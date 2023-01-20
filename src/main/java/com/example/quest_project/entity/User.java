@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor // empty constructor
 @AllArgsConstructor // constructor with all fields
 @Builder
-public class User {
+public class User implements AbstractEntity {
     private Long id;
     private String login;
     private String password;

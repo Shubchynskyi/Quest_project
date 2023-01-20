@@ -8,5 +8,5 @@ package com.example.quest_project.entity;
 public interface AbstractEntity {
     Long getId();
 
-    void setId();
+    void setId(Long id);
 }
