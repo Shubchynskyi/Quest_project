@@ -23,7 +23,7 @@ import java.util.Map;
 // который не будет загружаться, а будет храниться в памяти, 1 << 20 - это 1 мегабайт
 public class SignupServlet extends HttpServlet {
 
-    @Override // это значит что на странице любого User будут доступны роли Role (user.jsp строка 51)
+    @Override // это значит что на странице этого сервлета будут доступны роли Role (user.jsp строка 51)
     public void init(ServletConfig config) throws ServletException {
         config.getServletContext().setAttribute(Key.ROLES, Role.values());
         super.init(config);
@@ -53,7 +53,7 @@ public class SignupServlet extends HttpServlet {
             userService.create(user);
 
 
-        imageService.uploadImage(req, user.getId()); // загружаем аватар
+        imageService.uploadImage(req, user.getImage()); // загружаем аватар
 
         Jsp.redirect(resp, Key.USERS); // перенаправляем на всех пользователей
     }

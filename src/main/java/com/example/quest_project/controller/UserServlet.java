@@ -4,6 +4,7 @@ import com.example.quest_project.entity.Role;
 import com.example.quest_project.entity.User;
 import com.example.quest_project.service.ImageService;
 import com.example.quest_project.service.UserService;
+import com.example.quest_project.util.Go;
 import com.example.quest_project.util.Jsp;
 import com.example.quest_project.util.Key;
 import jakarta.servlet.*;
@@ -15,7 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-@WebServlet(name = "UserServlet", value = "/user")
+@WebServlet(name = "UserServlet", value = Go.USER)
 @MultipartConfig(fileSizeThreshold = 1 << 20) // позволяет видеть файлы в запросах, fileSizeThreshold - размер файла,
 // который не будет загружаться, а будет храниться в памяти, 1 << 20 - это 1 мегабайт
 public class UserServlet extends HttpServlet {
@@ -79,7 +80,7 @@ public class UserServlet extends HttpServlet {
             userService.delete(user);
         } else throw new IllegalArgumentException("Unknown command"); //TODO some application exception
 
-        imageService.uploadImage(req, user.getId()); // загружаем аватар
+        imageService.uploadImage(req, user.getImage()); // загружаем аватар
 
         resp.sendRedirect(Key.USERS); // перенаправляем на всех пользователей
     }

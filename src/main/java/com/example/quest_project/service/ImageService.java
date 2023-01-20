@@ -20,7 +20,7 @@ public enum ImageService {
 
     public static final String IMAGES_FOLDER = "images"; // расположение всех аватаров
     public static final String PART_NAME = "image";
-    public static final String FILENAME_PREFIX = "image-";
+//    public static final String FILENAME_PREFIX = "image-";
     public static final String NO_IMAGE_PNG = "no-image.png";   // аватар по умолчанию
     public static final List<String> EXTENSIONS = List.of(      // возможные расширения
             ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp"
@@ -42,13 +42,13 @@ public enum ImageService {
                 .orElse(imagesFolder.resolve(NO_IMAGE_PNG));
     }
 
-    public void uploadImage(HttpServletRequest request, long id) throws ServletException, IOException {
+    public void uploadImage(HttpServletRequest request, String imageId) throws ServletException, IOException {
         Part data = request.getPart(PART_NAME);
         if (Objects.nonNull(data) && data.getInputStream().available() > 0) {
             String filename = data.getSubmittedFileName();
             String ext = filename.substring(filename.lastIndexOf("."));
-            deleteOldFiles(FILENAME_PREFIX + id);
-            filename = FILENAME_PREFIX + id + ext;
+            deleteOldFiles(imageId);
+            filename = imageId + ext;
             uploadImageInternal(filename, data.getInputStream());
         }
     }

@@ -20,7 +20,7 @@ public class AnswerRepository extends BaseRepository<Answer> {
 //    }
 
     @Override
-    public Stream<Answer> find(Answer pattern) {     // будет возвращать квесты которые соответствуют паттерну
+    public Stream<Answer> find(Answer pattern) {     // будет возвращать квесты, которые соответствуют паттерну
         return map.values()
                 .stream()
                 .filter(answer -> nullOrEquals(pattern.getId(), answer.getId()))
