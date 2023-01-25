@@ -1,5 +1,7 @@
 package com.example.quest_project.service;
 
+import com.example.quest_project.AppException;
+import com.example.quest_project.entity.GameState;
 import com.example.quest_project.entity.Quest;
 import com.example.quest_project.entity.Question;
 import com.example.quest_project.repository.QuestRepository;
@@ -7,6 +9,8 @@ import com.example.quest_project.repository.Repository;
 import com.example.quest_project.util.QuestParser;
 
 import java.util.*;
+
+import static com.example.quest_project.util.QuestMarks.*;
 
 public enum QuestService {
 
@@ -42,14 +46,50 @@ public enum QuestService {
                 .startQuestionId(null) // если после вопроса лист строк пустой, то заполняю последний вопросом
                 .build();
 
-        // это будет метод в цикле while(пока есть строки)
+        System.out.println(quest.toString());
+        System.out.println();
+
+        //TODO заинжектить GAME_STATE и все репо
         questParser.splitQuestToStrings(text);
 
-        String currentLine = questParser.takeNextLine();
-        String[] logicBlock = questParser.extractLogicBlock(currentLine);
-        String blockNumber = logicBlock[0];
-        String blockData = logicBlock[1];
-        String blackType = logicBlock[2]; // тут метка //TODO добавить в метод поиск метки, заинжектить GAME_STATE и все репо
+        // это будет метод в цикле while(пока есть строки)
+        while(questParser.isStringPresent()) {
+            String currentLine = questParser.takeNextLine();
+            String[] logicBlock = questParser.extractLogicBlock(currentLine);
+            String blockNumber = logicBlock[0];
+            String blockData = logicBlock[1];
+            String blockType = logicBlock[2]; // тут метка
+
+            System.out.println("Номер блока: " + blockNumber);
+            System.out.println("Данные блока: " + blockData);
+            System.out.println("Метка: " + blockType);
+
+            switch (blockType) {
+                case QUESTION_MARK -> {
+                    System.out.println(":");
+
+
+                }
+                case WIN_MARK -> {
+                    System.out.println("+");
+
+
+                }
+                case LOST_MARK -> {
+                    System.out.println("-");
+
+
+                }
+                case ANSWER_MARK -> {
+                    System.out.println("<");
+
+
+                }
+
+                default -> throw new AppException(); //TODO неверная метка
+            }
+        }
+
 
 //        в зависимости от типа метки делаю
         // : - вопрос с ответами, статус PLAY, заливаю ответы, обнуляю список ответов

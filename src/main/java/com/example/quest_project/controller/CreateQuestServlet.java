@@ -35,5 +35,6 @@ public class CreateQuestServlet extends HttpServlet {
 
 // паттерн post redirect get PRG, все post запросы должны заканчиваться редиректом
 //если пользователя нет, то редирект на логин
+        Jsp.forward(request, response, Key.CREATE_QUEST);
     }
 }
