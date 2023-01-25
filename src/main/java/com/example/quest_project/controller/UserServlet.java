@@ -21,7 +21,6 @@ import java.util.Optional;
 // который не будет загружаться, а будет храниться в памяти, 1 << 20 - это 1 мегабайт
 public class UserServlet extends HttpServlet {
 
-
     @Override // это значит что на странице любого User будут доступны роли Role (user.jsp строка 51)
     public void init(ServletConfig config) throws ServletException {
         config.getServletContext().setAttribute(Key.ROLES, Role.values());

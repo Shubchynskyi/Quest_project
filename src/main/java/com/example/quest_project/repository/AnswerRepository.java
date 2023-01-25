@@ -26,7 +26,7 @@ public class AnswerRepository extends BaseRepository<Answer> {
                 .filter(answer -> nullOrEquals(pattern.getId(), answer.getId()))
                 .filter(answer -> nullOrEquals(pattern.getQuestionId(), answer.getQuestionId()))
                 .filter(answer -> nullOrEquals(pattern.getText(), answer.getText()))
-                .filter(answer -> nullOrEquals(pattern.getNextQuestion(),answer.getNextQuestion()));
+                .filter(answer -> nullOrEquals(pattern.getNextQuestionId(),answer.getNextQuestionId()));
     }
 
 }

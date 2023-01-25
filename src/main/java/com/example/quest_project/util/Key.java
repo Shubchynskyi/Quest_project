@@ -1,5 +1,8 @@
 package com.example.quest_project.util;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class Key {
     public static final String SIGNUP = "signup";
     public static final String LOGIN = "login";

@@ -14,6 +14,6 @@ public class Answer implements AbstractEntity{
     private Long id;
     private Long questionId;
     private String text;
-    private Long nextQuestion;
+    private Long nextQuestionId;
 
 }

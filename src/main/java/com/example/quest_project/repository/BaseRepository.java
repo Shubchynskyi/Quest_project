@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * repository for Ts, must be changed in future
  */
 public abstract class BaseRepository<T extends AbstractEntity> implements Repository<T> {
-    //для кадого репозитория будет свой map и свой счетчик (т.к. она не static)
+    //для каждого репозитория будет свой map и свой счетчик (т.к. она не static)
     protected final Map<Long, T> map = new HashMap<>(); // map for all Ts
     public final AtomicLong id = new AtomicLong(0L);  // если сделать static, то id будет для всех сущностей
     // если не static, то у каждого типа сущностей свой набор id
