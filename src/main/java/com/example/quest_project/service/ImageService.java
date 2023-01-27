@@ -17,6 +17,7 @@ import java.util.Objects;
 public enum ImageService {
 
     IMAGE_SERVICE;
+    private final Config config = Config.CONFIG;
 
     public static final String IMAGES_FOLDER = "images"; // расположение всех аватаров
     public static final String PART_NAME = "image";
@@ -26,7 +27,7 @@ public enum ImageService {
             ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp"
     );
 
-    private final Path imagesFolder = Config.WEB_INF.resolve(IMAGES_FOLDER);
+    private final Path imagesFolder = config.WEB_INF.resolve(IMAGES_FOLDER);
 
     @SneakyThrows
     ImageService() {

@@ -1,5 +1,6 @@
 package com.example.quest_project.service;
 
+import com.example.quest_project.config.Config;
 import com.example.quest_project.entity.User;
 import com.example.quest_project.repository.Repository;
 import com.example.quest_project.repository.UserRepository;
@@ -13,26 +14,27 @@ import java.util.Optional;
 /* в дальнейшем вся сложная логика будет тут */
 public enum UserService {
     USER_SERVICE;
-    private final Repository<User> userRepository = new UserRepository();
+    private final Config config = Config.CONFIG;
+//    private final Repository<User> userRepository = new UserRepository();
 
     public void create(User user) {
-        userRepository.create(user);
+        config.userRepository.create(user);
     }
 
     public void update(User user) {
-        userRepository.update(user);
+        config.userRepository.update(user);
     }
 
     public void delete(User user) {
-        userRepository.delete(user);
+        config.userRepository.delete(user);
     }
 
     public Collection<User> getAll() {
-        return userRepository.getAll();
+        return config.userRepository.getAll();
     }
 
     public Optional<User> get(long id) {
-        return Optional.ofNullable(userRepository.get(id));
+        return Optional.ofNullable(config.userRepository.get(id));
     }
 
     public Optional<User> get(String login, String password) {
@@ -42,6 +44,6 @@ public enum UserService {
                 .password(password)
                 .build();
 //        Collection<User> users = UserRepository.find(patternUser);
-        return userRepository.find(patternUser).findAny();
+        return config.userRepository.find(patternUser).findAny();
     }
 }

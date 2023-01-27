@@ -8,8 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.example.quest_project.util.QuestMarks.ANSWER_MARK;
-import static com.example.quest_project.util.QuestMarks.QUESTION_MARKS;
+import static com.example.quest_project.util.QuestMarks.*;
 
 public enum QuestParser {
     QUEST_PARSER;
@@ -68,7 +67,7 @@ public enum QuestParser {
     }
 
     public boolean isStringAnswer(String string) {
-        int markIndex = string.indexOf(ANSWER_MARK);
+        int markIndex = string.indexOf(ANSWER);
         return markIndex > 0 && StringUtils.isNumeric(String.valueOf(string.charAt(markIndex - 1)));
     }
 

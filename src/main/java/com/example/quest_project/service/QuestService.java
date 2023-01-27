@@ -1,12 +1,13 @@
 package com.example.quest_project.service;
 
 import com.example.quest_project.AppException;
+import com.example.quest_project.config.Config;
+import com.example.quest_project.entity.Answer;
 import com.example.quest_project.entity.GameState;
 import com.example.quest_project.entity.Quest;
 import com.example.quest_project.entity.Question;
-import com.example.quest_project.repository.QuestRepository;
-import com.example.quest_project.repository.Repository;
 import com.example.quest_project.util.QuestParser;
+
 
 import java.util.*;
 
@@ -16,28 +17,30 @@ public enum QuestService {
 
     QUEST_SERVICE;
 
-    private final HashMap<Integer, String> questionMap = new HashMap<>(); // карта вопросов с номерами из текста
 
+    private final Config config = Config.CONFIG;
     private final QuestParser questParser = QuestParser.QUEST_PARSER;
+    private final QuestionService questionService = QuestionService.QUESTION_SERVICE;
+//    private final AnswerService answerService = AnswerService.ANSWER_SERVICE;
 
-    private final Repository<Quest> questRepository = new QuestRepository();
 
     public void create(Quest quest) {
-        questRepository.create(quest);
+        config.questRepository.create(quest);
     }
 
     public void update(Quest quest) {
-        questRepository.update(quest);
+        config.questRepository.update(quest);
     }
 
     public void delete(Quest quest) {
-        questRepository.delete(quest);
+        config.questRepository.delete(quest);
     }
 
-    public Quest parseQuestFromTextWall(String title, String text, Long authorId) {
+    public void parseQuestFromTextWall(String title, String text, Long authorId) {
 
-        Map<Integer, Question> playQuestionsMap = new HashMap<>();
-        Collection<Question> questions = new ArrayList<>();
+        Map<Integer, Question> questionsMapWithRawId = new HashMap<>();
+        Map<Answer, Integer> answersMapWithNullNextQuestionId = new HashMap<>();
+        Collection<Answer> answers = new ArrayList<>();
 
         Quest quest = Quest.builder()
                 .name(title)
@@ -46,61 +49,117 @@ public enum QuestService {
                 .startQuestionId(null) // если после вопроса лист строк пустой, то заполняю последний вопросом
                 .build();
 
-        System.out.println(quest.toString());
-        System.out.println();
+        create(quest);
+//        System.out.println(quest.getId());
 
-        //TODO заинжектить GAME_STATE и все репо
+
+//        System.out.println(quest);
+//        System.out.println();
+
         questParser.splitQuestToStrings(text);
 
         // это будет метод в цикле while(пока есть строки)
-        while(questParser.isStringPresent()) {
+        while (questParser.isStringPresent()) {
             String currentLine = questParser.takeNextLine();
             String[] logicBlock = questParser.extractLogicBlock(currentLine);
-            String blockNumber = logicBlock[0];
+            Integer blockNumber = Integer.valueOf(logicBlock[0]);
             String blockData = logicBlock[1];
             String blockType = logicBlock[2]; // тут метка
 
-            System.out.println("Номер блока: " + blockNumber);
-            System.out.println("Данные блока: " + blockData);
-            System.out.println("Метка: " + blockType);
+//            System.out.println("Номер блока: " + blockNumber);
+//            System.out.println("Данные блока: " + blockData);
+//            System.out.println("Метка: " + blockType);
 
             switch (blockType) {
-                case QUESTION_MARK -> {
-                    System.out.println(":");
+                case PLAY, WIN, LOST -> {
+                    Question question = Question.builder()
+                            .questId(quest.getId())
+                            .text(blockData)
+                            .gameState(GameState.getState(blockType))
+                            .build();
+
+                    question.getAnswers().addAll(answers);
+                    answers.clear();
+                    questionService.create(question);
+                    question.getAnswers().forEach(answer -> answer.setQuestionId(question.getId()));
+                    quest.getQuestions().add(question);
 
 
+                    System.out.println(blockNumber);
+                    System.out.println(question);
+                    questionsMapWithRawId.put(blockNumber, question);
+                    System.out.println(questionsMapWithRawId);
+                    System.out.println();
+
+
+
+
+//                    System.out.println(question);
+
+                    // если нет больше строк, то задаем первый вопрос квеста и отчищаем карту вопросов в памяти
+                    if (!questParser.isStringPresent()) {
+                        quest.setStartQuestionId(question.getId());
+                    }
                 }
-                case WIN_MARK -> {
-                    System.out.println("+");
+                case ANSWER -> {
+                    Answer answer = Answer.builder()
+                            .text(blockData)
+//                            .nextQuestionId(questionsMapWithRawId.get(blockNumber).getId())
+                            .build();
 
 
+                    // если вопроса, на который ведет текущий ответ, еще нет
+                    // то помещаем ответ без ссылки в мапу и по окончании работы цикла будет сопоставление
+
+
+                    if (questionsMapWithRawId.containsKey(blockNumber)) {
+                        answer.setNextQuestionId(questionsMapWithRawId.get(blockNumber).getId());
+                    } else {
+                        answersMapWithNullNextQuestionId.put(answer, blockNumber);
+                    }
+
+                    config.answerRepository.create(answer);
+                    answers.add(answer);
                 }
-                case LOST_MARK -> {
-                    System.out.println("-");
-
-
-                }
-                case ANSWER_MARK -> {
-                    System.out.println("<");
-
-
-                }
-
                 default -> throw new AppException(); //TODO неверная метка
             }
+
+
+
+
+
+        }
+        // тут нужно присвоить ответам, у которых ссылка на вопрос = Null, актуальные ссылки
+        // и потом очистить обе мапы
+        for (Map.Entry<Answer, Integer> integerAnswerEntry : answersMapWithNullNextQuestionId.entrySet()) {
+
+            System.out.println(integerAnswerEntry);
+            System.out.println();
+            System.out.println(questionsMapWithRawId);
+            System.out.println();
+
+            integerAnswerEntry.getKey()
+                    .setNextQuestionId(
+                            questionsMapWithRawId.get(integerAnswerEntry.getValue()).getId()
+                    );
         }
 
+        questionsMapWithRawId.clear();
+        answersMapWithNullNextQuestionId.clear();
+        System.out.println("Квест:");
+        System.out.println(quest);
+        System.out.println();
+        System.out.println("Квест репо:");
+        System.out.println(config.questRepository.getAll());
+        System.out.println();
+        System.out.println("Вопрос репо:");
+        System.out.println(config.questionRepository.getAll());
+        System.out.println();
+        System.out.println("Ответ репо:");
+        System.out.println(config.answerRepository.getAll());
+        System.out.println();
+        System.out.println();
 
-//        в зависимости от типа метки делаю
-        // : - вопрос с ответами, статус PLAY, заливаю ответы, обнуляю список ответов
-        // < - ответ - пишу в лист, ищю id следующего вопроса в мапе вопросов
-        // - - вопрос со статусом LOSE, добавляю в карту
-        // + - вопрос со статусом WIN, добавляю в карту
-
-        // проверить есть ли еще строки
-        // если нет, то это будет стартовый вопрос - записать id в квест и выйти из цикла
-
-        return null;
     }
 
 

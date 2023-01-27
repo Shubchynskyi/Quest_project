@@ -21,7 +21,7 @@
         <%-- guest --%>
         <li><a href="${pageContext.request.contextPath}/" class="nav-link px-2 link-secondary">Home</a></li>
         <%-- user --%>
-        <li><a href="#" class="nav-link px-2 link-dark disabled">Играть</a></li>
+        <li><a href="quests-list" class="nav-link px-2 link-dark">Играть</a></li>
         <li><a href="#" class="nav-link px-2 link-dark disabled">Статистика</a></li>
         <%-- admin--%>
         <li><a href="users" class="nav-link px-2">Пользователи</a></li>
