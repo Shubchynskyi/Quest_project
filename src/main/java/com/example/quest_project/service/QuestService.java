@@ -2,10 +2,7 @@ package com.example.quest_project.service;
 
 import com.example.quest_project.AppException;
 import com.example.quest_project.config.Config;
-import com.example.quest_project.entity.Answer;
-import com.example.quest_project.entity.GameState;
-import com.example.quest_project.entity.Quest;
-import com.example.quest_project.entity.Question;
+import com.example.quest_project.entity.*;
 import com.example.quest_project.util.QuestParser;
 
 
@@ -21,11 +18,21 @@ public enum QuestService {
     private final Config config = Config.CONFIG;
     private final QuestParser questParser = QuestParser.QUEST_PARSER;
     private final QuestionService questionService = QuestionService.QUESTION_SERVICE;
-//    private final AnswerService answerService = AnswerService.ANSWER_SERVICE;
 
 
-    public void create(Quest quest) {
+    public Quest create(String name, String text, String description, Long authorId) {
+
+        Quest quest = Quest.builder()
+                .name(name)
+                .description(description)
+                .authorId(authorId)
+                .startQuestionId(-1L)
+                .build();
+
         config.questRepository.create(quest);
+        parseQuestFromTextWall(quest, text);
+
+        return quest;
     }
 
     public void update(Quest quest) {
@@ -36,39 +43,22 @@ public enum QuestService {
         config.questRepository.delete(quest);
     }
 
-    public void parseQuestFromTextWall(String title, String text, Long authorId) {
+    public void parseQuestFromTextWall(Quest quest, String text) {
 
         Map<Integer, Question> questionsMapWithRawId = new HashMap<>();
         Map<Answer, Integer> answersMapWithNullNextQuestionId = new HashMap<>();
         Collection<Answer> answers = new ArrayList<>();
 
-        Quest quest = Quest.builder()
-                .name(title)
-                .text(text)
-                .authorId(authorId)
-                .startQuestionId(null) // если после вопроса лист строк пустой, то заполняю последний вопросом
-                .build();
 
-        create(quest);
-//        System.out.println(quest.getId());
-
-
-//        System.out.println(quest);
-//        System.out.println();
 
         questParser.splitQuestToStrings(text);
 
-        // это будет метод в цикле while(пока есть строки)
         while (questParser.isStringPresent()) {
             String currentLine = questParser.takeNextLine();
             String[] logicBlock = questParser.extractLogicBlock(currentLine);
             Integer blockNumber = Integer.valueOf(logicBlock[0]);
             String blockData = logicBlock[1];
             String blockType = logicBlock[2]; // тут метка
-
-//            System.out.println("Номер блока: " + blockNumber);
-//            System.out.println("Данные блока: " + blockData);
-//            System.out.println("Метка: " + blockType);
 
             switch (blockType) {
                 case PLAY, WIN, LOST -> {
@@ -83,20 +73,8 @@ public enum QuestService {
                     questionService.create(question);
                     question.getAnswers().forEach(answer -> answer.setQuestionId(question.getId()));
                     quest.getQuestions().add(question);
-
-
-                    System.out.println(blockNumber);
-                    System.out.println(question);
                     questionsMapWithRawId.put(blockNumber, question);
-                    System.out.println(questionsMapWithRawId);
-                    System.out.println();
 
-
-
-
-//                    System.out.println(question);
-
-                    // если нет больше строк, то задаем первый вопрос квеста и отчищаем карту вопросов в памяти
                     if (!questParser.isStringPresent()) {
                         quest.setStartQuestionId(question.getId());
                     }
@@ -104,13 +82,7 @@ public enum QuestService {
                 case ANSWER -> {
                     Answer answer = Answer.builder()
                             .text(blockData)
-//                            .nextQuestionId(questionsMapWithRawId.get(blockNumber).getId())
                             .build();
-
-
-                    // если вопроса, на который ведет текущий ответ, еще нет
-                    // то помещаем ответ без ссылки в мапу и по окончании работы цикла будет сопоставление
-
 
                     if (questionsMapWithRawId.containsKey(blockNumber)) {
                         answer.setNextQuestionId(questionsMapWithRawId.get(blockNumber).getId());
@@ -123,21 +95,9 @@ public enum QuestService {
                 }
                 default -> throw new AppException(); //TODO неверная метка
             }
-
-
-
-
-
         }
-        // тут нужно присвоить ответам, у которых ссылка на вопрос = Null, актуальные ссылки
-        // и потом очистить обе мапы
+
         for (Map.Entry<Answer, Integer> integerAnswerEntry : answersMapWithNullNextQuestionId.entrySet()) {
-
-            System.out.println(integerAnswerEntry);
-            System.out.println();
-            System.out.println(questionsMapWithRawId);
-            System.out.println();
-
             integerAnswerEntry.getKey()
                     .setNextQuestionId(
                             questionsMapWithRawId.get(integerAnswerEntry.getValue()).getId()
@@ -146,20 +106,22 @@ public enum QuestService {
 
         questionsMapWithRawId.clear();
         answersMapWithNullNextQuestionId.clear();
-        System.out.println("Квест:");
-        System.out.println(quest);
-        System.out.println();
-        System.out.println("Квест репо:");
-        System.out.println(config.questRepository.getAll());
-        System.out.println();
-        System.out.println("Вопрос репо:");
-        System.out.println(config.questionRepository.getAll());
-        System.out.println();
-        System.out.println("Ответ репо:");
-        System.out.println(config.answerRepository.getAll());
-        System.out.println();
-        System.out.println();
+        Collections.reverse((List<?>) quest.getQuestions());
+        config.questRepository.update(quest);
 
+    }
+
+
+    public Collection<Quest> getAll() {
+        return config.questRepository.getAll();
+    }
+
+    public Optional<Quest> get(Long id) {
+        return Optional.ofNullable(config.questRepository.get(id));
+    }
+
+    public Optional<Quest> get(String id) {
+        return Optional.ofNullable(config.questRepository.get(Long.parseLong(id)));
     }
 
 

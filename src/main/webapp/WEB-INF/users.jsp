@@ -12,22 +12,12 @@
     <%-- петачает пользователей циклом, var - переменная, items - коллекция --%>
     <c:forEach var="user" items="${requestScope.users}">
         <%-- печатем обьект user --%>
-        обьект = ${user} <br> <%-- <br> - перенос строки --%>
         <img src="images/${user.image}" alt="images/${user.image}" width="100px">
         Edit user <a href="user?id=${user.id}">${user.login}<br></a
 
         <%-- печатаем только логин юзера --%>
             User login = ${user.login} <br>
     </c:forEach>
-
-    <p>
-        <br>
-        Коллекция users:
-        ${requestScope.users} <%-- напечатали коллекцию пользователей из requestScope --%>
-    </p>
-    <br><br>
-
-    <p><a href="user?id=0">Create new user</a></p>
 </div>
 
 

@@ -25,7 +25,7 @@ public class QuestRepository extends BaseRepository<Quest> {
         return map.values()
                 .stream()
                 .filter(quest -> nullOrEquals(pattern.getId(), quest.getId()))
-                .filter(quest -> nullOrEquals(pattern.getText(), quest.getText()))
+                .filter(quest -> nullOrEquals(pattern.getDescription(), quest.getDescription()))
                 .filter(quest -> nullOrEquals(pattern.getName(), quest.getName()))
                 .filter(quest -> nullOrEquals(pattern.getAuthorId(), quest.getAuthorId()))
                 .filter(quest -> nullOrEquals(pattern.getStartQuestionId(), quest.getStartQuestionId()));

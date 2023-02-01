@@ -11,7 +11,7 @@ import lombok.SneakyThrows;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-@WebServlet(value = "/images/*", name = "ImageServlet")
+@WebServlet(name = "ImageServlet", value = "/images/*")
 public class ImageServlet extends HttpServlet {
     private final ImageService imageService = ImageService.IMAGE_SERVICE;
 

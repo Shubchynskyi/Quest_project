@@ -1,6 +1,7 @@
 package com.example.quest_project.service;
 
 import com.example.quest_project.config.Config;
+import com.example.quest_project.entity.Answer;
 import com.example.quest_project.entity.Question;
 
 import java.util.Optional;
@@ -13,6 +14,15 @@ public enum QuestionService {
 
     public Optional<Question> get(Long id) {
         return config.questionRepository.find(Question.builder().id(id).build()).findAny(); //TODO переместить
+    }
+
+    public Optional<Question> get(String id) {
+        return config.questionRepository.find(Question.builder().id(Long.valueOf(id)).build()).findAny(); //TODO переместить
+    }
+
+    public Optional<Question> getNextQuestionOptional(String answerId) {
+        Long nextQuestionId = config.answerRepository.get(Long.parseLong(answerId)).getNextQuestionId();
+        return Optional.ofNullable(config.questionRepository.get(nextQuestionId));
     }
 
     public void create(Question question) {

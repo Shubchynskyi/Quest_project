@@ -42,7 +42,10 @@
                 Нажмите чтобы изменить
             </label>
             <div class="col-md-4">
-                <input onchange="PreviewImage('image','previewId');" id="image" name="image" style="visibility:hidden;"
+                <input onchange="PreviewImage('image','previewId');"
+                       id="image"
+                       name="image"
+                       style="visibility:hidden;"
                        class="input-file" type="file">
             </div>
         </div>

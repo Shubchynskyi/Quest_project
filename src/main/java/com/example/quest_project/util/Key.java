@@ -17,4 +17,6 @@ public class Key {
     public static final String CREATE_QUEST = "create-quest";
     public static final String QUESTS_LIST = "quests-list";
     public static final String QUEST_EDIT = "quest-edit";
+    public static final String QUEST = "quest";
+    public static final String QUESTION = "question";
 }

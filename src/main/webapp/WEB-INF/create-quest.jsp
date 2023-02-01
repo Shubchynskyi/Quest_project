@@ -10,6 +10,12 @@
     </div>
 
     <div class="mb-3">
+      <label for="quest-description" class="form-label">Описание квеста</label>
+      <input name="description" type="text" class="form-control" id="quest-description"
+             placeholder="Добавьте описание для Вашего квеста">
+    </div>
+
+    <div class="mb-3">
       <label for="exampleFormControlTextarea1" class="form-label">Содержимое квеста</label>
       <textarea name="text" class="form-control" id="exampleFormControlTextarea1" rows="10"
                 placeholder="<%@include file="./parts/quest-demo.jsp" %>"></textarea>

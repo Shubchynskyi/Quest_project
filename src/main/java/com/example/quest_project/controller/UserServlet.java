@@ -12,6 +12,7 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -61,6 +62,13 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        Map<String, String[]> parameterMap1 = req.getParameterMap();
+        for (var var : parameterMap1.entrySet()) {
+            System.out.println(var.getKey());
+            System.out.println(Arrays.toString(var.getValue()));
+            System.out.println();
+        }
         // собираем пользователя из запроса
         User user = User.builder()
                 .id(Long.valueOf(req.getParameter(Key.ID)))

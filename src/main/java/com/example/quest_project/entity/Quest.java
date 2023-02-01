@@ -15,7 +15,7 @@ import java.util.Collection;
 public class Quest implements AbstractEntity {
     private Long id;
     private String name;
-    private String text; // для чего?.. инфо о квесте? Описание? Нужна еще форма для заполнения
+    private String description; // для чего?.. инфо о квесте? Описание? Нужна еще форма для заполнения
     private Long authorId;
     private Long startQuestionId;
 //    private final Collection<User> players = new ArrayList<>(); // для статистики (сейчас проходят)

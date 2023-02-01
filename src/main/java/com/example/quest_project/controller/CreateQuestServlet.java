@@ -1,5 +1,7 @@
 package com.example.quest_project.controller;
 
+import com.example.quest_project.entity.Quest;
+import com.example.quest_project.entity.Question;
 import com.example.quest_project.entity.User;
 import com.example.quest_project.service.QuestService;
 import com.example.quest_project.util.Go;
@@ -10,8 +12,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Objects;
 
 @WebServlet(name = "CreateQuestServlet", value = Go.CREATE_QUEST)
 public class CreateQuestServlet extends HttpServlet {
@@ -20,19 +25,28 @@ public class CreateQuestServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Jsp.forward(request, response, Key.CREATE_QUEST);
+        if (Jsp.isParameterPresent(request, Key.USER)) {
+            Jsp.forward(request, response, Key.CREATE_QUEST);
+        } else {
+            response.sendRedirect(Key.LOGIN);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String questTitle = request.getParameter("name");
         String questText = request.getParameter("text");
+        String questDescription = request.getParameter("description");
         //TODO если пользователя нет, то редирект на логин
-        Long userId = ((User)request.getSession().getAttribute("user")).getId();
-        questService.parseQuestFromTextWall(questTitle, questText, userId);
+        Long userId = ((User) request.getSession().getAttribute("user")).getId();
+        Quest quest = questService.create(questTitle, questText, questDescription, userId);
+//        Quest quest = questService.parseQuestFromTextWall(questTitle, questText, questDescription, userId);
 
-
-        response.sendRedirect(Key.QUEST_EDIT);
-//        Jsp.forward(request, response, Key.QUESTS_EDIT); // TODO передать id квеста
+//        request.getSession().setAttribute("quest", quest);
+//        response.sendRedirect(Key.QUEST_EDIT);
+        Collection<Question> questions = quest.getQuestions();
+        request.setAttribute("questions", questions);
+        request.setAttribute("quest", quest);
+        Jsp.forward(request, response, Key.QUEST_EDIT);
     }
 }

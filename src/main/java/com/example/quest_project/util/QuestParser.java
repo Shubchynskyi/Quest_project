@@ -23,7 +23,7 @@ public enum QuestParser {
         return stringList.size() > 0;
     }
 
-    public String extractNumber(String string) {    //994- Два
+    public String extractNumber(String string) {
         String number;
         for (int i = 1; i < string.length() + 1; i++) {
             if (!StringUtils.isNumeric(string.substring(0, i))) {

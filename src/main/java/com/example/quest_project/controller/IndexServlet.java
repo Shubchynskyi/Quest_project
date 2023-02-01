@@ -13,11 +13,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(name  = "IndexServlet", value = Go.ROOT) // пустой адрес "" - корень контекста, "/" - любое слово вписаное в URI будет приниматься сервлетом,
+@WebServlet(name  = "IndexServlet", value = Go.ROOT, loadOnStartup = 0) // пустой адрес "" - корень контекста, "/" - любое слово вписаное в URI будет приниматься сервлетом,
 // "/*" - только те кто в этом каталоге
 public class IndexServlet extends HttpServlet {
 
     @Override // это значит что на странице этого сервлета будут доступны роли Role (user.jsp строка 51)
+    //TODO перенести в слушатель
     public void init(ServletConfig config) throws ServletException {
         config.getServletContext().setAttribute(Key.ROLES, Role.values());
         super.init(config);

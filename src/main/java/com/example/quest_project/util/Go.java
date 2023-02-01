@@ -13,4 +13,5 @@ public class Go {
     public static final String QUESTS_EDIT = "/quest-edit";
     public static final String USER = "/user";
     public static final String USERS = "/users";
+    public static final String QUEST = "/quest";
 }

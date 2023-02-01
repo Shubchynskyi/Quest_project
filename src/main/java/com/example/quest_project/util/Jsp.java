@@ -4,10 +4,12 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @UtilityClass
 public class Jsp {
@@ -26,5 +28,11 @@ public class Jsp {
     private String fixTarget(String target) {
         target = target.replace("/", "");
         return target;
+    }
+
+    public boolean isParameterPresent(HttpServletRequest request, String parameter) {
+        HttpSession session = request.getSession();
+        return Objects.nonNull(session.getAttribute(parameter));
+
     }
 }

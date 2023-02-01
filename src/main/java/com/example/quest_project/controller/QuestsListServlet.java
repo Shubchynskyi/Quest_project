@@ -1,5 +1,9 @@
 package com.example.quest_project.controller;
 
+import com.example.quest_project.entity.Quest;
+import com.example.quest_project.entity.Question;
+import com.example.quest_project.entity.User;
+import com.example.quest_project.service.ImageService;
 import com.example.quest_project.service.QuestService;
 import com.example.quest_project.util.Go;
 import com.example.quest_project.util.Jsp;
@@ -11,15 +15,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Collection;
+
 //TODO редирект на страницу со списком квестом
 @WebServlet(name = "QuestsListServlet", value = Go.QUESTS_LIST)
 public class QuestsListServlet extends HttpServlet {
 
     QuestService questService = QuestService.QUEST_SERVICE;
+    ImageService imageService = ImageService.IMAGE_SERVICE;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // получить все квесты, положить в реквест
+        Collection<Quest> quests = questService.getAll();
+        request.setAttribute("quests", quests);
+
         Jsp.forward(request, response, Key.QUESTS_LIST);
     }
 
