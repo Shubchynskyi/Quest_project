@@ -25,30 +25,23 @@ public class QuestServlet extends HttpServlet {
 
     QuestService questService = QuestService.QUEST_SERVICE;
     QuestionService questionService = QuestionService.QUESTION_SERVICE;
-    ImageService imageService = ImageService.IMAGE_SERVICE;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Optional<Quest> questOptional = questService.get(request.getParameter(Key.ID));
-
         if (questOptional.isPresent()) {
             Quest quest = questOptional.get();
             Map<String, String[]> parameterMap = request.getParameterMap();
             if (parameterMap.containsKey(Key.QUESTION)) {
                 String questionId = request.getParameter(Key.QUESTION);
                 Optional<Question> questionOptional = questionService.get(questionId);
-                if (questionOptional.isPresent()) {
-                    Question question = questionOptional.get();
-                    request.setAttribute(Key.QUESTION, question);
-                }
+                questionOptional.ifPresent(question -> request.setAttribute(Key.QUESTION, question));
             } else {
                 request.setAttribute(Key.START_QUESTION_ID, quest.getStartQuestionId());
                 request.setAttribute(Key.QUEST_DESCRIPTION, quest.getDescription());
             }
-
             request.setAttribute(Key.ID, quest.getId());
             request.setAttribute(Key.QUEST_NAME, quest.getName());
-
             Jsp.forward(request, response, Key.QUEST);
         } else {
             Jsp.redirect(response, Key.QUESTS_LIST);
@@ -57,47 +50,28 @@ public class QuestServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         Map<String, String[]> parameterMap = request.getParameterMap();
-
-
-        // переместить, возможно при редиректе эти данные уже будут
-        String questId = request.getParameter(Key.ID);
-        String questName = request.getParameter(Key.QUEST_NAME);
-
-
         if (parameterMap.containsKey(Key.GAME_STATE) && !request.getParameter(Key.GAME_STATE).equals(GameState.PLAY.name())) {
             Jsp.redirect(response, Key.QUESTS_LIST);
         } else {
+            String questionId = request.getParameter(Key.QUESTION_ID);
+            fillRequestAndRedirect(request, response, questionId);
+        }
+    }
 
-            if (parameterMap.containsKey(Key.NEXT_QUESTION_ID)) {
-                String nextQuestionId = request.getParameter(Key.NEXT_QUESTION_ID);
-                Optional<Question> nextQuestionOptional = questionService.get(nextQuestionId);
-                if (nextQuestionOptional.isPresent()) {
-                    Question question = nextQuestionOptional.get();
-                    request.setAttribute(Key.QUESTION, question);
-                    request.setAttribute(Key.ID, questId);
-                    request.setAttribute(Key.QUEST_NAME, questName);
-                    String newUri = Key.URI_PATTERN.formatted(Key.QUEST, Key.ID, questId, Key.QUESTION, question.getId());
-                    Jsp.redirect(response, newUri);
-                } else {
-                    Jsp.redirect(response, Key.QUESTS_LIST);
-                }
-            } else {
-
-                String questionId = request.getParameter(Key.QUESTION_ID);
-                Optional<Question> questionOptional = questionService.get(questionId);
-                if (questionOptional.isPresent()) {
-                    Question question = questionOptional.get();
-                    request.setAttribute(Key.QUESTION, question);
-                    request.setAttribute(Key.ID, questId);
-                    request.setAttribute(Key.QUEST_NAME, questName);
-                    Jsp.forward(request, response, Key.QUEST);
-                } else {
-                    Jsp.redirect(response, Key.QUESTS_LIST);
-                }
-
-            }
+    private void fillRequestAndRedirect(HttpServletRequest request, HttpServletResponse response, String questionId) {
+        Optional<Question> questionOptional = questionService.get(questionId);
+        if (questionOptional.isPresent()) {
+            String questId = request.getParameter(Key.ID);
+            String questName = request.getParameter(Key.QUEST_NAME);
+            Question question = questionOptional.get();
+            request.setAttribute(Key.QUESTION, question);
+            request.setAttribute(Key.ID, questId);
+            request.setAttribute(Key.QUEST_NAME, questName);
+            String newUri = Key.URI_PATTERN.formatted(Key.QUEST, Key.ID, questId, Key.QUESTION, question.getId());
+            Jsp.redirect(response, newUri);
+        } else {
+            Jsp.redirect(response, Key.QUESTS_LIST);
         }
     }
 }

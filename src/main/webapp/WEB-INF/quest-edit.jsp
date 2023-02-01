@@ -11,19 +11,23 @@
             <p align="center">Редактирование квеста ${requestScope.quest.name}.
                 Выберите изображение для каждого вопроса квеста</p> <br><br><br>
 
+
+
             <!-- File Button -->
             <div class="form-group">
 
-                <label class="col-md-4 control-label" for="question">
+                <input type="hidden" name="id" value="${requestScope.question.id}">
+
+                <label class="col-md-4 control-label" for="image">
                     <div class="form-group">
                         <img id="previewId" src="images/${question.image}" width="150" alt="${question.image}">
                     </div>
                     Нажмите чтобы изменить
                 </label>
                 <div class="col-md-4">
-                    <input onchange="PreviewImage('question','previewId');"
-                           id="question"
-                           name="question"
+                    <input onchange="PreviewImage('image','previewId');"
+                           id="image"
+                           name="image"
                            style="visibility:hidden;"
                            class="input-file" type="file">
                 </div>
