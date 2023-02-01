@@ -70,8 +70,8 @@ public class QuestServlet extends HttpServlet {
 
         Map<String, String[]> parameterMap = request.getParameterMap();
         if(parameterMap.containsKey("nextQuestionId")) {
-            String answerId = request.getParameter("nextQuestionId");
-            Optional<Question> nextQuestionOptional = questionService.getNextQuestionOptional(answerId);
+            String nextQuestionId = request.getParameter("nextQuestionId");
+            Optional<Question> nextQuestionOptional = questionService.get(nextQuestionId);
             if(nextQuestionOptional.isPresent()) {
                 Question question = nextQuestionOptional.get();
                 request.setAttribute("question", question);

@@ -61,7 +61,7 @@
                             <div class="radio">
                                 <label for="radios-${answer.nextQuestionId}">
                                     <input type="radio" name="nextQuestionId" id="radios-${answer.nextQuestionId}" value="${answer.nextQuestionId}">  <%-- checked="checked"--%>
-                                        ${answer.text}
+                                        ${answer.text} + ${answer.nextQuestionId}
                                 </label>
                             </div>
                         </div>

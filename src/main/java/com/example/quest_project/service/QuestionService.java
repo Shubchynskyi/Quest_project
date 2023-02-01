@@ -20,10 +20,11 @@ public enum QuestionService {
         return config.questionRepository.find(Question.builder().id(Long.valueOf(id)).build()).findAny(); //TODO переместить
     }
 
-    public Optional<Question> getNextQuestionOptional(String answerId) {
-        Long nextQuestionId = config.answerRepository.get(Long.parseLong(answerId)).getNextQuestionId();
-        return Optional.ofNullable(config.questionRepository.get(nextQuestionId));
-    }
+    // передаю id ответа и получаю следующий вопрос
+//    public Optional<Question> getNextQuestionOptional(String answerId) {
+//        Long nextQuestionId = config.answerRepository.get(Long.parseLong(answerId)).getNextQuestionId();
+//        return Optional.ofNullable(config.questionRepository.get(nextQuestionId));
+//    }
 
     public void create(Question question) {
         config.questionRepository.create(question);
