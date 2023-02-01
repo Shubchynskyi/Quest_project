@@ -65,7 +65,7 @@ public enum QuestService {
                     Question question = Question.builder()
                             .questId(quest.getId())
                             .text(blockData)
-                            .gameState(GameState.getState(blockType))
+                            .gameState(GameState.getStateFromParser(blockType))
                             .build();
 
                     question.getAnswers().addAll(answers);

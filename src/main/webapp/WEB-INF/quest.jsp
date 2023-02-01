@@ -50,6 +50,7 @@
             <fieldset>
                 <input type="hidden" name="id" value="${requestScope.id}">
                 <input type="hidden" name="questName" value="${requestScope.questName}">
+                <input type="hidden" name="gameState" value="${requestScope.question.gameState}">
 
                 <!-- Form Name -->
         <c:if test="${requestScope.question.answers!=null}">
@@ -68,13 +69,15 @@
                     </div>
                 </c:forEach>
             </c:if>
-
+                gameState =    ${requestScope.question.gameState}
                 <!-- Button -->
                 <div class="form-group">
                     <label class="col-md-4 control-label" for="singlebutton"></label>
                     <div class="col-md-4">
 <%--                        два варианта кнопки, в зависимости от GameState--%>
-                        <button id="singlebutton" name="singlebutton" class="btn btn-primary">Next</button>
+                        <button id="singlebutton" name="singlebutton" class="btn btn-primary">
+                                ${requestScope.question.gameState=="PLAY"?"Далее":"К списку квестов"}
+                        </button>
                     </div>
                 </div>
 

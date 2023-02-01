@@ -19,4 +19,11 @@ public class Key {
     public static final String QUEST_EDIT = "quest-edit";
     public static final String QUEST = "quest";
     public static final String QUESTION = "question";
+    public static final String GAME_STATE = "gameState";
+    public static final String NEXT_QUESTION_ID = "nextQuestionId";
+    public static final String QUEST_NAME = "questName";
+    public static final String QUESTION_ID = "questionId";
+    public static final String URI_PATTERN = "%s?%s=%s&%s=%d";
+    public static final String START_QUESTION_ID = "startQuestionId";
+    public static final String QUEST_DESCRIPTION = "questDescription";
 }

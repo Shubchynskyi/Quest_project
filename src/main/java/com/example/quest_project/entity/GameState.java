@@ -6,7 +6,8 @@ import com.example.quest_project.util.QuestMarks;
 public enum GameState {
     PLAY, WIN, LOST;
 
-    public static GameState getState(String stateFromParser) {
+    //TODO перенести в парсер
+    public static GameState getStateFromParser(String stateFromParser) {
         return switch (stateFromParser) {
             case QuestMarks.PLAY -> PLAY;
             case QuestMarks.WIN -> WIN;
