@@ -120,7 +120,7 @@
                     </button>
                 </c:if>
             </div>
-        </div>o
+        </div>
 
     </fieldset>
 </form>

@@ -40,13 +40,15 @@ public class CreateQuestServlet extends HttpServlet {
         //TODO если пользователя нет, то редирект на логин
         Long userId = ((User) request.getSession().getAttribute("user")).getId();
         Quest quest = questService.create(questTitle, questText, questDescription, userId);
-//        Quest quest = questService.parseQuestFromTextWall(questTitle, questText, questDescription, userId);
 
+//        Quest quest = questService.parseQuestFromTextWall(questTitle, questText, questDescription, userId);
 //        request.getSession().setAttribute("quest", quest);
 //        response.sendRedirect(Key.QUEST_EDIT);
-        Collection<Question> questions = quest.getQuestions();
-        request.setAttribute("questions", questions);
-        request.setAttribute("quest", quest);
-        Jsp.forward(request, response, Key.QUEST_EDIT);
+//        Collection<Question> questions = quest.getQuestions();
+//        request.setAttribute("questions", questions);
+//        request.setAttribute("quest", quest);
+
+
+        Jsp.redirect(response, Go.QUEST_EDIT + "?id=" + quest.getId());
     }
 }

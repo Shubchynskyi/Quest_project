@@ -32,7 +32,7 @@ public enum QuestionService {
 
 
     //TODO переделать, получаю вопрос по id и делаю в нем новый текст или новую картинку
-    public void update(Long id, String text, Question question) {
+    public void update(Question question) {
 
         config.questionRepository.update(question);
     }
