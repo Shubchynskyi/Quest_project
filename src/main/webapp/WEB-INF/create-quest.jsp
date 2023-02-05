@@ -1,23 +1,22 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<c:import url="parts/header.jsp"/>
+<%@include file="parts/header.jsp" %>
 <div class="container">
   <form action="create-quest" method="post">
 
     <div class="mb-3">
-      <label for="name" class="form-label">Название квеста</label>
-      <input name="name" type="text" class="form-control" id="name" placeholder="Тут укажите имя квеста">
+      <label for="questName" class="form-label">Название квеста</label>
+      <input name="questName" type="text" class="form-control" id="questName" placeholder="Тут укажите имя квеста">
     </div>
 
     <div class="mb-3">
-      <label for="description" class="form-label">Описание квеста</label>
-      <input name="description" type="text" class="form-control" id="description"
+      <label for="questDescription" class="form-label">Описание квеста</label>
+      <input name="questDescription" type="text" class="form-control" id="questDescription"
              placeholder="Добавьте описание для Вашего квеста">
     </div>
 
     <div class="mb-3">
       <label for="exampleFormControlTextarea1" class="form-label">Содержимое квеста</label>
-      <textarea name="text" class="form-control" id="exampleFormControlTextarea1" rows="10"
+      <textarea name="questText" class="form-control" id="exampleFormControlTextarea1" rows="10"
                 placeholder="<%@include file="./parts/quest-demo.jsp" %>"></textarea>
     </div>
 

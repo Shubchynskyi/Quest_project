@@ -1,9 +1,8 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<c:import url="parts/header.jsp"/>
+<%@include file="parts/header.jsp" %>
 <div class="container">
     <jsp:useBean id="user" scope="session"
-                 type="com.example.quest_project.entity.User"/>
+                 type="com.javarush.quest.shubchynskyi.entity.user.User"/>
 
     <div class="px-4 py-5 my-5 text-center">
         <p class="lead mb-4">
@@ -17,7 +16,7 @@
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                     <input type="hidden" name="id" value="${user.id}">
                     <button type="submit" name="user" class="btn btn-primary btn-lg px-4 gap-3">Редактировать</button>
-                    <button type="submit" name="logout" class="btn btn-outline-secondary btn-lg px-4">Выход</button>
+<%--                    <button type="submit" name="logout" class="btn btn-outline-secondary btn-lg px-4">Выход</button>--%>
                 </div>
             </form>
         </div>

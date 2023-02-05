@@ -1,7 +1,5 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<c:import url="parts/header.jsp"/>
-
+<%@include file="parts/header.jsp" %>
 <div class="container">
     <h4 style="margin: auto; padding-bottom: 50px; color: #565756">
         Редактирование квеста <b>${requestScope.quest.name}</b>
@@ -30,12 +28,10 @@
                     style="width: 200px; margin-bottom: 50px">
                 Сохранить
             </button>
-
             <input name="id" type="hidden" value="${requestScope.quest.id}">
         </div>
     </form>
 </div>
-
 
 <hr class="hr hr-blurry"/>
 <div class="container">
@@ -57,7 +53,7 @@
             <div class="mb-3" style="padding-bottom: 10px">
                 <c:forEach var="answer" items="${question.answers}">
                     <label for="answerText">Ответ:</label>
-                    <input id="answerText" class="w-100" name="${answer.id}" value="${answer.text}">
+                    <input id="answerText" class="w-100" name="answer${answer.id}" value="${answer.text}">
                 </c:forEach>
             </div>
 
@@ -66,7 +62,6 @@
                 <label class="col-md-4 control-label" for="image-${question.id}">
                     <img id="preview-${question.id}" src="images/${question.image}" width="75%"
                          alt="${question.image}">
-
                 </label>
 
                 <input onchange="PreviewImage('image-${question.id}','preview-${question.id}');"
@@ -84,11 +79,10 @@
                         };
                     }
                 </script>
-
             </div>
+
             <div class="mb-3">
-                <button type="submit" class="btn btn-success"
-                        style="width: 200px;">
+                <button type="submit" class="btn btn-success" style="width: 200px;">
                     Сохранить
                 </button>
                 <input name="questionId" type="hidden" value="${question.id}">
@@ -99,12 +93,13 @@
         <hr class="hr hr-blurry"/>
     </c:forEach>
 </div>
-<div class="mb-3">
-    <button type="button" class="btn btn-info"
-            style="width: 400px; margin: 0 auto;">
-        <a class="btn btn-secondary" href="quests-list">К списку квестов</a>
-    </button>
-    <input name="questionId" type="hidden" value="${question.id}">
+<div class="container">
+    <a href="quests-list">
+        <button type="button" class="btn btn-info"
+                style="width: 500px;">
+            К списку квестов
+        </button>
+    </a>
     <input name="id" type="hidden" value="${requestScope.quest.id}">
 </div>
 <c:import url="parts/footer.jsp"/>

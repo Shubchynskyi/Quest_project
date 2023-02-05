@@ -1,12 +1,10 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<c:import url="parts/header.jsp"/>
+<%@include file="parts/header.jsp" %>
 <div class="container">
     <p>список квестов</p>
 
     <c:forEach var="quest" items="${requestScope.quests}">
 
-        <!-- Three columns of text below the carousel -->
         <div class="row">
             <div class="col-lg-4">
                 <svg class="bd-placeholder-img rounded-circle" width="140" height="140"
@@ -18,12 +16,10 @@
                 <h2 class="fw-normal">${quest.name}</h2>
                 <p>${quest.description}</p>
                 <p><a class="btn btn-secondary" href="quest?id=${quest.id}">PLAY &raquo;</a></p>
-            </div><!-- /.col-lg4 -->
+            </div>
         </div>
 
-
     </c:forEach>
-
 
 </div>
 <c:import url="parts/footer.jsp"/>

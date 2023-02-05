@@ -1,6 +1,5 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-<c:import url="parts/header.jsp"/>
+<%@include file="parts/header.jsp" %>
 <div class="container">
 
     <c:if test="${requestScope.question==null}">
@@ -37,7 +36,7 @@
                                 <div class="radio">
                                     <label for="radios-${answer.nextQuestionId}">
                                         <input type="radio" name="questionId" id="radios-${answer.nextQuestionId}"
-                                               value="${answer.nextQuestionId}"> <%-- checked="checked"--%>
+                                               value="${answer.nextQuestionId}" checked="checked">
                                             ${answer.text}
                                     </label>
                                 </div>
