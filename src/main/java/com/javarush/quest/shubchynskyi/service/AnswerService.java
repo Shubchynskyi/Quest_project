@@ -2,24 +2,28 @@ package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.entity.game.Answer;
 import com.javarush.quest.shubchynskyi.config.Config;
+import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 
-public enum AnswerService {
+public class AnswerService {
 
-    ANSWER_SERVICE;
+    private final AnswerRepository answerRepository;
 
-    private final Config config = Config.CONFIG;
+    public AnswerService(AnswerRepository answerRepository) {
+        this.answerRepository = answerRepository;
+    }
+
 
     @SuppressWarnings("unused")
     public void create(Answer answer) {
-        config.answerRepository.create(answer);
+        answerRepository.create(answer);
     }
 
     public void update(Answer answer) {
-        config.answerRepository.update(answer);
+        answerRepository.update(answer);
     }
 
     @SuppressWarnings("unused")
     public void delete(Answer answer) {
-        config.answerRepository.delete(answer);
+        answerRepository.delete(answer);
     }
 }

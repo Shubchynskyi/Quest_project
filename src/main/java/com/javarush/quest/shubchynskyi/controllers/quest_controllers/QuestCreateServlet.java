@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -18,7 +19,11 @@ import java.util.Objects;
 @WebServlet(name = "CreateQuestServlet", value = Go.CREATE_QUEST)
 public class QuestCreateServlet extends HttpServlet {
 
-    private final QuestService questService = QuestService.QUEST_SERVICE;
+    private final QuestService questService;
+
+    public QuestCreateServlet(QuestService questService) {
+        this.questService = questService;
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

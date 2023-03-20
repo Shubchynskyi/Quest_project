@@ -25,11 +25,19 @@ import java.util.Map;
 @MultipartConfig(fileSizeThreshold = 1 << 20)
 public class QuestEditServlet extends HttpServlet {
 
-    private final QuestService questService = QuestService.QUEST_SERVICE;
-    private final QuestionService questionService = QuestionService.QUESTION_SERVICE;
-    private final AnswerService answerService = AnswerService.ANSWER_SERVICE;
-    private final ImageService imageService = ImageService.IMAGE_SERVICE;
-    private final QuestParser questParser = QuestParser.QUEST_PARSER;
+    private final QuestService questService;
+    private final QuestionService questionService;
+    private final AnswerService answerService;
+    private final ImageService imageService;
+    private final QuestParser questParser;
+
+    public QuestEditServlet(QuestService questService, QuestionService questionService, AnswerService answerService, ImageService imageService, QuestParser questParser) {
+        this.questService = questService;
+        this.questionService = questionService;
+        this.answerService = answerService;
+        this.imageService = imageService;
+        this.questParser = questParser;
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -1,11 +1,12 @@
 package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.entity.game.Answer;
-import com.javarush.quest.shubchynskyi.config.Config;
 import com.javarush.quest.shubchynskyi.entity.game.GameState;
 import com.javarush.quest.shubchynskyi.entity.game.Quest;
 import com.javarush.quest.shubchynskyi.entity.game.Question;
 import com.javarush.quest.shubchynskyi.exception.AppException;
+import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
+import com.javarush.quest.shubchynskyi.repository.QuestRepository;
 import com.javarush.quest.shubchynskyi.util.Key;
 import com.javarush.quest.shubchynskyi.util.QuestParser;
 
@@ -14,13 +15,18 @@ import java.util.*;
 import static com.javarush.quest.shubchynskyi.util.QuestMarks.*;
 
 
-public enum QuestService {
+public class QuestService {
+    private final QuestParser questParser;
+    private final QuestionService questionService;
+    private final QuestRepository questRepository;
+    private final AnswerRepository answerRepository;
 
-    QUEST_SERVICE;
-
-    private final Config config = Config.CONFIG;
-    private final QuestParser questParser = QuestParser.QUEST_PARSER;
-    private final QuestionService questionService = QuestionService.QUESTION_SERVICE;
+    public QuestService(QuestParser questParser, QuestionService questionService, QuestRepository questRepository, AnswerRepository answerRepository) {
+        this.questParser = questParser;
+        this.questionService = questionService;
+        this.questRepository = questRepository;
+        this.answerRepository = answerRepository;
+    }
 
     public Quest create(String name, String text, String description, Long authorId) {
         Quest quest = Quest.builder()
@@ -30,19 +36,19 @@ public enum QuestService {
                 .startQuestionId(-1L)
                 .build();
 
-        config.questRepository.create(quest);
+        questRepository.create(quest);
         parseQuestFromTextWall(quest, text);
 
         return quest;
     }
 
     public void update(Quest quest) {
-        config.questRepository.update(quest);
+        questRepository.update(quest);
     }
 
     @SuppressWarnings("unused")
     public void delete(Quest quest) {
-        config.questRepository.delete(quest);
+        questRepository.delete(quest);
     }
 
     public void parseQuestFromTextWall(Quest quest, String text) {
@@ -64,7 +70,7 @@ public enum QuestService {
         questionsMapWithRawId.clear();
         answersMapWithNullNextQuestionId.clear();
         Collections.reverse((List<?>) quest.getQuestions());
-        config.questRepository.update(quest);
+        questRepository.update(quest);
     }
 
     private void buildNewLogicBlock(
@@ -104,7 +110,7 @@ public enum QuestService {
             answersMapWithNullNextQuestionId.put(answer, blockNumber);
         }
 
-        config.answerRepository.create(answer);
+        answerRepository.create(answer);
         answers.add(answer);
     }
 
@@ -133,16 +139,16 @@ public enum QuestService {
     }
 
     public Collection<Quest> getAll() {
-        return config.questRepository.getAll();
+        return questRepository.getAll();
     }
 
     @SuppressWarnings("unused")
     public Optional<Quest> get(Long id) {
-        return Optional.ofNullable(config.questRepository.get(id));
+        return Optional.ofNullable(questRepository.get(id));
     }
 
     public Optional<Quest> get(String id) {
-        return Optional.ofNullable(config.questRepository.get(Long.parseLong(id)));
+        return Optional.ofNullable(questRepository.get(Long.parseLong(id)));
     }
 
 

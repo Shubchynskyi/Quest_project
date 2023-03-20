@@ -1,34 +1,38 @@
 package com.javarush.quest.shubchynskyi.service;
 
-import com.javarush.quest.shubchynskyi.config.Config;
 import com.javarush.quest.shubchynskyi.entity.user.User;
+import com.javarush.quest.shubchynskyi.repository.UserRepository;
 
 import java.util.Collection;
 import java.util.Optional;
 
 
-public enum UserService {
-    USER_SERVICE;
-    private final Config config = Config.CONFIG;
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public void create(User user) {
-        config.userRepository.create(user);
+        userRepository.create(user);
     }
 
     public void update(User user) {
-        config.userRepository.update(user);
+        userRepository.update(user);
     }
 
     public void delete(User user) {
-        config.userRepository.delete(user);
+        userRepository.delete(user);
     }
 
     public Collection<User> getAll() {
-        return config.userRepository.getAll();
+        return userRepository.getAll();
     }
 
     public Optional<User> get(long id) {
-        return Optional.ofNullable(config.userRepository.get(id));
+        return Optional.ofNullable(userRepository.get(id));
     }
 
     public Optional<User> get(String login, String password) {
@@ -37,6 +41,6 @@ public enum UserService {
                 .login(login)
                 .password(password)
                 .build();
-        return config.userRepository.find(patternUser).findAny();
+        return userRepository.find(patternUser).findAny();
     }
 }

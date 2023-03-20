@@ -7,6 +7,7 @@ import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.util.Go;
 import com.javarush.quest.shubchynskyi.util.Jsp;
 import com.javarush.quest.shubchynskyi.util.Key;
+import com.javarush.quest.shubchynskyi.config.Config;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -27,8 +28,8 @@ public class SignupServlet extends HttpServlet {
         super.init(config);
     }
 
-    private final UserService userService = UserService.USER_SERVICE;
-    private final ImageService imageService = ImageService.IMAGE_SERVICE;
+    private final UserService userService = Config.getBean(UserService.class);
+    private final ImageService imageService = Config.getBean(ImageService.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {

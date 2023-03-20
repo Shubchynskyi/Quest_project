@@ -14,12 +14,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
-public enum ImageService {
+public class ImageService {
 
-    IMAGE_SERVICE;
-    private final Config config = Config.CONFIG;
-
-    private final Path imagesFolder = config.WEB_INF.resolve(Key.IMAGES_FOLDER);
+    private final Path imagesFolder = Config.WEB_INF.resolve(Key.IMAGES_FOLDER);
 
     @SneakyThrows
     ImageService() {

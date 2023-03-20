@@ -22,8 +22,13 @@ import java.util.Optional;
 @WebServlet(name = "QuestServlet", value = Go.QUEST)
 public class QuestServlet extends HttpServlet {
 
-    private final QuestService questService = QuestService.QUEST_SERVICE;
-    private final QuestionService questionService = QuestionService.QUESTION_SERVICE;
+    private final QuestService questService;
+    private final QuestionService questionService;
+
+    public QuestServlet(QuestService questService, QuestionService questionService) {
+        this.questService = questService;
+        this.questionService = questionService;
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

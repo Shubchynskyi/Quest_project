@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers;
 
+import com.javarush.quest.shubchynskyi.config.Config;
 import com.javarush.quest.shubchynskyi.entity.user.Role;
 import com.javarush.quest.shubchynskyi.util.Go;
 import com.javarush.quest.shubchynskyi.util.Jsp;
@@ -18,6 +19,7 @@ public class IndexServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
+        Config.repositoryInit();
         config.getServletContext().setAttribute(Key.ROLES, Role.values());
         super.init(config);
     }
