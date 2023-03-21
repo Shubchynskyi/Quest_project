@@ -10,7 +10,6 @@ import java.util.List;
 
 
 public class QuestParser {
-//    QUEST_PARSER;
 
     private List<String> stringList;
 
@@ -86,27 +85,7 @@ public class QuestParser {
                 .map(String::trim)
                 .toList());
         Collections.reverse(result);
-
-        for (int i = 0; i < result.size(); i++) {
-            if(isContainsSpecialHtmlSymbols(result.get(i))) {
-                result.set(i, replaceSpecialHtmlSymbols(result.get(i)));
-            }
-        }
         stringList = result;
-    }
-
-    /**
-     * Need only for HTML input value
-     */
-    public boolean isContainsSpecialHtmlSymbols(String string) {
-        return string.contains(Key.QUOTA_MARK);
-    }
-
-    /**
-     * Need only for HTML input value
-     */
-    public String replaceSpecialHtmlSymbols(String string) {
-        return string.replaceAll(Key.QUOTA_MARK, Key.QUOTA_MARK_FOR_HTML);
     }
 
     public String[] extractLogicBlock(String currentLine) {

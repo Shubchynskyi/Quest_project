@@ -18,8 +18,10 @@
         <!-- Quest Description -->
         <div class="mb-3">
             <label for="questDescription">Описание квеста:</label>
-            <input id="questDescription" name="questDescription" class="w-100"
-                   value="${requestScope.quest.description}">
+            <textarea id="questDescription"
+                      name="questDescription"
+                      class="w-100"
+                      style="resize: none">${requestScope.quest.description}</textarea>
         </div>
 
         <!-- Button -->
@@ -45,15 +47,20 @@
             <!-- Question Text -->
             <div class="mb-3">
                 <label for="questionText">Вопрос:</label>
-                <input id="questionText" name="questionText" class="w-100"
-                       value="${question.text}">
+                <textarea id="questionText"
+                          name="questionText"
+                          class="w-100"
+                          style="resize: none">${question.text}</textarea>
             </div>
 
             <!-- Answers Text -->
             <div class="mb-3" style="padding-bottom: 10px">
                 <c:forEach var="answer" items="${question.answers}">
                     <label for="answerText">Ответ:</label>
-                    <input id="answerText" class="w-100" name="answer${answer.id}" value="${answer.text}">
+                    <textarea id="answerText"
+                              class="w-100"
+                              name="answer${answer.id}"
+                              style="resize: none">${answer.text}</textarea>
                 </c:forEach>
             </div>
 

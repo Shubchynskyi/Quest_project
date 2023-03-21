@@ -11,7 +11,6 @@ import com.javarush.quest.shubchynskyi.service.QuestionService;
 import com.javarush.quest.shubchynskyi.util.Go;
 import com.javarush.quest.shubchynskyi.util.Jsp;
 import com.javarush.quest.shubchynskyi.util.Key;
-import com.javarush.quest.shubchynskyi.util.QuestParser;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -30,7 +29,6 @@ public class QuestEditServlet extends HttpServlet {
     private final QuestionService questionService = Config.getBean(QuestionService.class);
     private final AnswerService answerService = Config.getBean(AnswerService.class);
     private final ImageService imageService = Config.getBean(ImageService.class);
-    private final QuestParser questParser = Config.getBean(QuestParser.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -57,10 +55,8 @@ public class QuestEditServlet extends HttpServlet {
         if (questService.get(request.getParameter(Key.ID)).isPresent()) {
             Quest quest = questService.get(request.getParameter(Key.ID)).get();
             String newName = request.getParameter(Key.QUEST_NAME);
-            newName = fixedNameForHtmlOnly(newName);
             quest.setName(newName);
             String newDescription = request.getParameter(Key.QUEST_DESCRIPTION);
-            newDescription = fixedNameForHtmlOnly(newDescription);
             quest.setDescription(newDescription);
             questService.update(quest);
             Jsp.redirect(response, Key.ID_URI_PATTERN.formatted(Go.QUEST_EDIT, request.getParameter(Key.ID)));
@@ -74,14 +70,12 @@ public class QuestEditServlet extends HttpServlet {
             imageService.uploadImage(request, question.getImage());
             String newQuestionText = request.getParameter(Key.QUESTION_TEXT);
             if(!newQuestionText.equals(question.getText())) {
-                newQuestionText = fixedNameForHtmlOnly(newQuestionText);
                 question.setText(newQuestionText);
                 questionService.update(question);
             }
             for (Answer answer : question.getAnswers()) {
                 String answerNewText = request.getParameter(Key.ANSWER + answer.getId());
                 if(!answerNewText.equals(answer.getText())) {
-                    answerNewText = fixedNameForHtmlOnly(answerNewText);
                     answer.setText(answerNewText);
                     answerService.update(answer);
                 }
@@ -90,15 +84,5 @@ public class QuestEditServlet extends HttpServlet {
                     Key.ID_URI_PATTERN.formatted(Go.QUEST_EDIT, request.getParameter(Key.ID))
                             + Key.LABEL_URI_PATTERN + question.getId());
         }
-    }
-
-    /**
-     * only for html input value
-     */
-    private String fixedNameForHtmlOnly(String newName) {
-        if(questParser.isContainsSpecialHtmlSymbols(newName)) {
-            newName = questParser.replaceSpecialHtmlSymbols(newName);
-        }
-        return newName;
     }
 }
