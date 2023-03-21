@@ -4,7 +4,6 @@ import com.javarush.quest.shubchynskyi.entity.user.Role;
 import com.javarush.quest.shubchynskyi.entity.user.User;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.util.Key;
-import lombok.experimental.UtilityClass;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -15,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-@UtilityClass
 public class Config {
 
     public static void repositoryInit() {
@@ -29,10 +27,10 @@ public class Config {
         }
     }
 
-    private final Map<Class<?>, Object> beanContainer = new HashMap<>();
+    private static final Map<Class<?>, Object> beanContainer = new HashMap<>();
 
     @SuppressWarnings("unchecked")
-    public <T> T getBean(Class<T> type) { //QuestService.class
+    public static <T> T getBean(Class<T> type) { //QuestService.class
         try {
             if (beanContainer.containsKey(type)) {
                 return (T) beanContainer.get(type);

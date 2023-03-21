@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
+import com.javarush.quest.shubchynskyi.config.Config;
 import com.javarush.quest.shubchynskyi.entity.game.GameState;
 import com.javarush.quest.shubchynskyi.entity.game.Quest;
 import com.javarush.quest.shubchynskyi.entity.game.Question;
@@ -22,13 +23,8 @@ import java.util.Optional;
 @WebServlet(name = "QuestServlet", value = Go.QUEST)
 public class QuestServlet extends HttpServlet {
 
-    private final QuestService questService;
-    private final QuestionService questionService;
-
-    public QuestServlet(QuestService questService, QuestionService questionService) {
-        this.questService = questService;
-        this.questionService = questionService;
-    }
+    private final QuestService questService = Config.getBean(QuestService.class);
+    private final QuestionService questionService = Config.getBean(QuestionService.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

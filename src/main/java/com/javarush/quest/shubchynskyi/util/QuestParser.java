@@ -9,8 +9,8 @@ import java.util.Collections;
 import java.util.List;
 
 
-public enum QuestParser {
-    QUEST_PARSER;
+public class QuestParser {
+//    QUEST_PARSER;
 
     private List<String> stringList;
 

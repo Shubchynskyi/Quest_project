@@ -19,7 +19,7 @@ public class ImageService {
     private final Path imagesFolder = Config.WEB_INF.resolve(Key.IMAGES_FOLDER);
 
     @SneakyThrows
-    ImageService() {
+    public ImageService() {
         Files.createDirectories(imagesFolder);
     }
 
