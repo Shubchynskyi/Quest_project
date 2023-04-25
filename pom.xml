@@ -90,11 +90,6 @@
             <artifactId>hibernate-core</artifactId>
         </dependency>
 
-
-
-
-
-
     </dependencies>
 
     <build>

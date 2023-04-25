@@ -11,6 +11,8 @@ import com.javarush.quest.shubchynskyi.util.Key;
 import com.javarush.quest.shubchynskyi.util.QuestParser;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.javarush.quest.shubchynskyi.util.QuestMarks.*;
 
@@ -20,6 +22,7 @@ public class QuestService {
     private final QuestionService questionService;
     private final QuestRepository questRepository;
     private final AnswerRepository answerRepository;
+    private final Lock lock = new ReentrantLock();
 
     public QuestService(QuestParser questParser, QuestionService questionService, QuestRepository questRepository, AnswerRepository answerRepository) {
         this.questParser = questParser;
@@ -52,25 +55,30 @@ public class QuestService {
     }
 
     public void parseQuestFromTextWall(Quest quest, String text) {
-        Map<Integer, Question> questionsMapWithRawId = new HashMap<>();
-        Map<Answer, Integer> answersMapWithNullNextQuestionId = new HashMap<>();
-        Collection<Answer> answers = new ArrayList<>();
+        lock.lock();
+        try {
+            Map<Integer, Question> questionsMapWithRawId = new HashMap<>();
+            Map<Answer, Integer> answersMapWithNullNextQuestionId = new HashMap<>();
+            Collection<Answer> answers = new ArrayList<>();
 
-        questParser.splitQuestToStrings(text);
+            questParser.splitQuestToStrings(text);
 
-        while (questParser.isStringPresent()) {
-            buildNewLogicBlock(quest, questionsMapWithRawId, answersMapWithNullNextQuestionId, answers);
+            while (questParser.isStringPresent()) {
+                buildNewLogicBlock(quest, questionsMapWithRawId, answersMapWithNullNextQuestionId, answers);
+            }
+
+            for (Map.Entry<Answer, Integer> integerAnswerEntry : answersMapWithNullNextQuestionId.entrySet()) {
+                integerAnswerEntry.getKey()
+                        .setNextQuestionId(questionsMapWithRawId.get(integerAnswerEntry.getValue()).getId());
+            }
+
+            questionsMapWithRawId.clear();
+            answersMapWithNullNextQuestionId.clear();
+            Collections.reverse((List<?>) quest.getQuestions());
+            questRepository.update(quest);
+        } finally {
+            lock.unlock();
         }
-
-        for (Map.Entry<Answer, Integer> integerAnswerEntry : answersMapWithNullNextQuestionId.entrySet()) {
-            integerAnswerEntry.getKey()
-                    .setNextQuestionId(questionsMapWithRawId.get(integerAnswerEntry.getValue()).getId());
-        }
-
-        questionsMapWithRawId.clear();
-        answersMapWithNullNextQuestionId.clear();
-        Collections.reverse((List<?>) quest.getQuestions());
-        questRepository.update(quest);
     }
 
     private void buildNewLogicBlock(

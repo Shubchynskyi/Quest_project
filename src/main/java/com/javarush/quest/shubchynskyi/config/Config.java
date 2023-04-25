@@ -36,7 +36,7 @@ public class Config {
                 return (T) beanContainer.get(type);
             } else {
                 Constructor<?>[] constructors = type.getConstructors();
-                Constructor<?> constructor = constructors[0];
+                Constructor<?> constructor = constructors[0];   // only first constructor
                 Class<?>[] parameterTypes = constructor.getParameterTypes();
                 Object[] parameters = new Object[parameterTypes.length];
                 for (int i = 0; i < parameters.length; i++) {
