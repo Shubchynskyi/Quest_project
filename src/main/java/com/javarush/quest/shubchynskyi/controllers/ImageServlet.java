@@ -1,6 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers;
 
-import com.javarush.quest.shubchynskyi.config.Config;
+import com.javarush.quest.shubchynskyi.config.ClassInitializer;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.util.Go;
 import com.javarush.quest.shubchynskyi.util.Key;
@@ -15,7 +15,7 @@ import java.nio.file.Path;
 
 @WebServlet(name = "ImageServlet", value = Go.IMAGES_ALL)
 public class ImageServlet extends HttpServlet {
-    private final ImageService imageService = Config.getBean(ImageService.class);
+    private final ImageService imageService = ClassInitializer.getBean(ImageService.class);
 
     @Override
     @SneakyThrows

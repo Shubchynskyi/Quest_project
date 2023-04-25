@@ -6,9 +6,8 @@ import com.javarush.quest.shubchynskyi.util.QuestMarks;
 public enum GameState {
     PLAY, WIN, LOST;
 
-    // TODO перенести в парсер
-    public static GameState getStateFromParser(String stateFromParser) {
-        return switch (stateFromParser) {
+    public static GameState defineState(String unknownState) {
+        return switch (unknownState) {
             case QuestMarks.PLAY -> PLAY;
             case QuestMarks.WIN -> WIN;
             case QuestMarks.LOST -> LOST;

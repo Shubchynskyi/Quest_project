@@ -72,8 +72,6 @@ public class QuestService {
                         .setNextQuestionId(questionsMapWithRawId.get(integerAnswerEntry.getValue()).getId());
             }
 
-            questionsMapWithRawId.clear();
-            answersMapWithNullNextQuestionId.clear();
             Collections.reverse((List<?>) quest.getQuestions());
             questRepository.update(quest);
         } finally {
@@ -131,7 +129,7 @@ public class QuestService {
         Question question = Question.builder()
                 .questId(quest.getId())
                 .text(blockData)
-                .gameState(GameState.getStateFromParser(blockType))
+                .gameState(GameState.defineState(blockType))
                 .build();
 
         question.getAnswers().addAll(answers);

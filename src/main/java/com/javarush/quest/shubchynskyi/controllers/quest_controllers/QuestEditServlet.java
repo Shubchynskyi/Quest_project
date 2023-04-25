@@ -1,9 +1,9 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
-import com.javarush.quest.shubchynskyi.config.Config;
+import com.javarush.quest.shubchynskyi.config.ClassInitializer;
 import com.javarush.quest.shubchynskyi.entity.game.Answer;
-import com.javarush.quest.shubchynskyi.entity.game.Question;
 import com.javarush.quest.shubchynskyi.entity.game.Quest;
+import com.javarush.quest.shubchynskyi.entity.game.Question;
 import com.javarush.quest.shubchynskyi.service.AnswerService;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.QuestService;
@@ -25,10 +25,10 @@ import java.util.Map;
 @MultipartConfig(fileSizeThreshold = 1 << 20)
 public class QuestEditServlet extends HttpServlet {
 
-    private final QuestService questService = Config.getBean(QuestService.class);
-    private final QuestionService questionService = Config.getBean(QuestionService.class);
-    private final AnswerService answerService = Config.getBean(AnswerService.class);
-    private final ImageService imageService = Config.getBean(ImageService.class);
+    private final QuestService questService = ClassInitializer.getBean(QuestService.class);
+    private final QuestionService questionService = ClassInitializer.getBean(QuestionService.class);
+    private final AnswerService answerService = ClassInitializer.getBean(AnswerService.class);
+    private final ImageService imageService = ClassInitializer.getBean(ImageService.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -69,13 +69,13 @@ public class QuestEditServlet extends HttpServlet {
             Question question = questionService.get(questionId).get();
             imageService.uploadImage(request, question.getImage());
             String newQuestionText = request.getParameter(Key.QUESTION_TEXT);
-            if(!newQuestionText.equals(question.getText())) {
+            if (!newQuestionText.equals(question.getText())) {
                 question.setText(newQuestionText);
                 questionService.update(question);
             }
             for (Answer answer : question.getAnswers()) {
                 String answerNewText = request.getParameter(Key.ANSWER + answer.getId());
-                if(!answerNewText.equals(answer.getText())) {
+                if (!answerNewText.equals(answer.getText())) {
                     answer.setText(answerNewText);
                     answerService.update(answer);
                 }

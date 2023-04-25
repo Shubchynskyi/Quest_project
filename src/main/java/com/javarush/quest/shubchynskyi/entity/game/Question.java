@@ -14,11 +14,11 @@ import java.util.Collection;
 @AllArgsConstructor
 @Builder
 public class Question implements AbstractEntity {
+    private final Collection<Answer> answers = new ArrayList<>();
     private Long id;
     private Long questId;
     private String text;
     private GameState gameState;
-    private final Collection<Answer> answers = new ArrayList<>();
 
     public String getImage() {
         return "question-" + id;
