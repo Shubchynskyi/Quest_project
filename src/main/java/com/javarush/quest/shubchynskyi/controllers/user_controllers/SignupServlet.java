@@ -38,15 +38,14 @@ public class SignupServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
-        User user = User.builder()
-                .id(0L)
-                .login(request.getParameter(Key.LOGIN))
-                .password(request.getParameter(Key.PASSWORD))
-                .role(Role.valueOf(request.getParameter(Key.ROLE)))
-                .build();
+        User user = userService.build(
+                Key.NEW_USER_ID,
+                request.getParameter(Key.LOGIN),
+                request.getParameter(Key.PASSWORD),
+                request.getParameter(Key.ROLE));
 
         userService.create(user);
         imageService.uploadImage(request, user.getImage());
-        Jsp.redirect(resp, Go.USERS);
+        Jsp.redirect(resp, Go.LOGIN);
     }
 }

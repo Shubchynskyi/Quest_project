@@ -53,12 +53,11 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
-        User user = User.builder()
-                .id(Long.valueOf(request.getParameter(Key.ID)))
-                .login(request.getParameter(Key.LOGIN))
-                .password(request.getParameter(Key.PASSWORD))
-                .role(Role.valueOf(request.getParameter(Key.ROLE)))
-                .build();
+        User user = userService.build(
+                request.getParameter(Key.ID),
+                request.getParameter(Key.LOGIN),
+                request.getParameter(Key.PASSWORD),
+                request.getParameter(Key.ROLE));
 
         Map<String, String[]> parameterMap = request.getParameterMap();
         if (parameterMap.containsKey(Key.CREATE)) {
@@ -71,7 +70,5 @@ public class UserServlet extends HttpServlet {
 
         imageService.uploadImage(request, user.getImage());
         Jsp.redirect(resp, Go.USERS);
-//        resp.sendRedirect(Go.USERS);
-
     }
 }

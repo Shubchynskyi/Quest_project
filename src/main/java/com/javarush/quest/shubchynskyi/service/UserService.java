@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.service;
 
+import com.javarush.quest.shubchynskyi.entity.user.Role;
 import com.javarush.quest.shubchynskyi.entity.user.User;
 import com.javarush.quest.shubchynskyi.repository.UserRepository;
 
@@ -15,6 +16,15 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+
+    public User build(String userId, String userLogin, String userPassword, String userRole) {
+        return User.builder()
+                .id(Long.valueOf(userId))
+                .login(userLogin)
+                .password(userPassword)
+                .role(Role.valueOf(userRole))
+                .build();
+    }
     public void create(User user) {
         userRepository.create(user);
     }
@@ -43,4 +53,5 @@ public class UserService {
                 .build();
         return userRepository.find(patternUser).findAny();
     }
+
 }

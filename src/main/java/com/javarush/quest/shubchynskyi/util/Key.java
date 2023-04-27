@@ -8,6 +8,7 @@ import java.util.List;
 public class Key {
     public static final String ID = "id";
     public static final String GAME_STATE = "gameState";
+    public static final String NEW_USER_ID = "-1L";
 
 
     //**************  Quests  **************//
@@ -36,8 +37,6 @@ public class Key {
     public static final String REGEX_SLASH_SIGN = "/";
     public static final String REGEX_EMPTY_STRING = "";
     public static final String REGEX_NEW_LINE = "\n";
-    public static final String QUOTA_MARK = "\"";
-    public static final String QUOTA_MARK_FOR_HTML = "&#34";
 
 
     //**************  Users  **************//
@@ -70,6 +69,4 @@ public class Key {
     public static final String INCORRECT_STRING_NUMBER = "Incorrect string number";
     public static final String INCORRECT_TEXT_BLOCK = "Incorrect text block";
     public static final String UNKNOWN_COMMAND = "Unknown command";
-
-
 }
