@@ -1,7 +1,6 @@
 package com.javarush.quest.shubchynskyi.service;
 
-import com.javarush.quest.shubchynskyi.entity.game.Question;
-import com.javarush.quest.shubchynskyi.config.Config;
+import com.javarush.quest.shubchynskyi.entity.Question;
 import com.javarush.quest.shubchynskyi.repository.QuestionRepository;
 
 import java.util.Optional;

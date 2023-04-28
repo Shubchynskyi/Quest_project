@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Cnn {
-    public static final String DB_URL = "jdbc:postgresql://localhost:2354/game?currentSchema=public";
+    public static final String DB_URL = "jdbc:postgresql://localhost:2345/quests?currentSchema=game";
 
     public static final String DB_USER = "postgres";
     public static final String DB_PASSWORD = "postgres";

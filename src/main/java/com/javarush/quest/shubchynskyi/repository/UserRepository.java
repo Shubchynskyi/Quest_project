@@ -1,6 +1,6 @@
 package com.javarush.quest.shubchynskyi.repository;
 
-import com.javarush.quest.shubchynskyi.entity.user.User;
+import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.repository.abstract_repo.BaseRepository;
 
 import java.util.stream.Stream;

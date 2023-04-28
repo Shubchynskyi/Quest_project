@@ -1,4 +1,4 @@
-package com.javarush.quest.shubchynskyi.entity.game;
+package com.javarush.quest.shubchynskyi.entity;
 
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.util.QuestMarks;

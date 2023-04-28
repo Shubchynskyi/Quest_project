@@ -1,6 +1,6 @@
 package com.javarush.quest.shubchynskyi.repository.hibernate;
 
-import com.javarush.quest.shubchynskyi.entity.user.User;
+import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.repository.abstract_repo.Repository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class UserDbRepository implements Repository<User> {
 
-    private final SessionCreator sessionCreator;
+    private final SessionFactoryCreator sessionFactoryCreator;
 
     @Override
     public Collection<User> getAll() {
@@ -27,7 +27,7 @@ public class UserDbRepository implements Repository<User> {
 
     @Override
     public User get(long id) {
-        Session session = sessionCreator.getSession();
+        Session session = sessionFactoryCreator.getSessionFactory().openSession();
         try (session) {
             Transaction transaction = session.beginTransaction(); // работу с гибером всегда надо начинать с транзакции
             try {
@@ -43,7 +43,7 @@ public class UserDbRepository implements Repository<User> {
 
     @Override
     public void create(User user) {
-        Session session = sessionCreator.getSession();
+        Session session = sessionFactoryCreator.getSessionFactory().openSession();;
         try (session) {
             Transaction transaction = session.beginTransaction(); // работу с гибером всегда надо начинать с транзакции
             try {
@@ -57,7 +57,7 @@ public class UserDbRepository implements Repository<User> {
 
     @Override
     public void update(User user) {
-        Session session = sessionCreator.getSession();
+        Session session = sessionFactoryCreator.getSessionFactory().openSession();
         try (session) {
             Transaction transaction = session.beginTransaction(); // работу с гибером всегда надо начинать с транзакции
             try {
@@ -71,7 +71,7 @@ public class UserDbRepository implements Repository<User> {
 
     @Override
     public void delete(User user) {
-        Session session = sessionCreator.getSession();
+        Session session = sessionFactoryCreator.getSessionFactory().openSession();
         try (session) {
             Transaction transaction = session.beginTransaction(); // работу с гибером всегда надо начинать с транзакции
             try {

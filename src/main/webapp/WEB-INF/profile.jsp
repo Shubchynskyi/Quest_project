@@ -2,7 +2,7 @@
 <%@include file="parts/header.jsp" %>
 <div class="container">
     <jsp:useBean id="user" scope="session"
-                 type="com.javarush.quest.shubchynskyi.entity.user.User"/>
+                 type="com.javarush.quest.shubchynskyi.entity.User"/>
 
     <div class="px-4 py-5 my-5 text-center">
         <p class="lead mb-4">

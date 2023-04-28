@@ -1,7 +1,7 @@
 package com.javarush.quest.shubchynskyi.config;
 
-import com.javarush.quest.shubchynskyi.entity.user.Role;
-import com.javarush.quest.shubchynskyi.entity.user.User;
+import com.javarush.quest.shubchynskyi.entity.Role;
+import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.util.Key;
 import lombok.experimental.UtilityClass;

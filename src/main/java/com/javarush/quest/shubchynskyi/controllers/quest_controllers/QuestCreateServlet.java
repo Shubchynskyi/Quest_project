@@ -1,8 +1,8 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
 import com.javarush.quest.shubchynskyi.config.ClassInitializer;
-import com.javarush.quest.shubchynskyi.entity.game.Quest;
-import com.javarush.quest.shubchynskyi.entity.user.User;
+import com.javarush.quest.shubchynskyi.entity.Quest;
+import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.util.Go;
 import com.javarush.quest.shubchynskyi.util.Jsp;

@@ -1,7 +1,7 @@
 
 SET search_path TO game;
 
-ALTER DATABASE game SET search_path TO game;
+ALTER DATABASE quests SET search_path TO game;
 
 DROP TABLE IF EXISTS answer;
 
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS quest
 (
     id                BIGSERIAL,
     name              VARCHAR(512)  NULL,
-    text              VARCHAR(2048) NULL,
+    description       VARCHAR(2048) NULL,
     start_question_id INT           NULL,
     users_id          INT           NULL,
 

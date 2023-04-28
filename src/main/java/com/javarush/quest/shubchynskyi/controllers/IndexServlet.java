@@ -1,7 +1,7 @@
 package com.javarush.quest.shubchynskyi.controllers;
 
 import com.javarush.quest.shubchynskyi.config.Config;
-import com.javarush.quest.shubchynskyi.entity.user.Role;
+import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.util.Go;
 import com.javarush.quest.shubchynskyi.util.Jsp;
 import com.javarush.quest.shubchynskyi.util.Key;

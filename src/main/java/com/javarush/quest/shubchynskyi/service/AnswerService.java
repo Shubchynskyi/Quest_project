@@ -1,6 +1,6 @@
 package com.javarush.quest.shubchynskyi.service;
 
-import com.javarush.quest.shubchynskyi.entity.game.Answer;
+import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 
 public class AnswerService {

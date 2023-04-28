@@ -1,9 +1,9 @@
 package com.javarush.quest.shubchynskyi.service;
 
-import com.javarush.quest.shubchynskyi.entity.game.Answer;
-import com.javarush.quest.shubchynskyi.entity.game.GameState;
-import com.javarush.quest.shubchynskyi.entity.game.Quest;
-import com.javarush.quest.shubchynskyi.entity.game.Question;
+import com.javarush.quest.shubchynskyi.entity.Answer;
+import com.javarush.quest.shubchynskyi.entity.GameState;
+import com.javarush.quest.shubchynskyi.entity.Quest;
+import com.javarush.quest.shubchynskyi.entity.Question;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 import com.javarush.quest.shubchynskyi.repository.QuestRepository;

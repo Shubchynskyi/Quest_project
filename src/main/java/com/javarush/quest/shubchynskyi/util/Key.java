@@ -8,7 +8,7 @@ import java.util.List;
 public class Key {
     public static final String ID = "id";
     public static final String GAME_STATE = "gameState";
-    public static final String NEW_USER_ID = "-1L";
+    public static final String NEW_USER_ID = "0";
 
 
     //**************  Quests  **************//

@@ -1,7 +1,7 @@
 package com.javarush.quest.shubchynskyi.service;
 
-import com.javarush.quest.shubchynskyi.entity.user.Role;
-import com.javarush.quest.shubchynskyi.entity.user.User;
+import com.javarush.quest.shubchynskyi.entity.Role;
+import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.repository.UserRepository;
 
 import java.util.Collection;

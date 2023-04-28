@@ -1,12 +1,9 @@
 package com.javarush.quest.shubchynskyi.repository.hibernate;
 
-import com.javarush.quest.shubchynskyi.entity.user.User;
+import com.javarush.quest.shubchynskyi.entity.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
-
-import java.util.Properties;
 
 
 public class SessionCreator implements AutoCloseable{
@@ -17,7 +14,7 @@ public class SessionCreator implements AutoCloseable{
         // если есть файл hibernate.cfg.xml, то нужно просто создать конфиг
         Configuration configuration = new Configuration(); //
 
-        configuration.configure();  // получает настройки из "hibernate.cfg.xml" НУЖЕН ТОЛЬКО ДЛЯ xml
+//        configuration.configure();  // получает настройки из "hibernate.cfg.xml" НУЖЕН ТОЛЬКО ДЛЯ xml
         configuration.addAnnotatedClass(User.class);
 // **************** через Java код = configuration.setProperty
 //        configuration.setProperty("hibernate.connection.url", "jdbc:postgresql://localhost:2354/game");

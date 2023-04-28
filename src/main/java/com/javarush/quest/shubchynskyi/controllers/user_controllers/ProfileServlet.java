@@ -1,6 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
-import com.javarush.quest.shubchynskyi.entity.user.User;
+import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.util.Go;
 import com.javarush.quest.shubchynskyi.util.Jsp;
 import com.javarush.quest.shubchynskyi.util.Key;
