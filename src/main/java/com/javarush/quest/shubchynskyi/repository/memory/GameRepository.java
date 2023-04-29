@@ -1,8 +1,8 @@
-package com.javarush.quest.shubchynskyi.repository;
+package com.javarush.quest.shubchynskyi.repository.memory;
 
 
 import com.javarush.quest.shubchynskyi.entity.Game;
-import com.javarush.quest.shubchynskyi.repository.abstract_repo.BaseRepository;
+import com.javarush.quest.shubchynskyi.repository.memory.BaseRepository;
 
 import java.util.stream.Stream;
 

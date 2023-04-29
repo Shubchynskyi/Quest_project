@@ -26,12 +26,17 @@ public class User implements AbstractEntity {
     @OneToMany
     @JoinColumn(name = "users_id")
     private List<Quest> quests;
-    @Transient
-//    @ManyToMany
-//    @JoinTable(name = "users_game",
-//            joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "users_id"),
-//            inverseJoinColumns = @JoinColumn(name = "game_id", referencedColumnName = "game_id"))
+    @OneToMany
+    @JoinColumn(name = "users_id")
+    @ToString.Exclude
     private final Collection<Game> games = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "game",
+            joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "quest_id", referencedColumnName = "id")
+    )
+    private final Collection<Quest> questsInGame = new ArrayList<>();
 
 
     public String getImage() {  //TODO move to DTO ???

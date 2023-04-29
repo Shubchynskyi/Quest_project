@@ -3,6 +3,8 @@ package com.javarush.quest.shubchynskyi.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Builder
@@ -21,7 +23,18 @@ public class Quest implements AbstractEntity {
     private Long startQuestionId;
     @Column(name = "users_id")
     private Long authorId;
-    @OneToMany
+
+    @OneToMany()
     @JoinColumn(name = "quest_id")
-    private List<Question> questions;
+//    @ToString.Exclude
+    private final Collection<Question> questions = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "game",
+            joinColumns = @JoinColumn(name = "quest_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id")
+    )
+    @ToString.Exclude
+    private final Collection<User> players = new ArrayList<>();
+
 }

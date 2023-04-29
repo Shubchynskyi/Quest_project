@@ -17,7 +17,7 @@ public class SessionFactoryCreator {
     public SessionFactoryCreator() {
         Configuration configuration = new Configuration();
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
-//        configuration.setProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
+        configuration.setProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
         // TODO WTF?
 
         Reflections reflections = new Reflections("com.javarush.quest.shubchynskyi.entity");

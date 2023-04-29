@@ -1,6 +1,7 @@
-package com.javarush.quest.shubchynskyi.repository.abstract_repo;
+package com.javarush.quest.shubchynskyi.repository.memory;
 
 import com.javarush.quest.shubchynskyi.entity.AbstractEntity;
+import com.javarush.quest.shubchynskyi.repository.Repository;
 
 import java.util.Collection;
 import java.util.HashMap;

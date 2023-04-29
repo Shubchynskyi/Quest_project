@@ -2,7 +2,7 @@ package com.javarush.quest.shubchynskyi.repository.hibernate;
 
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.exception.AppException;
-import com.javarush.quest.shubchynskyi.repository.abstract_repo.Repository;
+import com.javarush.quest.shubchynskyi.repository.Repository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -50,6 +50,7 @@ public class UserDbRepository implements Repository<User> {
                 session.persist(user);
                 transaction.commit();
             } catch (Exception e) {
+                System.err.println("ROLLBACK WHEN CREATE USER");
                 transaction.rollback();
             }
         }

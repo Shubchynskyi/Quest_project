@@ -1,4 +1,4 @@
-package com.javarush.quest.shubchynskyi.repository.abstract_repo;
+package com.javarush.quest.shubchynskyi.repository;
 
 import java.util.Collection;
 import java.util.stream.Stream;

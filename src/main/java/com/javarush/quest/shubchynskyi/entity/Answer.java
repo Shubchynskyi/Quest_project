@@ -18,7 +18,7 @@ public class Answer implements AbstractEntity {
     private Long id;
     private String text;
     private Long nextQuestionId;
-//    @Column(name = "question_id")
+    @Column(name = "question_id")
     private Long questionId;
 
 }

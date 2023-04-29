@@ -1,7 +1,7 @@
 package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.entity.Question;
-import com.javarush.quest.shubchynskyi.repository.QuestionRepository;
+import com.javarush.quest.shubchynskyi.repository.memory.QuestionRepository;
 
 import java.util.Optional;
 

@@ -18,14 +18,14 @@ public class Question implements AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-//    @Column(name = "quest_id")
+    @Column(name = "quest_id")
     private Long questId;
     private String text;
     @Enumerated(value = EnumType.STRING)
     private GameState gameState;
     @OneToMany
     @JoinColumn(name = "question_id")
-//    @ToString.Exclude
+    @ToString.Exclude
     private final Collection<Answer> answers = new ArrayList<>();
 
     @Transient
