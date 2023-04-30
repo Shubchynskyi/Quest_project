@@ -46,14 +46,6 @@ public abstract class GenericDAO<T extends AbstractEntity> implements Repository
         }
     }
 
-//    public List<T> getItems(int offset, int count) {
-//        Query query = getCurrentSession().createQuery("FROM " + clazz.getName(), clazz);
-//        query.setFirstResult(offset);
-//        query.setMaxResults(count);
-//        return query.getResultList();
-//    }
-
-
     public Collection<T> getAll() {
         Session session = getCurrentSession();
         try (session) {
@@ -135,9 +127,9 @@ public abstract class GenericDAO<T extends AbstractEntity> implements Repository
                 if (predicates != null) {
                     criteriaQuery.where(predicates);
                 }
-                Stream<T> result = getCurrentSession().createQuery(criteriaQuery).stream();
+                List<T> genericlist = getCurrentSession().createQuery(criteriaQuery).list();
                 transaction.commit();
-                return result;
+                return genericlist.stream();
             } catch (Exception e) {
                 transaction.rollback();
                 log.warn(String.format(Log.ROLLBACK_MESSAGE_PATTERN,
