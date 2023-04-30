@@ -45,7 +45,6 @@ public class SessionCreator implements AutoCloseable{
         return sessionFactory.openSession();
     }
 
-
     @Override
     public void close() throws Exception {
         sessionFactory.close();

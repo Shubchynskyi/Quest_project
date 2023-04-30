@@ -1,34 +1,45 @@
 package com.javarush.quest.shubchynskyi.repository.hibernate;
 
 import com.javarush.quest.shubchynskyi.entity.*;
+import com.javarush.quest.shubchynskyi.repository.hibernate.dao.UserDAO;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Client {
     public static void main(String[] args) {
         SessionFactoryCreator sessionFactoryCreator = new SessionFactoryCreator();
         User user = User.builder().login("test").password("password").role(Role.USER).build();
-        Session session = sessionFactoryCreator.getSessionFactory().openSession();
+        User pattern = User.builder().login("test").build();
+//        Session session = sessionFactoryCreator.getSessionFactory().openSession();
 
-        List<Answer> fromAnswer = session.createQuery("FROM Answer", Answer.class).list();
-        List<Game> fromGame = session.createQuery("FROM Game", Game.class).list();
-        List<Quest> fromQuest = session.createQuery("FROM Quest", Quest.class).list();
-        List<Question> fromQuestion = session.createQuery("FROM Question", Question.class).list();
-        List<User> fromUser = session.createQuery("FROM User", User.class).list();
+        // TODO добавить транзакции всем методам в DAO
+        // задать вопрос по сессиям
 
-        try (session) {
-            Transaction transaction = session.beginTransaction(); // работу с гибером всегда надо начинать с транзакции
-            try {
-                UserDAO userDbRepository = new UserDAO(sessionFactoryCreator.getSessionFactory());
-                userDbRepository.create(user);
-                transaction.commit();
-            } catch (Exception e) {
-                transaction.rollback();
-            }
+        UserDAO userDAO = new UserDAO(sessionFactoryCreator.getSessionFactory());
+        userDAO.create(user);
+        Stream<User> userStream = userDAO.find(pattern);
+        List<User> users = userStream.toList();
+        for (User user1 : users) {
+            System.out.println(user1);
         }
-        System.out.println(user);
+
+//        Collection<User> userCollection = new UserDAO(sessionFactoryCreator.getSessionFactory()).getAll();
+//        userCollection.forEach(System.out::println);
+
+
+//        try (session) {
+//            Transaction transaction = session.beginTransaction(); // работу с гибером всегда надо начинать с транзакции
+//            try {
+//                UserDAO userDbRepository = new UserDAO(sessionFactoryCreator.getSessionFactory());
+//
+//                transaction.commit();
+//            } catch (Exception e) {
+//                transaction.rollback();
+//            }
+//        }
+//        System.out.println(user);
 
 
 
