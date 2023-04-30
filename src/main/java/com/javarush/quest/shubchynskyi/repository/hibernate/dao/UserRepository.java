@@ -8,8 +8,8 @@ import org.hibernate.query.Query;
 
 import java.util.List;
 
-public class UserDAO extends GenericDAO<User> {
-    public UserDAO(SessionFactory sessionFactory) {
+public class UserRepository extends GenericDAO<User> {
+    public UserRepository(SessionFactory sessionFactory) {
         super(User.class, sessionFactory);
     }
 

@@ -19,7 +19,7 @@ public class IndexServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        Config.repositoryInit();
+//        Config.repositoryInit();
         config.getServletContext().setAttribute(Key.ROLES, Role.values());
         super.init(config);
     }

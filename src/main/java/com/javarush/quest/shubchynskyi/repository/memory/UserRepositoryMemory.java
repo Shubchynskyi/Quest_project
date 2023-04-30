@@ -1,14 +1,13 @@
 package com.javarush.quest.shubchynskyi.repository.memory;
 
 import com.javarush.quest.shubchynskyi.entity.User;
-import com.javarush.quest.shubchynskyi.repository.memory.BaseRepository;
 
 import java.util.stream.Stream;
 
 /**
  *  repository for Users, must be changed in future
  */
-public class UserRepository extends BaseRepository<User> {
+public class UserRepositoryMemory extends BaseRepository<User> {
 
     @Override
     public Stream<User> find(User pattern) {

@@ -1,7 +1,8 @@
 package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.entity.Question;
-import com.javarush.quest.shubchynskyi.repository.memory.QuestionRepository;
+import com.javarush.quest.shubchynskyi.repository.hibernate.dao.QuestionRepository;
+
 
 import java.util.Optional;
 

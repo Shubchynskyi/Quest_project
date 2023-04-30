@@ -2,14 +2,13 @@ package com.javarush.quest.shubchynskyi.repository.memory;
 
 
 import com.javarush.quest.shubchynskyi.entity.Question;
-import com.javarush.quest.shubchynskyi.repository.memory.BaseRepository;
 
 import java.util.stream.Stream;
 
 /**
  * repository for Questions, must be changed in future
  */
-public class QuestionRepository extends BaseRepository<Question> {
+public class QuestionRepositoryMemory extends BaseRepository<Question> {
 
     @Override
     public Stream<Question> find(Question pattern) {

@@ -2,7 +2,6 @@ package com.javarush.quest.shubchynskyi.repository.memory;
 
 
 import com.javarush.quest.shubchynskyi.entity.Game;
-import com.javarush.quest.shubchynskyi.repository.memory.BaseRepository;
 
 import java.util.stream.Stream;
 
@@ -11,7 +10,7 @@ import java.util.stream.Stream;
  */
 
 @SuppressWarnings("unused")
-public class GameRepository extends BaseRepository<Game> {
+public class GameRepositoryMemory extends BaseRepository<Game> {
 
     @Override
     public Stream<Game> find(Game pattern) {

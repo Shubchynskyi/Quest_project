@@ -5,8 +5,10 @@ import com.javarush.quest.shubchynskyi.entity.GameState;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.Question;
 import com.javarush.quest.shubchynskyi.exception.AppException;
-import com.javarush.quest.shubchynskyi.repository.memory.AnswerRepository;
-import com.javarush.quest.shubchynskyi.repository.memory.QuestRepository;
+
+import com.javarush.quest.shubchynskyi.repository.hibernate.dao.AnswerRepository;
+
+import com.javarush.quest.shubchynskyi.repository.hibernate.dao.QuestRepository;
 import com.javarush.quest.shubchynskyi.util.Key;
 import com.javarush.quest.shubchynskyi.util.QuestParser;
 

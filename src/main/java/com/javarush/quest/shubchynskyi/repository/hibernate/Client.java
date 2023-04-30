@@ -1,7 +1,7 @@
 package com.javarush.quest.shubchynskyi.repository.hibernate;
 
 import com.javarush.quest.shubchynskyi.entity.*;
-import com.javarush.quest.shubchynskyi.repository.hibernate.dao.UserDAO;
+import com.javarush.quest.shubchynskyi.repository.hibernate.dao.UserRepository;
 import org.hibernate.Session;
 
 import java.util.List;
@@ -17,9 +17,9 @@ public class Client {
         // TODO добавить транзакции всем методам в DAO
         // задать вопрос по сессиям
 
-        UserDAO userDAO = new UserDAO(sessionFactoryCreator.getSessionFactory());
-        userDAO.create(user);
-        Stream<User> userStream = userDAO.find(pattern);
+        UserRepository userRepository = new UserRepository(sessionFactoryCreator.getSessionFactory());
+        userRepository.create(user);
+        Stream<User> userStream = userRepository.find(pattern);
         List<User> users = userStream.toList();
         for (User user1 : users) {
             System.out.println(user1);
