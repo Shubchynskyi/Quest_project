@@ -13,6 +13,8 @@ public class ClassInitializer {
 
     private final Map<Class<?>, Object> beanContainer = new HashMap<>();
 
+
+
     @SuppressWarnings("unchecked")
     public <T> T getBean(Class<T> type) {
         try {

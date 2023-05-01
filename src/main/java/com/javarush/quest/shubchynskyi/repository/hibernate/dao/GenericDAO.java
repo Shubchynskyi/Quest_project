@@ -4,6 +4,7 @@ import com.javarush.quest.shubchynskyi.entity.AbstractEntity;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.exception.DaoException;
 import com.javarush.quest.shubchynskyi.repository.Repository;
+import com.javarush.quest.shubchynskyi.repository.hibernate.SessionFactoryCreator;
 import com.javarush.quest.shubchynskyi.util.Log;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.*;
@@ -23,9 +24,9 @@ public abstract class GenericDAO<T extends AbstractEntity> implements Repository
     private final Class<T> clazz;
     private final SessionFactory sessionFactory;
 
-    public GenericDAO(Class<T> clazz, SessionFactory sessionFactory) {
+    public GenericDAO(Class<T> clazz, SessionFactoryCreator sessionFactoryCreator) {
         this.clazz = clazz;
-        this.sessionFactory = sessionFactory;
+        this.sessionFactory = sessionFactoryCreator.getSessionFactory();
     }
 
     public T get(long id) {

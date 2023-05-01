@@ -17,7 +17,7 @@ public class Client {
         // TODO добавить транзакции всем методам в DAO
         // задать вопрос по сессиям
 
-        UserRepository userRepository = new UserRepository(sessionFactoryCreator.getSessionFactory());
+        UserRepository userRepository = new UserRepository(sessionFactoryCreator);
         userRepository.create(user);
         Stream<User> userStream = userRepository.find(pattern);
         List<User> users = userStream.toList();
