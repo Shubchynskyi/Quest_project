@@ -10,6 +10,7 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -21,12 +22,15 @@ public class Quest implements AbstractEntity {
     private String name;
     private String description;
     private Long startQuestionId;
-    @Column(name = "users_id")
-    private Long authorId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "users_id")
+    @ToString.Exclude
+    private User authorId;
 
     @OneToMany()
     @JoinColumn(name = "quest_id")
-//    @ToString.Exclude
+    @ToString.Exclude
     private final Collection<Question> questions = new ArrayList<>();
 
     @ManyToMany

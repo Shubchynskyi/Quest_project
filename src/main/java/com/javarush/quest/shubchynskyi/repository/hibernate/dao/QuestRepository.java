@@ -1,11 +1,10 @@
 package com.javarush.quest.shubchynskyi.repository.hibernate.dao;
 
+import com.javarush.quest.shubchynskyi.config.SessionCreator;
 import com.javarush.quest.shubchynskyi.entity.Quest;
-import com.javarush.quest.shubchynskyi.repository.hibernate.SessionFactoryCreator;
-import org.hibernate.SessionFactory;
 
 public class QuestRepository extends GenericDAO<Quest> {
-    public QuestRepository(SessionFactoryCreator sessionFactoryCreator) {
-        super(Quest.class, sessionFactoryCreator);
+    public QuestRepository(SessionCreator sessionCreator) {
+        super(Quest.class, sessionCreator);
     }
 }

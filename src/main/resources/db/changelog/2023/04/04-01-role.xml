@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1680636769636-1" author="akhmelev (generated)">
+        <createTable tableName="role">
+            <column name="value" type="VARCHAR(128)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="role_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1680636769636-2" author="akhmelev">
+        <insert tableName="role">
+            <column name="value">ADMIN</column>
+        </insert>
+        <insert tableName="role">
+            <column name="value">USER</column>
+        </insert>
+        <insert tableName="role">
+            <column name="value">GUEST</column>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

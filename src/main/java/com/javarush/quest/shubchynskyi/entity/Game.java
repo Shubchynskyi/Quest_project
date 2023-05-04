@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ToString
 @Table(name = "game", schema = "game")
 public class Game implements AbstractEntity {
     @Id

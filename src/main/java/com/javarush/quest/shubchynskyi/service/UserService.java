@@ -3,12 +3,13 @@ package com.javarush.quest.shubchynskyi.service;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.repository.hibernate.dao.UserRepository;
+import jakarta.transaction.Transactional;
 
 
 import java.util.Collection;
 import java.util.Optional;
 
-
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;

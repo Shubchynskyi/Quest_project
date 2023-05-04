@@ -1,4 +1,4 @@
-package com.javarush.quest.shubchynskyi.repository.jdbc;
+package com.javarush.quest.shubchynskyi.repository.jdbc.init;
 
 
 import com.javarush.quest.shubchynskyi.exception.AppException;

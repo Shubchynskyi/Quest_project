@@ -1,4 +1,4 @@
-package com.javarush.quest.shubchynskyi.repository.jdbc;
+package com.javarush.quest.shubchynskyi.repository.jdbc.init;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

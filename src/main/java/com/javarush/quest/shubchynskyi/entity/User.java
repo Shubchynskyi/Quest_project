@@ -25,6 +25,7 @@ public class User implements AbstractEntity {
     private Role role;
     @OneToMany
     @JoinColumn(name = "users_id")
+    @ToString.Exclude
     private List<Quest> quests;
     @OneToMany
     @JoinColumn(name = "users_id")
@@ -38,7 +39,7 @@ public class User implements AbstractEntity {
     )
     private final Collection<Quest> questsInGame = new ArrayList<>();
 
-
+    @Transient
     public String getImage() {  //TODO move to DTO ???
         return "image-" + id;
     }

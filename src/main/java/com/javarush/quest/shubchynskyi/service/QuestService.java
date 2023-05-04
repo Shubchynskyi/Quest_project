@@ -1,16 +1,12 @@
 package com.javarush.quest.shubchynskyi.service;
 
-import com.javarush.quest.shubchynskyi.entity.Answer;
-import com.javarush.quest.shubchynskyi.entity.GameState;
-import com.javarush.quest.shubchynskyi.entity.Quest;
-import com.javarush.quest.shubchynskyi.entity.Question;
+import com.javarush.quest.shubchynskyi.entity.*;
 import com.javarush.quest.shubchynskyi.exception.AppException;
-
 import com.javarush.quest.shubchynskyi.repository.hibernate.dao.AnswerRepository;
-
 import com.javarush.quest.shubchynskyi.repository.hibernate.dao.QuestRepository;
 import com.javarush.quest.shubchynskyi.util.Key;
 import com.javarush.quest.shubchynskyi.util.QuestParser;
+import jakarta.transaction.Transactional;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -33,11 +29,12 @@ public class QuestService {
         this.answerRepository = answerRepository;
     }
 
+    @Transactional
     public Quest create(String name, String text, String description, Long authorId) {
         Quest quest = Quest.builder()
                 .name(name)
                 .description(description)
-                .authorId(authorId)
+                .authorId(User.builder().id(authorId).build())
                 .startQuestionId(-1L)
                 .build();
 
@@ -46,7 +43,7 @@ public class QuestService {
 
         return quest;
     }
-
+    @Transactional
     public void update(Quest quest) {
         questRepository.update(quest);
     }
@@ -56,6 +53,7 @@ public class QuestService {
         questRepository.delete(quest);
     }
 
+    @Transactional
     public void parseQuestFromTextWall(Quest quest, String text) {
         lock.lock();
         try {
@@ -145,7 +143,7 @@ public class QuestService {
             quest.setStartQuestionId(question.getId());
         }
     }
-
+    @Transactional
     public Collection<Quest> getAll() {
         return questRepository.getAll();
     }
@@ -154,7 +152,7 @@ public class QuestService {
     public Optional<Quest> get(Long id) {
         return Optional.ofNullable(questRepository.get(id));
     }
-
+    @Transactional
     public Optional<Quest> get(String id) {
         return Optional.ofNullable(questRepository.get(Long.parseLong(id)));
     }
