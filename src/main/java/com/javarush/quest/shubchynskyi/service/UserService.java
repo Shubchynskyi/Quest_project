@@ -4,12 +4,13 @@ import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.repository.hibernate.dao.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 
 import java.util.Collection;
 import java.util.Optional;
 
-@Transactional
+@Service
 public class UserService {
 
     private final UserRepository userRepository;

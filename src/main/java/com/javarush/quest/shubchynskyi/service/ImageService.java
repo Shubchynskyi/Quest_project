@@ -1,11 +1,13 @@
 package com.javarush.quest.shubchynskyi.service;
 
-import com.javarush.quest.shubchynskyi.config.Config;
+
+import com.javarush.quest.shubchynskyi.config.JavaApplicationConfig;
 import com.javarush.quest.shubchynskyi.util.Key;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
 import lombok.SneakyThrows;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,9 +16,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
+@Service
 public class ImageService {
 
-    private final Path imagesFolder = Config.WEB_INF.resolve(Key.IMAGES_FOLDER);
+    private final Path imagesFolder = JavaApplicationConfig.WEB_INF.resolve(Key.IMAGES_FOLDER);
 
     @SneakyThrows
     public ImageService() {

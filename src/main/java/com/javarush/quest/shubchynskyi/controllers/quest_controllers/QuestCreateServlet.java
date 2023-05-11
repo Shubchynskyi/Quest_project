@@ -1,6 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
-import com.javarush.quest.shubchynskyi.config.ClassInitializer;
+import com.javarush.quest.shubchynskyi.config.JavaApplicationConfig;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.service.QuestService;
@@ -19,7 +19,7 @@ import java.util.Objects;
 @WebServlet(name = "CreateQuestServlet", value = Go.CREATE_QUEST)
 public class QuestCreateServlet extends HttpServlet {
 
-    private final QuestService questService = ClassInitializer.getBean(QuestService.class);
+    private final QuestService questService = JavaApplicationConfig.getBean(QuestService.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

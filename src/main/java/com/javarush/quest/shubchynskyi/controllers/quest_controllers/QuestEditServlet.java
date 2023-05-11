@@ -1,6 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
-import com.javarush.quest.shubchynskyi.config.ClassInitializer;
+import com.javarush.quest.shubchynskyi.config.JavaApplicationConfig;
 import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.Question;
@@ -25,10 +25,10 @@ import java.util.Map;
 @MultipartConfig(fileSizeThreshold = 1 << 20)
 public class QuestEditServlet extends HttpServlet {
 
-    private final QuestService questService = ClassInitializer.getBean(QuestService.class);
-    private final QuestionService questionService = ClassInitializer.getBean(QuestionService.class);
-    private final AnswerService answerService = ClassInitializer.getBean(AnswerService.class);
-    private final ImageService imageService = ClassInitializer.getBean(ImageService.class);
+    private final QuestService questService = JavaApplicationConfig.getBean(QuestService.class);
+    private final QuestionService questionService = JavaApplicationConfig.getBean(QuestionService.class);
+    private final AnswerService answerService = JavaApplicationConfig.getBean(AnswerService.class);
+    private final ImageService imageService = JavaApplicationConfig.getBean(ImageService.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -1,6 +1,7 @@
 package com.javarush.quest.shubchynskyi.config;
 
 import lombok.SneakyThrows;
+import org.springframework.stereotype.Component;
 
 import java.io.FileReader;
 import java.net.URI;
@@ -9,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Properties;
 
+@Component
 public class ApplicationProperties extends Properties {
 
     @SneakyThrows

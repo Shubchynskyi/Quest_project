@@ -3,10 +3,11 @@ package com.javarush.quest.shubchynskyi.service;
 import com.javarush.quest.shubchynskyi.entity.Question;
 import com.javarush.quest.shubchynskyi.repository.hibernate.dao.QuestionRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 
 import java.util.Optional;
-
+@Service
 public class QuestionService {
 
     private final QuestionRepository questionRepository;

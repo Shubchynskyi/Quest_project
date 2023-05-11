@@ -7,6 +7,7 @@ import com.javarush.quest.shubchynskyi.repository.hibernate.dao.QuestRepository;
 import com.javarush.quest.shubchynskyi.util.Key;
 import com.javarush.quest.shubchynskyi.util.QuestParser;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -14,7 +15,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static com.javarush.quest.shubchynskyi.util.QuestMarks.*;
 
-
+@Service
 public class QuestService {
     private final QuestParser questParser;
     private final QuestionService questionService;

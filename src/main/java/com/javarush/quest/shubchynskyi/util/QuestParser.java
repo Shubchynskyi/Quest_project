@@ -2,13 +2,14 @@ package com.javarush.quest.shubchynskyi.util;
 
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-
+@Component
 public class QuestParser {
 
     private List<String> stringList;

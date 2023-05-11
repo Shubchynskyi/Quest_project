@@ -1,6 +1,9 @@
 package com.javarush.quest.shubchynskyi.config;
 
-import com.javarush.quest.shubchynskyi.exception.AppException;
+import com.javarush.quest.shubchynskyi.entity.Role;
+import com.javarush.quest.shubchynskyi.entity.User;
+import com.javarush.quest.shubchynskyi.service.UserService;
+import com.javarush.quest.shubchynskyi.util.Key;
 import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -8,19 +11,37 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.*;
 import net.bytebuddy.matcher.ElementMatchers;
-
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static net.bytebuddy.matcher.ElementMatchers.isDeclaredBy;
 
 @UtilityClass
-public class ClassInitializer {
+public class JavaApplicationConfig {
+    public final Path WEB_INF =
+            Paths.get(URI.create(Objects.requireNonNull(
+                    JavaApplicationConfig.class.getResource(Key.REGEX_SLASH_SIGN)).toString())).getParent();
+
+    private final ApplicationContext context =
+            new AnnotationConfigApplicationContext(ApplicationConfig.class);
+
+    public static void main(String[] args) {
+        String[] names = context.getBeanDefinitionNames();
+        System.out.println("============= context =============");
+        Arrays.asList(names).forEach(System.out::println);
+        System.out.println("============= context =============");
+    }
 
     private final Map<Class<?>, Object> beanContainer = new HashMap<>();
 
@@ -66,6 +87,17 @@ public class ClassInitializer {
                 .getLoaded();
         Constructor<?> constructor = proxy.getConstructor(parameterTypes);
         return constructor.newInstance(parameters);
+    }
+
+    public static void repositoryInit() {
+        UserService userService = getBean(UserService.class);
+
+        if (userService.get(1L).isEmpty()) {
+            userService.create(User.builder().id(-1L).login("admin").password("admin").role(Role.ADMIN).build());
+            userService.create(User.builder().id(-1L).login("guest").password("guest").role(Role.GUEST).build());
+            userService.create(User.builder().id(-1L).login("moderator").password("moderator").role(Role.MODERATOR).build());
+            userService.create(User.builder().id(-1L).login("user").password("user").role(Role.USER).build());
+        }
     }
 
 

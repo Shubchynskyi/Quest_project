@@ -1,6 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
-import com.javarush.quest.shubchynskyi.config.ClassInitializer;
+import com.javarush.quest.shubchynskyi.config.JavaApplicationConfig;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.service.ImageService;
@@ -28,8 +28,8 @@ public class SignupServlet extends HttpServlet {
         super.init(config);
     }
 
-    private final UserService userService = ClassInitializer.getBean(UserService.class);
-    private final ImageService imageService = ClassInitializer.getBean(ImageService.class);
+    private final UserService userService = JavaApplicationConfig.getBean(UserService.class);
+    private final ImageService imageService = JavaApplicationConfig.getBean(ImageService.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {

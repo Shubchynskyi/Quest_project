@@ -1,6 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
-import com.javarush.quest.shubchynskyi.config.ClassInitializer;
+import com.javarush.quest.shubchynskyi.config.JavaApplicationConfig;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.util.Go;
@@ -18,7 +18,7 @@ import java.util.Collection;
 @WebServlet(name = "UsersServlet", value = Go.USERS)
 public class UsersServlet extends HttpServlet {
 
-    private final UserService userService = ClassInitializer.getBean(UserService.class);
+    private final UserService userService = JavaApplicationConfig.getBean(UserService.class);
 
     public void doGet(HttpServletRequest request, HttpServletResponse resp) throws IOException, ServletException {
         Collection<User> users = userService.getAll();

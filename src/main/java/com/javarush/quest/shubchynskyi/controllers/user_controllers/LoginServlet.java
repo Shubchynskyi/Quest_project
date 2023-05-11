@@ -1,6 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
-import com.javarush.quest.shubchynskyi.config.ClassInitializer;
+import com.javarush.quest.shubchynskyi.config.JavaApplicationConfig;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.util.Go;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @WebServlet(name = "LoginServlet", value = Go.LOGIN)
 public class LoginServlet extends HttpServlet {
 
-    private final UserService userService = ClassInitializer.getBean(UserService.class);
+    private final UserService userService = JavaApplicationConfig.getBean(UserService.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

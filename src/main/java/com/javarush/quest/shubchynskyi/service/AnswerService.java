@@ -2,8 +2,9 @@ package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.repository.hibernate.dao.AnswerRepository;
+import org.springframework.stereotype.Service;
 
-
+@Service
 public class AnswerService {
 
     private final AnswerRepository answerRepository;
