@@ -1,6 +1,7 @@
 package com.javarush.quest.shubchynskyi.service;
 
 
+import com.javarush.quest.shubchynskyi.config.ApplicationProperties;
 import com.javarush.quest.shubchynskyi.config.JavaApplicationConfig;
 import com.javarush.quest.shubchynskyi.util.Key;
 import jakarta.servlet.ServletException;
@@ -19,10 +20,11 @@ import java.util.Objects;
 @Service
 public class ImageService {
 
-    private final Path imagesFolder = JavaApplicationConfig.WEB_INF.resolve(Key.IMAGES_FOLDER);
+    private final Path imagesFolder;
 
     @SneakyThrows
     public ImageService() {
+        imagesFolder = ApplicationProperties.WEB_INF.resolve(Key.IMAGES_FOLDER);
         Files.createDirectories(imagesFolder);
     }
 

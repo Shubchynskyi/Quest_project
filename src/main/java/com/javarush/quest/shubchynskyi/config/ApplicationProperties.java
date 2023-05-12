@@ -13,9 +13,20 @@ import java.util.Properties;
 @Component
 public class ApplicationProperties extends Properties {
 
+    public static final String HIBERNATE_CONNECTION_URL = "hibernate.connection.url";
+    public static final String HIBERNATE_CONNECTION_USERNAME = "hibernate.connection.username";
+    public static final String HIBERNATE_CONNECTION_PASSWORD = "hibernate.connection.password";
+    public static final String HIBERNATE_CONNECTION_DRIVER_CLASS = "hibernate.connection.driver_class";
+
     @SneakyThrows
     public ApplicationProperties() {
         this.load(new FileReader(CLASSES_ROOT + "/application.properties"));
+        try {
+            String driver = this.getProperty(HIBERNATE_CONNECTION_DRIVER_CLASS);
+            Class.forName(driver);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //any runtime

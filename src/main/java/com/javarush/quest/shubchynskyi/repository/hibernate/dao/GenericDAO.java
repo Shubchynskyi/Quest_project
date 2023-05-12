@@ -7,7 +7,9 @@ import com.javarush.quest.shubchynskyi.repository.Repository;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -37,7 +39,20 @@ public abstract class GenericDAO<T extends AbstractEntity> implements Repository
     }
 
     public void create(T entity) {
-        sessionCreator.getSession().persist(entity);
+        Session session = sessionCreator.getSession();
+        try(session) {
+            Transaction transaction = session.beginTransaction();
+            try {
+                sessionCreator.getSession().persist(entity);
+                transaction.commit();
+            } catch (Exception e) {
+                transaction.rollback();
+                throw new RuntimeException(e);
+            }
+
+
+        }
+
     }
 
     public void update(T entity) {

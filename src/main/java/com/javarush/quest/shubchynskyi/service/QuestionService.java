@@ -20,15 +20,15 @@ public class QuestionService {
     public Optional<Question> get(Long id) {
         return questionRepository.find(Question.builder().id(id).build()).findAny();
     }
-    @Transactional
+
     public Optional<Question> get(String id) {
         return questionRepository.find(Question.builder().id(Long.valueOf(id)).build()).findAny();
     }
-    @Transactional
+
     public void create(Question question) {
         questionRepository.create(question);
     }
-    @Transactional
+
     public void update(Question question) {
         questionRepository.update(question);
     }
