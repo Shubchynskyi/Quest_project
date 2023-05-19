@@ -4,6 +4,7 @@ import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.repository.hibernate.dao.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
@@ -13,11 +14,12 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
+    private UserRepository userRepository;
 
 
     public User build(String userId, String userLogin, String userPassword, String userRole) {
@@ -28,14 +30,17 @@ public class UserService {
                 .role(Role.valueOf(userRole))
                 .build();
     }
+
+
+    @Transactional
     public void create(User user) {
         userRepository.create(user);
     }
-
+    @Transactional
     public void update(User user) {
         userRepository.update(user);
     }
-
+    @Transactional
     public void delete(User user) {
         userRepository.delete(user);
     }
@@ -57,4 +62,8 @@ public class UserService {
         return userRepository.find(patternUser).findAny();
     }
 
+    @Override
+    public String toString() {
+        return "UserService";
+    }
 }

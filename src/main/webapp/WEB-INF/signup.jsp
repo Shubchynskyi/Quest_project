@@ -37,7 +37,7 @@
             </script>
 
             <!-- hidden field with id=0 - for new user registration -->
-            <input type="hidden" name="id" value="0">
+<%--            <input type="hidden" name="id" value="0">--%>
 
             <!-- Text input-->
             <div class="form-group">

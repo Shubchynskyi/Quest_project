@@ -7,9 +7,7 @@ import com.javarush.quest.shubchynskyi.repository.Repository;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -18,7 +16,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 
-@Transactional
 public abstract class GenericDAO<T extends AbstractEntity> implements Repository<T> {
     private final Class<T> clazz;
     final SessionCreator sessionCreator;
@@ -38,20 +35,19 @@ public abstract class GenericDAO<T extends AbstractEntity> implements Repository
         return session.createQuery(hql, clazz).list();
     }
 
+
     public void create(T entity) {
         Session session = sessionCreator.getSession();
-        try(session) {
-            Transaction transaction = session.beginTransaction();
-            try {
-                sessionCreator.getSession().persist(entity);
-                transaction.commit();
-            } catch (Exception e) {
-                transaction.rollback();
-                throw new RuntimeException(e);
-            }
-
-
-        }
+//        try(session) {
+//            Transaction transaction = session.beginTransaction();
+//            try {
+        session.save(entity);
+//                transaction.commit();
+//            } catch (Exception e) {
+//                transaction.rollback();
+//                throw new RuntimeException(e);
+//            }
+//        }
 
     }
 

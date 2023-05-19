@@ -7,6 +7,7 @@ import com.javarush.quest.shubchynskyi.repository.hibernate.dao.QuestRepository;
 import com.javarush.quest.shubchynskyi.util.Key;
 import com.javarush.quest.shubchynskyi.util.QuestParser;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,20 +18,29 @@ import static com.javarush.quest.shubchynskyi.util.QuestMarks.*;
 
 @Service
 public class QuestService {
-    private final QuestParser questParser;
-    private final QuestionService questionService;
-    private final QuestRepository questRepository;
-    private final AnswerRepository answerRepository;
+    private QuestParser questParser;
+    private QuestionService questionService;
+    private QuestRepository questRepository;
+    private AnswerRepository answerRepository;
     private final Lock lock = new ReentrantLock();
 
-    public QuestService(QuestParser questParser, QuestionService questionService, QuestRepository questRepository, AnswerRepository answerRepository) {
+    @Autowired
+    public void setQuestParser(QuestParser questParser) {
         this.questParser = questParser;
+    }
+    @Autowired
+    public void setQuestionService(QuestionService questionService) {
         this.questionService = questionService;
+    }
+    @Autowired
+    public void setQuestRepository(QuestRepository questRepository) {
         this.questRepository = questRepository;
+    }
+    @Autowired
+    public void setAnswerRepository(AnswerRepository answerRepository) {
         this.answerRepository = answerRepository;
     }
 
-    @Transactional
     public Quest create(String name, String text, String description, Long authorId) {
         Quest quest = Quest.builder()
                 .name(name)
@@ -44,7 +54,7 @@ public class QuestService {
 
         return quest;
     }
-    @Transactional
+
     public void update(Quest quest) {
         questRepository.update(quest);
     }
@@ -144,7 +154,7 @@ public class QuestService {
             quest.setStartQuestionId(question.getId());
         }
     }
-    @Transactional
+
     public Collection<Quest> getAll() {
         return questRepository.getAll();
     }
@@ -153,7 +163,7 @@ public class QuestService {
     public Optional<Quest> get(Long id) {
         return Optional.ofNullable(questRepository.get(id));
     }
-    @Transactional
+
     public Optional<Quest> get(String id) {
         return Optional.ofNullable(questRepository.get(Long.parseLong(id)));
     }
