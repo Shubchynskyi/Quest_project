@@ -40,16 +40,16 @@ public class QuestService {
     public void setAnswerRepository(AnswerRepository answerRepository) {
         this.answerRepository = answerRepository;
     }
-
+    @Transactional
     public Quest create(String name, String text, String description, Long authorId) {
         Quest quest = Quest.builder()
                 .name(name)
                 .description(description)
                 .authorId(User.builder().id(authorId).build())
-                .startQuestionId(-1L)
+//                .startQuestionId(-1L)
                 .build();
 
-        questRepository.create(quest);
+
         parseQuestFromTextWall(quest, text);
 
         return quest;
@@ -66,6 +66,7 @@ public class QuestService {
 
     @Transactional
     public void parseQuestFromTextWall(Quest quest, String text) {
+        quest = questRepository.create(quest);
         lock.lock();
         try {
             Map<Integer, Question> questionsMapWithRawId = new HashMap<>();

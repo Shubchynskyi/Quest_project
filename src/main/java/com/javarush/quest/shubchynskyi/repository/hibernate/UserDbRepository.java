@@ -43,18 +43,20 @@ public class UserDbRepository implements Repository<User> {
     }
 
     @Override
-    public void create(User user) {
+    public User create(User user) {
         Session session = sessionCreator.getSession();
         try (session) {
             Transaction transaction = session.beginTransaction(); // работу с гибером всегда надо начинать с транзакции
             try {
                 session.persist(user);
                 transaction.commit();
+                return get(user.getId());
             } catch (Exception e) {
                 System.err.println("ROLLBACK WHEN CREATE USER");
                 transaction.rollback();
             }
         }
+        return user;
     }
 
     @Override

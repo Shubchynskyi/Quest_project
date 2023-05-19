@@ -18,13 +18,13 @@ public class JavaApplicationConfig {
     private static final ApplicationContext context =
             new AnnotationConfigApplicationContext(ApplicationConfig.class);
 
-    public final static Path CLASSES_ROOT = Paths.get(URI.create(
-            Objects.requireNonNull(
-                    ApplicationProperties.class.getResource("/")
-            ).toString()));
-
-    //only in Tomcat (not use in tests)
-    public final static Path WEB_INF = CLASSES_ROOT.getParent();
+//    public final static Path CLASSES_ROOT = Paths.get(URI.create(
+//            Objects.requireNonNull(
+//                    ApplicationProperties.class.getResource("/")
+//            ).toString()));
+//
+//    //only in Tomcat (not use in tests)
+//    public final static Path WEB_INF = CLASSES_ROOT.getParent();
 //    public static final Path WEB_INF =
 //            Paths.get(URI.create(Objects.requireNonNull(
 //                    JavaApplicationConfig.class.getResource(Key.REGEX_SLASH_SIGN)).toString())).getParent();
@@ -91,10 +91,10 @@ public class JavaApplicationConfig {
         UserService userService = getBean(UserService.class);
 
         if (userService.get(1L).isEmpty()) {
-            userService.create(User.builder().id(-1L).login("admin").password("admin").role(Role.ADMIN).build());
-            userService.create(User.builder().id(-1L).login("guest").password("guest").role(Role.GUEST).build());
-            userService.create(User.builder().id(-1L).login("moderator").password("moderator").role(Role.MODERATOR).build());
-            userService.create(User.builder().id(-1L).login("user").password("user").role(Role.USER).build());
+            userService.create(User.builder().login("admin").password("admin").role(Role.ADMIN).build());
+            userService.create(User.builder().login("guest").password("guest").role(Role.GUEST).build());
+            userService.create(User.builder().login("moderator").password("moderator").role(Role.MODERATOR).build());
+            userService.create(User.builder().login("user").password("user").role(Role.USER).build());
         }
     }
 

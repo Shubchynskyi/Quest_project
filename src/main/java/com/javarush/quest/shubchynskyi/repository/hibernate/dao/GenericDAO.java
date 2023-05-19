@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 
@@ -36,12 +37,13 @@ public abstract class GenericDAO<T extends AbstractEntity> implements Repository
     }
 
 
-    public void create(T entity) {
+    public T create(T entity) {
         Session session = sessionCreator.getSession();
 //        try(session) {
 //            Transaction transaction = session.beginTransaction();
 //            try {
-        session.save(entity);
+        session.persist(entity);
+        return get(entity.getId());
 //                transaction.commit();
 //            } catch (Exception e) {
 //                transaction.rollback();
