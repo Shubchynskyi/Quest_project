@@ -17,6 +17,8 @@ public class ApplicationProperties extends Properties {
     public static final String HIBERNATE_CONNECTION_USERNAME = "hibernate.connection.username";
     public static final String HIBERNATE_CONNECTION_PASSWORD = "hibernate.connection.password";
     public static final String HIBERNATE_CONNECTION_DRIVER_CLASS = "hibernate.connection.driver_class";
+    public static final String HIBERNATE_CONNECTION_DEFAULT_SCHEMA = "hibernate.connection.default_schema";
+    public static final String HIBERNATE_HBM2DDL_AUTO = "hibernate.hbm2ddl.auto";
 
     @SneakyThrows
     public ApplicationProperties() {

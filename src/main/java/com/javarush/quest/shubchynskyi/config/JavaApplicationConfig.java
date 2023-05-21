@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.config;
 
+import com.javarush.quest.shubchynskyi.config.aspects.LoggerAspect;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.service.UserService;
@@ -87,6 +88,7 @@ public class JavaApplicationConfig {
 //        return constructor.newInstance(parameters);
 //    }
 //
+//    @LoggerAspect
     public static void repositoryInit() {
         UserService userService = getBean(UserService.class);
 

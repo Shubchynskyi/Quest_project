@@ -80,10 +80,10 @@
 <!-- ******************************** for hibernate ******************************** -->
 
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.slf4j</groupId>-->
+<!--            <artifactId>slf4j-api</artifactId>-->
+<!--        </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version> <!-- do NOT update-->
+<!--            <version>1.7.36</version> &lt;!&ndash; do NOT update&ndash;&gt;-->
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl -->
@@ -188,11 +188,23 @@
             <version>10.1.7</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/p6spy/p6spy -->
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/p6spy/p6spy &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>p6spy</groupId>-->
+<!--            <artifactId>p6spy</artifactId>-->
+<!--            <version>3.9.1</version>-->
+<!--        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
         <dependency>
-            <groupId>p6spy</groupId>
-            <artifactId>p6spy</artifactId>
-            <version>3.9.1</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
     </dependencies>
