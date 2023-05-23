@@ -54,7 +54,7 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
         User user = userService.build(
-                request.getParameter(Key.ID),
+//                request.getParameter(Key.ID),
                 request.getParameter(Key.LOGIN),
                 request.getParameter(Key.PASSWORD),
                 request.getParameter(Key.ROLE));

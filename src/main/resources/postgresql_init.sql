@@ -14,10 +14,12 @@ CREATE TABLE IF NOT EXISTS role
     PRIMARY KEY (value)
 );
 
+-- DROP TABLE users;
+
 CREATE TABLE IF NOT EXISTS users
 (
     id       bigserial    NOT NULL,
-    login    varchar(256) NOT NULL,
+    login    varchar(256) NOT NULL UNIQUE,
     password varchar(256) NOT NULL,
     role     varchar(128) NOT NULL,
     PRIMARY KEY (id),
@@ -67,3 +69,8 @@ CREATE TABLE IF NOT EXISTS answer
     PRIMARY KEY (id),
     CONSTRAINT answer_next_question_id_question_id_foreign FOREIGN KEY (next_question_id) REFERENCES question (id)
 );
+
+INSERT INTO game.role (value) VALUES ('ADMIN');
+INSERT INTO game.role (value) VALUES ('USER');
+INSERT INTO game.role (value) VALUES ('MODERATOR');
+INSERT INTO game.role (value) VALUES ('GUEST');

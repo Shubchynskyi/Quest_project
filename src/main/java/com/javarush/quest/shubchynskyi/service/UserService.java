@@ -22,9 +22,9 @@ public class UserService {
     private UserRepository userRepository;
 
 
-    public User build(String userId, String userLogin, String userPassword, String userRole) {
+    public User build(String userLogin, String userPassword, String userRole) {
         return User.builder()
-                .id(Long.valueOf(userId))
+//                .id(Long.valueOf(userId))
                 .login(userLogin)
                 .password(userPassword)
                 .role(Role.valueOf(userRole))
@@ -33,8 +33,9 @@ public class UserService {
 
 
     @Transactional
-    public void create(User user) {
+    public Optional<User> create(User user) {
         userRepository.create(user);
+        return userRepository.find(user).findAny();
     }
     @Transactional
     public void update(User user) {

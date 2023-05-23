@@ -10,8 +10,12 @@ public class Main {
     public static void main(String[] args) {
         JavaApplicationConfig.init();
         UserService bean = JavaApplicationConfig.getBean(UserService.class);
-
         User build = User.builder().login("testMain").password("testPass").role(Role.ADMIN).build();
         bean.create(build);
+
+//        System.err.println("TETввыыыыыыыыыв!!!!!!!!!!!!!!!!");
+//        System.err.println("TEST!!!!!!!!!!!!!!!!");
+//        System.err.println("TEST!!!!!!!!!!!!!!!!");
+//        System.err.println("TEST!!!!!!!!!!!!!!!!");
     }
 }

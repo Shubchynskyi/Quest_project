@@ -17,6 +17,7 @@ public class Answer implements AbstractEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String text;
+    @Column(name = "next_question_id")
     private Long nextQuestionId;
     @Column(name = "question_id")
     private Long questionId;

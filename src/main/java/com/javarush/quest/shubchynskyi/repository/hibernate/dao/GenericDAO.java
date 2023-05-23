@@ -37,13 +37,14 @@ public abstract class GenericDAO<T extends AbstractEntity> implements Repository
     }
 
 
-    public T create(T entity) {
+    public void create(T entity) {
         Session session = sessionCreator.getSession();
 //        try(session) {
 //            Transaction transaction = session.beginTransaction();
 //            try {
         session.persist(entity);
-        return get(entity.getId());
+//        return get(entity.getId());
+
 //                transaction.commit();
 //            } catch (Exception e) {
 //                transaction.rollback();

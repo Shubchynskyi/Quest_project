@@ -123,7 +123,7 @@ public class UserDao implements Repository<User> {
     }
 
     @Override
-    public User create(User user) {
+    public void create(User user) {
         try (Connection connection = CnnPool.get();
              PreparedStatement preparedStatement =
                      connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS)) {
@@ -137,7 +137,7 @@ public class UserDao implements Repository<User> {
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-        return user;
+//        return user;
     }
 
     @Override
