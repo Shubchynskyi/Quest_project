@@ -6,12 +6,25 @@ import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.service.UserService;
 
+import java.util.Optional;
+
 public class Main {
     public static void main(String[] args) {
+        System.out.println("check check");
         JavaApplicationConfig.init();
-        UserService bean = JavaApplicationConfig.getBean(UserService.class);
-        User build = User.builder().login("testMain").password("testPass").role(Role.ADMIN).build();
-        bean.create(build);
+        UserService userService = JavaApplicationConfig.getBean(UserService.class);
+
+        User build = User.builder().login("testMai3").password("testPass").role(Role.ADMIN).build();
+        userService.create(build);
+
+        Optional<User> user = userService.get(5);
+
+        Optional<User> user1 = userService.get("testMain1", "testPass");
+
+        if(user.isPresent() && user1.isPresent()) {
+            System.out.println(user.get());
+            System.out.println(user1.get());
+        }
 
 //        System.err.println("TETввыыыыыыыыыв!!!!!!!!!!!!!!!!");
 //        System.err.println("TEST!!!!!!!!!!!!!!!!");
