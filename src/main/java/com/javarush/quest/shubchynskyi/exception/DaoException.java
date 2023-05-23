@@ -1,6 +1,8 @@
 package com.javarush.quest.shubchynskyi.exception;
-
+@SuppressWarnings("unused")
 public class DaoException extends RuntimeException{
+
+    @SuppressWarnings("unused")
     public DaoException() {
         super();
     }

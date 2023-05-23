@@ -1,10 +1,9 @@
 package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.config.aspects.LoggerAspect;
-import com.javarush.quest.shubchynskyi.config.aspects.TxAspect;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
-import com.javarush.quest.shubchynskyi.repository.hibernate.dao.UserRepository;
+import com.javarush.quest.shubchynskyi.repository.impl.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,6 @@ public class UserService {
 
     public User build(String userLogin, String userPassword, String userRole) {
         return User.builder()
-//                .id(Long.valueOf(userId))
                 .login(userLogin)
                 .password(userPassword)
                 .role(Role.valueOf(userRole))

@@ -1,4 +1,4 @@
-package com.javarush.quest.shubchynskyi.repository.hibernate.dao;
+package com.javarush.quest.shubchynskyi.repository.impl;
 
 import com.javarush.quest.shubchynskyi.config.SessionCreator;
 import com.javarush.quest.shubchynskyi.entity.Answer;

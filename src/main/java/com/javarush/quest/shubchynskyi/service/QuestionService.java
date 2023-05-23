@@ -1,7 +1,7 @@
 package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.entity.Question;
-import com.javarush.quest.shubchynskyi.repository.hibernate.dao.QuestionRepository;
+import com.javarush.quest.shubchynskyi.repository.impl.QuestionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

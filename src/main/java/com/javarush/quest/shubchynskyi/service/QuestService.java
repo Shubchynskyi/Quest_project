@@ -2,8 +2,8 @@ package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.entity.*;
 import com.javarush.quest.shubchynskyi.exception.AppException;
-import com.javarush.quest.shubchynskyi.repository.hibernate.dao.AnswerRepository;
-import com.javarush.quest.shubchynskyi.repository.hibernate.dao.QuestRepository;
+import com.javarush.quest.shubchynskyi.repository.impl.AnswerRepository;
+import com.javarush.quest.shubchynskyi.repository.impl.QuestRepository;
 import com.javarush.quest.shubchynskyi.util.Key;
 import com.javarush.quest.shubchynskyi.util.QuestParser;
 import jakarta.transaction.Transactional;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Stream;
 
 import static com.javarush.quest.shubchynskyi.util.QuestMarks.*;
 
@@ -29,27 +28,29 @@ public class QuestService {
     public void setQuestParser(QuestParser questParser) {
         this.questParser = questParser;
     }
+
     @Autowired
     public void setQuestionService(QuestionService questionService) {
         this.questionService = questionService;
     }
+
     @Autowired
     public void setQuestRepository(QuestRepository questRepository) {
         this.questRepository = questRepository;
     }
+
     @Autowired
     public void setAnswerRepository(AnswerRepository answerRepository) {
         this.answerRepository = answerRepository;
     }
+
     @Transactional
     public Quest create(String name, String text, String description, Long authorId) {
         Quest quest = Quest.builder()
                 .name(name)
                 .description(description)
                 .authorId(User.builder().id(authorId).build())
-//                .startQuestionId(-1L)
                 .build();
-
 
         parseQuestFromTextWall(quest, text);
 
@@ -67,11 +68,9 @@ public class QuestService {
 
     @Transactional
     public void parseQuestFromTextWall(Quest quest, String text) {
-//        quest = questRepository.create(quest);
         questRepository.create(quest);
-        // TODO перед сохранением квеста надо проверить не существует ли квест в базе, если существует, то надо вернуть сообщение что квест уже есть
         Optional<Quest> questWithId = questRepository.find(quest).findAny();
-        if(questWithId.isPresent()) {
+        if (questWithId.isPresent()) {
             quest = questWithId.get();
         }
         lock.lock();

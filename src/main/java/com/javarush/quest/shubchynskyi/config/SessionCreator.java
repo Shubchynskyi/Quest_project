@@ -26,13 +26,10 @@ public class SessionCreator implements AutoCloseable {
         configuration.addAnnotatedClass(Game.class);
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         sessionFactory = configuration.buildSessionFactory();
-//        session = sessionFactory.openSession();
     }
 
     public Session getSession() {
-        return sessionBox.get() == null || !sessionBox.get().isOpen()
-                ? sessionFactory.openSession()
-                : sessionBox.get();
+        return sessionBox.get() == null || !sessionBox.get().isOpen() ? sessionFactory.openSession() : sessionBox.get();
     }
 
     public void beginTransactional() {
@@ -47,7 +44,6 @@ public class SessionCreator implements AutoCloseable {
         }
         log(level.get(), "begin level: ");
     }
-
 
     public void endTransactional() {
         AtomicInteger level = levelBox.get();
@@ -65,7 +61,7 @@ public class SessionCreator implements AutoCloseable {
 
     private void log(int level, String message) {
         String simpleName = Thread.currentThread().getStackTrace()[4].toString();
-        System.out.println("\t".repeat(level) + message + level+" from "+simpleName);
+        System.out.println("\t".repeat(level) + message + level + " from " + simpleName);
         System.out.flush();
     }
 
@@ -74,35 +70,3 @@ public class SessionCreator implements AutoCloseable {
         sessionFactory.close();
     }
 }
-
-//    private final SessionFactory sessionFactory;
-//    private final Session session;
-//
-//    public SessionCreator(ApplicationProperties applicationProperties) {
-//        Configuration configuration = new Configuration();
-//        configuration.setProperties(applicationProperties);
-//        configuration.addAnnotatedClass(User.class);
-//        configuration.addAnnotatedClass(Quest.class);
-//        configuration.addAnnotatedClass(Question.class);
-//        configuration.addAnnotatedClass(Answer.class);
-//        configuration.addAnnotatedClass(Game.class);
-//        configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
-//        sessionFactory = configuration.buildSessionFactory();
-//        session = sessionFactory.openSession();
-//    }
-//
-//    public Session getSession() {
-//        return session == null || !session.isOpen()
-//                ? sessionFactory.openSession()
-//                : session;
-//    }
-//
-//
-//
-//
-//    @Override
-//    public void close() {
-//        sessionFactory.close();
-//    }
-//}
-

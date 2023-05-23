@@ -35,10 +35,7 @@ public class User implements AbstractEntity {
     private final Collection<Game> games = new ArrayList<>();
 
     @ManyToMany
-    @JoinTable(name = "game",
-            joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "quest_id", referencedColumnName = "id")
-    )
+    @JoinTable(name = "game", joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "quest_id", referencedColumnName = "id"))
     private final Collection<Quest> questsInGame = new ArrayList<>();
 
     @Transient
