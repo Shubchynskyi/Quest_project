@@ -4,9 +4,6 @@ package com.javarush.quest.shubchynskyi.config.bpp;
 import com.javarush.quest.shubchynskyi.config.JavaApplicationConfig;
 import com.javarush.quest.shubchynskyi.config.SessionCreator;
 import jakarta.transaction.Transactional;
-import org.hibernate.Session;
-
-import org.hibernate.Transaction;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.cglib.proxy.Enhancer;

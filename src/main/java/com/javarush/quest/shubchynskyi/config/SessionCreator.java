@@ -26,7 +26,6 @@ public class SessionCreator implements AutoCloseable {
         configuration.addAnnotatedClass(Game.class);
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         sessionFactory = configuration.buildSessionFactory();
-//        session = sessionFactory.openSession();
     }
 
     public Session getSession() {
@@ -65,7 +64,7 @@ public class SessionCreator implements AutoCloseable {
 
     private void log(int level, String message) {
         String simpleName = Thread.currentThread().getStackTrace()[4].toString();
-        System.out.println("\t".repeat(level) + message + level+" from "+simpleName);
+        System.out.println("\t".repeat(level) + message + level + " from " + simpleName);
         System.out.flush();
     }
 

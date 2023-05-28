@@ -7,5 +7,4 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("com.javarush.quest.shubchynskyi")
 public class ApplicationConfig {
 
-
 }

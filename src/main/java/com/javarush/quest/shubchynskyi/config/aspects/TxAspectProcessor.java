@@ -1,12 +1,10 @@
 package com.javarush.quest.shubchynskyi.config.aspects;
 
-import com.javarush.quest.shubchynskyi.config.JavaApplicationConfig;
 import com.javarush.quest.shubchynskyi.config.SessionCreator;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,13 +13,15 @@ import org.springframework.stereotype.Component;
 public class TxAspectProcessor {
     private final SessionCreator sessionCreator;
 
-    @Before("TxAspectPointcut.isMethodAnnotation()")
-    public void beforeMethodLoggerAnnotation(JoinPoint point) {
+    @Around("TxAspectPointcut.isMethodAnnotation()")
+    public Object manageTransaction(ProceedingJoinPoint joinPoint) throws Throwable {
         sessionCreator.beginTransactional();
-    }
-
-    @After("TxAspectPointcut.isMethodAnnotation()")
-    public void afterMethodLoggerAnnotation(JoinPoint point) {
-        sessionCreator.endTransactional();
+        Object result;
+        try {
+            result = joinPoint.proceed();
+            return result;
+        } finally {
+            sessionCreator.endTransactional();
+        }
     }
 }

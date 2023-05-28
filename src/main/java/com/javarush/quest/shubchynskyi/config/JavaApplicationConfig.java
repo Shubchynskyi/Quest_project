@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.config;
 
-import com.javarush.quest.shubchynskyi.config.aspects.LoggerAspect;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.service.UserService;
@@ -8,11 +7,7 @@ import lombok.experimental.UtilityClass;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Objects;
 
 @UtilityClass
 public class JavaApplicationConfig {
