@@ -8,8 +8,12 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
+import static com.javarush.quest.shubchynskyi.util.Key.ROLE;
+
 @Repository
 public class UserRepository extends GenericDAO<User> {
+
     public UserRepository(SessionCreator sessionCreator) {
         super(User.class, sessionCreator);
     }
@@ -21,7 +25,7 @@ public class UserRepository extends GenericDAO<User> {
                 WHERE u.role = :role
                 """;
         Query<User> query = sessionCreator.getSession().createQuery(hql, User.class);
-        query.setParameter("role", role);
+        query.setParameter(ROLE, role);
         return query.list();
     }
 }

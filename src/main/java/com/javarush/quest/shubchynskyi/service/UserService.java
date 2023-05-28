@@ -1,7 +1,6 @@
 package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.config.aspects.LoggerAspect;
-import com.javarush.quest.shubchynskyi.config.aspects.TxAspect;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.repository.hibernate.dao.UserRepository;
@@ -23,10 +22,8 @@ public class UserService {
 
     private UserRepository userRepository;
 
-
     public User build(String userLogin, String userPassword, String userRole) {
         return User.builder()
-//                .id(Long.valueOf(userId))
                 .login(userLogin)
                 .password(userPassword)
                 .role(Role.valueOf(userRole))
@@ -41,7 +38,6 @@ public class UserService {
                 .role(Role.valueOf(userRole))
                 .build();
     }
-
 
     @Transactional
     public Optional<User> create(User user) {

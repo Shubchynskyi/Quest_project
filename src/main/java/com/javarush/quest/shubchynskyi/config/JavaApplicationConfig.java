@@ -7,7 +7,6 @@ import lombok.experimental.UtilityClass;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.util.Arrays;
 
 @UtilityClass
 public class JavaApplicationConfig {
@@ -20,10 +19,6 @@ public class JavaApplicationConfig {
     }
 
     public static void init() {
-        String[] names = context.getBeanDefinitionNames();
-        System.out.println("============= context =============");
-        Arrays.asList(names).forEach(System.out::println);
-        System.out.println("============= context =============");
         repositoryInit();
     }
 

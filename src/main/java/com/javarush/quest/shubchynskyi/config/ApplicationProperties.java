@@ -31,12 +31,10 @@ public class ApplicationProperties extends Properties {
         }
     }
 
-    //any runtime
     public final static Path CLASSES_ROOT = Paths.get(URI.create(
             Objects.requireNonNull(
                     ApplicationProperties.class.getResource("/")
             ).toString()));
 
-    //only in Tomcat (not use in tests)
     public final static Path WEB_INF = CLASSES_ROOT.getParent();
 }

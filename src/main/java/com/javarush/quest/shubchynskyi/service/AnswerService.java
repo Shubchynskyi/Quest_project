@@ -16,8 +16,6 @@ public class AnswerService {
     private AnswerRepository answerRepository;
 
 
-
-
     @SuppressWarnings("unused")
     public void create(Answer answer) {
         answerRepository.create(answer);
