@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.controllers;
 
-import com.javarush.quest.shubchynskyi.config.JavaApplicationConfig;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.util.Go;
 import com.javarush.quest.shubchynskyi.util.Key;
@@ -9,13 +8,18 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 @WebServlet(name = "ImageServlet", value = Go.IMAGES_ALL)
 public class ImageServlet extends HttpServlet {
-    private final ImageService imageService = JavaApplicationConfig.getBean(ImageService.class);
+    private ImageService imageService;
+    @Autowired
+    public void setImageService(ImageService imageService) {
+        this.imageService = imageService;
+    }
 
     @Override
     @SneakyThrows

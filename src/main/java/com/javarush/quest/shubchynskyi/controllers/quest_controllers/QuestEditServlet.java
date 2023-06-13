@@ -1,6 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
-import com.javarush.quest.shubchynskyi.config.JavaApplicationConfig;
+
 import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.Question;
@@ -17,6 +17,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.Map;
@@ -25,10 +26,26 @@ import java.util.Map;
 @MultipartConfig(fileSizeThreshold = 1 << 20)
 public class QuestEditServlet extends HttpServlet {
 
-    private final QuestService questService = JavaApplicationConfig.getBean(QuestService.class);
-    private final QuestionService questionService = JavaApplicationConfig.getBean(QuestionService.class);
-    private final AnswerService answerService = JavaApplicationConfig.getBean(AnswerService.class);
-    private final ImageService imageService = JavaApplicationConfig.getBean(ImageService.class);
+    private QuestService questService;
+    private QuestionService questionService;
+    private AnswerService answerService;
+    private ImageService imageService;
+    @Autowired
+    public void setQuestService(QuestService questService) {
+        this.questService = questService;
+    }
+    @Autowired
+    public void setQuestionService(QuestionService questionService) {
+        this.questionService = questionService;
+    }
+    @Autowired
+    public void setAnswerService(AnswerService answerService) {
+        this.answerService = answerService;
+    }
+    @Autowired
+    public void setImageService(ImageService imageService) {
+        this.imageService = imageService;
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

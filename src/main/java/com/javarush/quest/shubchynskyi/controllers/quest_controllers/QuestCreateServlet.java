@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
-import com.javarush.quest.shubchynskyi.config.JavaApplicationConfig;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.service.QuestService;
@@ -12,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -19,7 +19,12 @@ import java.util.Objects;
 @WebServlet(name = "CreateQuestServlet", value = Go.CREATE_QUEST)
 public class QuestCreateServlet extends HttpServlet {
 
-    private final QuestService questService = JavaApplicationConfig.getBean(QuestService.class);
+    private QuestService questService;
+
+    @Autowired
+    public void setQuestService(QuestService questService) {
+        this.questService = questService;
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

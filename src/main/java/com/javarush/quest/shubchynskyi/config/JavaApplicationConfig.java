@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.config;
 
+import com.javarush.quest.shubchynskyi.config.old.ApplicationConfig;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.service.UserService;
@@ -9,7 +10,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import java.util.Arrays;
 
-@UtilityClass
+//@UtilityClass
 public class JavaApplicationConfig {
     private static final ApplicationContext context =
             new AnnotationConfigApplicationContext(ApplicationConfig.class);

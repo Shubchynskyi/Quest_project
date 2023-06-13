@@ -1,7 +1,7 @@
 package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.entity.Question;
-import com.javarush.quest.shubchynskyi.repository.hibernate.dao.QuestionRepository;
+import com.javarush.quest.shubchynskyi.repository.QuestionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,21 +21,21 @@ public class QuestionService {
 
     @SuppressWarnings("unused")
     public Optional<Question> get(Long id) {
-        return questionRepository.find(Question.builder().id(id).build()).findAny();
+        return questionRepository.findById(id);
     }
 
     public Optional<Question> get(String id) {
-        return questionRepository.find(Question.builder().id(Long.valueOf(id)).build()).findAny();
+        return get(Long.valueOf(id));
     }
 
     @Transactional
     public void create(Question question) {
-        questionRepository.create(question);
+        questionRepository.save(question);
     }
 
     @Transactional
     public void update(Question question) {
-        questionRepository.update(question);
+        questionRepository.save(question);
     }
 
     @Transactional

@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
-import com.javarush.quest.shubchynskyi.config.JavaApplicationConfig;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.service.ImageService;
@@ -15,6 +14,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
@@ -28,8 +28,16 @@ public class SignupServlet extends HttpServlet {
         super.init(config);
     }
 
-    private final UserService userService = JavaApplicationConfig.getBean(UserService.class);
-    private final ImageService imageService = JavaApplicationConfig.getBean(ImageService.class);
+    private UserService userService;
+    private ImageService imageService;
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+    @Autowired
+    public void setImageService(ImageService imageService) {
+        this.imageService = imageService;
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
@@ -39,7 +47,6 @@ public class SignupServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
         User user = userService.build(
-//                Key.NEW_USER_ID,
                 request.getParameter(Key.LOGIN),
                 request.getParameter(Key.PASSWORD),
                 request.getParameter(Key.ROLE));

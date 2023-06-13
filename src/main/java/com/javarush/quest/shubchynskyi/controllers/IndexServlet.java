@@ -1,7 +1,7 @@
 package com.javarush.quest.shubchynskyi.controllers;
 
 
-import com.javarush.quest.shubchynskyi.config.JavaApplicationConfig;
+
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.util.Go;
 import com.javarush.quest.shubchynskyi.util.Jsp;
@@ -15,15 +15,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-import static com.javarush.quest.shubchynskyi.config.JavaApplicationConfig.repositoryInit;
-
 @WebServlet(name = "IndexServlet", value = Go.ROOT, loadOnStartup = 0)
 public class IndexServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         config.getServletContext().setAttribute(Key.ROLES, Role.values());
-        JavaApplicationConfig.init();
         super.init(config);
     }
 

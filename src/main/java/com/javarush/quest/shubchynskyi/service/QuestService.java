@@ -2,18 +2,18 @@ package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.entity.*;
 import com.javarush.quest.shubchynskyi.exception.AppException;
-import com.javarush.quest.shubchynskyi.repository.hibernate.dao.AnswerRepository;
-import com.javarush.quest.shubchynskyi.repository.hibernate.dao.QuestRepository;
+import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
+import com.javarush.quest.shubchynskyi.repository.QuestRepository;
 import com.javarush.quest.shubchynskyi.util.Key;
 import com.javarush.quest.shubchynskyi.util.QuestParser;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Stream;
 
 import static com.javarush.quest.shubchynskyi.util.QuestMarks.*;
 
@@ -57,7 +57,7 @@ public class QuestService {
     }
 
     public void update(Quest quest) {
-        questRepository.update(quest);
+        questRepository.save(quest);
     }
 
     @SuppressWarnings("unused")
@@ -68,9 +68,11 @@ public class QuestService {
     @Transactional
     public void parseQuestFromTextWall(Quest quest, String text) {
 //        quest = questRepository.create(quest);
-        questRepository.create(quest);
+        questRepository.save(quest);
         // TODO перед сохранением квеста надо проверить не существует ли квест в базе, если существует, то надо вернуть сообщение что квест уже есть
-        Optional<Quest> questWithId = questRepository.find(quest).findAny();
+//        Example<Quest> questExample = quest;
+        Optional<Quest> questWithId = questRepository.findAll(Example.of(quest)).stream().findAny();
+//        Optional<Quest> questWithId = questRepository.find(quest).findAny();
         if(questWithId.isPresent()) {
             quest = questWithId.get();
         }
@@ -92,7 +94,7 @@ public class QuestService {
             }
 
             Collections.reverse((List<?>) quest.getQuestions());
-            questRepository.update(quest);
+            questRepository.save(quest);
         } finally {
             lock.unlock();
         }
@@ -135,7 +137,7 @@ public class QuestService {
             answersMapWithNullNextQuestionId.put(answer, blockNumber);
         }
 
-        answerRepository.create(answer);
+        answerRepository.save(answer);
         answers.add(answer);
     }
 
@@ -164,16 +166,16 @@ public class QuestService {
     }
 
     public Collection<Quest> getAll() {
-        return questRepository.getAll();
+        return questRepository.findAll();
     }
 
     @SuppressWarnings("unused")
     public Optional<Quest> get(Long id) {
-        return Optional.ofNullable(questRepository.get(id));
+        return questRepository.findById(id);
     }
 
     public Optional<Quest> get(String id) {
-        return Optional.ofNullable(questRepository.get(Long.parseLong(id)));
+        return get(Long.parseLong(id));
     }
 
 

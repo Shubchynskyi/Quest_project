@@ -1,7 +1,7 @@
 package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.entity.Answer;
-import com.javarush.quest.shubchynskyi.repository.hibernate.dao.AnswerRepository;
+import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,12 +20,12 @@ public class AnswerService {
 
     @SuppressWarnings("unused")
     public void create(Answer answer) {
-        answerRepository.create(answer);
+        answerRepository.save(answer);
     }
 
     @Transactional
     public void update(Answer answer) {
-        answerRepository.update(answer);
+        answerRepository.save(answer);
     }
 
     @SuppressWarnings("unused")

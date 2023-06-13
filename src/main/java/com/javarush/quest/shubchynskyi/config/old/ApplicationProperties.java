@@ -1,4 +1,4 @@
-package com.javarush.quest.shubchynskyi.config;
+package com.javarush.quest.shubchynskyi.config.old;
 
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Properties;
 
-@Component
+//@Component
 public class ApplicationProperties extends Properties {
 
     public static final String HIBERNATE_CONNECTION_URL = "hibernate.connection.url";

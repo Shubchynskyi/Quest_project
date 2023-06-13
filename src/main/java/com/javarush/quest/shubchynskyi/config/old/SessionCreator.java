@@ -1,5 +1,6 @@
-package com.javarush.quest.shubchynskyi.config;
+package com.javarush.quest.shubchynskyi.config.old;
 
+import com.javarush.quest.shubchynskyi.config.old.ApplicationProperties;
 import com.javarush.quest.shubchynskyi.entity.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Component
+//@Component
 public class SessionCreator implements AutoCloseable {
 
     private final SessionFactory sessionFactory;

@@ -1,14 +1,12 @@
 package com.javarush.quest.shubchynskyi.service;
 
-import com.javarush.quest.shubchynskyi.config.aspects.LoggerAspect;
-import com.javarush.quest.shubchynskyi.config.aspects.TxAspect;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
-import com.javarush.quest.shubchynskyi.repository.hibernate.dao.UserRepository;
+import com.javarush.quest.shubchynskyi.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
-
 
 import java.util.Collection;
 import java.util.Optional;
@@ -23,10 +21,8 @@ public class UserService {
 
     private UserRepository userRepository;
 
-
     public User build(String userLogin, String userPassword, String userRole) {
         return User.builder()
-//                .id(Long.valueOf(userId))
                 .login(userLogin)
                 .password(userPassword)
                 .role(Role.valueOf(userRole))
@@ -42,38 +38,37 @@ public class UserService {
                 .build();
     }
 
-
     @Transactional
     public Optional<User> create(User user) {
-        userRepository.create(user);
-        return userRepository.find(user).findAny();
+        userRepository.save(user);
+        return userRepository.findAll(Example.of(user)).stream().findAny();
     }
+
     @Transactional
     public void update(User user) {
-        userRepository.update(user);
+        userRepository.save(user);
     }
+
     @Transactional
     public void delete(User user) {
         userRepository.delete(user);
     }
 
     public Collection<User> getAll() {
-        return userRepository.getAll();
+        return userRepository.findAll();
     }
 
-    @LoggerAspect
     public Optional<User> get(long id) {
-        return Optional.ofNullable(userRepository.get(id));
+        return userRepository.findById(id);
     }
 
-    @LoggerAspect
     public Optional<User> get(String login, String password) {
         User patternUser = User
                 .builder()
                 .login(login)
                 .password(password)
                 .build();
-        return userRepository.find(patternUser).findAny();
+        return userRepository.findAll(Example.of(patternUser)).stream().findAny();
     }
 
     @Override
