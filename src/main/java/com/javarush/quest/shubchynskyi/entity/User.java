@@ -42,7 +42,7 @@ public class User implements AbstractEntity {
     private final Collection<Quest> questsInGame = new ArrayList<>();
 
     @Transient
-    public String getImage() {  //TODO move to DTO ???
+    public String getImage() {
         return "image-" + id;
     }
 }

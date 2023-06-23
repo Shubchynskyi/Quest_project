@@ -4,6 +4,7 @@ import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -12,14 +13,15 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final UserRepository userRepository;
 
-    private UserRepository userRepository;
+    public boolean isLoginExist(String login) {
+        Example<User> user = Example.of(User.builder().login(login).build());
+        return userRepository.exists(user);
+    }
 
     public User build(String userLogin, String userPassword, String userRole) {
         return User.builder()

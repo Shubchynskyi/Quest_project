@@ -15,10 +15,10 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
 @SpringBootApplication
 public class App {
 
-    @Bean
-    public MultipartResolver multipartResolver() {
-        return new StandardServletMultipartResolver();
-    }
+//    @Bean
+//    public MultipartResolver multipartResolver() {
+//        return new StandardServletMultipartResolver();
+//    }
 
     public static void main(String[] args) {
         var context = SpringApplication.run(App.class, args);

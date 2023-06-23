@@ -4,7 +4,7 @@
 <div class="container">
     <c:forEach var="user" items="${requestScope.users}">
         <img src="images/${user.image}" alt="images/${user.image}" width="100px">
-        Edit user <a href="user?id=${user.id}">${user.login}<br></a
+        Edit user <a href="user?id=${user.id}&source=users">${user.login}<br></a>
         User login = ${user.login} <br>
     </c:forEach>
 </div>

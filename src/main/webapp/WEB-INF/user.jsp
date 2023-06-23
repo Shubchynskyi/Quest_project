@@ -37,7 +37,7 @@
                 }
             </script>
 
-            <input type="hidden" name="id" value="${requestScope.id}">
+<%--            <input type="hidden" name="id" value="${requestScope.id}">--%>
 
             <!-- Text input-->
             <div class="form-group">
@@ -57,12 +57,12 @@
                 </div>
             </div>
 
-            <!-- Select Basic -->
+            <!-- Select Role -->
             <div class="form-group">
                 <label class="col-md-4 control-label" for="role">Role</label>
                 <div class="col-md-4">
                     <select id="role" name="role" class="form-control">
-                        <c:forEach items="${applicationScope.roles}" var="role">
+                        <c:forEach items="${roles}" var="role">
                             <option value="${role}" ${user.role==role?"selected":""}>${role}</option>
                         </c:forEach>
                     </select>

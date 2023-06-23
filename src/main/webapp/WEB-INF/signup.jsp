@@ -16,7 +16,7 @@
             <div class="form-group">
                 <div class="form-group">
                     <label class="col-md-4 control-label" for="image">
-                        <img id="previewId" src="images/${user.image}" width="150" alt="${user.image}">
+                        <img id="previewId" src="images/no-image.jpg" width="150" alt="no-image">
                         Нажмите чтобы изменить
                     </label>
                 </div>
@@ -39,7 +39,12 @@
             <!-- hidden field with id=0 - for new user registration -->
 <%--            <input type="hidden" name="id" value="0">--%>
 
-            <!-- Text input-->
+            <!-- Error Message -->
+            <c:if test="${not empty error}">
+                <div class="alert alert-danger">${error}</div>
+            </c:if>
+
+            <!-- Login input-->
             <div class="form-group">
                 <label class="col-md-4 control-label" for="login">Login</label>
                 <div class="col-md-4">
@@ -57,12 +62,12 @@
                 </div>
             </div>
 
-            <!-- Select Basic -->
+            <!-- Role input-->
             <div class="form-group">
                 <label class="col-md-4 control-label" for="role">Role</label>
                 <div class="col-md-4">
                     <select id="role" name="role" class="form-control">
-                        <c:forEach items="${applicationScope.roles}" var="role">
+                        <c:forEach items="${roles}" var="role">
                             <option value="${role}" ${"GUEST"==role?"selected":""}>${role}</option>
                         </c:forEach>
                     </select>
