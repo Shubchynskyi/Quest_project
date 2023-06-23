@@ -49,7 +49,6 @@ public class SignupController {
 
         if (userService.isLoginExist(login)) {
             redirectAttributes.addFlashAttribute("error", "Login already exist");
-//            model.addAttribute(Key.ROLES, Role.values());
             return "redirect:signup";
         }
 

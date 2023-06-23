@@ -39,7 +39,12 @@
 
 <%--            <input type="hidden" name="id" value="${requestScope.id}">--%>
 
-            <!-- Text input-->
+            <!-- Error Message -->
+            <c:if test="${not empty error}">
+                <div class="alert alert-danger">${error}</div>
+            </c:if>
+
+            <!-- Login input-->
             <div class="form-group">
                 <label class="col-md-4 control-label" for="login">Login</label>
                 <div class="col-md-4">
@@ -57,7 +62,7 @@
                 </div>
             </div>
 
-            <!-- Select Role -->
+            <!-- Role input -->
             <div class="form-group">
                 <label class="col-md-4 control-label" for="role">Role</label>
                 <div class="col-md-4">
@@ -72,10 +77,10 @@
             <div class=" form-group">
                 <label class="col-md-4 control-label" for="updateOrCreate"></label>
                 <div class="col-md-8">
-                    <button id="updateOrCreate" name="${requestScope.id>0?"update":"create"}"
-                            class="btn btn-success">${requestScope.id>0?"Update":"Create"}
+                    <button id="updateOrCreate" name="${user.id>0?"update":"create"}"
+                            class="btn btn-success">${user.id>0?"Update":"Create"}
                     </button>
-                    <c:if test="${requestScope.id>0}">
+                    <c:if test="${user.id>0}">
                         <button id="delete" name="delete"
                                 class="btn btn-danger">Delete
                         </button>

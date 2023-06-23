@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.Map;
@@ -72,6 +73,7 @@ public class UserController {
             @RequestParam(Key.LOGIN) String login,
             @RequestParam(Key.PASSWORD) String password,
             @RequestParam(Key.ROLE) String role,
+            RedirectAttributes redirectAttributes,
             HttpServletRequest request
     ) throws ServletException, IOException {
 
@@ -80,6 +82,8 @@ public class UserController {
         if (currentUser == null) {
             return "redirect:login";
         }
+
+
 
         boolean isCurrentUserAdmin = currentUser.getRole().equals(Role.ADMIN);
 
@@ -93,9 +97,14 @@ public class UserController {
         if (parameterMap.containsKey(Key.CREATE)) {
             userService.create(user);
         } else if (parameterMap.containsKey(Key.UPDATE)) {
+            if (userService.isLoginExist(login)) {
+                redirectAttributes.addFlashAttribute("error", "Login already exist");
+                return "redirect:user?id="+id;
+            }
             userService.update(user);
         } else if (parameterMap.containsKey(Key.DELETE)) {
             userService.delete(user);
+            return "redirect:logout";
         } else throw new AppException(Key.UNKNOWN_COMMAND);
 
         imageService.uploadImage(request, user.getImage());
