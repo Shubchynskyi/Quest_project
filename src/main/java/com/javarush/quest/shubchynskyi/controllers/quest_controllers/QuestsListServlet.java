@@ -6,25 +6,30 @@ import com.javarush.quest.shubchynskyi.util.Go;
 import com.javarush.quest.shubchynskyi.util.Jsp;
 import com.javarush.quest.shubchynskyi.util.Key;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.IOException;
 import java.util.Collection;
 
-@WebServlet(name = "QuestsListServlet", value = Go.QUESTS_LIST)
-public class QuestsListServlet extends HttpServlet {
+//@WebServlet(name = "QuestsListServlet", value = Go.QUESTS_LIST)
+@Controller
+@RequiredArgsConstructor
+public class QuestsListServlet {
 
-    private QuestService questService;
-    @Autowired
-    public void setQuestService(QuestService questService) {
-        this.questService = questService;
+    private final QuestService questService;
+
+    @GetMapping("quests-list")
+    public String showQuests(Model model) {
+        Collection<Quest> quests = questService.getAll();
+        model.addAttribute("quests", quests);
+        return "quests-list";
     }
 
-    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Collection<Quest> quests = questService.getAll();
         request.setAttribute(Key.QUESTS, quests);

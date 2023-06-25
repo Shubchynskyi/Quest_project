@@ -42,11 +42,12 @@ public class QuestService {
         this.answerRepository = answerRepository;
     }
     @Transactional
-    public Quest create(String name, String text, String description, Long authorId) {
+    public Quest create(String name, String text, String description, String authorId) {
+
         Quest quest = Quest.builder()
                 .name(name)
                 .description(description)
-                .authorId(User.builder().id(authorId).build())
+                .authorId(User.builder().id(Long.valueOf(authorId)).build())
 //                .startQuestionId(-1L)
                 .build();
 

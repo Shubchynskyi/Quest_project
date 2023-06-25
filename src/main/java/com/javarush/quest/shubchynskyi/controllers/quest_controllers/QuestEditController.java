@@ -13,41 +13,45 @@ import com.javarush.quest.shubchynskyi.util.Jsp;
 import com.javarush.quest.shubchynskyi.util.Key;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
-@WebServlet(name = "QuestEditServlet", value = Go.QUEST_EDIT)
+//@WebServlet(name = "QuestEditServlet", value = Go.QUEST_EDIT)
 @MultipartConfig(fileSizeThreshold = 1 << 20)
-public class QuestEditServlet extends HttpServlet {
+@Controller
+@RequiredArgsConstructor
+public class QuestEditController {
 
-    private QuestService questService;
-    private QuestionService questionService;
-    private AnswerService answerService;
-    private ImageService imageService;
-    @Autowired
-    public void setQuestService(QuestService questService) {
-        this.questService = questService;
-    }
-    @Autowired
-    public void setQuestionService(QuestionService questionService) {
-        this.questionService = questionService;
-    }
-    @Autowired
-    public void setAnswerService(AnswerService answerService) {
-        this.answerService = answerService;
-    }
-    @Autowired
-    public void setImageService(ImageService imageService) {
-        this.imageService = imageService;
+    private final QuestService questService;
+    private final QuestionService questionService;
+    private final AnswerService answerService;
+    private final ImageService imageService;
+
+    @GetMapping("quest-edit")
+    public String showQuestForEdit(
+            @RequestParam("id") String id,
+            Model model
+    ){
+        Optional<Quest> quest = questService.get(id);
+        if (quest.isPresent()) {
+            model.addAttribute(Key.QUEST, quest.get());
+            return "quest-edit";
+        } else {
+            return "redirect:quest-create";
+        }
     }
 
-    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String questId = request.getParameter(Key.ID);
         if (questService.get(questId).isPresent()) {
@@ -56,7 +60,21 @@ public class QuestEditServlet extends HttpServlet {
         Jsp.forward(request, response, Go.QUEST_EDIT);
     }
 
-    @Override
+    @PostMapping("quest-edit")
+    public void saveQuest(
+            @RequestParam MultiValueMap<String,String> allParams,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
+        if (allParams.containsKey(Key.QUEST_NAME)) {
+            questEdit(request, response);
+        } else if (allParams.containsKey(Key.QUESTION_ID)) {
+            questionEdit(request, response);
+        } else {
+            Jsp.forward(request, response, Go.QUESTS_LIST);
+        }
+    }
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, String[]> parameterMap = request.getParameterMap();
         if (parameterMap.containsKey(Key.QUEST_NAME)) {

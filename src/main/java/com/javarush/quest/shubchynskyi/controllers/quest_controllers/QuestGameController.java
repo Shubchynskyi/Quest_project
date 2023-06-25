@@ -14,28 +14,33 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
 
-@WebServlet(name = "QuestServlet", value = Go.QUEST)
-public class QuestServlet extends HttpServlet {
+//@WebServlet(name = "QuestServlet", value = Go.QUEST)
+@Controller
+@RequiredArgsConstructor
+public class QuestGameController {
 
-    private QuestService questService;
-    private QuestionService questionService;
-    @Autowired
-    public void setQuestService(QuestService questService) {
-        this.questService = questService;
-    }
-    @Autowired
-    public void setQuestionService(QuestionService questionService) {
-        this.questionService = questionService;
-    }
+    private final QuestService questService;
+    private final QuestionService questionService;
 
-    @Override
+//    @GetMapping("quest")
+//    public String startQuest(
+//            @RequestParam("id") String id
+//    ) {
+//
+//    }
+
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Optional<Quest> questOptional = questService.get(request.getParameter(Key.ID));
         if (questOptional.isPresent()) {
@@ -55,7 +60,7 @@ public class QuestServlet extends HttpServlet {
         }
     }
 
-    @Override
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         Map<String, String[]> parameterMap = request.getParameterMap();
         if (parameterMap.containsKey(Key.GAME_STATE) && !request.getParameter(Key.GAME_STATE).equals(GameState.PLAY.name())) {
@@ -64,6 +69,12 @@ public class QuestServlet extends HttpServlet {
             String questionId = request.getParameter(Key.QUESTION_ID);
             fillRequestAndRedirect(request, response, questionId);
         }
+    }
+
+    private void setQuestionToMode(HttpServletRequest request) {
+        String questionId = request.getParameter(Key.QUESTION);
+        Optional<Question> questionOptional = questionService.get(questionId);
+        questionOptional.ifPresent(question -> request.setAttribute(Key.QUESTION, question));
     }
 
     private void setQuestionToRequest(HttpServletRequest request) {
