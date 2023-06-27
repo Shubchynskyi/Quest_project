@@ -7,25 +7,18 @@ import com.javarush.quest.shubchynskyi.entity.Question;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.service.QuestionService;
 import com.javarush.quest.shubchynskyi.util.Go;
-import com.javarush.quest.shubchynskyi.util.Jsp;
 import com.javarush.quest.shubchynskyi.util.Key;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
 
-//@WebServlet(name = "QuestServlet", value = Go.QUEST)
 @Controller
 @RequiredArgsConstructor
 public class QuestGameController {
@@ -33,15 +26,10 @@ public class QuestGameController {
     private final QuestService questService;
     private final QuestionService questionService;
 
-//    @GetMapping("quest")
-//    public String startQuest(
-//            @RequestParam("id") String id
-//    ) {
-//
-//    }
-
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @GetMapping("quest")
+    public String startQuest(
+            HttpServletRequest request
+    ) {
         Optional<Quest> questOptional = questService.get(request.getParameter(Key.ID));
         if (questOptional.isPresent()) {
             Quest quest = questOptional.get();
@@ -54,27 +42,23 @@ public class QuestGameController {
             }
             request.setAttribute(Key.ID, quest.getId());
             request.setAttribute(Key.QUEST_NAME, quest.getName());
-            Jsp.forward(request, response, Go.QUEST);
+            return "quest";
         } else {
-            Jsp.redirect(response, Go.QUESTS_LIST);
+            return "redirect:quests-list";
         }
     }
 
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    @PostMapping("quest")
+    public String nextStep(HttpServletRequest request,
+                           HttpServletResponse response) {
         Map<String, String[]> parameterMap = request.getParameterMap();
-        if (parameterMap.containsKey(Key.GAME_STATE) && !request.getParameter(Key.GAME_STATE).equals(GameState.PLAY.name())) {
-            Jsp.redirect(response, Go.QUESTS_LIST);
+        if (parameterMap.containsKey(Key.GAME_STATE)
+            && !request.getParameter(Key.GAME_STATE).equals(GameState.PLAY.name())) {
+            return "redirect:/quests-list";
         } else {
             String questionId = request.getParameter(Key.QUESTION_ID);
-            fillRequestAndRedirect(request, response, questionId);
+            return fillRequestAndRedirect(request, response, questionId);
         }
-    }
-
-    private void setQuestionToMode(HttpServletRequest request) {
-        String questionId = request.getParameter(Key.QUESTION);
-        Optional<Question> questionOptional = questionService.get(questionId);
-        questionOptional.ifPresent(question -> request.setAttribute(Key.QUESTION, question));
     }
 
     private void setQuestionToRequest(HttpServletRequest request) {
@@ -83,7 +67,7 @@ public class QuestGameController {
         questionOptional.ifPresent(question -> request.setAttribute(Key.QUESTION, question));
     }
 
-    private void fillRequestAndRedirect(HttpServletRequest request, HttpServletResponse response, String questionId) {
+    private String fillRequestAndRedirect(HttpServletRequest request, HttpServletResponse response, String questionId) {
         Optional<Question> questionOptional = questionService.get(questionId);
         if (questionOptional.isPresent()) {
             String questId = request.getParameter(Key.ID);
@@ -93,9 +77,9 @@ public class QuestGameController {
             request.setAttribute(Key.ID, questId);
             request.setAttribute(Key.QUEST_NAME, questName);
             String newUri = Key.NEXT_QUESTION_URI_PATTERN.formatted(Go.QUEST, Key.ID, questId, Key.QUESTION, question.getId());
-            Jsp.redirect(response, newUri);
+            return "redirect:" + newUri;
         } else {
-            Jsp.redirect(response, Go.QUESTS_LIST);
+            return "redirect:/quests-list";
         }
     }
 }

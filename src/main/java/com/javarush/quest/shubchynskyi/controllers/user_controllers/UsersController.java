@@ -11,9 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Collection;
-import java.util.Objects;
 
-//@WebServlet(name = "UsersServlet", value = Go.USERS)
 @Controller
 public class UsersController {
 

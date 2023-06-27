@@ -5,7 +5,6 @@ import com.javarush.quest.shubchynskyi.util.Key;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +21,13 @@ public class ImageService {
 
     private final Path imagesFolder;
 
-    @SneakyThrows
-    public ImageService(@Value("${app.images-directory}") String imagesDirectory) {
+    //TODO exception?
+
+    public ImageService(@Value("${app.images-directory}") String imagesDirectory) throws IOException {
         imagesFolder = Paths.get(imagesDirectory);
         Files.createDirectories(imagesFolder);
     }
 
-    @SneakyThrows
     public Path getImagePath(String filename) {
         return Key.EXTENSIONS.stream()
                 .map(ext -> imagesFolder.resolve(filename + ext))
@@ -61,8 +60,7 @@ public class ImageService {
                 });
     }
 
-    @SneakyThrows
-    private void uploadImageInternal(String name, InputStream data) {
+    private void uploadImageInternal(String name, InputStream data) throws IOException {
         try (data) {
             if (data.available() > 0) {
                 Files.copy(data, imagesFolder.resolve(name), StandardCopyOption.REPLACE_EXISTING);

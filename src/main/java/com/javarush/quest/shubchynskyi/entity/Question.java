@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Builder
 @Getter
@@ -19,11 +18,15 @@ public class Question implements AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "quest_id")
     private Long questId;
+
     private String text;
+
     @Enumerated(value = EnumType.STRING)
     private GameState gameState;
+
     @OneToMany
     @JoinColumn(name = "question_id")
     @ToString.Exclude
@@ -33,5 +36,4 @@ public class Question implements AbstractEntity {
     public String getImage() {
         return "question-" + id;
     }
-
 }

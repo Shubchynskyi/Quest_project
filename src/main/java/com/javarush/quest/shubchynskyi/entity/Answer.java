@@ -1,9 +1,7 @@
 package com.javarush.quest.shubchynskyi.entity;
 
-import com.javarush.quest.shubchynskyi.entity.AbstractEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
 
 @Builder
 @Getter

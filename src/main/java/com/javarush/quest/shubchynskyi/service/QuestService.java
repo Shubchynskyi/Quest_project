@@ -7,6 +7,7 @@ import com.javarush.quest.shubchynskyi.repository.QuestRepository;
 import com.javarush.quest.shubchynskyi.util.Key;
 import com.javarush.quest.shubchynskyi.util.QuestParser;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -18,29 +19,14 @@ import java.util.concurrent.locks.ReentrantLock;
 import static com.javarush.quest.shubchynskyi.util.QuestMarks.*;
 
 @Service
+@RequiredArgsConstructor
 public class QuestService {
-    private QuestParser questParser;
-    private QuestionService questionService;
-    private QuestRepository questRepository;
-    private AnswerRepository answerRepository;
-    private final Lock lock = new ReentrantLock();
+    private final QuestParser questParser;
+    private final QuestionService questionService;
+    private final QuestRepository questRepository;
+    private final AnswerRepository answerRepository;
+    private final Lock lock;
 
-    @Autowired
-    public void setQuestParser(QuestParser questParser) {
-        this.questParser = questParser;
-    }
-    @Autowired
-    public void setQuestionService(QuestionService questionService) {
-        this.questionService = questionService;
-    }
-    @Autowired
-    public void setQuestRepository(QuestRepository questRepository) {
-        this.questRepository = questRepository;
-    }
-    @Autowired
-    public void setAnswerRepository(AnswerRepository answerRepository) {
-        this.answerRepository = answerRepository;
-    }
     @Transactional
     public Quest create(String name, String text, String description, String authorId) {
 
@@ -48,9 +34,7 @@ public class QuestService {
                 .name(name)
                 .description(description)
                 .authorId(User.builder().id(Long.valueOf(authorId)).build())
-//                .startQuestionId(-1L)
                 .build();
-
 
         parseQuestFromTextWall(quest, text);
 
@@ -68,12 +52,11 @@ public class QuestService {
 
     @Transactional
     public void parseQuestFromTextWall(Quest quest, String text) {
-//        quest = questRepository.create(quest);
         questRepository.save(quest);
         // TODO перед сохранением квеста надо проверить не существует ли квест в базе, если существует, то надо вернуть сообщение что квест уже есть
-//        Example<Quest> questExample = quest;
+
         Optional<Quest> questWithId = questRepository.findAll(Example.of(quest)).stream().findAny();
-//        Optional<Quest> questWithId = questRepository.find(quest).findAny();
+
         if(questWithId.isPresent()) {
             quest = questWithId.get();
         }

@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-//@WebServlet(name = "UserServlet", value = Go.USER)
 @MultipartConfig(fileSizeThreshold = 1 << 20)
 @Controller
 @RequiredArgsConstructor
@@ -83,8 +82,6 @@ public class UserController {
             return "redirect:login";
         }
 
-
-
         boolean isCurrentUserAdmin = currentUser.getRole().equals(Role.ADMIN);
 
         User user = userService.build(
@@ -97,10 +94,15 @@ public class UserController {
         if (parameterMap.containsKey(Key.CREATE)) {
             userService.create(user);
         } else if (parameterMap.containsKey(Key.UPDATE)) {
-            if (userService.isLoginExist(login)) {
-                redirectAttributes.addFlashAttribute("error", "Login already exist");
-                return "redirect:user?id="+id;
+
+            User originalUser = userService.get(Long.parseLong(id)).orElseThrow();
+
+            if (!originalUser.getLogin().equals(login) && userService.isLoginExist(login)) {
+                    redirectAttributes.addFlashAttribute("error",
+                            "Login already exist");
+                    return "redirect:user?id=" + id;
             }
+
             userService.update(user);
         } else if (parameterMap.containsKey(Key.DELETE)) {
             userService.delete(user);
@@ -111,17 +113,20 @@ public class UserController {
 
 
         if (!isCurrentUserAdmin) {
-            // текущий пользователь редактирует свой профиль
+            // current user(not admin) is editing his profile
             request.getSession().setAttribute("user", user);
             return "redirect:profile";
         } else {
             if (currentUser.getId().equals(Long.parseLong(id))) {
-                // админ редактирует свой профиль
+                // admin edits his profile, update session
                 request.getSession().setAttribute("user", user);
             }
+            // admin edits user's profile from users list
+            // source - the place where the admin came from and where he will return
+            // (need when admin editing his profile from users list)
             String source = (String) request.getSession().getAttribute("source");
             request.getSession().removeAttribute("source");
-            // администратор редактирует профиль другого пользователя
+
             return source != null ? "redirect:" + source : "redirect:profile";
         }
     }

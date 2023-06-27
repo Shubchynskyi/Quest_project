@@ -24,10 +24,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Optional;
 
-//@WebServlet(name = "QuestEditServlet", value = Go.QUEST_EDIT)
+
 @MultipartConfig(fileSizeThreshold = 1 << 20)
 @Controller
 @RequiredArgsConstructor
@@ -42,7 +41,7 @@ public class QuestEditController {
     public String showQuestForEdit(
             @RequestParam("id") String id,
             Model model
-    ){
+    ) {
         Optional<Quest> quest = questService.get(id);
         if (quest.isPresent()) {
             model.addAttribute(Key.QUEST, quest.get());
@@ -52,34 +51,15 @@ public class QuestEditController {
         }
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String questId = request.getParameter(Key.ID);
-        if (questService.get(questId).isPresent()) {
-            request.setAttribute(Key.QUEST, questService.get(questId).get());
-        }
-        Jsp.forward(request, response, Go.QUEST_EDIT);
-    }
-
     @PostMapping("quest-edit")
     public void saveQuest(
-            @RequestParam MultiValueMap<String,String> allParams,
+            @RequestParam MultiValueMap<String, String> allParams,
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
         if (allParams.containsKey(Key.QUEST_NAME)) {
             questEdit(request, response);
         } else if (allParams.containsKey(Key.QUESTION_ID)) {
-            questionEdit(request, response);
-        } else {
-            Jsp.forward(request, response, Go.QUESTS_LIST);
-        }
-    }
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Map<String, String[]> parameterMap = request.getParameterMap();
-        if (parameterMap.containsKey(Key.QUEST_NAME)) {
-            questEdit(request, response);
-        } else if (parameterMap.containsKey(Key.QUESTION_ID)) {
             questionEdit(request, response);
         } else {
             Jsp.forward(request, response, Go.QUESTS_LIST);
@@ -117,7 +97,7 @@ public class QuestEditController {
             }
             Jsp.redirect(response,
                     Key.ID_URI_PATTERN.formatted(Go.QUEST_EDIT, request.getParameter(Key.ID))
-                            + Key.LABEL_URI_PATTERN + question.getId());
+                    + Key.LABEL_URI_PATTERN + question.getId());
         }
     }
 }

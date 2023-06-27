@@ -14,27 +14,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
-//@GetMapping("login")
-//public String showLoginPage(){
-//        return "login";
-//        }
-//
-//@PostMapping("login")
-//public String enterLogin(
-//@RequestParam("login") String login,
-//@RequestParam("password") String password
-//        ){
-//        Optional<User> user = userService.get(login, password);
-//        if (user.isPresent()) {
-//        HttpSession session = request.getSession();
-//        session.setAttribute(Key.USER, user.get());
-//        Jsp.redirect(response, Go.PROFILE);
-//        } else {
-//        Jsp.redirect(response, Go.LOGIN);
-//        }
-//        return "login";
-//        }
-
 @Controller
 public class LoginController {
 

@@ -16,7 +16,7 @@ public class QuestParser {
 
     public String takeNextLine() {
         return stringList.remove(0);
-        //TODO exception when invalid quest
+        // TODO exception when invalid quest
     }
 
     public boolean isStringPresent() {
