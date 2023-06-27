@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+// TODO вынести наборы аннотаций в отдельную
 
 @Builder
 @Getter
@@ -22,24 +23,32 @@ public class User implements AbstractEntity {
 
     @Column(unique = true)
     private String login;
+
     private String password;
+
     @Enumerated(EnumType.STRING)
     private Role role;
+
     @OneToMany
     @JoinColumn(name = "users_id")
     @ToString.Exclude
     private List<Quest> quests;
+
     @OneToMany
     @JoinColumn(name = "users_id")
     @ToString.Exclude
     private final Collection<Game> games = new ArrayList<>();
 
     @ManyToMany
-    @JoinTable(name = "game", joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "quest_id", referencedColumnName = "id"))
+    @JoinTable(name = "game",
+            joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "quest_id", referencedColumnName = "id")
+    )
+
     private final Collection<Quest> questsInGame = new ArrayList<>();
 
     @Transient
-    public String getImage() {  //TODO move to DTO ???
+    public String getImage() {
         return "image-" + id;
     }
 }

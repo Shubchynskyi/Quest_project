@@ -2,12 +2,14 @@ package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.entity.*;
 import com.javarush.quest.shubchynskyi.exception.AppException;
-import com.javarush.quest.shubchynskyi.repository.impl.AnswerRepository;
-import com.javarush.quest.shubchynskyi.repository.impl.QuestRepository;
+import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
+import com.javarush.quest.shubchynskyi.repository.QuestRepository;
 import com.javarush.quest.shubchynskyi.util.Key;
 import com.javarush.quest.shubchynskyi.util.QuestParser;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,39 +19,21 @@ import java.util.concurrent.locks.ReentrantLock;
 import static com.javarush.quest.shubchynskyi.util.QuestMarks.*;
 
 @Service
+@RequiredArgsConstructor
 public class QuestService {
-    private QuestParser questParser;
-    private QuestionService questionService;
-    private QuestRepository questRepository;
-    private AnswerRepository answerRepository;
-    private final Lock lock = new ReentrantLock();
-
-    @Autowired
-    public void setQuestParser(QuestParser questParser) {
-        this.questParser = questParser;
-    }
-
-    @Autowired
-    public void setQuestionService(QuestionService questionService) {
-        this.questionService = questionService;
-    }
-
-    @Autowired
-    public void setQuestRepository(QuestRepository questRepository) {
-        this.questRepository = questRepository;
-    }
-
-    @Autowired
-    public void setAnswerRepository(AnswerRepository answerRepository) {
-        this.answerRepository = answerRepository;
-    }
+    private final QuestParser questParser;
+    private final QuestionService questionService;
+    private final QuestRepository questRepository;
+    private final AnswerRepository answerRepository;
+    private final Lock lock;
 
     @Transactional
-    public Quest create(String name, String text, String description, Long authorId) {
+    public Quest create(String name, String text, String description, String authorId) {
+
         Quest quest = Quest.builder()
                 .name(name)
                 .description(description)
-                .authorId(User.builder().id(authorId).build())
+                .authorId(User.builder().id(Long.valueOf(authorId)).build())
                 .build();
 
         parseQuestFromTextWall(quest, text);
@@ -58,7 +42,7 @@ public class QuestService {
     }
 
     public void update(Quest quest) {
-        questRepository.update(quest);
+        questRepository.save(quest);
     }
 
     @SuppressWarnings("unused")
@@ -68,9 +52,12 @@ public class QuestService {
 
     @Transactional
     public void parseQuestFromTextWall(Quest quest, String text) {
-        questRepository.create(quest);
-        Optional<Quest> questWithId = questRepository.find(quest).findAny();
-        if (questWithId.isPresent()) {
+        questRepository.save(quest);
+        // TODO перед сохранением квеста надо проверить не существует ли квест в базе, если существует, то надо вернуть сообщение что квест уже есть
+
+        Optional<Quest> questWithId = questRepository.findAll(Example.of(quest)).stream().findAny();
+
+        if(questWithId.isPresent()) {
             quest = questWithId.get();
         }
         lock.lock();
@@ -91,7 +78,7 @@ public class QuestService {
             }
 
             Collections.reverse((List<?>) quest.getQuestions());
-            questRepository.update(quest);
+            questRepository.save(quest);
         } finally {
             lock.unlock();
         }
@@ -134,7 +121,7 @@ public class QuestService {
             answersMapWithNullNextQuestionId.put(answer, blockNumber);
         }
 
-        answerRepository.create(answer);
+        answerRepository.save(answer);
         answers.add(answer);
     }
 
@@ -163,16 +150,16 @@ public class QuestService {
     }
 
     public Collection<Quest> getAll() {
-        return questRepository.getAll();
+        return questRepository.findAll();
     }
 
     @SuppressWarnings("unused")
     public Optional<Quest> get(Long id) {
-        return Optional.ofNullable(questRepository.get(id));
+        return questRepository.findById(id);
     }
 
     public Optional<Quest> get(String id) {
-        return Optional.ofNullable(questRepository.get(Long.parseLong(id)));
+        return get(Long.parseLong(id));
     }
 
 

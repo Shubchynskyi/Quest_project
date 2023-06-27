@@ -35,7 +35,7 @@
         <c:choose>
             <c:when test="${not empty sessionScope.user}">
                 <li><a href="profile" class="nav-link px-2 link-dark">Profile</a></li>
-                <%--                <li><a href="logout" class="nav-link px-2 link-dark">Logout</a></li>--%>
+                                <li><a href="logout" class="nav-link px-2 link-dark">Logout</a></li>
             </c:when>
             <c:otherwise>
                 <li><a href="login" class="nav-link px-2 link-dark">Login</a></li>

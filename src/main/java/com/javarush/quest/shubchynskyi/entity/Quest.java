@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Builder
 @Getter
@@ -41,5 +40,9 @@ public class Quest implements AbstractEntity {
     )
     @ToString.Exclude
     private final Collection<User> players = new ArrayList<>();
+    @Transient
+    public String getImage() {
+        return "quest-" + id;
+    }
 
 }

@@ -7,6 +7,11 @@
             <!-- Form Name -->
             <legend>Login form</legend>
 
+            <!-- Error Message -->
+            <c:if test="${not empty error}">
+                <div class="alert alert-danger">${error}</div>
+            </c:if>
+
             <!-- Text input-->
             <div class="form-group">
                 <label class="col-md-4 control-label" for="userLogin">Login</label>

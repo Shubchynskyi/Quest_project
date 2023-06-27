@@ -21,7 +21,7 @@
             <textarea id="questDescription"
                       name="questDescription"
                       class="w-100"
-                      style="resize: none">${requestScope.quest.description}</textarea>
+                      style="resize: none">${quest.description}</textarea>
         </div>
 
         <!-- Button -->
@@ -30,7 +30,7 @@
                     style="width: 200px; margin-bottom: 50px">
                 Сохранить
             </button>
-            <input name="id" type="hidden" value="${requestScope.quest.id}">
+            <input name="id" type="hidden" value="${quest.id}">
         </div>
     </form>
 </div>
@@ -38,7 +38,7 @@
 <hr class="hr hr-blurry"/>
 <div class="container">
 
-    <c:forEach var="question" items="${requestScope.quest.questions}">
+    <c:forEach var="question" items="${quest.questions}">
         <form class="row form-horizontal"
               action="quest-edit"
               method="post"
