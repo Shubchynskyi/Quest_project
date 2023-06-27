@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-// TODO вынести наборы аннотаций в отдельную
 
 @Builder
 @Getter
