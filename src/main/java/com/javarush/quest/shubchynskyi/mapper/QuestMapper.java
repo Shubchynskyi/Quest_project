@@ -5,7 +5,7 @@ import com.javarush.quest.shubchynskyi.entity.Quest;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface QuestMapper {
     QuestMapper INSTANCE = Mappers.getMapper(QuestMapper.class);
 

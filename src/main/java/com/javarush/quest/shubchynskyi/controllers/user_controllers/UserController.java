@@ -1,8 +1,10 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
+import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.exception.AppException;
+import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.util.Key;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -30,6 +33,7 @@ public class UserController {
 
     private final UserService userService;
     private final ImageService imageService;
+    private final UserMapper userMapper;
 
     @GetMapping("user")
     public String showUser(
@@ -49,15 +53,17 @@ public class UserController {
 
             if (session.getAttribute("user") != null) {
                 User user = (User) session.getAttribute("user");
-                if (user.getId().equals(id)) {
-                    model.addAttribute(Key.USER, user);
+                UserDTO userDTO = userMapper.userToUserDTOWithOutCollections(user);
+
+                if (userDTO.getId().equals(id)) {
+                    model.addAttribute(Key.USER, userDTO);
                 } else {
                     Optional<User> optionalUser = userService.get(id);
-                    optionalUser.ifPresent(value -> model.addAttribute(Key.USER, value));
+                    optionalUser.ifPresent(value -> model.addAttribute(Key.USER, userMapper.userToUserDTOWithOutCollections(value)));
                 }
             } else {
                 Optional<User> optionalUser = userService.get(id);
-                optionalUser.ifPresent(value -> model.addAttribute(Key.USER, value));
+                optionalUser.ifPresent(value -> model.addAttribute(Key.USER, userMapper.userToUserDTOWithOutCollections(value)));
             }
 
             return "user";
@@ -68,39 +74,34 @@ public class UserController {
 
     @PostMapping("user")
     public String editUser(
-            @RequestParam(Key.ID) String id,
-            @RequestParam(Key.LOGIN) String login,
-            @RequestParam(Key.PASSWORD) String password,
-            @RequestParam(Key.ROLE) String role,
+            @ModelAttribute UserDTO userDTO,
             RedirectAttributes redirectAttributes,
             HttpServletRequest request
     ) throws ServletException, IOException {
 
         User currentUser = (User) request.getSession().getAttribute("user");
 
-        if (currentUser == null) {
+        UserDTO currentUserDTO = userMapper.userToUserDTOWithOutCollections(currentUser);
+
+        if (currentUserDTO == null) {
             return "redirect:login";
         }
 
-        boolean isCurrentUserAdmin = currentUser.getRole().equals(Role.ADMIN);
+        boolean isCurrentUserAdmin = currentUserDTO.getRole().equals(Role.ADMIN);
 
-        User user = userService.build(
-                id,
-                login,
-                password,
-                role);
+        User user = userMapper.userDTOToUser(userDTO);
 
         Map<String, String[]> parameterMap = request.getParameterMap();
         if (parameterMap.containsKey(Key.CREATE)) {
             userService.create(user);
         } else if (parameterMap.containsKey(Key.UPDATE)) {
 
-            User originalUser = userService.get(Long.parseLong(id)).orElseThrow();
+            User originalUser = userService.get(userDTO.getId()).orElseThrow();
 
-            if (!originalUser.getLogin().equals(login) && userService.isLoginExist(login)) {
+            if (!originalUser.getLogin().equals(userDTO.getLogin()) && userService.isLoginExist(userDTO.getLogin())) {
                     redirectAttributes.addFlashAttribute("error",
                             "Login already exist");
-                    return "redirect:user?id=" + id;
+                    return "redirect:user?id=" + userDTO.getId();
             }
 
             userService.update(user);
@@ -117,7 +118,7 @@ public class UserController {
             request.getSession().setAttribute("user", user);
             return "redirect:profile";
         } else {
-            if (currentUser.getId().equals(Long.parseLong(id))) {
+            if (currentUserDTO.getId().equals(userDTO.getId())) {
                 // admin edits his profile, update session
                 request.getSession().setAttribute("user", user);
             }

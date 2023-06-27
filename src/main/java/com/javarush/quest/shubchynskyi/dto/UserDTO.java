@@ -14,9 +14,13 @@ import java.util.List;
 public class UserDTO {
     private Long id;
     private String login;
+    private String password;
     private Role role;
     private List<QuestDTO> quests;
     private List<GameDTO> games;
     private List<QuestDTO> questsInGame;
 
+    public String getImage() {
+        return "image-" + id;
+    }
 }
