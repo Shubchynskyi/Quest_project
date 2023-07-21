@@ -58,18 +58,21 @@ public class UserController {
                 if (userDTO.getId().equals(id)) {
                     model.addAttribute(Key.USER, userDTO);
                 } else {
-                    Optional<User> optionalUser = userService.get(id);
-                    optionalUser.ifPresent(value -> model.addAttribute(Key.USER, userMapper.userToUserDTOWithOutCollections(value)));
+                    addUserDtoToModel(model, id);
                 }
             } else {
-                Optional<User> optionalUser = userService.get(id);
-                optionalUser.ifPresent(value -> model.addAttribute(Key.USER, userMapper.userToUserDTOWithOutCollections(value)));
+                addUserDtoToModel(model, id);
             }
 
             return "user";
         } else {
             return "redirect:users";
         }
+    }
+
+    private void addUserDtoToModel(Model model, Long id) {
+        Optional<User> optionalUser = userService.get(id);
+        optionalUser.ifPresent(value -> model.addAttribute(Key.USER, userMapper.userToUserDTOWithOutCollections(value)));
     }
 
     @PostMapping("user")
