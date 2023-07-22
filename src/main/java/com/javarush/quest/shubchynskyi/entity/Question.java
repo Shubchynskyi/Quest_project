@@ -13,7 +13,7 @@ import java.util.Collection;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "question", schema = "game")
+@Table(name = "question")
 public class Question implements AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

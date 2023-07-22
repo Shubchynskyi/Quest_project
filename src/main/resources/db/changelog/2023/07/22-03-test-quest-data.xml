@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="Shubchynskyi (generated)" id="Create Quest without start id">
+        <insert tableName="quest">
+            <column name="id" valueNumeric="1"/>
+            <column name="users_id" valueNumeric="1"/>
+            <column name="description" value="Описание квеста"/>
+            <column name="name" value="Перед волшебным камнем"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Shubchynskyi (generated)" id="Add questions">
+        <insert tableName="question">
+            <column name="id" valueNumeric="10"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Ты видишь какую-то пещеру, что будешь делать?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="9"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Ты видишь Кикимору Болотную, которая что-то увлеченно печатает на ноутбуке."/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="8"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Кикимора прыгнула в болото, ноут утонул вместе с ней, но зато справа я вижу какой-то тоннель"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="6"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Ого. Вот она, большая куча золота."/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="4"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Какая-то странная дорога, она ведет назад или мне это кажется?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="12"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Ты перед волшебным камнем, на нем есть надписи.&#13;&#10;Что выберешь?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="11"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Ты видишь закрытый сундук, ну-с...&#13;&#10;И что будем делать?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="7"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Настоящий поступок, настоящего программиста.&#13;&#10;Теперь осталось только Java доучить, и все, дело в шляпе."/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="1"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="LOST"/>
+            <column name="text" value="Тут и сказочке конец.&#13;&#10;Ужасная смерть в неравном бою.&#13;&#10;Это поражение!"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="2"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="LOST"/>
+            <column name="text" value="И тут прибежали злые печенеги и убили тебя.&#13;&#10;Жадность до добра не доведет.&#13;&#10;Это поражение!"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="5"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Ты заходишь в пещеру, а там Кащей, с Бабой Ягой, и Змеем Горынычем смотрят ролики на Youtube.&#13;&#10;Что будешь делать?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="3"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="WIN"/>
+            <column name="text" value="Ура! Это победа!&#13;&#10;Но мне пора действительно кодить, хватит уже ерундой заниматься."/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="Shubchynskyi (generated)" id="Add start id into quest">
+        <update tableName="quest">
+            <column name="start_question_id" valueNumeric="12"/>
+            <where>id = 1</where>
+        </update>
+    </changeSet>
+
+    <changeSet author="Shubchynskyi (generated)" id="Add answers">
+        <insert tableName="answer">
+            <column name="id" valueNumeric="1"/>
+            <column name="next_question_id" valueNumeric="12"/>
+            <column name="question_id" valueNumeric="4"/>
+            <column name="text" value="Делать нечего, иду дальше...."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="2"/>
+            <column name="next_question_id" valueNumeric="1"/>
+            <column name="question_id" valueNumeric="5"/>
+            <column name="text" value="Ясно что! В Бой!!!"/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="3"/>
+            <column name="next_question_id" valueNumeric="11"/>
+            <column name="question_id" valueNumeric="6"/>
+            <column name="text" value="Что-то тут не то, закрою-ка я этот сундук.."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="4"/>
+            <column name="next_question_id" valueNumeric="2"/>
+            <column name="question_id" valueNumeric="6"/>
+            <column name="text" value="Ура. Набиваем карманы...."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="5"/>
+            <column name="next_question_id" valueNumeric="3"/>
+            <column name="question_id" valueNumeric="7"/>
+            <column name="text" value="Да, точно. Все, я быстро-быстро иду все повторять, учить, и кодить-кодить-кодить. Игры - это зло."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="6"/>
+            <column name="next_question_id" valueNumeric="4"/>
+            <column name="question_id" valueNumeric="7"/>
+            <column name="text" value="Стоп, мне же еще нужна литература... Поищу-ка я ее, вон и тропинка видна какая-то с табличкой &quot;в библиотеку&quot;"/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="7"/>
+            <column name="next_question_id" valueNumeric="10"/>
+            <column name="question_id" valueNumeric="8"/>
+            <column name="text" value="Ок, пойду-ка я туда, делать-то нечего."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="8"/>
+            <column name="next_question_id" valueNumeric="7"/>
+            <column name="question_id" valueNumeric="9"/>
+            <column name="text" value="Похоже без ноута никак разработчиком не стать. Бью Кикимору дубиной по башке, и теперь у меня большое будущее."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="9"/>
+            <column name="next_question_id" valueNumeric="8"/>
+            <column name="question_id" valueNumeric="9"/>
+            <column name="text" value="Скажу громко Эй ты, а ну отошла от ноута, ща я тебе покажу класс..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="10"/>
+            <column name="next_question_id" valueNumeric="12"/>
+            <column name="question_id" valueNumeric="9"/>
+            <column name="text" value="Кикимора? Ноутбук? Какие-то опасные грибы я съел... Бегом отсюда..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="11"/>
+            <column name="next_question_id" valueNumeric="5"/>
+            <column name="question_id" valueNumeric="10"/>
+            <column name="text" value="Держите меня семеро! Я достаю меч и быстро захожу в пещеру..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="12"/>
+            <column name="next_question_id" valueNumeric="12"/>
+            <column name="question_id" valueNumeric="10"/>
+            <column name="text" value="Та ну её нафиг. Я боюсь. Вернусь-ка я за подмогой."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="13"/>
+            <column name="next_question_id" valueNumeric="6"/>
+            <column name="question_id" valueNumeric="11"/>
+            <column name="text" value="Я ничего не боюсь, я его открою..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="14"/>
+            <column name="next_question_id" valueNumeric="12"/>
+            <column name="question_id" valueNumeric="11"/>
+            <column name="text" value="Кто ж его знает, что там, вернусь-ка я обратно..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="15"/>
+            <column name="next_question_id" valueNumeric="9"/>
+            <column name="question_id" valueNumeric="12"/>
+            <column name="text" value="прямо пойдешь - в разработчики пойдешь"/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="16"/>
+            <column name="next_question_id" valueNumeric="10"/>
+            <column name="question_id" valueNumeric="12"/>
+            <column name="text" value="направо пойдешь - свою смерть найдешь"/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="17"/>
+            <column name="next_question_id" valueNumeric="11"/>
+            <column name="question_id" valueNumeric="12"/>
+            <column name="text" value="налево пойдешь - в сказку попадешь"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

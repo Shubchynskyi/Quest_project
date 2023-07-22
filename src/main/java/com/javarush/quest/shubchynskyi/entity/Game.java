@@ -11,11 +11,12 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @ToString
-@Table(name = "game", schema = "game")
+@Table(name = "game")
 public class Game implements AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "quest_id")
     private Long questId;
     private Long currentQuestionId;
     @Column(name = "users_id")

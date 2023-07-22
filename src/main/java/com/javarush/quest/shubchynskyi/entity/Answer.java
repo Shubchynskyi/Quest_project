@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "answer", schema = "game")
+@Table(name = "answer")
 public class Answer implements AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
