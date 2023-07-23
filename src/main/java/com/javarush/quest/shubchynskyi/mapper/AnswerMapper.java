@@ -4,9 +4,10 @@ import com.javarush.quest.shubchynskyi.dto.AnswerDTO;
 import com.javarush.quest.shubchynskyi.entity.Answer;
 import org.mapstruct.Mapper;
 
+@SuppressWarnings("all")
 @Mapper(componentModel = "spring")
 public interface AnswerMapper {
 
     AnswerDTO answerToAnswerDTO(Answer answer);
-    Answer answerDTOToAnswer(AnswerDTO answerDTO);
+//    Answer answerDTOToAnswer(AnswerDTO answerDTO);
 }

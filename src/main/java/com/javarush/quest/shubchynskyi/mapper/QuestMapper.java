@@ -12,10 +12,6 @@ public interface QuestMapper {
 
     @Named("questToQuestDTOWithOutQuestions")
     @Mappings({
-            @Mapping(target = "id", source = "id"),
-            @Mapping(target = "name", source = "name"),
-            @Mapping(target = "description", source = "description"),
-            @Mapping(target = "startQuestionId", source = "startQuestionId"),
             @Mapping(target = "authorId", ignore = true),
             @Mapping(target = "questions", ignore = true),
             @Mapping(target = "players", ignore = true)
@@ -24,14 +20,9 @@ public interface QuestMapper {
 
     @Named("questToQuestDTO")
     @Mappings({
-            @Mapping(target = "id", source = "id"),
-            @Mapping(target = "name", source = "name"),
-            @Mapping(target = "description", source = "description"),
-            @Mapping(target = "startQuestionId", source = "startQuestionId"),
             @Mapping(target = "authorId", ignore = true),
-            @Mapping(target = "questions", source = "questions"),
             @Mapping(target = "players", ignore = true)
     })
     QuestDTO questToQuestDTO(Quest quest);
-    Quest questDTOToQuest(QuestDTO questDTO);
+//    Quest questDTOToQuest(QuestDTO questDTO);
 }
