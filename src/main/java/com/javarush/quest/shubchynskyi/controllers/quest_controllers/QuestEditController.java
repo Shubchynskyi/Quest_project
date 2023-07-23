@@ -4,6 +4,7 @@ package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.Question;
+import com.javarush.quest.shubchynskyi.mapper.QuestMapper;
 import com.javarush.quest.shubchynskyi.service.AnswerService;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.QuestService;
@@ -36,6 +37,7 @@ public class QuestEditController {
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final ImageService imageService;
+    private final QuestMapper questMapper;
 
     @GetMapping("quest-edit")
     public String showQuestForEdit(
@@ -44,7 +46,10 @@ public class QuestEditController {
     ) {
         Optional<Quest> quest = questService.get(id);
         if (quest.isPresent()) {
-            model.addAttribute(Key.QUEST, quest.get());
+            model.addAttribute(
+                    Key.QUEST,
+                    questMapper.questToQuestDTO(quest.get())
+            );
             return "quest-edit";
         } else {
             return "redirect:quest-create";

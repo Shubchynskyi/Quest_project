@@ -1,9 +1,11 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
 
+import com.javarush.quest.shubchynskyi.dto.QuestionDTO;
 import com.javarush.quest.shubchynskyi.entity.GameState;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.Question;
+import com.javarush.quest.shubchynskyi.mapper.QuestionMapper;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.service.QuestionService;
 import com.javarush.quest.shubchynskyi.util.Go;
@@ -24,6 +26,7 @@ public class QuestGameController {
 
     private final QuestService questService;
     private final QuestionService questionService;
+    private final QuestionMapper questionMapper;
 
     @GetMapping("quest")
     public String startQuest(
@@ -61,8 +64,10 @@ public class QuestGameController {
 
     private void setQuestionToRequest(HttpServletRequest request) {
         String questionId = request.getParameter(Key.QUESTION);
-        Optional<Question> questionOptional = questionService.get(questionId);
-        questionOptional.ifPresent(question -> request.setAttribute(Key.QUESTION, question));
+        QuestionDTO questionDTO = questionService.get(questionId)
+                .map(questionMapper::questionToQuestionDTO)
+                .orElseThrow();
+        request.setAttribute(Key.QUESTION, questionDTO);
     }
 
     private String fillRequestAndRedirect(HttpServletRequest request, String questionId) {
@@ -70,11 +75,11 @@ public class QuestGameController {
         if (questionOptional.isPresent()) {
             String questId = request.getParameter(Key.ID);
             String questName = request.getParameter(Key.QUEST_NAME);
-            Question question = questionOptional.get();
-            request.setAttribute(Key.QUESTION, question);
+            QuestionDTO questionDTO = questionMapper.questionToQuestionDTO(questionOptional.get());
+            request.setAttribute(Key.QUESTION, questionDTO);
             request.setAttribute(Key.ID, questId);
             request.setAttribute(Key.QUEST_NAME, questName);
-            String newUri = Key.NEXT_QUESTION_URI_PATTERN.formatted(Go.QUEST, Key.ID, questId, Key.QUESTION, question.getId());
+            String newUri = Key.NEXT_QUESTION_URI_PATTERN.formatted(Go.QUEST, Key.ID, questId, Key.QUESTION, questionDTO.getId());
             return "redirect:" + newUri;
         } else {
             return "redirect:/quests-list";

@@ -17,5 +17,8 @@ public class QuestionDTO {
     private String text;
     private GameState gameState;
     private List<AnswerDTO> answers;
+    public String getImage() {
+        return "question-" + id;
+    }
 
 }

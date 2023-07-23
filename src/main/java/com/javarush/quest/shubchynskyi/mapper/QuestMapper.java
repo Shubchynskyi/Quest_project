@@ -10,7 +10,7 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface QuestMapper {
 
-    @Named("questToQuestDTOWithOutAuthorId")
+    @Named("questToQuestDTOWithOutQuestions")
     @Mappings({
             @Mapping(target = "id", source = "id"),
             @Mapping(target = "name", source = "name"),
@@ -20,6 +20,18 @@ public interface QuestMapper {
             @Mapping(target = "questions", ignore = true),
             @Mapping(target = "players", ignore = true)
     })
-    QuestDTO questToQuestDTOWithOutAuthorId(Quest quest);
+    QuestDTO questToQuestDTOWithOutQuestions(Quest quest);
+
+    @Named("questToQuestDTO")
+    @Mappings({
+            @Mapping(target = "id", source = "id"),
+            @Mapping(target = "name", source = "name"),
+            @Mapping(target = "description", source = "description"),
+            @Mapping(target = "startQuestionId", source = "startQuestionId"),
+            @Mapping(target = "authorId", ignore = true),
+            @Mapping(target = "questions", source = "questions"),
+            @Mapping(target = "players", ignore = true)
+    })
+    QuestDTO questToQuestDTO(Quest quest);
     Quest questDTOToQuest(QuestDTO questDTO);
 }

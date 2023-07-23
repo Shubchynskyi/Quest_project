@@ -21,7 +21,7 @@ public class QuestsListController {
     @GetMapping("quests-list")
     public String showQuests(Model model) {
         List<QuestDTO> questDTOS = questService.getAll().stream()
-                .map(q -> q.map(questMapper::questToQuestDTOWithOutAuthorId))
+                .map(q -> q.map(questMapper::questToQuestDTOWithOutQuestions))
                 .flatMap(Optional::stream)
                 .toList();
         model.addAttribute("quests", questDTOS);

@@ -41,7 +41,7 @@ public interface UserMapper {
             @Mapping(target = "login", source = "login"),
             @Mapping(target = "password", ignore = true),
             @Mapping(target = "role", source = "role"),
-            @Mapping(target = "quests", qualifiedByName = "questToQuestDTOWithOutAuthorId"),
+            @Mapping(target = "quests", qualifiedByName = "questToQuestDTOWithOutQuestions"),
             @Mapping(target = "games", source = "games"),
             @Mapping(target = "questsInGame", source = "questsInGame")
     })
