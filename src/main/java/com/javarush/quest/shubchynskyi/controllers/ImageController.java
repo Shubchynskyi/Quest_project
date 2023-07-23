@@ -2,6 +2,7 @@ package com.javarush.quest.shubchynskyi.controllers;
 
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,13 +14,10 @@ import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/images")
+@RequiredArgsConstructor
 public class ImageController {
 
     private final ImageService imageService;
-
-    public ImageController(ImageService imageService) {
-        this.imageService = imageService;
-    }
 
     @GetMapping(value = "/{imageName}")
     public void getImage(@PathVariable("imageName") String imageName, HttpServletResponse response) throws IOException {

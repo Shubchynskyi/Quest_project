@@ -10,7 +10,7 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("classpath:/images/");
-//        registry.addResourceHandler("/ico/**")
-//                .addResourceLocations("/WEB-INF/images/ico/");
+        registry.addResourceHandler("/ico/**")
+                .addResourceLocations("/WEB-INF/images/ico/");
     }
 }

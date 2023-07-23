@@ -2,6 +2,7 @@ package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
+import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.util.Key;
@@ -26,6 +27,7 @@ public class SignupController {
 
     private final UserService userService;
     private final ImageService imageService;
+    private final UserMapper userMapper;
 
     @GetMapping("signup")
     public String showSignup(Model model) {
@@ -55,7 +57,8 @@ public class SignupController {
 
         User createdUser = userService.create(user).orElseThrow();
         imageService.uploadImage(request, user.getImage());
-        request.getSession().setAttribute("user", createdUser);
+        request.getSession()
+                .setAttribute("user", userMapper.userToUserDTOWithoutPassword(createdUser));
         return "redirect:profile";
     }
 }

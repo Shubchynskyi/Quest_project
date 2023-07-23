@@ -8,13 +8,12 @@ import com.javarush.quest.shubchynskyi.util.Key;
 import com.javarush.quest.shubchynskyi.util.QuestParser;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import static com.javarush.quest.shubchynskyi.util.QuestMarks.*;
 
@@ -149,8 +148,10 @@ public class QuestService {
         }
     }
 
-    public Collection<Quest> getAll() {
-        return questRepository.findAll();
+    public Collection<Optional<Quest>> getAll() {
+        return questRepository.findAll().stream()
+                .map(Optional::of)
+                .collect(Collectors.toList());
     }
 
     @SuppressWarnings("unused")

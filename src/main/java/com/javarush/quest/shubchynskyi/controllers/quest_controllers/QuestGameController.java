@@ -9,7 +9,6 @@ import com.javarush.quest.shubchynskyi.service.QuestionService;
 import com.javarush.quest.shubchynskyi.util.Go;
 import com.javarush.quest.shubchynskyi.util.Key;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,15 +48,14 @@ public class QuestGameController {
     }
 
     @PostMapping("quest")
-    public String nextStep(HttpServletRequest request,
-                           HttpServletResponse response) {
+    public String nextStep(HttpServletRequest request) {
         Map<String, String[]> parameterMap = request.getParameterMap();
         if (parameterMap.containsKey(Key.GAME_STATE)
             && !request.getParameter(Key.GAME_STATE).equals(GameState.PLAY.name())) {
             return "redirect:/quests-list";
         } else {
             String questionId = request.getParameter(Key.QUESTION_ID);
-            return fillRequestAndRedirect(request, response, questionId);
+            return fillRequestAndRedirect(request, questionId);
         }
     }
 
@@ -67,7 +65,7 @@ public class QuestGameController {
         questionOptional.ifPresent(question -> request.setAttribute(Key.QUESTION, question));
     }
 
-    private String fillRequestAndRedirect(HttpServletRequest request, HttpServletResponse response, String questionId) {
+    private String fillRequestAndRedirect(HttpServletRequest request, String questionId) {
         Optional<Question> questionOptional = questionService.get(questionId);
         if (questionOptional.isPresent()) {
             String questId = request.getParameter(Key.ID);

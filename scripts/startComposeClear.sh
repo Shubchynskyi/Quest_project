@@ -1,5 +1,5 @@
 #!/bin/bash
-#cd "$(dirname "$0")/.." || exit #if script not into root directory
+cd "$(dirname "$0")/.." || exit #if script not into root directory
 mvn clean install -DskipTests
 
 echo "Starting docker-compose"

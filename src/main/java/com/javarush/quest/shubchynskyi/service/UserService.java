@@ -5,12 +5,12 @@ import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,8 +56,10 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public Collection<User> getAll() {
-        return userRepository.findAll();
+    public Collection<Optional<User>> getAll() {
+        return userRepository.findAll().stream()
+                .map(Optional::of)
+                .collect(Collectors.toList());
     }
 
     public Optional<User> get(long id) {

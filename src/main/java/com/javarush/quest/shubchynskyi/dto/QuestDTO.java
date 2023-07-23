@@ -18,4 +18,8 @@ public class QuestDTO {
     private UserDTO authorId;
     private List<QuestionDTO> questions;
     private List<UserDTO> players;
+
+    public String getImage() {
+        return "quest-" + id;
+    }
 }

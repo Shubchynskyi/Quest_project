@@ -49,11 +49,11 @@ public class UserController {
                 session.setAttribute("source", source);
             }
 
-            model.addAttribute("source", source);
-
             if (session.getAttribute("user") != null) {
-                User user = (User) session.getAttribute("user");
-                UserDTO userDTO = userMapper.userToUserDTOWithOutCollections(user);
+                UserDTO userFromSession = (UserDTO) session.getAttribute("user");
+                UserDTO userDTO = userService.get(userFromSession.getId())
+                        .map(userMapper::userToUserDTOWithoutCollections)
+                        .orElseThrow();
 
                 if (userDTO.getId().equals(id)) {
                     model.addAttribute(Key.USER, userDTO);
@@ -72,7 +72,10 @@ public class UserController {
 
     private void addUserDtoToModel(Model model, Long id) {
         Optional<User> optionalUser = userService.get(id);
-        optionalUser.ifPresent(value -> model.addAttribute(Key.USER, userMapper.userToUserDTOWithOutCollections(value)));
+        optionalUser.ifPresent(value -> model.addAttribute(
+                Key.USER,
+                userMapper.userToUserDTOWithoutCollections(value))
+        );
     }
 
     @PostMapping("user")
@@ -82,13 +85,20 @@ public class UserController {
             HttpServletRequest request
     ) throws ServletException, IOException {
 
-        User currentUser = (User) request.getSession().getAttribute("user");
+        UserDTO userFromSession = (UserDTO) request.getSession().getAttribute("user");
 
-        UserDTO currentUserDTO = userMapper.userToUserDTOWithOutCollections(currentUser);
-
-        if (currentUserDTO == null) {
+        if (userFromSession == null) {
             return "redirect:login";
         }
+
+        Role userRole = userFromSession.getRole();
+        if (!userRole.equals(Role.ADMIN) && !userRole.equals(Role.MODERATOR)) {
+            return "redirect:profile";
+        }
+
+        UserDTO currentUserDTO = userService.get(userFromSession.getId())
+                .map(userMapper::userToUserDTOWithoutCollections)
+                .orElseThrow();
 
         boolean isCurrentUserAdmin = currentUserDTO.getRole().equals(Role.ADMIN);
 
@@ -110,7 +120,12 @@ public class UserController {
             userService.update(user);
         } else if (parameterMap.containsKey(Key.DELETE)) {
             userService.delete(user);
-            return "redirect:logout";
+            if (Objects.equals(user.getId(), userFromSession.getId())) {
+                return "redirect:logout";
+            } else {
+                return "redirect:users";
+            }
+
         } else throw new AppException(Key.UNKNOWN_COMMAND);
 
         imageService.uploadImage(request, user.getImage());
@@ -118,12 +133,12 @@ public class UserController {
 
         if (!isCurrentUserAdmin) {
             // current user(not admin) is editing his profile
-            request.getSession().setAttribute("user", user);
+            request.getSession().setAttribute("user", userMapper.userToUserDTOWithoutPassword(user));
             return "redirect:profile";
         } else {
             if (currentUserDTO.getId().equals(userDTO.getId())) {
                 // admin edits his profile, update session
-                request.getSession().setAttribute("user", user);
+                request.getSession().setAttribute("user", userMapper.userToUserDTOWithoutPassword(user));
             }
             // admin edits user's profile from users list
             // source - the place where the admin came from and where he will return

@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet author="Shubchynskyi (generated)" id="Create Quest without start id">
+    <changeSet author="d.shubchynskyi@gmail.com" id="Create Quest without start id">
         <insert tableName="quest">
             <column name="id" valueNumeric="1"/>
             <column name="users_id" valueNumeric="1"/>
@@ -14,7 +14,7 @@
         </insert>
     </changeSet>
 
-    <changeSet author="Shubchynskyi (generated)" id="Add questions">
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add questions">
         <insert tableName="question">
             <column name="id" valueNumeric="10"/>
             <column name="quest_id" valueNumeric="1"/>
@@ -89,14 +89,14 @@
         </insert>
     </changeSet>
 
-    <changeSet author="Shubchynskyi (generated)" id="Add start id into quest">
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add start id into quest">
         <update tableName="quest">
             <column name="start_question_id" valueNumeric="12"/>
             <where>id = 1</where>
         </update>
     </changeSet>
 
-    <changeSet author="Shubchynskyi (generated)" id="Add answers">
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add answers">
         <insert tableName="answer">
             <column name="id" valueNumeric="1"/>
             <column name="next_question_id" valueNumeric="12"/>

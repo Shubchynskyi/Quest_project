@@ -24,10 +24,11 @@
         <li><a href="quests-list" class="nav-link px-2 link-dark">Играть</a></li>
         <%--        <li><a href="#" class="nav-link px-2 link-dark disabled">Статистика</a></li>--%>
         <%-- admin--%>
-            <c:if test="${not empty sessionScope.user}">
+            <c:if test="${not empty sessionScope.user && (sessionScope.user.role == 'ADMIN' || sessionScope.user.role == 'MODERATOR')}">
                 <li><a href="users" class="nav-link px-2">Пользователи</a></li>
             </c:if>
-        <li><a href="create-quest" class="nav-link px-2">Создать квест</a></li>
+
+            <li><a href="create-quest" class="nav-link px-2">Создать квест</a></li>
         <%--        <li><a href="#" class="nav-link px-2 disabled">Редактировать квест</a></li>--%>
     </ul>
 
