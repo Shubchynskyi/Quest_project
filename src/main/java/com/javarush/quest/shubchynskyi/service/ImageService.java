@@ -21,8 +21,6 @@ public class ImageService {
 
     private final Path imagesFolder;
 
-    //TODO exception?
-
     public ImageService(@Value("${app.images-directory}") String imagesDirectory) throws IOException {
         imagesFolder = Paths.get(imagesDirectory);
         Files.createDirectories(imagesFolder);

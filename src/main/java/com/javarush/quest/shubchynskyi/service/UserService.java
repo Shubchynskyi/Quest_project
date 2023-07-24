@@ -22,23 +22,6 @@ public class UserService {
         return userRepository.exists(user);
     }
 
-//    public User build(String userLogin, String userPassword, String userRole) {
-//        return User.builder()
-//                .login(userLogin)
-//                .password(userPassword)
-//                .role(Role.valueOf(userRole))
-//                .build();
-//    }
-
-//    public User build(String userId, String userLogin, String userPassword, String userRole) {
-//        return User.builder()
-//                .id(Long.valueOf(userId))
-//                .login(userLogin)
-//                .password(userPassword)
-//                .role(Role.valueOf(userRole))
-//                .build();
-//    }
-
     @Transactional
     public Optional<User> create(User user) {
         userRepository.save(user);

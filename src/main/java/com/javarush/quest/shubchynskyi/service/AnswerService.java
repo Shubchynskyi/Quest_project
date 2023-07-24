@@ -4,7 +4,6 @@ import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,7 +12,6 @@ public class AnswerService {
 
     private final AnswerRepository answerRepository;
 
-  // TODO refactoring
     public void create(Answer answer) {
         answerRepository.save(answer);
     }

@@ -83,26 +83,21 @@ public class UserController {
             RedirectAttributes redirectAttributes,
             HttpServletRequest request
     ) throws ServletException, IOException {
-
         if (userDTOFromSession == null) {
             return REDIRECT + Route.LOGIN;
         }
-
         if (!isUserPermitted(userDTOFromModel, userDTOFromSession)) {
             return REDIRECT + Route.PROFILE;
         }
 
         userDTOFromSession = getUserDTOWithPassword(userDTOFromSession);
-
         User userFromModel = userMapper.userDTOToUser(userDTOFromModel);
 
-        String redirectUrl = performUserActionAndResolveRedirect(userDTOFromModel, userDTOFromSession, redirectAttributes, request, userFromModel);
+        String redirectUrl = performUserActionAndResolveRedirect(userDTOFromSession, redirectAttributes, request, userFromModel);
         if (redirectUrl != null) {
             return redirectUrl;
         }
-
         imageService.uploadImage(request, userFromModel.getImage());
-
         return handleAdminFlow(request, userDTOFromSession, userFromModel);
     }
 
@@ -121,36 +116,42 @@ public class UserController {
     }
 
     private String performUserActionAndResolveRedirect(
-            UserDTO userDTOFromModel,
             UserDTO userDTOFromSession,
             RedirectAttributes redirectAttributes,
             HttpServletRequest request,
-            User user) {
+            User userFromModel) {
+
         Map<String, String[]> parameterMap = request.getParameterMap();
+
         if (parameterMap.containsKey(CREATE)) {
-            userService.create(user);
+            userService.create(userFromModel);
         } else if (parameterMap.containsKey(UPDATE)) {
+            User originalUser = userService.get(userFromModel.getId()).orElseThrow();
 
-            User originalUser = userService.get(userDTOFromModel.getId()).orElseThrow();
-
-            if (!originalUser.getLogin().equals(userDTOFromModel.getLogin())
-                && userService.isLoginExist(userDTOFromModel.getLogin())) {
-                redirectAttributes.addFlashAttribute(
-                        ERROR, LOGIN_ALREADY_EXIST
-                );
-                return REDIRECT + Route.USER_ID + userDTOFromModel.getId();
+            String loginRedirect = checkExistingLogin(redirectAttributes, userFromModel, originalUser);
+            if (loginRedirect != null) {
+                return loginRedirect;
             }
-
-            userService.update(user);
+            userService.update(userFromModel);
         } else if (parameterMap.containsKey(DELETE)) {
-            userService.delete(user);
-            if (user.getId().equals(userDTOFromSession.getId())) {
+            userService.delete(userFromModel);
+            if (userFromModel.getId().equals(userDTOFromSession.getId())) {
                 return REDIRECT + Route.LOGOUT;
             } else {
                 return REDIRECT + Route.USERS;
             }
-
         } else throw new AppException(UNKNOWN_COMMAND);
+        return null;
+    }
+
+    private String checkExistingLogin(RedirectAttributes redirectAttributes, User userFromModel, User originalUser) {
+        if (!originalUser.getLogin().equals(userFromModel.getLogin())
+            && userService.isLoginExist(userFromModel.getLogin())) {
+            redirectAttributes.addFlashAttribute(
+                    ERROR, LOGIN_ALREADY_EXIST
+            );
+            return REDIRECT + Route.USER_ID + userFromModel.getId();
+        }
         return null;
     }
 
