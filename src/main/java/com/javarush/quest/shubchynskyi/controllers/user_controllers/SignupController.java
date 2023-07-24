@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
+import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
@@ -13,8 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -36,29 +37,25 @@ public class SignupController {
     }
 
     @PostMapping("signup")
-    public String signup(
-            @RequestParam(Key.LOGIN) String login,
-            @RequestParam(Key.PASSWORD) String password,
-            @RequestParam(Key.ROLE) String role,
-            HttpServletRequest request,
-            RedirectAttributes redirectAttributes
+    public String signup(@ModelAttribute UserDTO userDTO,
+                         HttpServletRequest request,
+                         RedirectAttributes redirectAttributes
     ) throws ServletException, IOException {
 
-        if (userService.isLoginExist(login)) {
-            redirectAttributes.addFlashAttribute("error",
-                    "Login already exist");
+        if (isLoginExist(userDTO.getLogin())) {
+            redirectAttributes.addFlashAttribute("error", "Login already exist");
             return "redirect:signup";
         }
 
-        User user = userService.build(
-                login,
-                password,
-                role);
-
-        User createdUser = userService.create(user).orElseThrow();
-        imageService.uploadImage(request, user.getImage());
+        User createdUser = userService.create(userMapper.userDTOToUser(userDTO)).orElseThrow();
+        imageService.uploadImage(request, createdUser.getImage());
         request.getSession()
                 .setAttribute("user", userMapper.userToUserDTOWithoutPassword(createdUser));
         return "redirect:profile";
     }
+
+    private boolean isLoginExist(String login) {
+        return userService.isLoginExist(login);
+    }
 }
+

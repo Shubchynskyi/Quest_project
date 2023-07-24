@@ -91,9 +91,11 @@ public class UserController {
             return "redirect:login";
         }
 
-        Role userRole = userFromSession.getRole();
-        if (!userRole.equals(Role.ADMIN) && !userRole.equals(Role.MODERATOR)) {
-            return "redirect:profile";
+        if(!userFromSession.getId().equals(userDTO.getId())) {
+            Role userRole = userFromSession.getRole();
+            if (!userRole.equals(Role.ADMIN) && !userRole.equals(Role.MODERATOR)) {
+                return "redirect:profile";
+            }
         }
 
         UserDTO currentUserDTO = userService.get(userFromSession.getId())

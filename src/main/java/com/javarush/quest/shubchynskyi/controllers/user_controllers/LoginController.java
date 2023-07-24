@@ -43,7 +43,7 @@ public class LoginController {
         } else {
             redirectAttributes.addFlashAttribute("error",
                     "Data is incorrect, please check your username and password");
-            return Go.LOGIN;
+            return "redirect:" + Go.LOGIN;
         }
     }
 

@@ -10,8 +10,6 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring", uses = QuestMapper.class)
 public interface UserMapper {
 
-//    UserDTO userToUserDTO(User user);
-
     @Named("userToUserDTOWithoutPasswordAndCollections")
     @Mappings({
             @Mapping(target = "password", ignore = true),

@@ -4,6 +4,7 @@ package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.Question;
+import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.mapper.QuestMapper;
 import com.javarush.quest.shubchynskyi.service.AnswerService;
 import com.javarush.quest.shubchynskyi.service.ImageService;
@@ -72,37 +73,69 @@ public class QuestEditController {
     }
 
     private void questEdit(HttpServletRequest request, HttpServletResponse response) {
-        if (questService.get(request.getParameter(Key.ID)).isPresent()) {
-            Quest quest = questService.get(request.getParameter(Key.ID)).get();
-            String newName = request.getParameter(Key.QUEST_NAME);
+        String questId = request.getParameter(Key.ID);
+        questService.get(questId).ifPresent(quest -> {
+            updateQuest(request, quest);
+            redirect(response, questId);
+        });
+    }
+
+    private void updateQuest(HttpServletRequest request, Quest quest) {
+        String newName = request.getParameter(Key.QUEST_NAME);
+        String newDescription = request.getParameter(Key.QUEST_DESCRIPTION);
+
+        if (newName != null) {
             quest.setName(newName);
-            String newDescription = request.getParameter(Key.QUEST_DESCRIPTION);
+        }
+        if (newDescription != null) {
             quest.setDescription(newDescription);
-            questService.update(quest);
-            Jsp.redirect(response, Key.ID_URI_PATTERN.formatted(Go.QUEST_EDIT, request.getParameter(Key.ID)));
+        }
+
+        questService.update(quest);
+    }
+
+    private void redirect(HttpServletResponse response, String questId) {
+        Jsp.redirect(response, Key.ID_URI_PATTERN.formatted(Go.QUEST_EDIT, questId));
+    }
+
+    private void questionEdit(HttpServletRequest request, HttpServletResponse response) {
+        String questionId = request.getParameter(Key.QUESTION_ID);
+        Optional<Question> optionalQuestion = questionService.get(questionId);
+        optionalQuestion.ifPresent(question -> {
+            try {
+                updateQuestion(request, question);
+                updateAnswers(request, question);
+                redirect(response, request.getParameter(Key.ID), String.valueOf(question.getId()));
+            } catch (IOException | ServletException e) {
+                e.printStackTrace();
+                throw new AppException("Failed to edit the question.", e);
+            }
+        });
+    }
+
+    private void updateQuestion(HttpServletRequest request, Question question) throws ServletException, IOException {
+        imageService.uploadImage(request, question.getImage());
+        String newQuestionText = request.getParameter(Key.QUESTION_TEXT);
+        if (newQuestionText != null && !newQuestionText.equals(question.getText())) {
+            question.setText(newQuestionText);
+            questionService.update(question);
         }
     }
 
-    private void questionEdit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String questionId = request.getParameter(Key.QUESTION_ID);
-        if (questionService.get(questionId).isPresent()) {
-            Question question = questionService.get(questionId).get();
-            imageService.uploadImage(request, question.getImage());
-            String newQuestionText = request.getParameter(Key.QUESTION_TEXT);
-            if (!newQuestionText.equals(question.getText())) {
-                question.setText(newQuestionText);
-                questionService.update(question);
+    private void updateAnswers(HttpServletRequest request, Question question) {
+        for (Answer answer : question.getAnswers()) {
+            String answerNewText = request.getParameter(Key.ANSWER + answer.getId());
+            if (answerNewText != null && !answerNewText.equals(answer.getText())) {
+                answer.setText(answerNewText);
+                answerService.update(answer);
             }
-            for (Answer answer : question.getAnswers()) {
-                String answerNewText = request.getParameter(Key.ANSWER + answer.getId());
-                if (!answerNewText.equals(answer.getText())) {
-                    answer.setText(answerNewText);
-                    answerService.update(answer);
-                }
-            }
-            Jsp.redirect(response,
-                    Key.ID_URI_PATTERN.formatted(Go.QUEST_EDIT, request.getParameter(Key.ID))
-                    + Key.LABEL_URI_PATTERN + question.getId());
         }
     }
+
+    private void redirect(HttpServletResponse response, String questId, String questionId) {
+        Jsp.redirect(response,
+                Key.ID_URI_PATTERN.formatted(Go.QUEST_EDIT, questId)
+                + Key.LABEL_URI_PATTERN + questionId);
+    }
+
 }

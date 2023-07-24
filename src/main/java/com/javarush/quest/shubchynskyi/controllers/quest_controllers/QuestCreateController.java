@@ -25,8 +25,9 @@ public class QuestCreateController {
         if (Objects.nonNull(session.getAttribute("user"))) {
             return "create-quest";
         } else {
-            // TODO нужно передавать метку, чтобы сразу после ввода логина и пароля
-            //  попадать не в профиль а на создание квеста
+            // TODO if the user was not logged in and clicked "create quest":
+            //  - redirected to the login with the label "source" = "quest-create" (the label in the controller is optional
+            //  - if the label is present, then after login redirect to create a quest
             return "redirect:login";
         }
     }
@@ -39,6 +40,7 @@ public class QuestCreateController {
             @RequestParam("id") String userId
     ) {
         Quest quest = questService.create(questName, questText, questDescription, userId);
+        // TODO if quest already exist (quest name) -> add error to flash and redirect
         return "redirect:quest-edit?id=" + quest.getId();
     }
 }
