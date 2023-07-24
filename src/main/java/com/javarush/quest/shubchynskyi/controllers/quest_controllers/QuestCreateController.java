@@ -2,7 +2,8 @@ package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.service.QuestService;
-import com.javarush.quest.shubchynskyi.util.Key;
+import com.javarush.quest.shubchynskyi.util.constant.Route;
+import com.javarush.quest.shubchynskyi.util.constant.Key;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -12,35 +13,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Objects;
 
+
+import static com.javarush.quest.shubchynskyi.util.constant.Route.REDIRECT;
+import static com.javarush.quest.shubchynskyi.util.constant.Key.*;
+
 @Controller
 @RequiredArgsConstructor
 public class QuestCreateController {
 
     private final QuestService questService;
 
-    @GetMapping("create-quest")
+    @GetMapping(CREATE_QUEST)
     public String showCreateQuestPage(
             HttpSession session
     ) {
-        if (Objects.nonNull(session.getAttribute("user"))) {
-            return "create-quest";
+        if (Objects.nonNull(session.getAttribute(Key.USER))) {
+            return CREATE_QUEST;
         } else {
             // TODO if the user was not logged in and clicked "create quest":
             //  - redirected to the login with the label "source" = "quest-create" (the label in the controller is optional
             //  - if the label is present, then after login redirect to create a quest
-            return "redirect:login";
+            return REDIRECT + Route.LOGIN;
         }
     }
 
-    @PostMapping("create-quest")
+    @PostMapping(CREATE_QUEST)
     public String createQuest(
-            @RequestParam(Key.QUEST_NAME) String questName,
-            @RequestParam(Key.QUEST_TEXT) String questText,
-            @RequestParam(Key.QUEST_DESCRIPTION) String questDescription,
-            @RequestParam("id") String userId
+            @RequestParam(QUEST_NAME) String questName,
+            @RequestParam(QUEST_TEXT) String questText,
+            @RequestParam(QUEST_DESCRIPTION) String questDescription,
+            @RequestParam(ID) String userId
     ) {
         Quest quest = questService.create(questName, questText, questDescription, userId);
         // TODO if quest already exist (quest name) -> add error to flash and redirect
-        return "redirect:quest-edit?id=" + quest.getId();
+        return REDIRECT + Route.QUEST_EDIT_ID + quest.getId();
     }
 }

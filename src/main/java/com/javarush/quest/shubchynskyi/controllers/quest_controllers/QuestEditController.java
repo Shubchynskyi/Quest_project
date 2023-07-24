@@ -10,13 +10,10 @@ import com.javarush.quest.shubchynskyi.service.AnswerService;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.service.QuestionService;
-import com.javarush.quest.shubchynskyi.util.Go;
-import com.javarush.quest.shubchynskyi.util.Jsp;
-import com.javarush.quest.shubchynskyi.util.Key;
+import com.javarush.quest.shubchynskyi.util.constant.Route;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.util.Optional;
+
+import static com.javarush.quest.shubchynskyi.util.constant.Route.REDIRECT;
+import static com.javarush.quest.shubchynskyi.util.constant.Key.*;
 
 
 @MultipartConfig(fileSizeThreshold = 1 << 20)
@@ -40,49 +40,54 @@ public class QuestEditController {
     private final ImageService imageService;
     private final QuestMapper questMapper;
 
-    @GetMapping("quest-edit")
+    @GetMapping(QUEST_EDIT)
     public String showQuestForEdit(
-            @RequestParam("id") String id,
+            @RequestParam(ID) String id,
             Model model
     ) {
         Optional<Quest> quest = questService.get(id);
         if (quest.isPresent()) {
             model.addAttribute(
-                    Key.QUEST,
+                    QUEST,
                     questMapper.questToQuestDTO(quest.get())
             );
-            return "quest-edit";
+            return QUEST_EDIT;
         } else {
-            return "redirect:quest-create";
+            return REDIRECT + Route.QUEST_CREATE;
         }
     }
 
-    @PostMapping("quest-edit")
-    public void saveQuest(
-            @RequestParam MultiValueMap<String, String> allParams,
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws ServletException, IOException {
-        if (allParams.containsKey(Key.QUEST_NAME)) {
-            questEdit(request, response);
-        } else if (allParams.containsKey(Key.QUESTION_ID)) {
-            questionEdit(request, response);
+    @PostMapping(QUEST_EDIT)
+    public String saveQuest(@RequestParam MultiValueMap<String, String> allParams, HttpServletRequest request) {
+        String viewName;
+
+        if (allParams.containsKey(QUEST_NAME)) {
+            viewName = questEdit(allParams);
+        } else if (allParams.containsKey(QUESTION_ID)) {
+            viewName = questionEdit(allParams, request);
         } else {
-            Jsp.forward(request, response, Go.QUESTS_LIST);
+            viewName = Route.QUESTS_LIST;
+        }
+
+        return viewName;
+    }
+
+    private String questEdit(MultiValueMap<String, String> allParams) {
+        String questId = allParams.getFirst(ID);
+        Optional<Quest> optionalQuest = questService.get(questId);
+
+        if (optionalQuest.isPresent()) {
+            Quest quest = optionalQuest.get();
+            updateQuest(allParams, quest);
+            return REDIRECT + ID_URI_PATTERN.formatted(Route.QUEST_EDIT, questId);
+        } else {
+            return Route.QUESTS_LIST;  // fallback if quest not found
         }
     }
 
-    private void questEdit(HttpServletRequest request, HttpServletResponse response) {
-        String questId = request.getParameter(Key.ID);
-        questService.get(questId).ifPresent(quest -> {
-            updateQuest(request, quest);
-            redirect(response, questId);
-        });
-    }
-
-    private void updateQuest(HttpServletRequest request, Quest quest) {
-        String newName = request.getParameter(Key.QUEST_NAME);
-        String newDescription = request.getParameter(Key.QUEST_DESCRIPTION);
+    private void updateQuest(MultiValueMap<String, String> allParams, Quest quest) {
+        String newName = allParams.getFirst(QUEST_NAME);
+        String newDescription = allParams.getFirst(QUEST_DESCRIPTION);
 
         if (newName != null) {
             quest.setName(newName);
@@ -94,48 +99,43 @@ public class QuestEditController {
         questService.update(quest);
     }
 
-    private void redirect(HttpServletResponse response, String questId) {
-        Jsp.redirect(response, Key.ID_URI_PATTERN.formatted(Go.QUEST_EDIT, questId));
-    }
-
-    private void questionEdit(HttpServletRequest request, HttpServletResponse response) {
-        String questionId = request.getParameter(Key.QUESTION_ID);
+    private String questionEdit(MultiValueMap<String, String> allParams, HttpServletRequest request) {
+        String questionId = allParams.getFirst(QUESTION_ID);
         Optional<Question> optionalQuestion = questionService.get(questionId);
-        optionalQuestion.ifPresent(question -> {
-            try {
-                updateQuestion(request, question);
-                updateAnswers(request, question);
-                redirect(response, request.getParameter(Key.ID), String.valueOf(question.getId()));
-            } catch (IOException | ServletException e) {
-                e.printStackTrace();
-                throw new AppException("Failed to edit the question.", e);
-            }
-        });
+
+        if (optionalQuestion.isPresent()) {
+            Question question = optionalQuestion.get();
+            updateQuestion(allParams, question, request);
+            updateAnswers(allParams, question);
+            return REDIRECT + ID_URI_PATTERN.formatted(Route.QUEST_EDIT, allParams.getFirst(ID))
+                   + LABEL_URI_PATTERN + question.getId();
+        } else {
+            return Route.QUESTS_LIST;  // fallback if question not found
+        }
     }
 
-    private void updateQuestion(HttpServletRequest request, Question question) throws ServletException, IOException {
-        imageService.uploadImage(request, question.getImage());
-        String newQuestionText = request.getParameter(Key.QUESTION_TEXT);
+    private void updateQuestion(MultiValueMap<String, String> allParams, Question question, HttpServletRequest request) {
+        try {
+            imageService.uploadImage(request, question.getImage());
+        } catch (IOException | ServletException e) {
+            throw new AppException(IMAGE_UPLOAD_ERROR, e);
+        }
+
+        String newQuestionText = allParams.getFirst(QUESTION_TEXT);
         if (newQuestionText != null && !newQuestionText.equals(question.getText())) {
             question.setText(newQuestionText);
             questionService.update(question);
         }
     }
 
-    private void updateAnswers(HttpServletRequest request, Question question) {
+    private void updateAnswers(MultiValueMap<String, String> allParams, Question question) {
         for (Answer answer : question.getAnswers()) {
-            String answerNewText = request.getParameter(Key.ANSWER + answer.getId());
+            String answerNewText = allParams.getFirst(ANSWER + answer.getId());
             if (answerNewText != null && !answerNewText.equals(answer.getText())) {
                 answer.setText(answerNewText);
                 answerService.update(answer);
             }
         }
-    }
-
-    private void redirect(HttpServletResponse response, String questId, String questionId) {
-        Jsp.redirect(response,
-                Key.ID_URI_PATTERN.formatted(Go.QUEST_EDIT, questId)
-                + Key.LABEL_URI_PATTERN + questionId);
     }
 
 }

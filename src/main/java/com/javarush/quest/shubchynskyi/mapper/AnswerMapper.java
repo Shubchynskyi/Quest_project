@@ -9,5 +9,5 @@ import org.mapstruct.Mapper;
 public interface AnswerMapper {
 
     AnswerDTO answerToAnswerDTO(Answer answer);
-//    Answer answerDTOToAnswer(AnswerDTO answerDTO);
+    Answer answerDTOToAnswer(AnswerDTO answerDTO);
 }

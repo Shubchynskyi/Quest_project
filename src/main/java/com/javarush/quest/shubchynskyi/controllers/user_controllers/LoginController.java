@@ -3,8 +3,7 @@ package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.UserService;
-import com.javarush.quest.shubchynskyi.util.Go;
-import com.javarush.quest.shubchynskyi.util.Key;
+import com.javarush.quest.shubchynskyi.util.constant.Route;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,6 +14,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
+import static com.javarush.quest.shubchynskyi.util.constant.Route.REDIRECT;
+import static com.javarush.quest.shubchynskyi.util.constant.Key.*;
+
 @Controller
 @RequiredArgsConstructor
 public class LoginController {
@@ -22,28 +24,29 @@ public class LoginController {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    @GetMapping("login")
+    @GetMapping(LOGIN)
     public String showLoginPage() {
-        return Go.LOGIN;
+        return Route.LOGIN;
     }
 
-    @PostMapping("login")
-    public String doLogin(@RequestParam(Key.LOGIN) String login,
-                          @RequestParam(Key.PASSWORD) String password,
+    @PostMapping(LOGIN)
+    public String doLogin(@RequestParam(LOGIN) String login,
+                          @RequestParam(PASSWORD) String password,
                           HttpSession session,
                           RedirectAttributes redirectAttributes
     ) {
         Optional<User> user = userService.get(login, password);
         if (user.isPresent()) {
             session.setAttribute(
-                    Key.USER,
+                    USER,
                     userMapper.userToUserDTOWithoutPassword(user.get())
             );
-            return "redirect:" + Go.PROFILE;
+            return REDIRECT + Route.PROFILE;
         } else {
-            redirectAttributes.addFlashAttribute("error",
-                    "Data is incorrect, please check your username and password");
-            return "redirect:" + Go.LOGIN;
+            redirectAttributes.addFlashAttribute(
+                    ERROR,
+                    DATA_IS_INCORRECT_PLEASE_CHECK_YOUR_USERNAME_AND_PASSWORD);
+            return REDIRECT + Route.LOGIN;
         }
     }
 

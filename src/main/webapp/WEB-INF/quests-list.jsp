@@ -8,7 +8,7 @@
         <div class="row mb-4">
             <div class="col-lg-4">
                 <div class="card">
-                    <img src="${quest.image}" class="card-img-top" alt="...">
+<%--                    <img src="${quest.image}" class="card-img-top" alt="...">--%>
                     <div class="card-body">
                         <h5 class="card-title">${quest.name}</h5>
 <%--                        <p class="card-text">${quest.description}</p>--%>
@@ -21,4 +21,4 @@
     </c:forEach>
 
 </div>
-<c:import url="parts/footer.jsp"/>
+<%@include file="parts/footer.jsp" %>

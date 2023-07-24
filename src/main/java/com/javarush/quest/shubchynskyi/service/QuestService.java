@@ -4,7 +4,7 @@ import com.javarush.quest.shubchynskyi.entity.*;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 import com.javarush.quest.shubchynskyi.repository.QuestRepository;
-import com.javarush.quest.shubchynskyi.util.Key;
+import com.javarush.quest.shubchynskyi.util.constant.Key;
 import com.javarush.quest.shubchynskyi.util.QuestParser;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

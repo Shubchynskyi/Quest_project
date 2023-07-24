@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.service;
 
-import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -23,22 +22,22 @@ public class UserService {
         return userRepository.exists(user);
     }
 
-    public User build(String userLogin, String userPassword, String userRole) {
-        return User.builder()
-                .login(userLogin)
-                .password(userPassword)
-                .role(Role.valueOf(userRole))
-                .build();
-    }
+//    public User build(String userLogin, String userPassword, String userRole) {
+//        return User.builder()
+//                .login(userLogin)
+//                .password(userPassword)
+//                .role(Role.valueOf(userRole))
+//                .build();
+//    }
 
-    public User build(String userId, String userLogin, String userPassword, String userRole) {
-        return User.builder()
-                .id(Long.valueOf(userId))
-                .login(userLogin)
-                .password(userPassword)
-                .role(Role.valueOf(userRole))
-                .build();
-    }
+//    public User build(String userId, String userLogin, String userPassword, String userRole) {
+//        return User.builder()
+//                .id(Long.valueOf(userId))
+//                .login(userLogin)
+//                .password(userPassword)
+//                .role(Role.valueOf(userRole))
+//                .build();
+//    }
 
     @Transactional
     public Optional<User> create(User user) {

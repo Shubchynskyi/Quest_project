@@ -6,7 +6,7 @@ import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.UserService;
-import com.javarush.quest.shubchynskyi.util.Key;
+import com.javarush.quest.shubchynskyi.util.constant.Route;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +20,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 
+import static com.javarush.quest.shubchynskyi.util.constant.Route.REDIRECT;
+import static com.javarush.quest.shubchynskyi.util.constant.Key.*;
+
 
 @MultipartConfig(fileSizeThreshold = 1 << 20)
 @Controller
@@ -30,28 +33,28 @@ public class SignupController {
     private final ImageService imageService;
     private final UserMapper userMapper;
 
-    @GetMapping("signup")
+    @GetMapping(SIGNUP)
     public String showSignup(Model model) {
-        model.addAttribute(Key.ROLES, Role.values());
-        return "signup";
+        model.addAttribute(ROLES, Role.values());
+        return Route.SIGNUP;
     }
 
-    @PostMapping("signup")
+    @PostMapping(SIGNUP)
     public String signup(@ModelAttribute UserDTO userDTO,
                          HttpServletRequest request,
                          RedirectAttributes redirectAttributes
     ) throws ServletException, IOException {
 
         if (isLoginExist(userDTO.getLogin())) {
-            redirectAttributes.addFlashAttribute("error", "Login already exist");
-            return "redirect:signup";
+            redirectAttributes.addFlashAttribute(ERROR, LOGIN_ALREADY_EXIST);
+            return REDIRECT + Route.SIGNUP;
         }
 
         User createdUser = userService.create(userMapper.userDTOToUser(userDTO)).orElseThrow();
         imageService.uploadImage(request, createdUser.getImage());
         request.getSession()
-                .setAttribute("user", userMapper.userToUserDTOWithoutPassword(createdUser));
-        return "redirect:profile";
+                .setAttribute(USER, userMapper.userToUserDTOWithoutPassword(createdUser));
+        return REDIRECT + Route.PROFILE;
     }
 
     private boolean isLoginExist(String login) {

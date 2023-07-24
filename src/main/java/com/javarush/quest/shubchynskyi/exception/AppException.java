@@ -9,13 +9,8 @@ public class AppException extends RuntimeException{
         super(message);
     }
 
-    @SuppressWarnings("unused")
     public AppException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    @SuppressWarnings("unused")
-    public AppException(Throwable cause) {
-        super(cause);
-    }
 }

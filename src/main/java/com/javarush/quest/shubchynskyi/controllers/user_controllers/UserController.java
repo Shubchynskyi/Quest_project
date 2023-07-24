@@ -7,7 +7,7 @@ import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.UserService;
-import com.javarush.quest.shubchynskyi.util.Key;
+import com.javarush.quest.shubchynskyi.util.constant.Route;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,16 +15,16 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import static com.javarush.quest.shubchynskyi.util.constant.Key.*;
+import static com.javarush.quest.shubchynskyi.util.constant.Route.REDIRECT;
 
 @MultipartConfig(fileSizeThreshold = 1 << 20)
 @Controller
@@ -35,28 +35,26 @@ public class UserController {
     private final ImageService imageService;
     private final UserMapper userMapper;
 
-    @GetMapping("user")
+    @GetMapping(USER)
     public String showUser(
             Model model,
             HttpSession session,
-            @RequestParam(value = "id", required = false) Long id,
-            @RequestParam(value = "source", required = false) String source
+            @RequestParam(value = ID, required = false) Long id,
+            @RequestParam(value = SOURCE, required = false) String source,
+            @SessionAttribute(name = USER, required = false) UserDTO userFromSession
     ) {
         if (Objects.nonNull(id)) {
-            model.addAttribute(Key.ROLES, Role.values());
+            model.addAttribute(ROLES, Role.values());
 
             if (Objects.nonNull(source)) {
-                session.setAttribute("source", source);
+                session.setAttribute(SOURCE, source);
             }
 
-            if (session.getAttribute("user") != null) {
-                UserDTO userFromSession = (UserDTO) session.getAttribute("user");
-                UserDTO userDTO = userService.get(userFromSession.getId())
-                        .map(userMapper::userToUserDTOWithoutCollections)
-                        .orElseThrow();
+            if (userFromSession != null) {
+                UserDTO userDTO = getUserDTOWithPassword(userFromSession);
 
                 if (userDTO.getId().equals(id)) {
-                    model.addAttribute(Key.USER, userDTO);
+                    model.addAttribute(USER, userDTO);
                 } else {
                     addUserDtoToModel(model, id);
                 }
@@ -64,91 +62,115 @@ public class UserController {
                 addUserDtoToModel(model, id);
             }
 
-            return "user";
+            return Route.USER;
         } else {
-            return "redirect:users";
+            return REDIRECT + Route.USERS;
         }
     }
 
     private void addUserDtoToModel(Model model, Long id) {
         Optional<User> optionalUser = userService.get(id);
         optionalUser.ifPresent(value -> model.addAttribute(
-                Key.USER,
+                USER,
                 userMapper.userToUserDTOWithoutCollections(value))
         );
     }
 
-    @PostMapping("user")
+    @PostMapping(USER)
     public String editUser(
-            @ModelAttribute UserDTO userDTO,
+            @ModelAttribute UserDTO userDTOFromModel,
+            @SessionAttribute(name = USER, required = false) UserDTO userDTOFromSession,
             RedirectAttributes redirectAttributes,
             HttpServletRequest request
     ) throws ServletException, IOException {
 
-        UserDTO userFromSession = (UserDTO) request.getSession().getAttribute("user");
-
-        if (userFromSession == null) {
-            return "redirect:login";
+        if (userDTOFromSession == null) {
+            return REDIRECT + Route.LOGIN;
         }
 
-        if(!userFromSession.getId().equals(userDTO.getId())) {
-            Role userRole = userFromSession.getRole();
-            if (!userRole.equals(Role.ADMIN) && !userRole.equals(Role.MODERATOR)) {
-                return "redirect:profile";
-            }
+        if (!isUserPermitted(userDTOFromModel, userDTOFromSession)) {
+            return REDIRECT + Route.PROFILE;
         }
 
-        UserDTO currentUserDTO = userService.get(userFromSession.getId())
+        userDTOFromSession = getUserDTOWithPassword(userDTOFromSession);
+
+        User userFromModel = userMapper.userDTOToUser(userDTOFromModel);
+
+        String redirectUrl = performUserActionAndResolveRedirect(userDTOFromModel, userDTOFromSession, redirectAttributes, request, userFromModel);
+        if (redirectUrl != null) {
+            return redirectUrl;
+        }
+
+        imageService.uploadImage(request, userFromModel.getImage());
+
+        return handleAdminFlow(request, userDTOFromSession, userFromModel);
+    }
+
+    private UserDTO getUserDTOWithPassword(UserDTO userDTOFromSession) {
+        return userService.get(userDTOFromSession.getId())
                 .map(userMapper::userToUserDTOWithoutCollections)
                 .orElseThrow();
+    }
 
-        boolean isCurrentUserAdmin = currentUserDTO.getRole().equals(Role.ADMIN);
+    private static boolean isUserPermitted(UserDTO userDTOFromModel, UserDTO userDTOFromSession) {
+        if (!userDTOFromSession.getId().equals(userDTOFromModel.getId())) {
+            Role userRole = userDTOFromSession.getRole();
+            return userRole.equals(Role.ADMIN) || userRole.equals(Role.MODERATOR);
+        }
+        return true;
+    }
 
-        User user = userMapper.userDTOToUser(userDTO);
-
+    private String performUserActionAndResolveRedirect(
+            UserDTO userDTOFromModel,
+            UserDTO userDTOFromSession,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request,
+            User user) {
         Map<String, String[]> parameterMap = request.getParameterMap();
-        if (parameterMap.containsKey(Key.CREATE)) {
+        if (parameterMap.containsKey(CREATE)) {
             userService.create(user);
-        } else if (parameterMap.containsKey(Key.UPDATE)) {
+        } else if (parameterMap.containsKey(UPDATE)) {
 
-            User originalUser = userService.get(userDTO.getId()).orElseThrow();
+            User originalUser = userService.get(userDTOFromModel.getId()).orElseThrow();
 
-            if (!originalUser.getLogin().equals(userDTO.getLogin()) && userService.isLoginExist(userDTO.getLogin())) {
-                    redirectAttributes.addFlashAttribute("error",
-                            "Login already exist");
-                    return "redirect:user?id=" + userDTO.getId();
+            if (!originalUser.getLogin().equals(userDTOFromModel.getLogin())
+                && userService.isLoginExist(userDTOFromModel.getLogin())) {
+                redirectAttributes.addFlashAttribute(
+                        ERROR, LOGIN_ALREADY_EXIST
+                );
+                return REDIRECT + Route.USER_ID + userDTOFromModel.getId();
             }
 
             userService.update(user);
-        } else if (parameterMap.containsKey(Key.DELETE)) {
+        } else if (parameterMap.containsKey(DELETE)) {
             userService.delete(user);
-            if (Objects.equals(user.getId(), userFromSession.getId())) {
-                return "redirect:logout";
+            if (user.getId().equals(userDTOFromSession.getId())) {
+                return REDIRECT + Route.LOGOUT;
             } else {
-                return "redirect:users";
+                return REDIRECT + Route.USERS;
             }
 
-        } else throw new AppException(Key.UNKNOWN_COMMAND);
+        } else throw new AppException(UNKNOWN_COMMAND);
+        return null;
+    }
 
-        imageService.uploadImage(request, user.getImage());
-
-
-        if (!isCurrentUserAdmin) {
-            // current user(not admin) is editing his profile
-            request.getSession().setAttribute("user", userMapper.userToUserDTOWithoutPassword(user));
-            return "redirect:profile";
-        } else {
-            if (currentUserDTO.getId().equals(userDTO.getId())) {
-                // admin edits his profile, update session
-                request.getSession().setAttribute("user", userMapper.userToUserDTOWithoutPassword(user));
-            }
-            // admin edits user's profile from users list
-            // source - the place where the admin came from and where he will return
-            // (need when admin editing his profile from users list)
-            String source = (String) request.getSession().getAttribute("source");
-            request.getSession().removeAttribute("source");
-
-            return source != null ? "redirect:" + source : "redirect:profile";
+    private String handleAdminFlow(HttpServletRequest request, UserDTO userDTOFromSession, User userFromModel) {
+        if (userDTOFromSession.getId().equals(userFromModel.getId())) {
+            updateUserSession(request, userFromModel);
         }
+        if (!userDTOFromSession.getRole().equals(Role.ADMIN)) {
+            return REDIRECT + Route.PROFILE;
+        } else {
+            String source = (String) request.getSession().getAttribute(SOURCE);
+            request.getSession().removeAttribute(SOURCE);
+            return source != null ? REDIRECT + source : REDIRECT + Route.PROFILE;
+        }
+    }
+
+    private void updateUserSession(HttpServletRequest request, User userFromModel) {
+        request.getSession()
+                .setAttribute(
+                        USER, userMapper.userToUserDTOWithoutPassword(userFromModel)
+                );
     }
 }
