@@ -7,6 +7,7 @@ public class Route {
 
     public static final String REDIRECT = "redirect:";
     public static final String INDEX = "/";
+    public static final String INDEX_PAGE = "/index";
 
     //**************  User  **************//
     public static final String USER = "/user";

@@ -52,7 +52,6 @@ public class QuestService {
     @Transactional
     public void parseQuestFromTextWall(Quest quest, String text) {
         questRepository.save(quest);
-        // TODO перед сохранением квеста надо проверить не существует ли квест в базе, если существует, то надо вернуть сообщение что квест уже есть
 
         Optional<Quest> questWithId = questRepository.findAll(Example.of(quest)).stream().findAny();
 

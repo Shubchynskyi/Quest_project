@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-
 @SpringBootApplication
 public class App {
 
