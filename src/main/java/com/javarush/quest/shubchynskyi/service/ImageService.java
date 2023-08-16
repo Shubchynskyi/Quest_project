@@ -1,7 +1,7 @@
 package com.javarush.quest.shubchynskyi.service;
 
 
-import com.javarush.quest.shubchynskyi.util.constant.Key;
+import com.javarush.quest.shubchynskyi.constant.Key;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;

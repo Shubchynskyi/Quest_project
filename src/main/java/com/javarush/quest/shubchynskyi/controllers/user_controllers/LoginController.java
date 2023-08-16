@@ -3,7 +3,7 @@ package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.UserService;
-import com.javarush.quest.shubchynskyi.util.constant.Route;
+import com.javarush.quest.shubchynskyi.constant.Route;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -14,8 +14,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
-import static com.javarush.quest.shubchynskyi.util.constant.Route.REDIRECT;
-import static com.javarush.quest.shubchynskyi.util.constant.Key.*;
+import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
+import static com.javarush.quest.shubchynskyi.constant.Key.*;
 
 @Controller
 @RequiredArgsConstructor

@@ -2,10 +2,11 @@ package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.entity.*;
 import com.javarush.quest.shubchynskyi.exception.AppException;
+import com.javarush.quest.shubchynskyi.quest_util.BlockTypeResolver;
 import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 import com.javarush.quest.shubchynskyi.repository.QuestRepository;
-import com.javarush.quest.shubchynskyi.util.constant.Key;
-import com.javarush.quest.shubchynskyi.util.QuestParser;
+import com.javarush.quest.shubchynskyi.constant.Key;
+import com.javarush.quest.shubchynskyi.quest_util.QuestParser;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -15,12 +16,11 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
-import static com.javarush.quest.shubchynskyi.util.QuestMarks.*;
-
 @Service
 @RequiredArgsConstructor
 public class QuestService {
     private final QuestParser questParser;
+    private final BlockTypeResolver blockTypeResolver;
     private final QuestionService questionService;
     private final QuestRepository questRepository;
     private final AnswerRepository answerRepository;
@@ -92,14 +92,17 @@ public class QuestService {
         String[] logicBlock = questParser.extractLogicBlock(currentLine);
         Integer blockNumber = Integer.valueOf(logicBlock[0]);
         String blockData = logicBlock[1];
-        String blockType = logicBlock[2];
+        String blockTypeStr = logicBlock[2];
+
+        BlockTypeResolver.BlockType blockType = blockTypeResolver.defineBlockType(blockTypeStr);
 
         switch (blockType) {
             case PLAY, WIN, LOST ->
-                    buildNewQuestion(quest, questionsMapWithRawId, answers, blockNumber, blockData, blockType);
+                    buildNewQuestion(quest, questionsMapWithRawId, answers, blockNumber, blockData, blockTypeStr);
             case ANSWER ->
                     buildNewAnswer(questionsMapWithRawId, answersMapWithNullNextQuestionId, answers, blockNumber, blockData);
-            default -> throw new AppException(Key.INCORRECT_TYPE);
+            default ->
+                    throw new AppException(Key.INCORRECT_TYPE);
         }
     }
 

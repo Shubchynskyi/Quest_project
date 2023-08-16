@@ -6,7 +6,7 @@ import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.UserService;
-import com.javarush.quest.shubchynskyi.util.constant.Route;
+import com.javarush.quest.shubchynskyi.constant.Route;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,8 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 
-import static com.javarush.quest.shubchynskyi.util.constant.Route.REDIRECT;
-import static com.javarush.quest.shubchynskyi.util.constant.Key.*;
+import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
+import static com.javarush.quest.shubchynskyi.constant.Key.*;
 
 
 @MultipartConfig(fileSizeThreshold = 1 << 20)

@@ -1,7 +1,7 @@
 package com.javarush.quest.shubchynskyi.controllers;
 
 import com.javarush.quest.shubchynskyi.service.ImageService;
-import com.javarush.quest.shubchynskyi.util.constant.Key;
+import com.javarush.quest.shubchynskyi.constant.Key;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static com.javarush.quest.shubchynskyi.util.constant.Key.PATH_IMAGES;
+import static com.javarush.quest.shubchynskyi.constant.Key.PATH_IMAGES;
 
 @Controller
 @RequestMapping(PATH_IMAGES)

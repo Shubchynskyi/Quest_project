@@ -4,7 +4,7 @@ import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.UserService;
-import com.javarush.quest.shubchynskyi.util.constant.Route;
+import com.javarush.quest.shubchynskyi.constant.Route;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 import java.util.Optional;
 
-import static com.javarush.quest.shubchynskyi.util.constant.Route.REDIRECT;
-import static com.javarush.quest.shubchynskyi.util.constant.Key.USER;
-import static com.javarush.quest.shubchynskyi.util.constant.Key.USERS;
+import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
+import static com.javarush.quest.shubchynskyi.constant.Key.USER;
+import static com.javarush.quest.shubchynskyi.constant.Key.USERS;
 
 @Controller
 @RequiredArgsConstructor

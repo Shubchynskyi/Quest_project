@@ -1,7 +1,7 @@
-package com.javarush.quest.shubchynskyi.util;
+package com.javarush.quest.shubchynskyi.quest_util;
 
 import com.javarush.quest.shubchynskyi.exception.AppException;
-import com.javarush.quest.shubchynskyi.util.constant.Key;
+import com.javarush.quest.shubchynskyi.constant.Key;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -62,22 +62,14 @@ public class QuestParser {
     }
 
     private boolean isStringWithOutMark(String string) {
-        return (!isStringQuestion(string) && !isStringAnswer(string));
-    }
-
-    private boolean isStringAnswer(String string) {
-        int markIndex = string.indexOf(QuestMarks.ANSWER);
-        return markIndex > 0 && StringUtils.isNumeric(String.valueOf(string.charAt(markIndex - 1)));
-    }
-
-    private boolean isStringQuestion(String string) {
-        for (String answerMark : QuestMarks.QUESTION_MARKS) {
-            int markIndex = string.indexOf(answerMark);
-            if (markIndex > 0 && StringUtils.isNumeric(String.valueOf(string.charAt(markIndex - 1)))) {
-                return true;
+        for (String mark : QuestMarksEnum.getAllMarks()) {
+            int markIndex = string.indexOf(mark);
+            if (markIndex > 0) {
+                String charBeforeMark = String.valueOf(string.charAt(markIndex - 1));
+                return !StringUtils.isNumeric(charBeforeMark);
             }
         }
-        return false;
+        return true;
     }
 
     public void splitQuestToStrings(String text) {

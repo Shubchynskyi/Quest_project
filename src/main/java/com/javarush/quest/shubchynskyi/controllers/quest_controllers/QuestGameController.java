@@ -8,7 +8,7 @@ import com.javarush.quest.shubchynskyi.entity.Question;
 import com.javarush.quest.shubchynskyi.mapper.QuestionMapper;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.service.QuestionService;
-import com.javarush.quest.shubchynskyi.util.constant.Route;
+import com.javarush.quest.shubchynskyi.constant.Route;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.javarush.quest.shubchynskyi.util.constant.Route.REDIRECT;
-import static com.javarush.quest.shubchynskyi.util.constant.Key.*;
+import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
+import static com.javarush.quest.shubchynskyi.constant.Key.*;
 
 @Controller
 @RequiredArgsConstructor

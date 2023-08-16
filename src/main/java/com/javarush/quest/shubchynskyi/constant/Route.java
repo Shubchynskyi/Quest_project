@@ -1,4 +1,4 @@
-package com.javarush.quest.shubchynskyi.util.constant;
+package com.javarush.quest.shubchynskyi.constant;
 
 import lombok.experimental.UtilityClass;
 

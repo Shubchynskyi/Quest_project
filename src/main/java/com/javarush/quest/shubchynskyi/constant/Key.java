@@ -1,4 +1,4 @@
-package com.javarush.quest.shubchynskyi.util.constant;
+package com.javarush.quest.shubchynskyi.constant;
 
 import lombok.experimental.UtilityClass;
 
@@ -31,6 +31,8 @@ public class Key {
     public static final String INCORRECT_STRING_NUMBER = "Incorrect string number";
     public static final String INCORRECT_TEXT_BLOCK = "Incorrect text block";
     public static final String UNKNOWN_COMMAND = "Unknown command";
+    public static final String UNEXPECTED_VALUE = "Unexpected value: ";
+    public static final String UNKNOWN_GAME_STATE = "Unknown Game State";
 
     //**************  View errors  **************//
     public static final String LOGIN_ALREADY_EXIST = "Login already exist";
@@ -74,4 +76,5 @@ public class Key {
     public static final String PATH_IMAGES = "/images";
     public static final String PATH_IMAGE_NAME = "/{imageName}";
     public static final String PARAM_IMAGE_NAME = "imageName";
+
 }

@@ -10,7 +10,7 @@ import com.javarush.quest.shubchynskyi.service.AnswerService;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.service.QuestionService;
-import com.javarush.quest.shubchynskyi.util.constant.Route;
+import com.javarush.quest.shubchynskyi.constant.Route;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.IOException;
 import java.util.Optional;
 
-import static com.javarush.quest.shubchynskyi.util.constant.Route.REDIRECT;
-import static com.javarush.quest.shubchynskyi.util.constant.Key.*;
+import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
+import static com.javarush.quest.shubchynskyi.constant.Key.*;
 
 
 @MultipartConfig(fileSizeThreshold = 1 << 20)

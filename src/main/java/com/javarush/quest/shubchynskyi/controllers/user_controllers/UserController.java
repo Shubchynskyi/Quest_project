@@ -7,7 +7,7 @@ import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.UserService;
-import com.javarush.quest.shubchynskyi.util.constant.Route;
+import com.javarush.quest.shubchynskyi.constant.Route;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.javarush.quest.shubchynskyi.util.constant.Key.*;
-import static com.javarush.quest.shubchynskyi.util.constant.Route.REDIRECT;
+import static com.javarush.quest.shubchynskyi.constant.Key.*;
+import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 
 @MultipartConfig(fileSizeThreshold = 1 << 20)
 @Controller
