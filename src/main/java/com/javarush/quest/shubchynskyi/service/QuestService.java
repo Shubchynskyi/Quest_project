@@ -1,12 +1,12 @@
 package com.javarush.quest.shubchynskyi.service;
 
+import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.entity.*;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.quest_util.BlockTypeResolver;
+import com.javarush.quest.shubchynskyi.quest_util.QuestParser;
 import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 import com.javarush.quest.shubchynskyi.repository.QuestRepository;
-import com.javarush.quest.shubchynskyi.constant.Key;
-import com.javarush.quest.shubchynskyi.quest_util.QuestParser;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -55,7 +55,7 @@ public class QuestService {
 
         Optional<Quest> questWithId = questRepository.findAll(Example.of(quest)).stream().findAny();
 
-        if(questWithId.isPresent()) {
+        if (questWithId.isPresent()) {
             quest = questWithId.get();
         }
         lock.lock();
@@ -70,9 +70,12 @@ public class QuestService {
                 buildNewLogicBlock(quest, questionsMapWithRawId, answersMapWithNullNextQuestionId, answers);
             }
 
-            for (Map.Entry<Answer, Integer> integerAnswerEntry : answersMapWithNullNextQuestionId.entrySet()) {
-                integerAnswerEntry.getKey()
-                        .setNextQuestionId(questionsMapWithRawId.get(integerAnswerEntry.getValue()).getId());
+            for (var AnswerEntry : answersMapWithNullNextQuestionId.entrySet()) {
+                Long nextQuestionId = questionsMapWithRawId
+                        .get(AnswerEntry.getValue())
+                        .getId();
+
+                AnswerEntry.getKey().setNextQuestionId(nextQuestionId);
             }
 
             Collections.reverse((List<?>) quest.getQuestions());
@@ -86,7 +89,8 @@ public class QuestService {
             Quest quest,
             Map<Integer, Question> questionsMapWithRawId,
             Map<Answer, Integer> answersMapWithNullNextQuestionId,
-            Collection<Answer> answers) {
+            Collection<Answer> answers
+    ) {
 
         String currentLine = questParser.takeNextLine();
         String[] logicBlock = questParser.extractLogicBlock(currentLine);
@@ -101,8 +105,7 @@ public class QuestService {
                     buildNewQuestion(quest, questionsMapWithRawId, answers, blockNumber, blockData, blockTypeStr);
             case ANSWER ->
                     buildNewAnswer(questionsMapWithRawId, answersMapWithNullNextQuestionId, answers, blockNumber, blockData);
-            default ->
-                    throw new AppException(Key.INCORRECT_TYPE);
+            default -> throw new AppException(Key.INCORRECT_TYPE);
         }
     }
 
@@ -110,14 +113,16 @@ public class QuestService {
             Map<Integer, Question> questionsMapWithRawId,
             Map<Answer, Integer> answersMapWithNullNextQuestionId,
             Collection<Answer> answers,
-            Integer blockNumber, String blockData) {
+            Integer blockNumber, String blockData
+    ) {
 
         Answer answer = Answer.builder()
                 .text(blockData)
                 .build();
 
         if (questionsMapWithRawId.containsKey(blockNumber)) {
-            answer.setNextQuestionId(questionsMapWithRawId.get(blockNumber).getId());
+            Long nextQuestionId = questionsMapWithRawId.get(blockNumber).getId();
+            answer.setNextQuestionId(nextQuestionId);
         } else {
             answersMapWithNullNextQuestionId.put(answer, blockNumber);
         }
@@ -130,7 +135,10 @@ public class QuestService {
             Quest quest,
             Map<Integer, Question> questionsMapWithRawId,
             Collection<Answer> answers,
-            Integer blockNumber, String blockData, String blockType) {
+            Integer blockNumber,
+            String blockData,
+            String blockType
+    ) {
 
         Question question = Question.builder()
                 .questId(quest.getId())
@@ -156,7 +164,6 @@ public class QuestService {
                 .collect(Collectors.toList());
     }
 
-    @SuppressWarnings("unused")
     public Optional<Quest> get(Long id) {
         return questRepository.findById(id);
     }
@@ -164,6 +171,5 @@ public class QuestService {
     public Optional<Quest> get(String id) {
         return get(Long.parseLong(id));
     }
-
 
 }

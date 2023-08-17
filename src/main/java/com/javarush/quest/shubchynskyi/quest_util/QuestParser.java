@@ -2,6 +2,7 @@ package com.javarush.quest.shubchynskyi.quest_util;
 
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.constant.Key;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +12,10 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class QuestParser {
+
+    public final QuestStringExtractor questStringExtractor;
 
     private List<String> stringList;
 
@@ -21,28 +25,6 @@ public class QuestParser {
 
     public boolean isStringPresent() {
         return stringList.size() > 0;
-    }
-
-    private String extractNumber(String string) {
-        String number;
-        for (int i = 1; i < string.length() + 1; i++) {
-            if (!StringUtils.isNumeric(string.substring(0, i))) {
-                number = string.substring(0, i - 1).trim();
-                return number;
-            }
-        }
-        throw new AppException(Key.INCORRECT_STRING_NUMBER);
-    }
-
-    private String extractData(String string) {
-        String result;
-        for (int i = 1; i < string.length() + 1; i++) {
-            if (!StringUtils.isNumeric(string.substring(0, i))) {
-                result = string.substring(i).trim();
-                return result;
-            }
-        }
-        throw new AppException(Key.INCORRECT_STRING);
     }
 
     private String fillData(String currentLine) {
@@ -83,19 +65,10 @@ public class QuestParser {
     }
 
     public String[] extractLogicBlock(String currentLine) {
-        String[] result = new String[3];
         if (isStringWithOutMark(currentLine)) {
             currentLine = fillData(currentLine);
         }
-        result[0] = extractNumber(currentLine);
-        result[1] = extractData(currentLine);
-        result[2] = extractMark(currentLine, result[0]);
-        return result;
+        return questStringExtractor.getExtractedData(currentLine);
     }
 
-    private String extractMark(String currentLine, String number) {
-        String mark = currentLine.replaceFirst(number, Key.REGEX_EMPTY_STRING);
-        mark = mark.substring(0, 2);
-        return mark.trim();
-    }
 }

@@ -18,14 +18,20 @@ public class UserService {
     private final UserRepository userRepository;
 
     public boolean isLoginExist(String login) {
-        Example<User> user = Example.of(User.builder().login(login).build());
+        Example<User> user = Example.of(
+                User.builder()
+                        .login(login)
+                        .build()
+        );
         return userRepository.exists(user);
     }
 
     @Transactional
     public Optional<User> create(User user) {
-        userRepository.save(user);
-        return userRepository.findAll(Example.of(user)).stream().findAny();
+        User savedUser = userRepository.save(user);
+        Example<User> userExample = Example.of(savedUser);
+        return userRepository.findAll(userExample)
+                .stream().findAny();
     }
 
     @Transactional
@@ -49,8 +55,7 @@ public class UserService {
     }
 
     public Optional<User> get(String login, String password) {
-        User patternUser = User
-                .builder()
+        User patternUser = User.builder()
                 .login(login)
                 .password(password)
                 .build();

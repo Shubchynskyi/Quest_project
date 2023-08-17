@@ -32,6 +32,7 @@ public class QuestionService {
         questionRepository.save(question);
     }
 
+    @SuppressWarnings("unused")
     @Transactional
     public void delete(Question question) {
         questionRepository.delete(question);

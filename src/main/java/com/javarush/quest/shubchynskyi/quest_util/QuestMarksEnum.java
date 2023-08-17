@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
 public enum QuestMarksEnum {
     PLAY(":"),
     ANSWER("<"),
@@ -21,7 +20,7 @@ public enum QuestMarksEnum {
         return mark;
     }
 
-    public static List<String> getAllMarks() {
+    static List<String> getAllMarks() {
         return Stream.of(QuestMarksEnum.values())
                 .map(QuestMarksEnum::getMark)
                 .collect(Collectors.toList());
