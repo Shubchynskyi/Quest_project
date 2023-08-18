@@ -9,7 +9,6 @@ import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 import com.javarush.quest.shubchynskyi.repository.QuestRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,7 +26,12 @@ public class QuestService {
     private final Lock lock;
 
     @Transactional
-    public Quest create(String name, String text, String description, String authorId) {
+    public Quest create(
+            String name,
+            String text,
+            String description,
+            String authorId
+    ) {
 
         Quest quest = Quest.builder()
                 .name(name)
@@ -51,13 +55,8 @@ public class QuestService {
 
     @Transactional
     public void parseQuestFromTextWall(Quest quest, String text) {
-        questRepository.save(quest);
+        Quest questWithId = questRepository.save(quest);
 
-        Optional<Quest> questWithId = questRepository.findAll(Example.of(quest)).stream().findAny();
-
-        if (questWithId.isPresent()) {
-            quest = questWithId.get();
-        }
         lock.lock();
         try {
             Map<Integer, Question> questionsMapWithRawId = new HashMap<>();
@@ -67,7 +66,7 @@ public class QuestService {
             questParser.splitQuestToStrings(text);
 
             while (questParser.isStringPresent()) {
-                buildNewLogicBlock(quest, questionsMapWithRawId, answersMapWithNullNextQuestionId, answers);
+                buildNewLogicBlock(questWithId, questionsMapWithRawId, answersMapWithNullNextQuestionId, answers);
             }
 
             for (var AnswerEntry : answersMapWithNullNextQuestionId.entrySet()) {
@@ -78,8 +77,8 @@ public class QuestService {
                 AnswerEntry.getKey().setNextQuestionId(nextQuestionId);
             }
 
-            Collections.reverse((List<?>) quest.getQuestions());
-            questRepository.save(quest);
+            Collections.reverse((List<Question>) questWithId.getQuestions());
+            questRepository.save(questWithId);
         } finally {
             lock.unlock();
         }

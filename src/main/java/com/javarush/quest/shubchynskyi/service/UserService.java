@@ -31,7 +31,8 @@ public class UserService {
         User savedUser = userRepository.save(user);
         Example<User> userExample = Example.of(savedUser);
         return userRepository.findAll(userExample)
-                .stream().findAny();
+                .stream()
+                .findAny();
     }
 
     @Transactional
