@@ -14,11 +14,12 @@ public class Key {
     public static final String REGEX_NEW_LINE = "\n";
 
     //**************  ImageService  **************//
-    public static final String PART_NAME = "image";
     public static final String NO_IMAGE_PNG = "no-image.jpg";
     public static final List<String> EXTENSIONS = List.of(
             ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp"
     );
+    public static final List<String> ALLOWED_MIME_TYPES = List.of(
+            "image/jpeg", "image/png", "image/bmp", "image/gif", "image/webp");
 
     //**************  URI Patterns  **************//
     public static final String NEXT_QUESTION_URI_PATTERN = "%s?%s=%s&%s=%d";
@@ -39,6 +40,7 @@ public class Key {
     public static final String DATA_IS_INCORRECT_PLEASE_CHECK_YOUR_USERNAME_AND_PASSWORD
             = "Data is incorrect, please check your username and password";
     public static final String ERROR = "error";
+    public static final String FILE_IS_TOO_LARGE_MAXIMUM_SIZE_IS = "File is too large! Maximum size is ";
 
     //**************  Users  **************//
     public static final String USER = "user";
@@ -60,6 +62,7 @@ public class Key {
     public static final String QUEST_NAME = "questName";
     public static final String QUEST_TEXT = "questText";
     public static final String QUEST_DESCRIPTION = "questDescription";
+    public static final String QUEST_IMAGE = "questImage";
     public static final String START_QUESTION_ID = "startQuestionId";
     public static final String CREATE_QUEST = "create-quest";
     public static final String QUEST_EDIT = "quest-edit";
@@ -76,5 +79,8 @@ public class Key {
     public static final String PATH_IMAGES = "/images";
     public static final String PATH_IMAGE_NAME = "/{imageName}";
     public static final String PARAM_IMAGE_NAME = "imageName";
-
+    public static final String IMAGE = "image";
+    public static final int MAX_FILE_SIZE = 2097152;
+    public static final String MB = "MB";
+    public static final int KB_TO_MB = 1024;
 }

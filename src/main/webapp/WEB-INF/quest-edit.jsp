@@ -24,6 +24,25 @@
                       style="resize: none">${quest.description}</textarea>
         </div>
 
+        <!-- Quest Image -->
+        <div class="mb-3">
+            <label class="col-md-4 control-label" for="image-quest">
+                <img id="preview-quest" src="images/${requestScope.quest.image}" width="75%" alt="${requestScope.quest.image}">
+            </label>
+
+            <input onchange="PreviewImage('image-quest','preview-quest');" id="image-quest" name="image" style="visibility:hidden;" class="input-file" type="file">
+        </div>
+
+        <script type="text/javascript">
+            function PreviewImage(inputFileId, imageId) {
+                const oFReader = new FileReader();
+                oFReader.readAsDataURL(document.getElementById(inputFileId).files[0]);
+                oFReader.onload = function (oFREvent) {
+                    document.getElementById(imageId).src = oFREvent.target.result;
+                };
+            }
+        </script>
+
         <!-- Button -->
         <div class="mb-3">
             <button type="submit" class="btn btn-success"

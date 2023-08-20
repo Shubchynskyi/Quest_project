@@ -8,14 +8,13 @@ import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.constant.Route;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -26,7 +25,6 @@ import java.util.Optional;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 
-@MultipartConfig(fileSizeThreshold = 1 << 20)
 @Controller
 @RequiredArgsConstructor
 public class UserController {
@@ -81,8 +79,9 @@ public class UserController {
             @ModelAttribute UserDTO userDTOFromModel,
             @SessionAttribute(name = USER, required = false) UserDTO userDTOFromSession,
             RedirectAttributes redirectAttributes,
+            @RequestParam(IMAGE) MultipartFile imageFile,
             HttpServletRequest request
-    ) throws ServletException, IOException {
+    ) throws IOException {
         if (userDTOFromSession == null) {
             return REDIRECT + Route.LOGIN;
         }
@@ -97,7 +96,9 @@ public class UserController {
         if (redirectUrl != null) {
             return redirectUrl;
         }
-        imageService.uploadImage(request, userFromModel.getImage());
+
+        imageService.uploadImage(imageFile, userFromModel.getImage());
+
         return handleAdminFlow(request, userDTOFromSession, userFromModel);
     }
 

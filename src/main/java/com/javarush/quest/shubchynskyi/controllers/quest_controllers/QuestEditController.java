@@ -11,9 +11,6 @@ import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.service.QuestionService;
 import com.javarush.quest.shubchynskyi.constant.Route;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +18,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -28,8 +26,6 @@ import java.util.Optional;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 
-
-@MultipartConfig(fileSizeThreshold = 1 << 20)
 @Controller
 @RequiredArgsConstructor
 public class QuestEditController {
@@ -58,13 +54,16 @@ public class QuestEditController {
     }
 
     @PostMapping(QUEST_EDIT)
-    public String saveQuest(@RequestParam MultiValueMap<String, String> allParams, HttpServletRequest request) {
+    public String saveQuest(
+            @RequestParam MultiValueMap<String, String> allParams,
+            @RequestParam(name = IMAGE, required = false) MultipartFile imageFile
+    ) {
         String viewName;
 
         if (allParams.containsKey(QUEST_NAME)) {
-            viewName = questEdit(allParams);
+            viewName = questEdit(allParams, imageFile);
         } else if (allParams.containsKey(QUESTION_ID)) {
-            viewName = questionEdit(allParams, request);
+            viewName = questionEdit(allParams, imageFile);
         } else {
             viewName = Route.QUESTS_LIST;
         }
@@ -72,20 +71,25 @@ public class QuestEditController {
         return viewName;
     }
 
-    private String questEdit(MultiValueMap<String, String> allParams) {
+    private String questEdit(
+            MultiValueMap<String, String> allParams,
+            MultipartFile imageFile
+    ) {
         String questId = allParams.getFirst(ID);
-        Optional<Quest> optionalQuest = questService.get(questId);
 
-        if (optionalQuest.isPresent()) {
-            Quest quest = optionalQuest.get();
-            updateQuest(allParams, quest);
-            return REDIRECT + ID_URI_PATTERN.formatted(Route.QUEST_EDIT, questId);
-        } else {
-            return Route.QUESTS_LIST;  // fallback if quest not found
-        }
+        return questService.get(questId)
+                .map(quest -> {
+                    updateQuest(allParams, quest, imageFile);
+                    return REDIRECT + ID_URI_PATTERN.formatted(Route.QUEST_EDIT, questId);
+                })
+                .orElse(Route.QUESTS_LIST);
     }
 
-    private void updateQuest(MultiValueMap<String, String> allParams, Quest quest) {
+    private void updateQuest(
+            MultiValueMap<String, String> allParams,
+            Quest quest,
+            MultipartFile imageFile
+    ) {
         String newName = allParams.getFirst(QUEST_NAME);
         String newDescription = allParams.getFirst(QUEST_DESCRIPTION);
 
@@ -96,28 +100,41 @@ public class QuestEditController {
             quest.setDescription(newDescription);
         }
 
+        try {
+            imageService.uploadImage(imageFile, quest.getImage());
+        } catch (IOException e) {
+            throw new AppException(IMAGE_UPLOAD_ERROR, e);
+        }
+
         questService.update(quest);
     }
 
-    private String questionEdit(MultiValueMap<String, String> allParams, HttpServletRequest request) {
+    private String questionEdit(
+            MultiValueMap<String, String> allParams,
+            MultipartFile imageFile
+    ) {
         String questionId = allParams.getFirst(QUESTION_ID);
         Optional<Question> optionalQuestion = questionService.get(questionId);
 
         if (optionalQuestion.isPresent()) {
             Question question = optionalQuestion.get();
-            updateQuestion(allParams, question, request);
+            updateQuestion(allParams, question, imageFile);
             updateAnswers(allParams, question);
             return REDIRECT + ID_URI_PATTERN.formatted(Route.QUEST_EDIT, allParams.getFirst(ID))
                    + LABEL_URI_PATTERN + question.getId();
         } else {
-            return Route.QUESTS_LIST;  // fallback if question not found
+            return Route.QUESTS_LIST;
         }
     }
 
-    private void updateQuestion(MultiValueMap<String, String> allParams, Question question, HttpServletRequest request) {
+    private void updateQuestion(
+            MultiValueMap<String, String> allParams,
+            Question question,
+            MultipartFile imageFile
+    ) {
         try {
-            imageService.uploadImage(request, question.getImage());
-        } catch (IOException | ServletException e) {
+            imageService.uploadImage(imageFile, question.getImage());
+        } catch (IOException e) {
             throw new AppException(IMAGE_UPLOAD_ERROR, e);
         }
 

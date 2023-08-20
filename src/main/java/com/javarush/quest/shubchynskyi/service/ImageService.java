@@ -2,11 +2,10 @@ package com.javarush.quest.shubchynskyi.service;
 
 
 import com.javarush.quest.shubchynskyi.constant.Key;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.Part;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,9 +18,15 @@ import java.util.Objects;
 @Service
 public class ImageService {
 
-    private final Path imagesFolder;
+    public static final String NO_FILE_PROVIDED = "No file provided";
+    public static final String INVALID_FILE_TYPE = "Invalid file type: ";
+    private Path imagesFolder;
 
-    public ImageService(@Value("${app.images-directory}") String imagesDirectory) throws IOException {
+    @Value("${app.images-directory}")
+    private String imagesDirectory;
+
+    @PostConstruct
+    public void init() throws IOException {
         imagesFolder = Paths.get(imagesDirectory);
         Files.createDirectories(imagesFolder);
     }
@@ -34,14 +39,22 @@ public class ImageService {
                 .orElse(imagesFolder.resolve(Key.NO_IMAGE_PNG));
     }
 
-    public void uploadImage(HttpServletRequest request, String imageId) throws ServletException, IOException {
-        Part data = request.getPart(Key.PART_NAME);
-        if (Objects.nonNull(data) && data.getInputStream().available() > 0) {
-            String filename = data.getSubmittedFileName();
-            String ext = filename.substring(filename.lastIndexOf("."));
-            deleteOldFiles(imageId);
-            filename = imageId + ext;
-            uploadImageInternal(filename, data.getInputStream());
+    public void uploadImage(MultipartFile file, String imageId) throws IOException {
+        validate(file);
+        String filename = file.getOriginalFilename();
+        String ext = Objects.requireNonNull(filename).substring(filename.lastIndexOf("."));
+        deleteOldFiles(imageId);
+        filename = imageId + ext;
+        uploadImageInternal(filename, file.getInputStream());
+    }
+
+    private void validate(MultipartFile file) throws IOException {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException(NO_FILE_PROVIDED);
+        }
+        String mimeType = Files.probeContentType(Paths.get(Objects.requireNonNull(file.getOriginalFilename())));
+        if (mimeType == null || !Key.ALLOWED_MIME_TYPES.contains(mimeType)) {
+            throw new IllegalArgumentException(INVALID_FILE_TYPE + mimeType);
         }
     }
 

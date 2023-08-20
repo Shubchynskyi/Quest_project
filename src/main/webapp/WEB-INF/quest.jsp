@@ -9,6 +9,7 @@
             <fieldset>
                 <input type="hidden" name="questName" value="${requestScope.questName}">
                 <p>${requestScope.questName}</p>
+                <img src="images/${requestScope.questImage}" alt="images/${requestScope.questImage}" width="500px">
                 <p>${requestScope.questDescription}</p>
                 <button id="start" name="start"
                         class="btn btn-success">Начать

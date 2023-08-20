@@ -58,6 +58,7 @@ public class QuestGameController {
         } else {
             request.setAttribute(START_QUESTION_ID, quest.getStartQuestionId());
             request.setAttribute(QUEST_DESCRIPTION, quest.getDescription());
+            request.setAttribute(QUEST_IMAGE, quest.getImage());
         }
         request.setAttribute(ID, quest.getId());
         request.setAttribute(QUEST_NAME, quest.getName());

@@ -7,8 +7,6 @@ import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.constant.Route;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -16,6 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -24,7 +24,6 @@ import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 
 
-@MultipartConfig(fileSizeThreshold = 1 << 20)
 @Controller
 @RequiredArgsConstructor
 public class SignupController {
@@ -40,20 +39,32 @@ public class SignupController {
     }
 
     @PostMapping(SIGNUP)
-    public String signup(@ModelAttribute UserDTO userDTO,
+    public String signup(@ModelAttribute UserDTO userDTOFromView,
+                         @RequestParam(IMAGE) MultipartFile imageFile,
                          HttpServletRequest request,
                          RedirectAttributes redirectAttributes
-    ) throws ServletException, IOException {
+    ) throws IOException {
 
-        if (isLoginExist(userDTO.getLogin())) {
+        if (imageFile.getSize() > MAX_FILE_SIZE) {
+            redirectAttributes.addFlashAttribute(
+                    ERROR, FILE_IS_TOO_LARGE_MAXIMUM_SIZE_IS
+                           + (MAX_FILE_SIZE / KB_TO_MB / KB_TO_MB)
+                           + MB);
+            return REDIRECT + Route.SIGNUP;
+        }
+
+        if (isLoginExist(userDTOFromView.getLogin())) {
             redirectAttributes.addFlashAttribute(ERROR, LOGIN_ALREADY_EXIST);
             return REDIRECT + Route.SIGNUP;
         }
 
-        User createdUser = userService.create(userMapper.userDTOToUser(userDTO)).orElseThrow();
-        imageService.uploadImage(request, createdUser.getImage());
+        User user = userMapper.userDTOToUser(userDTOFromView);
+        User createdUser = userService.create(user).orElseThrow();
+        imageService.uploadImage(imageFile, createdUser.getImage());
+
+        UserDTO userDTO = userMapper.userToUserDTOWithoutPassword(createdUser);
         request.getSession()
-                .setAttribute(USER, userMapper.userToUserDTOWithoutPassword(createdUser));
+                .setAttribute(USER, userDTO);
         return REDIRECT + Route.PROFILE;
     }
 
