@@ -1,0 +1,10 @@
+.img-icon {
+    height: 25px;
+    border-color: #0078ff;
+    border-width: 1px;
+    padding: 0 5px;
+}
+
+.a-icon {
+    display: inline-block;
+}

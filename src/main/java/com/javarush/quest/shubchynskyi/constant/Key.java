@@ -42,6 +42,10 @@ public class Key {
     public static final String ERROR = "error";
     public static final String FILE_IS_TOO_LARGE_MAXIMUM_SIZE_IS = "File is too large! Maximum size is ";
 
+    //**************  View keys  **************//
+    public static final String TITLE_KEY = "titleKey";
+    public static final String TITLE_INDEX = "title.index";
+
     //**************  Users  **************//
     public static final String USER = "user";
     public static final String USERS = "users";
