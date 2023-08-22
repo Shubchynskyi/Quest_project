@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head th:insert="~{parts/head :: head}"></head>
+<!--<head th:insert="~{parts/head :: head}"></head>-->
 <body>
 <header class="bg-light d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom"
         th:fragment="header">
@@ -25,35 +25,38 @@
     </ul>
 
     <span>
-    <a href="./?lang=en" class="a-icon">
+    <a th:href="@{{path}(path=${path}, lang='en')}" class="a-icon">
         <img th:src="@{/images/icon/en-icon.png}" alt="EN flag" class="img-icon">
     </a>
-    <a href="./?lang=de" class="a-icon">
+    <a th:href="@{{path}(path=${path}, lang='de')}" class="a-icon">
         <img th:src="@{/images/icon/de-icon.png}" alt="DE flag" class="img-icon">
     </a>
-    <a href="./?lang=ua" class="a-icon">
+    <a th:href="@{{path}(path=${path}, lang='ua')}" class="a-icon">
         <img th:src="@{/images/icon/ua-icon.png}" alt="UA flag" class="img-icon">
     </a>
-    <a href="./?lang=ru" class="a-icon">
+    <a th:href="@{{path}(path=${path}, lang='ru')}" class="a-icon">
         <img th:src="@{/images/icon/ru-icon.png}" alt="RU flag" class="img-icon">
     </a>
-        </span>
+    </span>
 
     <ul class="nav col-md-3 text-end">
         <li th:if="${session.user != null}"><a href="#" th:href="@{/profile}"
-                                               class="nav-link px-2 link-dark">Profile</a></li>
-        <li th:if="${session.user != null}"><a href="#" th:href="@{/logout}" class="nav-link px-2 link-dark">Logout</a>
+                                               class="nav-link px-2 link-dark"
+                                               th:text="#{header.profile.link}">Profile</a></li>
+
+        <li th:if="${session.user != null}"><a href="#" th:href="@{/logout}"
+                                               class="nav-link px-2 link-dark"
+                                               th:text="#{header.logout.link}">Logout</a>
         </li>
         <li th:unless="${session.user != null}"><a href="#" th:href="@{/login}"
-                                                   class="nav-link px-2 link-dark">Login</a></li>
+                                                   class="nav-link px-2 link-dark"
+                                                   th:text="#{header.login.link}">Login</a>
+        </li>
         <li th:unless="${session.user != null}"><a href="#" th:href="@{/signup}"
-                                                   class="nav-link px-2 link-dark">Sign-up</a></li>
+                                                   class="nav-link px-2 link-dark"
+                                                   th:text="#{header.sign-up.link}">Sign-up</a>
+        </li>
     </ul>
-
-
-
-
-
 
 </header>
 </body>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:insert="~{parts/head :: head}"></head>
+<body>
+<div th:replace="~{parts/header :: header}"></div>
+<div class="container">
+  <form action="create-quest" method="post">
+    <div class="mb-3">
+      <label for="questName" class="form-label" th:text="#{create-quest.quest.name.label}">Quest name</label>
+      <input name="questName" type="text" class="form-control" id="questName"
+             th:placeholder="#{create-quest.quest.name.placeholder}">
+    </div>
+
+    <div class="mb-3">
+      <label for="questDescription" class="form-label" th:text="#{create-quest.quest.description.label}">Quest description</label>
+      <input name="questDescription" type="text" class="form-control" id="questDescription"
+             th:placeholder="#{create-quest.quest.description.placeholder}">
+    </div>
+
+    <div th:replace="~{parts/quest-text-area :: quest-text-area}"></div>
+
+    <input type="hidden" name="id" th:value="${session.user.id}">
+
+    <div class="form-group">
+      <label class="col-md-4 control-label" for="submit"></label>
+      <div class="col-md-4">
+        <button id="submit" name="create" class="btn btn-success" th:text="#{create-quest.quest.create.button}">Create quest</button>
+      </div>
+    </div>
+  </form>
+</div>
+<div th:replace="~{parts/footer :: footer}"></div>
+</body>
+</html>
