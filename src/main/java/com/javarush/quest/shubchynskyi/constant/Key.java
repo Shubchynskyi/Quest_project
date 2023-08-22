@@ -44,7 +44,7 @@ public class Key {
 
     //**************  View keys  **************//
     public static final String TITLE_KEY = "titleKey";
-    public static final String TITLE_INDEX = "title.index";
+    public static final String TITLE_INDEX = "header.title.index";
 
     //**************  Users  **************//
     public static final String USER = "user";

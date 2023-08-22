@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head th:insert="~{parts/head :: head}"></head> <!-- Изменено на th:insert -->
+<head th:insert="~{parts/head :: head}"></head>
 <body>
 <header class="bg-light d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom"
         th:fragment="header">
@@ -10,16 +10,18 @@
 
     <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
         <!-- guest -->
-        <li><a href="#" th:href="@{/}" class="nav-link px-2 link-secondary">Home</a></li>
+        <li><a href="#" th:href="@{/}" class="nav-link px-2 link-secondary"
+               th:text="#{header.home.link}">Home</a></li>
         <!-- user -->
-        <li><a href="#" th:href="@{/quests-list}" class="nav-link px-2 link-dark">Играть</a></li>
+        <li><a href="#" th:href="@{/quests-list}" class="nav-link px-2 link-dark"
+               th:text="#{header.play.link}">Play</a></li>
         <!-- admin -->
         <li th:if="${session.user != null and (session.user.role == 'ADMIN' || session.user.role == 'MODERATOR')}">
-            <a href="#" th:href="@{/users}" class="nav-link px-2">Пользователи</a>
+            <a href="#" th:href="@{/users}" class="nav-link px-2" th:text="#{header.users.link}">Users</a>
         </li>
 
 
-        <li><a href="#" th:href="@{/create-quest}" class="nav-link px-2">Создать квест</a></li>
+        <li><a href="#" th:href="@{/create-quest}" class="nav-link px-2" th:text="#{header.create.quest.link}">Create Quest</a></li>
     </ul>
 
     <span>
