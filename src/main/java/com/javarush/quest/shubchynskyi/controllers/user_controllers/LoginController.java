@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
-import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.UserService;
@@ -8,7 +7,6 @@ import com.javarush.quest.shubchynskyi.constant.Route;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,8 +25,7 @@ public class LoginController {
     private final UserMapper userMapper;
 
     @GetMapping(LOGIN)
-    public String showLoginPage(Model model) {
-        model.addAttribute(Key.TITLE_KEY, "login.title");
+    public String showLoginPage() {
         return Route.LOGIN;
     }
 

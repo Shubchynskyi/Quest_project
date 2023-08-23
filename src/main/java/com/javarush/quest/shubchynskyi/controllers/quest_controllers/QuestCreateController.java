@@ -4,10 +4,9 @@ import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.constant.Key;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,13 +25,9 @@ public class QuestCreateController {
 
     @GetMapping(CREATE_QUEST)
     public String showCreateQuestPage(
-            Model model,
-            HttpServletRequest request
+            HttpSession session
     ) {
-//        String currentUrl = request.getRequestURI(); // Получение текущего URI
-//        model.addAttribute("path", currentUrl); // Добавление URI в модель
-        model.addAttribute(Key.TITLE_KEY, "create-quest.title");
-        if (Objects.nonNull(request.getSession().getAttribute(Key.USER))) {
+        if (Objects.nonNull(session.getAttribute(Key.USER))) {
             return CREATE_QUEST;
         } else {
             // TODO if the user was not logged in and clicked "create quest":

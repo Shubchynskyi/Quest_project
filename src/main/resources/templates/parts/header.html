@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<!--<head th:insert="~{parts/head :: head}"></head>-->
 <body>
 <header class="bg-light d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom"
         th:fragment="header">
@@ -9,7 +8,6 @@
     </a>
 
     <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-        <!-- guest -->
         <li><a href="#" th:href="@{/}" class="nav-link px-2 link-secondary"
                th:text="#{header.home.link}">Home</a></li>
         <!-- user -->
