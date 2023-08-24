@@ -17,7 +17,6 @@ import java.util.Objects;
 
 @Service
 public class ImageService {
-    public static final String INVALID_FILE_TYPE = "Invalid file type: ";  // TODO
     private Path imagesFolder;
 
     @Value("${app.images-directory}")
@@ -51,7 +50,7 @@ public class ImageService {
     private void validate(MultipartFile file) throws IOException {
         String mimeType = Files.probeContentType(Paths.get(Objects.requireNonNull(file.getOriginalFilename())));
         if (mimeType == null || !Key.ALLOWED_MIME_TYPES.contains(mimeType)) {
-            throw new IllegalArgumentException(INVALID_FILE_TYPE + mimeType);
+            throw new IllegalArgumentException(Key.INVALID_FILE_TYPE + mimeType);
         }
     }
 

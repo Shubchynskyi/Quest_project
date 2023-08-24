@@ -11,6 +11,9 @@
 <body>
 <div th:replace="~{parts/header :: header}"></div>
 <div class="container">
+  <!-- Error Message -->
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
   <form action="create-quest" method="post">
     <div class="mb-3">
       <label for="questName" class="form-label" th:text="#{create-quest.quest.name.label}">Quest name</label>

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -30,6 +31,7 @@ import static com.javarush.quest.shubchynskyi.constant.Key.*;
 @RequiredArgsConstructor
 public class QuestEditController {
 
+    public static final String QUEST_NOT_FOUND_ERROR = "Quest not found, you can create a new quest using this form";
     private final QuestService questService;
     private final QuestionService questionService;
     private final AnswerService answerService;
@@ -39,15 +41,20 @@ public class QuestEditController {
     @GetMapping(QUEST_EDIT)
     public String showQuestForEdit(
             @RequestParam(ID) String id,
-            Model model
-    ) { // TODO убрать условие, сразу получить объект
-        Optional<Quest> quest = questService.get(id);
-        if (quest.isPresent()) {
-            model.addAttribute(QUEST, questMapper.questToQuestDTO(quest.get()));
-            return QUEST_EDIT;
-        } else {
-            return REDIRECT + Route.QUEST_CREATE;
-        }
+            Model model,
+            RedirectAttributes redirectAttributes
+    ) {
+        return questService.get(id)
+                .map(quest -> {
+                    model.addAttribute(QUEST, questMapper.questToQuestDTO(quest));
+                    return QUEST_EDIT;
+                })
+                .orElseGet(() -> {
+                    redirectAttributes.addFlashAttribute(
+                            ERROR, QUEST_NOT_FOUND_ERROR
+                    );
+                    return REDIRECT + Route.QUEST_CREATE;
+                });
     }
 
     @PostMapping(QUEST_EDIT)

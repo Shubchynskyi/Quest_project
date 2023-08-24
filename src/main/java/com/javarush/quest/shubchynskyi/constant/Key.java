@@ -34,6 +34,7 @@ public class Key {
     public static final String UNKNOWN_COMMAND = "Unknown command";
     public static final String UNEXPECTED_VALUE = "Unexpected value: ";
     public static final String UNKNOWN_GAME_STATE = "Unknown Game State";
+    public static final String INVALID_FILE_TYPE = "Invalid file type: ";
 
     //**************  View errors  **************//
     public static final String LOGIN_ALREADY_EXIST = "Login already exist";
