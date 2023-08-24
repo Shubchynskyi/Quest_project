@@ -23,19 +23,19 @@
     </ul>
 
     <span>
-    <a th:href="@{{path}(path=${path}, lang='en')}" class="a-icon">
+    <a href="javascript:void(0);" onclick="changeLanguage('en');" class="a-icon">
         <img th:src="@{/images/icon/en-icon.png}" alt="EN flag" class="img-icon">
     </a>
-    <a th:href="@{{path}(path=${path}, lang='de')}" class="a-icon">
+    <a href="javascript:void(0);" onclick="changeLanguage('de');" class="a-icon">
         <img th:src="@{/images/icon/de-icon.png}" alt="DE flag" class="img-icon">
     </a>
-    <a th:href="@{{path}(path=${path}, lang='ua')}" class="a-icon">
+    <a href="javascript:void(0);" onclick="changeLanguage('ua');" class="a-icon">
         <img th:src="@{/images/icon/ua-icon.png}" alt="UA flag" class="img-icon">
     </a>
-    <a th:href="@{{path}(path=${path}, lang='ru')}" class="a-icon">
+    <a href="javascript:void(0);" onclick="changeLanguage('ru');" class="a-icon">
         <img th:src="@{/images/icon/ru-icon.png}" alt="RU flag" class="img-icon">
     </a>
-    </span>
+</span>
 
     <ul class="nav col-md-3 text-end">
         <li th:if="${session.user != null}"><a href="#" th:href="@{/profile}"
@@ -55,6 +55,14 @@
                                                    th:text="#{header.sign-up.link}">Sign-up</a>
         </li>
     </ul>
+
+    <script>
+        function changeLanguage(lang) {
+            var url = new URL(window.location.href);
+            url.searchParams.set('lang', lang);
+            window.location.href = url.toString();
+        }
+    </script>
 
 </header>
 </body>
