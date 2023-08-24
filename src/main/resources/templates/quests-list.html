@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <title th:text="#{quests-list.title}">Quests List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+        crossorigin="anonymous">
+  <link rel="stylesheet" th:href="@{/css/appStyles.css}">
+</head>
+<body>
+<div th:replace="~{parts/header :: header}"></div>
+<div class="container">
+  <p class="mb-4 fs-4 text-center" th:text="#{quests-list.choice.label}">Choose a quest</p>
+  <div class="row">
+    <div th:each="quest : ${quests}" class="col-lg-4 mb-4">
+      <div class="card">
+        <div style="height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+          <img th:src="@{/images/{image}(image=${quest.image})}" class="card-img-top" alt="..." style="max-width: 100%; max-height: 100%; object-fit: contain;">
+        </div>
+        <div class="card-body">
+          <h5 class="card-title" th:text="${quest.name}"></h5>
+          <p class="card-text" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:text="${quest.description}"></p>
+          <a th:href="@{/quest(id=${quest.id})}" class="btn btn-primary">PLAY &raquo;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div th:replace="~{parts/footer :: footer}"></div>
+</body>
+</html>

@@ -40,13 +40,10 @@ public class QuestEditController {
     public String showQuestForEdit(
             @RequestParam(ID) String id,
             Model model
-    ) {
+    ) { // TODO убрать условие, сразу получить объект
         Optional<Quest> quest = questService.get(id);
         if (quest.isPresent()) {
-            model.addAttribute(
-                    QUEST,
-                    questMapper.questToQuestDTO(quest.get())
-            );
+            model.addAttribute(QUEST, questMapper.questToQuestDTO(quest.get()));
             return QUEST_EDIT;
         } else {
             return REDIRECT + Route.QUEST_CREATE;
@@ -116,7 +113,7 @@ public class QuestEditController {
         String questionId = allParams.getFirst(QUESTION_ID);
         Optional<Question> optionalQuestion = questionService.get(questionId);
 
-        if (optionalQuestion.isPresent()) {
+        if (optionalQuestion.isPresent()) { // TODO получать сразу объект
             Question question = optionalQuestion.get();
             updateQuestion(allParams, question, imageFile);
             updateAnswers(allParams, question);

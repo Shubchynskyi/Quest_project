@@ -17,9 +17,7 @@ import java.util.Objects;
 
 @Service
 public class ImageService {
-
-    public static final String NO_FILE_PROVIDED = "No file provided";
-    public static final String INVALID_FILE_TYPE = "Invalid file type: ";
+    public static final String INVALID_FILE_TYPE = "Invalid file type: ";  // TODO
     private Path imagesFolder;
 
     @Value("${app.images-directory}")
@@ -40,18 +38,17 @@ public class ImageService {
     }
 
     public void uploadImage(MultipartFile file, String imageId) throws IOException {
-        validate(file);
-        String filename = file.getOriginalFilename();
-        String ext = Objects.requireNonNull(filename).substring(filename.lastIndexOf("."));
-        deleteOldFiles(imageId);
-        filename = imageId + ext;
-        uploadImageInternal(filename, file.getInputStream());
+        if (!file.isEmpty()) {
+            validate(file);
+            String filename = file.getOriginalFilename();
+            String ext = Objects.requireNonNull(filename).substring(filename.lastIndexOf("."));
+            deleteOldFiles(imageId);
+            filename = imageId + ext;
+            uploadImageInternal(filename, file.getInputStream());
+        }
     }
 
     private void validate(MultipartFile file) throws IOException {
-        if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException(NO_FILE_PROVIDED);
-        }
         String mimeType = Files.probeContentType(Paths.get(Objects.requireNonNull(file.getOriginalFilename())));
         if (mimeType == null || !Key.ALLOWED_MIME_TYPES.contains(mimeType)) {
             throw new IllegalArgumentException(INVALID_FILE_TYPE + mimeType);
