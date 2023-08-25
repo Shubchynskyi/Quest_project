@@ -8,6 +8,7 @@ import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,9 +34,19 @@ public class SignupController {
     private final UserMapper userMapper;
 
     @GetMapping(SIGNUP)
-    public String showSignup(Model model) {
-        model.addAttribute(ROLES, Role.values());
-        return Route.SIGNUP;
+    public String showSignup(Model model,
+                             HttpSession session,
+                             RedirectAttributes redirectAttributes
+    ) {
+        UserDTO currentUser = (UserDTO) session.getAttribute(USER);
+        if (currentUser == null) {
+            model.addAttribute(ROLES, Role.values());
+            return Route.SIGNUP;
+        } else {
+            redirectAttributes.addFlashAttribute(ERROR, YOU_ARE_ALREADY_LOGGED_IN);
+            return REDIRECT + Route.PROFILE;
+        }
+
     }
 
     @PostMapping(SIGNUP)

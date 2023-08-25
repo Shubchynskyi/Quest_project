@@ -89,4 +89,5 @@ public class Key {
     public static final int MAX_FILE_SIZE = 2097152;
     public static final String MB = "MB";
     public static final int KB_TO_MB = 1024;
+    public static final String YOU_ARE_ALREADY_LOGGED_IN = "You are already logged in";
 }

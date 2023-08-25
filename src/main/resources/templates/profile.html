@@ -11,6 +11,11 @@
 <body>
 <div th:replace="~{parts/header :: header}"></div>
 <div class="container">
+
+  <!-- Error Message -->
+  <!--suppress ThymeleafVariablesResolveInspection -->
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
   <div class="px-4 py-5 my-5 text-center">
     <p class="lead mb-4">
     <div class="form-group">

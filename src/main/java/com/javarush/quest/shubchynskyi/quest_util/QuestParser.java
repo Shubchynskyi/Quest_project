@@ -3,7 +3,6 @@ package com.javarush.quest.shubchynskyi.quest_util;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.constant.Key;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -48,7 +47,20 @@ public class QuestParser {
             int markIndex = string.indexOf(mark);
             if (markIndex > 0) {
                 String charBeforeMark = String.valueOf(string.charAt(markIndex - 1));
-                return !StringUtils.isNumeric(charBeforeMark);
+                return !isNumeric(charBeforeMark);
+            }
+        }
+        return true;
+    }
+
+    private boolean isNumeric(final CharSequence cs) {
+        if (cs == null || cs.length() == 0) {
+            return false;
+        }
+        final int sz = cs.length();
+        for (int i = 0; i < sz; i++) {
+            if (!Character.isDigit(cs.charAt(i))) {
+                return false;
             }
         }
         return true;
