@@ -37,10 +37,19 @@ public class UserController {
     public String showUser(
             Model model,
             HttpSession session,
+            RedirectAttributes redirectAttributes,
             @RequestParam(value = ID, required = false) Long id,
             @RequestParam(value = SOURCE, required = false) String source,
             @SessionAttribute(name = USER, required = false) UserDTO userFromSession
     ) {
+        UserDTO currentUser = (UserDTO) session.getAttribute(USER);
+        if (currentUser == null
+            || (!currentUser.getRole().equals(Role.ADMIN)
+                && !currentUser.getRole().equals(Role.MODERATOR))) {
+            redirectAttributes.addFlashAttribute(ERROR, YOU_DON_T_HAVE_PERMISSIONS);
+            return REDIRECT + Route.INDEX;
+        }
+
         if (Objects.nonNull(id)) {
             model.addAttribute(ROLES, Role.values());
 

@@ -10,13 +10,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
 
+import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
-import static com.javarush.quest.shubchynskyi.constant.Key.USER;
-import static com.javarush.quest.shubchynskyi.constant.Key.USERS;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,12 +28,14 @@ public class UsersController {
     @GetMapping(USERS)
     public String showUsers(
             Model model,
-            HttpSession session
+            HttpSession session,
+            RedirectAttributes redirectAttributes
     ) {
         UserDTO currentUser = (UserDTO) session.getAttribute(USER);
         if (currentUser == null
             || (!currentUser.getRole().equals(Role.ADMIN)
                 && !currentUser.getRole().equals(Role.MODERATOR))) {
+            redirectAttributes.addFlashAttribute(ERROR, YOU_DON_T_HAVE_PERMISSIONS);
             return REDIRECT + Route.INDEX;
         }
 

@@ -34,3 +34,24 @@
     width: 130px;
     margin: auto;
 }
+
+#createUserModal {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #f4f4f4;
+    padding: 20px;
+    width: 60%;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 10%;
+    left: 20%;
+}

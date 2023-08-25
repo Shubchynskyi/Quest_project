@@ -12,6 +12,10 @@
 <div th:replace="~{parts/header :: header}"></div>
 
 <div class="container">
+    <!-- Error Message -->
+    <!--suppress ThymeleafVariablesResolveInspection -->
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
     <h1>Квесты для тестирования</h1>
     <br/>
     <div>

@@ -1,0 +1,79 @@
+<div class="container">
+  <form class="form-horizontal"
+        action="signup"
+        method="post"
+        enctype="multipart/form-data">
+    <fieldset>
+      <legend th:text="#{signup.form.label}">Create an Account</legend>
+
+      <!-- File Button -->
+      <div class="form-group">
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="image">
+            <img id="previewId" th:src="@{/images/no-image.jpg}" width="150" alt="no-image"><br>
+            <span th:text="#{signup.click.label}">press to change</span>
+          </label>
+        </div>
+        <div class="col-md-4">
+          <input onchange="PreviewImage('image','previewId');" id="image" name="image"
+                 style="visibility:hidden;"
+                 class="input-file" type="file">
+        </div>
+      </div>
+
+      <script type="text/javascript">
+        function PreviewImage(inputFileId, imageId) {
+          const oFReader = new FileReader();
+          oFReader.readAsDataURL(document.getElementById(inputFileId).files[0]);
+          oFReader.onload = function (oFREvent) {
+            document.getElementById(imageId).src = oFREvent.target.result;
+          };
+        }
+      </script>
+
+      <!-- Error Message -->
+      <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+      <!-- Login input-->
+      <div class="form-group">
+        <label class="col-md-4 control-label" for="login" th:text="#{signup.login.label}">Login</label>
+        <div class="col-md-4">
+          <input id="login" name="login" type="text"
+                 th:placeholder="#{signup.login.placeholder}"
+                 class="form-control input-md" required="">
+        </div>
+      </div>
+
+      <!-- Password input-->
+      <div class="form-group">
+        <label class="col-md-4 control-label" for="password" th:text="#{signup.password.label}">Password</label>
+        <div class="col-md-4">
+          <input id="password" name="password" type="password"
+                 th:placeholder="#{signup.password.placeholder}"
+                 class="form-control input-md" required="">
+        </div>
+      </div>
+
+      <!-- Role input-->
+      <div class="form-group">
+        <label class="col-md-4 control-label" for="role" th:text="#{signup.role.label}">Role</label>
+        <div class="col-md-4">
+          <select id="role" name="role" class="form-control">
+            <option th:each="role : ${roles}" th:value="${role}" th:selected="${role=='GUEST'}" th:text="${role}"></option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Button (Double) -->
+      <div class="form-group">
+        <label class="col-md-4 control-label" for="updateOrCreate"></label>
+        <div class="col-md-8">
+          <button id="updateOrCreate" name="create" class="btn btn-success"
+                  th:text="#{signup.sign-up.button}">Sign-up
+          </button>
+        </div>
+      </div>
+
+    </fieldset>
+  </form>
+</div>

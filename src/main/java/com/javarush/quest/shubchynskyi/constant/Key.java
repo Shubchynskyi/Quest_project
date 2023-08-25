@@ -42,6 +42,7 @@ public class Key {
             = "Data is incorrect, please check your username and password";
     public static final String ERROR = "error";
     public static final String FILE_IS_TOO_LARGE_MAXIMUM_SIZE_IS = "File is too large! Maximum size is ";
+    public static final String YOU_DON_T_HAVE_PERMISSIONS = "You don't have permissions";
 
     //**************  View keys  **************//
     public static final String TITLE_KEY = "titleKey";
