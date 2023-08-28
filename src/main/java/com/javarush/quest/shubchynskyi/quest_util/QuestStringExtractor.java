@@ -4,10 +4,12 @@ import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import org.springframework.stereotype.Component;
 
+import static com.javarush.quest.shubchynskyi.constant.Key.INCORRECT_STRING;
+
 @Component
 public class QuestStringExtractor {
 
-    String[] getExtractedData(String currentLine) {
+    public String[] getExtractedData(String currentLine) {
         String[] result = new String[3];
         result[0] = extractNumber(currentLine);
         result[1] = extractData(currentLine);
@@ -17,7 +19,9 @@ public class QuestStringExtractor {
 
     private String extractMark(String currentLine, String number) {
         String mark = currentLine.replaceFirst(number, Key.REGEX_EMPTY_STRING);
-        mark = mark.substring(0, 2);
+        if (mark.length() > 1) {
+            mark = mark.substring(0, 2);
+        }
         return mark.trim();
     }
 
@@ -34,11 +38,14 @@ public class QuestStringExtractor {
     private String extractData(String string) {
         int startIndex = findNumberEndIndex(string) + 1;
 
-        try {
-            return string.substring(startIndex).trim();
-        } catch (IndexOutOfBoundsException e) {
-            throw new AppException(Key.INCORRECT_STRING);
+        if (startIndex >= 1 && startIndex < string.length()) {
+            String trimmedString = string.substring(startIndex).trim();
+            if (!trimmedString.isEmpty()) {
+                return trimmedString;
+            }
         }
+
+        throw new AppException(INCORRECT_STRING);
     }
 
     private int findNumberEndIndex(String string) {
