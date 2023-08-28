@@ -2,6 +2,7 @@ package com.javarush.quest.shubchynskyi.service;
 
 
 import com.javarush.quest.shubchynskyi.constant.Key;
+import com.javarush.quest.shubchynskyi.exception.AppException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,12 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
+import static com.javarush.quest.shubchynskyi.constant.Key.IMAGE_UPLOAD_ERROR;
+import static com.javarush.quest.shubchynskyi.constant.Key.INVALID_FILE_TYPE;
+
 @Service
 public class ImageService {
+
     private Path imagesFolder;
 
     @Value("${app.images-directory}")
@@ -36,21 +41,27 @@ public class ImageService {
                 .orElse(imagesFolder.resolve(Key.NO_IMAGE_PNG));
     }
 
-    public void uploadImage(MultipartFile file, String imageId) throws IOException {
-        if (!file.isEmpty()) {
-            validate(file);
-            String filename = file.getOriginalFilename();
-            String ext = Objects.requireNonNull(filename).substring(filename.lastIndexOf("."));
-            deleteOldFiles(imageId);
-            filename = imageId + ext;
-            uploadImageInternal(filename, file.getInputStream());
+    public void uploadImage(MultipartFile file, String imageId) {
+        try {
+            if (!file.isEmpty()) {
+                validate(file);
+                String filename = file.getOriginalFilename();
+                String ext = Objects.requireNonNull(filename).substring(filename.lastIndexOf("."));
+                deleteOldFiles(imageId);
+                filename = imageId + ext;
+                uploadImageInternal(filename, file.getInputStream());
+            }
+        } catch (IOException | NullPointerException e) {
+            throw new AppException(IMAGE_UPLOAD_ERROR);
+        } catch (IllegalArgumentException e) {
+            throw new AppException(INVALID_FILE_TYPE);
         }
     }
 
     private void validate(MultipartFile file) throws IOException {
         String mimeType = Files.probeContentType(Paths.get(Objects.requireNonNull(file.getOriginalFilename())));
         if (mimeType == null || !Key.ALLOWED_MIME_TYPES.contains(mimeType)) {
-            throw new IllegalArgumentException(Key.INVALID_FILE_TYPE + mimeType);
+            throw new IllegalArgumentException(INVALID_FILE_TYPE + ": " + mimeType);
         }
     }
 

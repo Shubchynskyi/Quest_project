@@ -1,16 +1,15 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
 
+import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.Question;
-import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.mapper.QuestMapper;
 import com.javarush.quest.shubchynskyi.service.AnswerService;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.service.QuestionService;
-import com.javarush.quest.shubchynskyi.constant.Route;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,17 +20,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.Optional;
 
-import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
+import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 
 @Controller
 @RequiredArgsConstructor
 public class QuestEditController {
 
-    public static final String QUEST_NOT_FOUND_ERROR = "Quest not found, you can create a new quest using this form";
     private final QuestService questService;
     private final QuestionService questionService;
     private final AnswerService answerService;
@@ -104,11 +101,7 @@ public class QuestEditController {
             quest.setDescription(newDescription);
         }
 
-        try {
-            imageService.uploadImage(imageFile, quest.getImage());
-        } catch (IOException e) {
-            throw new AppException(IMAGE_UPLOAD_ERROR, e);
-        }
+        imageService.uploadImage(imageFile, quest.getImage());
 
         questService.update(quest);
     }
@@ -134,11 +127,7 @@ public class QuestEditController {
             Question question,
             MultipartFile imageFile
     ) {
-        try {
-            imageService.uploadImage(imageFile, question.getImage());
-        } catch (IOException e) {
-            throw new AppException(IMAGE_UPLOAD_ERROR, e);
-        }
+        imageService.uploadImage(imageFile, question.getImage());
 
         String newQuestionText = allParams.getFirst(QUESTION_TEXT);
         if (newQuestionText != null && !newQuestionText.equals(question.getText())) {

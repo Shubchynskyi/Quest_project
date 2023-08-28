@@ -38,7 +38,7 @@ public class Key {
     public static final String UNKNOWN_COMMAND = "Unknown command";
     public static final String UNEXPECTED_VALUE = "Unexpected value: ";
     public static final String UNKNOWN_GAME_STATE = "Unknown Game State";
-    public static final String INVALID_FILE_TYPE = "Invalid file type: ";
+    public static final String INVALID_FILE_TYPE = "Invalid file type";
     public static final String QUEST_TEXT_IS_NOT_VALID = "Quest text is not valid";
 
     //**************  View errors  **************//
@@ -50,6 +50,7 @@ public class Key {
     public static final String YOU_DON_T_HAVE_PERMISSIONS = "You don't have permissions";
     public static final String YOU_ARE_ALREADY_LOGGED_IN = "You are already logged in";
     public static final String QUEST_WITH_THIS_NAME_ALREADY_EXISTS = "Quest with this name already exists";
+    public static final String QUEST_NOT_FOUND_ERROR = "Quest not found, you can create a new quest using this form";
 
     //**************  Quest parser settings  **************// //TODO move to properties
     public static final int MINIMUM_QUESTION_IN_QUEST = 1;
@@ -98,7 +99,5 @@ public class Key {
     public static final int MAX_FILE_SIZE = 2097152;    //TODO move to properties
     public static final String MB = "MB";
     public static final int KB_TO_MB = 1024;
-
-
 
 }
