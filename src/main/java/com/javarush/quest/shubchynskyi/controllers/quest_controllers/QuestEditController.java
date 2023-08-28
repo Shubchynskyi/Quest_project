@@ -120,15 +120,13 @@ public class QuestEditController {
         String questionId = allParams.getFirst(QUESTION_ID);
         Optional<Question> optionalQuestion = questionService.get(questionId);
 
-        if (optionalQuestion.isPresent()) { // TODO получать сразу объект
-            Question question = optionalQuestion.get();
+        return optionalQuestion.map(question -> {
             updateQuestion(allParams, question, imageFile);
             updateAnswers(allParams, question);
             return REDIRECT + ID_URI_PATTERN.formatted(Route.QUEST_EDIT, allParams.getFirst(ID))
                    + LABEL_URI_PATTERN + question.getId();
-        } else {
-            return Route.QUESTS_LIST;
-        }
+        }).orElse(Route.QUESTS_LIST);
+
     }
 
     private void updateQuestion(

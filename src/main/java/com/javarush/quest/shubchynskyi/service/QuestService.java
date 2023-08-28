@@ -5,6 +5,7 @@ import com.javarush.quest.shubchynskyi.entity.*;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.quest_util.BlockTypeResolver;
 import com.javarush.quest.shubchynskyi.quest_util.QuestParser;
+import com.javarush.quest.shubchynskyi.quest_util.QuestValidator;
 import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 import com.javarush.quest.shubchynskyi.repository.QuestRepository;
 import jakarta.transaction.Transactional;
@@ -15,14 +16,18 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
+import static com.javarush.quest.shubchynskyi.constant.Key.QUEST_TEXT_IS_NOT_VALID;
+import static com.javarush.quest.shubchynskyi.constant.Key.QUEST_WITH_THIS_NAME_ALREADY_EXISTS;
+
 @Service
 @RequiredArgsConstructor
 public class QuestService {
-    private final QuestParser questParser;
-    private final BlockTypeResolver blockTypeResolver;
     private final QuestionService questionService;
     private final QuestRepository questRepository;
     private final AnswerRepository answerRepository;
+    private final QuestParser questParser;
+    private final QuestValidator questValidator;
+    private final BlockTypeResolver blockTypeResolver;
     private final Lock lock;
 
     @Transactional
@@ -32,16 +37,22 @@ public class QuestService {
             String description,
             String authorId
     ) {
+        if (questValidator.isQuestExist(name)) {
+            throw new AppException(QUEST_WITH_THIS_NAME_ALREADY_EXISTS);
+        }
+        if (questValidator.isQuestTextValid(text)) {
+            Quest quest = Quest.builder()
+                    .name(name)
+                    .description(description)
+                    .authorId(User.builder().id(Long.valueOf(authorId)).build())
+                    .build();
 
-        Quest quest = Quest.builder()
-                .name(name)
-                .description(description)
-                .authorId(User.builder().id(Long.valueOf(authorId)).build())
-                .build();
+            parseQuestFromTextWall(quest, text);
 
-        parseQuestFromTextWall(quest, text);
-
-        return quest;
+            return quest;
+        } else {
+            throw new AppException(QUEST_TEXT_IS_NOT_VALID);
+        }
     }
 
     public void update(Quest quest) {
@@ -53,8 +64,23 @@ public class QuestService {
         questRepository.delete(quest);
     }
 
+    public Collection<Optional<Quest>> getAll() {
+        return questRepository.findAll().stream()
+                .map(Optional::of)
+                .collect(Collectors.toList());
+    }
+
+    public Optional<Quest> get(Long id) {
+        return questRepository.findById(id);
+    }
+
+    public Optional<Quest> get(String id) {
+        return get(Long.parseLong(id));
+    }
+
+
     @Transactional
-    public void parseQuestFromTextWall(Quest quest, String text) {
+    private void parseQuestFromTextWall(Quest quest, String text) {
         Quest questWithId = questRepository.save(quest);
 
         lock.lock();
@@ -155,20 +181,6 @@ public class QuestService {
         if (!questParser.isStringPresent()) {
             quest.setStartQuestionId(question.getId());
         }
-    }
-
-    public Collection<Optional<Quest>> getAll() {
-        return questRepository.findAll().stream()
-                .map(Optional::of)
-                .collect(Collectors.toList());
-    }
-
-    public Optional<Quest> get(Long id) {
-        return questRepository.findById(id);
-    }
-
-    public Optional<Quest> get(String id) {
-        return get(Long.parseLong(id));
     }
 
 }

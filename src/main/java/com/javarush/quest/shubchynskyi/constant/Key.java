@@ -12,6 +12,10 @@ public class Key {
     //**************  Regex  **************//
     public static final String REGEX_EMPTY_STRING = "";
     public static final String REGEX_NEW_LINE = "\n";
+    public static final String QUESTION_REGEX = "^\\d+:.*";
+    public static final String ANSWER_REGEX = "^\\d+<.*";
+    public static final String WIN_REGEX = "^\\d+\\+.*";
+    public static final String LOSE_REGEX = "^\\d+-.*";
 
     //**************  ImageService  **************//
     public static final String NO_IMAGE_PNG = "no-image.jpg";
@@ -35,6 +39,7 @@ public class Key {
     public static final String UNEXPECTED_VALUE = "Unexpected value: ";
     public static final String UNKNOWN_GAME_STATE = "Unknown Game State";
     public static final String INVALID_FILE_TYPE = "Invalid file type: ";
+    public static final String QUEST_TEXT_IS_NOT_VALID = "Quest text is not valid";
 
     //**************  View errors  **************//
     public static final String LOGIN_ALREADY_EXIST = "Login already exist";
@@ -43,10 +48,14 @@ public class Key {
     public static final String ERROR = "error";
     public static final String FILE_IS_TOO_LARGE_MAXIMUM_SIZE_IS = "File is too large! Maximum size is ";
     public static final String YOU_DON_T_HAVE_PERMISSIONS = "You don't have permissions";
+    public static final String YOU_ARE_ALREADY_LOGGED_IN = "You are already logged in";
+    public static final String QUEST_WITH_THIS_NAME_ALREADY_EXISTS = "Quest with this name already exists";
 
-    //**************  View keys  **************//
-    public static final String TITLE_KEY = "titleKey";
-    public static final String TITLE_INDEX = "header.title.index";
+    //**************  Quest parser settings  **************// //TODO move to properties
+    public static final int MINIMUM_QUESTION_IN_QUEST = 1;
+    public static final int MINIMUM_ANSWER_IN_QUEST = 2;
+    public static final int MINIMUM_QUESTION_TO_WIN_IN_QUEST = 1;
+    public static final int MINIMUM_QUESTION_TO_LOSE_IN_QUEST = 1;
 
     //**************  Users  **************//
     public static final String USER = "user";
@@ -86,8 +95,10 @@ public class Key {
     public static final String PATH_IMAGE_NAME = "/{imageName}";
     public static final String PARAM_IMAGE_NAME = "imageName";
     public static final String IMAGE = "image";
-    public static final int MAX_FILE_SIZE = 2097152;
+    public static final int MAX_FILE_SIZE = 2097152;    //TODO move to properties
     public static final String MB = "MB";
     public static final int KB_TO_MB = 1024;
-    public static final String YOU_ARE_ALREADY_LOGGED_IN = "You are already logged in";
+
+
+
 }

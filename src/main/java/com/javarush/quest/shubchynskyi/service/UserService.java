@@ -29,15 +29,13 @@ public class UserService {
     @Transactional
     public Optional<User> create(User user) {
         User savedUser = userRepository.save(user);
-        Example<User> userExample = Example.of(savedUser);
-        return userRepository.findAll(userExample)
-                .stream()
-                .findAny();
+        return Optional.of(savedUser);
     }
 
     @Transactional
-    public void update(User user) {
-        userRepository.save(user);
+    public Optional<User> update(User user) {
+        User updatedUser = userRepository.save(user);
+        return Optional.of(updatedUser);
     }
 
     @Transactional
