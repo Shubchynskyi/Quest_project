@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - "2345:5432"
     volumes:
       - postgresql_quest_data:/var/lib/postgresql/data
     networks:
@@ -23,6 +23,11 @@ services:
     restart: unless-stopped
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_THYMELEAF_PREFIX: ${SPRING_THYMELEAF_PREFIX}
+      APP_IMAGES_DIRECTORY: ${APP_IMAGES_DIRECTORY}
+    volumes:
+      - ./src/main/resources/templates:/app/templates
+      - ./src/main/webapp/WEB-INF/images:/app/images
     ports:
       - "8080:8080"
     networks:
