@@ -4,26 +4,30 @@ import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.exception.AppException;
+import com.javarush.quest.shubchynskyi.localization.ViewErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -32,6 +36,7 @@ public class UserController {
     private final UserService userService;
     private final ImageService imageService;
     private final UserMapper userMapper;
+    private final MessageSource messageSource;
 
     @GetMapping(USER)
     public String showUser(
@@ -42,11 +47,7 @@ public class UserController {
             @RequestParam(value = SOURCE, required = false) String source,
             @SessionAttribute(name = USER, required = false) UserDTO userFromSession
     ) {
-        UserDTO currentUser = (UserDTO) session.getAttribute(USER);
-        if (currentUser == null
-            || (!currentUser.getRole().equals(Role.ADMIN)
-                && !currentUser.getRole().equals(Role.MODERATOR))) {
-            redirectAttributes.addFlashAttribute(ERROR, YOU_DON_T_HAVE_PERMISSIONS);
+        if (UsersController.validateUserRole(session, redirectAttributes)) {
             return REDIRECT + Route.INDEX;
         }
 
@@ -85,12 +86,29 @@ public class UserController {
 
     @PostMapping(USER)
     public String editUser(
-            @ModelAttribute UserDTO userDTOFromModel,
+            @Valid @ModelAttribute UserDTO userDTOFromModel,
+            BindingResult bindingResult,
             @SessionAttribute(name = USER, required = false) UserDTO userDTOFromSession,
             RedirectAttributes redirectAttributes,
             @RequestParam(IMAGE) MultipartFile imageFile,
             HttpServletRequest request
-    ) throws IOException {
+    ) {
+
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            Locale locale = LocaleContextHolder.getLocale();
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                String localizedErrorMessage = messageSource.getMessage(error, locale);
+                errors.put(error.getField(), localizedErrorMessage);
+            }
+            redirectAttributes.addFlashAttribute("fieldErrors", errors); //TODO
+
+
+
+            return REDIRECT + Route.USER_ID + userDTOFromModel.getId();
+        }
+
+
         if (userDTOFromSession == null) {
             return REDIRECT + Route.LOGIN;
         }
@@ -157,9 +175,8 @@ public class UserController {
     private String checkExistingLogin(RedirectAttributes redirectAttributes, User userFromModel, User originalUser) {
         if (!originalUser.getLogin().equals(userFromModel.getLogin())
             && userService.isLoginExist(userFromModel.getLogin())) {
-            redirectAttributes.addFlashAttribute(
-                    ERROR, LOGIN_ALREADY_EXIST
-            );
+            String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(LOGIN_ALREADY_EXIST);
+            redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
             return REDIRECT + Route.USER_ID + userFromModel.getId();
         }
         return null;

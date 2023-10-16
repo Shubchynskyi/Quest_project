@@ -1,6 +1,7 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
 import com.javarush.quest.shubchynskyi.entity.User;
+import com.javarush.quest.shubchynskyi.localization.ViewErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.constant.Route;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -43,9 +45,8 @@ public class LoginController {
             );
             return REDIRECT + Route.PROFILE;
         } else {
-            redirectAttributes.addFlashAttribute(
-                    ERROR,
-                    DATA_IS_INCORRECT_PLEASE_CHECK_YOUR_USERNAME_AND_PASSWORD);
+            String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(DATA_IS_INCORRECT);
+            redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
             return REDIRECT + Route.LOGIN;
         }
     }

@@ -2,6 +2,7 @@ package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
+import com.javarush.quest.shubchynskyi.localization.ViewErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.constant.Route;
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.YOU_DONT_HAVE_PERMISSIONS;
 
 @Controller
 @RequiredArgsConstructor
@@ -31,11 +33,7 @@ public class UsersController {
             HttpSession session,
             RedirectAttributes redirectAttributes
     ) {
-        UserDTO currentUser = (UserDTO) session.getAttribute(USER);
-        if (currentUser == null
-            || (!currentUser.getRole().equals(Role.ADMIN)
-                && !currentUser.getRole().equals(Role.MODERATOR))) {
-            redirectAttributes.addFlashAttribute(ERROR, YOU_DON_T_HAVE_PERMISSIONS);
+        if (validateUserRole(session, redirectAttributes)) {
             return REDIRECT + Route.INDEX;
         }
 
@@ -46,5 +44,17 @@ public class UsersController {
 
         model.addAttribute(USERS, users);
         return Route.USERS;
+    }
+
+    static boolean validateUserRole(HttpSession session, RedirectAttributes redirectAttributes) {
+        UserDTO currentUser = (UserDTO) session.getAttribute(USER);
+        if (currentUser == null
+            || (!currentUser.getRole().equals(Role.ADMIN)
+                && !currentUser.getRole().equals(Role.MODERATOR))) {
+            String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(YOU_DONT_HAVE_PERMISSIONS);
+            redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
+            return true;
+        }
+        return false;
     }
 }

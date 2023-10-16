@@ -22,7 +22,7 @@ public class ProfileController {
         }
 
         UserDTO user = (UserDTO) userObject;
-        model.addAttribute("user", user);
+        model.addAttribute(USER, user);
 
         return Route.PROFILE;
     }

@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
+//TODO надо эти ошибки прокидывать в контроллер пользователю, т.е. их по сути надо тоже локализировать
 import static com.javarush.quest.shubchynskyi.constant.Key.QUEST_TEXT_IS_NOT_VALID;
 import static com.javarush.quest.shubchynskyi.constant.Key.QUEST_WITH_THIS_NAME_ALREADY_EXISTS;
 

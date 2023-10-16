@@ -8,6 +8,7 @@ import java.util.List;
 public class Key {
     public static final String ID = "id";
     public static final String GAME_STATE = "gameState";
+    public static final String ERROR = "error";
 
     //**************  Regex  **************//
     public static final String REGEX_EMPTY_STRING = "";
@@ -40,17 +41,7 @@ public class Key {
     public static final String UNKNOWN_GAME_STATE = "Unknown Game State";
     public static final String INVALID_FILE_TYPE = "Invalid file type";
     public static final String QUEST_TEXT_IS_NOT_VALID = "Quest text is not valid";
-
-    //**************  View errors  **************//
-    public static final String LOGIN_ALREADY_EXIST = "Login already exist";
-    public static final String DATA_IS_INCORRECT_PLEASE_CHECK_YOUR_USERNAME_AND_PASSWORD
-            = "Data is incorrect, please check your username and password";
-    public static final String ERROR = "error";
-    public static final String FILE_IS_TOO_LARGE_MAXIMUM_SIZE_IS = "File is too large! Maximum size is ";
-    public static final String YOU_DON_T_HAVE_PERMISSIONS = "You don't have permissions";
-    public static final String YOU_ARE_ALREADY_LOGGED_IN = "You are already logged in";
     public static final String QUEST_WITH_THIS_NAME_ALREADY_EXISTS = "Quest with this name already exists";
-    public static final String QUEST_NOT_FOUND_ERROR = "Quest not found, you can create a new quest using this form";
 
     //**************  Quest parser settings  **************// //TODO move to properties
     public static final int MINIMUM_QUESTION_IN_QUEST = 1;
