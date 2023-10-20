@@ -9,6 +9,8 @@ public class Key {
     public static final String ID = "id";
     public static final String GAME_STATE = "gameState";
     public static final String ERROR = "error";
+    public static final String IMAGING_ERROR = "imagingError";
+    public static final String FIELD_ERRORS = "fieldErrors";
 
     //**************  Regex  **************//
     public static final String REGEX_EMPTY_STRING = "";

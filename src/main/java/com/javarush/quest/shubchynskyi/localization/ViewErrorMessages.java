@@ -10,5 +10,5 @@ public class ViewErrorMessages {
     public static final String YOU_DONT_HAVE_PERMISSIONS = "view_error.you_dont_have_permissions";
     public static final String YOU_ARE_ALREADY_LOGGED_IN = "view_error.you_are_already_logged_in";
     public static final String QUEST_NOT_FOUND_ERROR = "view_error.quest_not_found_error";
-}
 
+}

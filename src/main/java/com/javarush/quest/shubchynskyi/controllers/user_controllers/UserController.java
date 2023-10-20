@@ -101,13 +101,9 @@ public class UserController {
                 String localizedErrorMessage = messageSource.getMessage(error, locale);
                 errors.put(error.getField(), localizedErrorMessage);
             }
-            redirectAttributes.addFlashAttribute("fieldErrors", errors); //TODO
-
-
-
+            redirectAttributes.addFlashAttribute(FIELD_ERRORS, errors);
             return REDIRECT + Route.USER_ID + userDTOFromModel.getId();
         }
-
 
         if (userDTOFromSession == null) {
             return REDIRECT + Route.LOGIN;
@@ -135,7 +131,7 @@ public class UserController {
                 .orElseThrow();
     }
 
-    private static boolean isUserPermitted(UserDTO userDTOFromModel, UserDTO userDTOFromSession) {
+    private boolean isUserPermitted(UserDTO userDTOFromModel, UserDTO userDTOFromSession) {
         if (!userDTOFromSession.getId().equals(userDTOFromModel.getId())) {
             Role userRole = userDTOFromSession.getRole();
             return userRole.equals(Role.ADMIN) || userRole.equals(Role.MODERATOR);
