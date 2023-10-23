@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.INVALID_FILE_TYPE;
-import static com.javarush.quest.shubchynskyi.constant.Key.NO_IMAGE_PNG;
+import static com.javarush.quest.shubchynskyi.constant.Key.NO_IMAGE_JPG;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -46,7 +46,7 @@ public class ImageServiceTest {
 
         MockMultipartFile mockFile = new MockMultipartFile("file", originalFilename, mimeType, content);
 
-        imageService.uploadImage(mockFile, imageId);
+        imageService.uploadImage(mockFile, imageId, false);
 
         Path uploadedImagePath = Paths.get(imagesDirectory, imageId + ".png");
         assertTrue(Files.exists(uploadedImagePath));
@@ -69,7 +69,7 @@ public class ImageServiceTest {
 
         AppException exception = assertThrows(
                 AppException.class,
-                () -> imageService.uploadImage(file, "testId"));
+                () -> imageService.uploadImage(file, "testId", false));
 
         assertTrue(exception.getMessage().contains(INVALID_FILE_TYPE));
     }
@@ -78,20 +78,20 @@ public class ImageServiceTest {
     public void Should_ThrowAppException_When_ImageIdIsEmpty() {
         assertThrows(
                 AppException.class,
-                () -> imageService.uploadImage(file, ""));
+                () -> imageService.uploadImage(file, "", false));
     }
 
     @Test
     public void Should_ThrowAppException_When_ImageIdIsNull() {
         assertThrows(
                 AppException.class,
-                () -> imageService.uploadImage(file, null));
+                () -> imageService.uploadImage(file, null, false));
     }
 
     @Test
     public void Should_ReturnDefaultImagePath_When_FileDoesNotExist() {
         String filename = "nonexistent";
-        Path expectedPath = Paths.get(imagesDirectory, NO_IMAGE_PNG);
+        Path expectedPath = Paths.get(imagesDirectory, NO_IMAGE_JPG);
 
         Path result = imageService.getImagePath(filename);
 
@@ -113,11 +113,11 @@ public class ImageServiceTest {
         byte[] content2 = "fakeImageContent2".getBytes();
         MockMultipartFile mockFile2 = new MockMultipartFile("file", originalFilename2, mimeType2, content2);
 
-        imageService.uploadImage(mockFile1, imageId);
+        imageService.uploadImage(mockFile1, imageId, false);
         byte[] fileBytes1 = Files.readAllBytes(uploadedImagePath);
         assertArrayEquals(content1, fileBytes1);
 
-        imageService.uploadImage(mockFile2, imageId);
+        imageService.uploadImage(mockFile2, imageId, false);
         byte[] fileBytes2 = Files.readAllBytes(uploadedImagePath);
         assertArrayEquals(content2, fileBytes2);
 

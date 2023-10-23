@@ -102,7 +102,7 @@ public class QuestEditController {
             quest.setDescription(newDescription);
         }
 
-        imageService.uploadImage(imageFile, quest.getImage());
+        imageService.uploadImage(imageFile, quest.getImage(), false);
 
         questService.update(quest);
     }
@@ -128,7 +128,7 @@ public class QuestEditController {
             Question question,
             MultipartFile imageFile
     ) {
-        imageService.uploadImage(imageFile, question.getImage());
+        imageService.uploadImage(imageFile, question.getImage(), false);
 
         String newQuestionText = allParams.getFirst(QUESTION_TEXT);
         if (newQuestionText != null && !newQuestionText.equals(question.getText())) {

@@ -21,7 +21,7 @@ public class Key {
     public static final String LOSE_REGEX = "^\\d+-.*";
 
     //**************  ImageService  **************//
-    public static final String NO_IMAGE_PNG = "no-image.jpg";
+    public static final String NO_IMAGE_JPG = "no-image.jpg";
     public static final List<String> EXTENSIONS = List.of(
             ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp"
     );

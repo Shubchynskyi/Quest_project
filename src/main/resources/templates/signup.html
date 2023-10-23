@@ -22,11 +22,40 @@
             <!-- Error Image Message -->
             <div class="alert alert-danger" th:if="${imagingError}" th:text="${imagingError}"></div>
 
+<!--            &lt;!&ndash; File Button &ndash;&gt;-->
+<!--            <div class="form-group">-->
+<!--                <div class="form-group">-->
+<!--                    <label class="col-md-4 control-label" for="image">-->
+<!--                        <img id="previewId" th:src="@{/images/no-image.jpg}" width="150" alt="no-image"><br>-->
+<!--                        <span th:text="#{signup.click.label}">press to change</span>-->
+<!--                    </label>-->
+<!--                </div>-->
+<!--                <div class="col-md-4">-->
+<!--                    <input onchange="PreviewImage('image','previewId');" id="image" name="image"-->
+<!--                           style="visibility:hidden;"-->
+<!--                           class="input-file" type="file">-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <script type="text/javascript">-->
+<!--                function PreviewImage(inputFileId, imageId) {-->
+<!--                    const oFReader = new FileReader();-->
+<!--                    oFReader.readAsDataURL(document.getElementById(inputFileId).files[0]);-->
+<!--                    oFReader.onload = function (oFREvent) {-->
+<!--                        document.getElementById(imageId).src = oFREvent.target.result;-->
+<!--                    };-->
+<!--                }-->
+<!--            </script>-->
+
             <!-- File Button -->
             <div class="form-group">
                 <div class="form-group">
                     <label class="col-md-4 control-label" for="image">
-                        <img id="previewId" th:src="@{/images/no-image.jpg}" width="150" alt="no-image"><br>
+                        <img id="previewId"
+                             th:src="${#strings.isEmpty(tempImageId) ? '/images/no-image.jpg' : '/images/' + tempImageId}"
+                             width="150"
+                             alt="no-image">
+
                         <span th:text="#{signup.click.label}">press to change</span>
                     </label>
                 </div>
@@ -46,6 +75,9 @@
                     };
                 }
             </script>
+
+            <input th:type="hidden" th:name="tempImageId" th:value="${tempImageId}">
+
 
             <!-- Error Login Message -->
             <!--suppress ThymeleafVariablesResolveInspection -->

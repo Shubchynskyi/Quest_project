@@ -120,7 +120,7 @@ public class UserController {
             return redirectUrl;
         }
 
-        imageService.uploadImage(imageFile, userFromModel.getImage());
+        imageService.uploadImage(imageFile, userFromModel.getImage(),false);
 
         return handleAdminFlow(request, userDTOFromSession, userFromModel);
     }
