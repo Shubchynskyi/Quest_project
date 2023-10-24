@@ -3,7 +3,7 @@ package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.exception.AppException;
-import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -17,150 +17,108 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 
 @Service
 public class ImageService {
 
-    private Path imagesFolder;
+    private final Path imagesFolder;
 
-    @Value("${app.images-directory}")
-    private String imagesDirectory;
-
-    @PostConstruct
-    public void init() throws IOException {
-        imagesFolder = Paths.get(imagesDirectory);
-        Files.createDirectories(imagesFolder);
+    @Autowired
+    public ImageService(@Value("${app.images-directory}") String imagesDirectory) throws IOException {
+        this.imagesFolder = Paths.get(imagesDirectory);
+        Files.createDirectories(this.imagesFolder);
     }
 
-//    public Path getImagePath(String filename) {
-//        return Key.EXTENSIONS.stream()
-//                .map(ext -> imagesFolder.resolve(filename + ext))
-//                .filter(Files::exists)
-//                .findAny()
-//                .orElse(imagesFolder.resolve(Key.NO_IMAGE_JPG));
+//    private Path imagesFolder;
+//
+//    @Value("${app.images-directory}")
+//    private String imagesDirectory;
+//
+//    @PostConstruct
+//    public void init() throws IOException {
+//        imagesFolder = Paths.get(imagesDirectory);
+//        Files.createDirectories(imagesFolder);
 //    }
 
     public Path getImagePath(String filename) {
-        // Если имя файла уже содержит расширение, то возвращаем путь к этому файлу
-        for (String ext : Key.EXTENSIONS) {
-            if (filename.endsWith(ext)) {
-                Path potentialPath = imagesFolder.resolve(filename);
-                if (Files.exists(potentialPath)) {
-                    return potentialPath;
-                }
-            }
+        Path potentialPath = imagesFolder.resolve(filename);
+        if (Files.exists(potentialPath)) {
+            return potentialPath;
         }
 
-        // Иначе ищем существующий файл, добавляя разные расширения
         for (String ext : Key.EXTENSIONS) {
-            Path potentialPath = imagesFolder.resolve(filename + ext);
-            if (Files.exists(potentialPath)) {
-                return potentialPath;
+            Path pathWithExtension = imagesFolder.resolve(filename + ext);
+            if (Files.exists(pathWithExtension)) {
+                return pathWithExtension;
             }
         }
 
         return imagesFolder.resolve(Key.NO_IMAGE_JPG);
     }
 
-//    public String uploadImage(MultipartFile file, String imageId, boolean isTemporary) {
-//        try {
-//            if (!file.isEmpty()) {
-//                validate(file);
-//                String filename = file.getOriginalFilename();
-//                String ext = Objects.requireNonNull(filename).substring(filename.lastIndexOf("."));
-//
-//                if (isTemporary) {
-//                    filename = "temp_" + System.currentTimeMillis() + "_" + imageId + ext;
-//                    System.out.println("Saving temporary image as: " + filename);  // TODO Для отладки
-//                } else {
-//                    filename = imageId + ext;
-//                }
-//
-//                deleteOldFiles(imageId);
-//                uploadImageInternal(filename, file.getInputStream());
-//
-//                return filename;
-//            }
-//        } catch (IOException | NullPointerException e) {
-//            throw new AppException(IMAGE_UPLOAD_ERROR);
-//        } catch (IllegalArgumentException e) {
-//            throw new AppException(INVALID_FILE_TYPE);
-//        }
-//
-//        return NO_IMAGE_JPG;
-//    }
-
-    public String uploadImage(MultipartFile file, String imageId, boolean isTemporary) {
+    public String uploadFromMultipartFile(MultipartFile file, String imageId, boolean isTemporary) {
         try {
             if (!file.isEmpty()) {
-                validate(file);
-                String filename = file.getOriginalFilename();
-
-                String ext = Objects.requireNonNull(filename).substring(filename.lastIndexOf("."));
-
-                if (isTemporary) {
-                    filename = "temp_" + System.currentTimeMillis() + "_" + imageId + ext;
-                } else {
-                    filename = imageId + ext;
-                }
-                deleteOldFiles(imageId);
-                uploadImageInternal(filename, file.getInputStream());
-
-                return filename;
-            }
-        } catch (IOException | NullPointerException e) {
-            throw new AppException(IMAGE_UPLOAD_ERROR);
-        } catch (IllegalArgumentException e) {
-            throw new AppException(INVALID_FILE_TYPE);
-        }
-
-        return NO_IMAGE_JPG;
-    }
-
-    public String uploadImage(String fileName, String imageId, boolean isTemporary) {
-        try {
-            Path filePath = getImagePath(fileName);
-            if (Files.exists(filePath)) {
-                validate(filePath); // Добавленная валидация
-
-                String filename = filePath.getFileName().toString();
-                String ext = filename.substring(filename.lastIndexOf("."));
-
-                if (isTemporary) {
-                    filename = "temp_" + System.currentTimeMillis() + "_" + imageId + ext;
-                } else {
-                    filename = imageId + ext;
-                }
-
-                deleteOldFiles(imageId);
-                uploadImageInternal(filename, Files.newInputStream(filePath));
-
-                return filename;
+                isValid(file);
+                return processFileUpload(file.getInputStream(), Objects.requireNonNull(file.getOriginalFilename()), imageId, isTemporary);
             }
         } catch (IOException e) {
             throw new AppException(IMAGE_UPLOAD_ERROR);
         } catch (IllegalArgumentException e) {
             throw new AppException(INVALID_FILE_TYPE);
         }
-
         return NO_IMAGE_JPG;
     }
 
-
-    private void validate(MultipartFile file) throws IOException {
-        String mimeType = Files.probeContentType(Paths.get(Objects.requireNonNull(file.getOriginalFilename())));
-        if (mimeType == null || !Key.ALLOWED_MIME_TYPES.contains(mimeType)) {
-            throw new IllegalArgumentException(INVALID_FILE_TYPE + ": " + mimeType);
+    public void uploadFromExistingFile(String fileName, String imageId) {
+        try {
+            Path filePath = getImagePath(fileName);
+            if (Files.exists(filePath)) {
+                isValid(filePath);
+                processFileUpload(
+                        Files.newInputStream(filePath),
+                        filePath.getFileName().toString(),
+                        imageId,
+                        false
+                );
+            }
+        } catch (IOException e) {
+            throw new AppException(IMAGE_UPLOAD_ERROR);
         }
     }
 
-    private void validate(Path filePath) throws IOException {
-        String mimeType = Files.probeContentType(filePath);
-        if (mimeType == null || !Key.ALLOWED_MIME_TYPES.contains(mimeType)) {
-            throw new IllegalArgumentException(INVALID_FILE_TYPE + ": " + mimeType);
-        }
+    private String processFileUpload(InputStream data, String filename, String imageId, boolean isTemporary) throws IOException {
+        String ext = filename.substring(filename.lastIndexOf("."));
+        String newFileName = isTemporary ?
+                generateTemporaryFileName(imageId, ext) :
+                imageId + ext;
+        deleteOldFiles(imageId);
+        uploadImageInternal(newFileName, data);
+        return newFileName;
+    }
+
+    private String generateTemporaryFileName(String imageId, String ext) {
+        return "temp_" + System.currentTimeMillis() + "_" + imageId + ext;
+    }
+
+    // TODO пользователю нужно как-то сообщать об ошибках в форму ввода изображения
+    private boolean isValid(String filePath) throws IOException {
+        String mimeType = Files.probeContentType(Paths.get(filePath));
+        return mimeType != null && Key.ALLOWED_MIME_TYPES.contains(mimeType);
+    }
+
+    //TODO обработать
+    public boolean isValid(MultipartFile file) throws IOException {
+        return isValid(Objects.requireNonNull(file.getOriginalFilename()));
+    }
+
+    //TODO обработать
+    private boolean isValid(Path filePath) throws IOException {
+        return isValid(filePath.toString());
     }
 
     private void deleteOldFiles(String filename) {
@@ -184,8 +142,11 @@ public class ImageService {
         }
     }
 
+    private static final long THIRTY_MINUTES_IN_MILLIS = 1800000L;
+    private static final Pattern TEMP_FILE_PATTERN = Pattern.compile("^temp_(\\d+)_.*$");
+
     public void deleteExpiredTempFiles() {
-        File folder = new File(imagesDirectory);
+        File folder = imagesFolder.toFile();
         File[] listOfFiles = folder.listFiles();
 
         if (listOfFiles == null) {
@@ -196,34 +157,26 @@ public class ImageService {
 
         for (File file : listOfFiles) {
             if (file.isFile()) {
-                String name = file.getName();
-                if (name.startsWith("temp_")) {
-                    String[] parts = name.split("_");
-                    long timestamp;
+                Matcher matcher = TEMP_FILE_PATTERN.matcher(file.getName());
+                if (matcher.matches()) {
                     try {
-                        timestamp = Long.parseLong(parts[1]);
-                    } catch (NumberFormatException e) {
-                        continue;
-                    }
-
-                    if (currentTime - timestamp > 60000) {  // устаревшие через 1 минуту
-                        boolean deleted = file.delete();
-                        if (!deleted) {
-                            System.out.println();
-                            System.err.println("Не удалось удалить файл: " + file.getName());
-                            System.out.println();
-                        } else {
-                            System.out.println();
-                            System.err.println("Файл удален: " + file.getName());
-                            System.out.println();
+                        long timestamp = Long.parseLong(matcher.group(1));
+                        if (currentTime - timestamp > THIRTY_MINUTES_IN_MILLIS) {
+                            if (!file.delete()) {
+                                // Логирование ошибки
+                            } else {
+                                // Логирование успешного удаления
+                            }
                         }
+                    } catch (NumberFormatException e) {
+                        // Логирование ошибки
                     }
                 }
             }
         }
     }
 
-    @Scheduled(cron = "0 0 * * * ?")  // каждую минуту
+    @Scheduled(cron = "0 0 * * * ?")  // каждый час
     public void scheduledDeleteExpiredFiles() {
         deleteExpiredTempFiles();
     }

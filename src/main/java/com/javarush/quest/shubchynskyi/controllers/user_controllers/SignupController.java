@@ -4,6 +4,7 @@ import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
+import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.localization.ViewErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.ImageService;
@@ -88,7 +89,9 @@ public class SignupController {
         System.err.println("imageFile: " + imageFile.getOriginalFilename());
 
         boolean hasErrors = false;
-        boolean imageIsValid = !imageFile.isEmpty();
+        boolean imageIsValid = imageService.isValid(imageFile);
+        boolean isTempImagePresent = !tempImageId.isEmpty();
+
 
         // проверяю на ошибки валидации в логине и пароле
         if (bindingResult.hasErrors()) {
@@ -99,12 +102,11 @@ public class SignupController {
                 errors.put(error.getField(), localizedErrorMessage);
             }
             redirectAttributes.addFlashAttribute(FIELD_ERRORS, errors);
-            redirectAttributes.addFlashAttribute("userDTOFromModel", userDTOFromModel);
             hasErrors = true;
         }
 
         // проверка на размер файла
-        if (imageFile.getSize() > MAX_FILE_SIZE) {
+        if (imageIsValid && imageFile.getSize() > MAX_FILE_SIZE) {
             String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(FILE_IS_TOO_LARGE);
             redirectAttributes.addFlashAttribute(
                     IMAGING_ERROR, localizedMessage
@@ -112,6 +114,9 @@ public class SignupController {
                                    + " " + MB);
             hasErrors = true;
             imageIsValid = false;
+            if(!tempImageId.isEmpty()) {
+                tempImageId = "";
+            }
         }
 
         if (isLoginExist(userDTOFromModel.getLogin())) {
@@ -123,25 +128,33 @@ public class SignupController {
         // TODO сохраняем изображение как временное , только если оно валидно и есть ошибки
         if (hasErrors && imageIsValid) {
             String tempImageUUID = UUID.randomUUID().toString();
-            String fullTempImageName = imageService.uploadImage(imageFile, tempImageUUID, true);
+            // TODO передавать ошибку в исключении на view
+            String fullTempImageName = imageService.uploadFromMultipartFile(imageFile, tempImageUUID, true);
             redirectAttributes.addFlashAttribute("tempImageId", fullTempImageName);
         } else
             // если основное изображение пустое или невалидное, то пробуем сохранить временное в редирект, если оно не пустое
-            if (hasErrors && !tempImageId.isEmpty()) {
+            if (hasErrors && isTempImagePresent) {
                 redirectAttributes.addFlashAttribute("tempImageId", tempImageId);
             }
 
+        if((!imageIsValid && !imageFile.isEmpty())) {
+            hasErrors = true;
+            redirectAttributes.addFlashAttribute(IMAGING_ERROR, "TEST_ERRORRRRRR");
+        }
+
         if (hasErrors) {
+            redirectAttributes.addFlashAttribute("userDTOFromModel", userDTOFromModel);
             return REDIRECT + Route.SIGNUP;
         }
 
         User user = userMapper.userDTOToUser(userDTOFromModel);
         User createdUser = userService.create(user).orElseThrow();
 
-        if (!imageFile.isEmpty()) {
-            imageService.uploadImage(imageFile, createdUser.getImage(), false);
-        } else if (!tempImageId.isEmpty()) {
-            imageService.uploadImage(tempImageId, createdUser.getImage(), false);
+        // TODO передавать ошибку в исключении на view
+        if (imageIsValid) {
+            imageService.uploadFromMultipartFile(imageFile, createdUser.getImage(), false);
+        } else if (isTempImagePresent) {
+            imageService.uploadFromExistingFile(tempImageId, createdUser.getImage());
         }
 
         UserDTO userDTO = userMapper.userToUserDTOWithoutPassword(createdUser);

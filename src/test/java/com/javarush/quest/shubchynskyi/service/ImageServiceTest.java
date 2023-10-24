@@ -2,6 +2,7 @@ package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -23,18 +24,16 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class ImageServiceTest {
 
-    private static ImageService imageService;
+    private ImageService imageService;
 
     @Mock
     private MultipartFile file;
 
     private static final String imagesDirectory = "target/test-images";
 
-    @BeforeAll
-    public static void setUp() throws IOException {
-        imageService = new ImageService();
-        ReflectionTestUtils.setField(imageService, "imagesDirectory", imagesDirectory);
-        imageService.init();
+    @BeforeEach
+    public void setUp() throws IOException {
+        imageService = new ImageService(imagesDirectory);
     }
 
     @Test
@@ -46,7 +45,7 @@ public class ImageServiceTest {
 
         MockMultipartFile mockFile = new MockMultipartFile("file", originalFilename, mimeType, content);
 
-        imageService.uploadImage(mockFile, imageId, false);
+        imageService.uploadFromMultipartFile(mockFile, imageId, false);
 
         Path uploadedImagePath = Paths.get(imagesDirectory, imageId + ".png");
         assertTrue(Files.exists(uploadedImagePath));
@@ -69,7 +68,7 @@ public class ImageServiceTest {
 
         AppException exception = assertThrows(
                 AppException.class,
-                () -> imageService.uploadImage(file, "testId", false));
+                () -> imageService.uploadFromMultipartFile(file, "testId", false));
 
         assertTrue(exception.getMessage().contains(INVALID_FILE_TYPE));
     }
@@ -78,14 +77,14 @@ public class ImageServiceTest {
     public void Should_ThrowAppException_When_ImageIdIsEmpty() {
         assertThrows(
                 AppException.class,
-                () -> imageService.uploadImage(file, "", false));
+                () -> imageService.uploadFromMultipartFile(file, "", false));
     }
 
     @Test
     public void Should_ThrowAppException_When_ImageIdIsNull() {
         assertThrows(
                 AppException.class,
-                () -> imageService.uploadImage(file, null, false));
+                () -> imageService.uploadFromMultipartFile(file, null, false));
     }
 
     @Test
@@ -113,11 +112,11 @@ public class ImageServiceTest {
         byte[] content2 = "fakeImageContent2".getBytes();
         MockMultipartFile mockFile2 = new MockMultipartFile("file", originalFilename2, mimeType2, content2);
 
-        imageService.uploadImage(mockFile1, imageId, false);
+        imageService.uploadFromMultipartFile(mockFile1, imageId, false);
         byte[] fileBytes1 = Files.readAllBytes(uploadedImagePath);
         assertArrayEquals(content1, fileBytes1);
 
-        imageService.uploadImage(mockFile2, imageId, false);
+        imageService.uploadFromMultipartFile(mockFile2, imageId, false);
         byte[] fileBytes2 = Files.readAllBytes(uploadedImagePath);
         assertArrayEquals(content2, fileBytes2);
 

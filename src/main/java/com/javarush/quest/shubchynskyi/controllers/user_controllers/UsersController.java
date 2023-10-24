@@ -46,6 +46,8 @@ public class UsersController {
         return Route.USERS;
     }
 
+    // TODO метод статический и используется двумя контроллерами
+    // лучше вынести в какой-то класс userValidator или делать проверки через Secur
     static boolean validateUserRole(HttpSession session, RedirectAttributes redirectAttributes) {
         UserDTO currentUser = (UserDTO) session.getAttribute(USER);
         if (currentUser == null
