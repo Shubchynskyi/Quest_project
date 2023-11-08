@@ -33,17 +33,6 @@ public class ImageService {
         Files.createDirectories(this.imagesFolder);
     }
 
-//    private Path imagesFolder;
-//
-//    @Value("${app.images-directory}")
-//    private String imagesDirectory;
-//
-//    @PostConstruct
-//    public void init() throws IOException {
-//        imagesFolder = Paths.get(imagesDirectory);
-//        Files.createDirectories(imagesFolder);
-//    }
-
     public Path getImagePath(String filename) {
         Path potentialPath = imagesFolder.resolve(filename);
         if (Files.exists(potentialPath)) {
@@ -56,9 +45,56 @@ public class ImageService {
                 return pathWithExtension;
             }
         }
-
+        // TODO добавить логирование для случаев, когда файл не найден
         return imagesFolder.resolve(Key.NO_IMAGE_JPG);
     }
+
+    public static final String ERROR_FILE_NULL_OR_EMPTY = "File is null or empty";
+    public static final String ERROR_ORIGINAL_FILENAME_EMPTY = "Original filename is null or empty";
+    public static final String ERROR_FILE_PATH_NOT_EXIST = "File path does not exist";
+
+
+//    public String uploadFromMultipartFile(MultipartFile file, String imageId, boolean isTemporary) {
+//        if (file == null || file.isEmpty()) {
+//            throw new AppException(ERROR_FILE_NULL_OR_EMPTY);
+//        }
+//        String originalFilename = file.getOriginalFilename();
+//        if (originalFilename == null || originalFilename.trim().isEmpty()) {
+//            throw new AppException(ERROR_ORIGINAL_FILENAME_EMPTY);
+//        }
+//        try {
+//            try {
+//                isValid(file);
+//            } catch (NullPointerException e) {
+//                throw new AppException("NPE");
+//            }
+//            // Вы можете добавить логирование перед каждым throw, если это необходимо
+//            return processFileUpload(file.getInputStream(), originalFilename, imageId, isTemporary);
+//        } catch (IOException e) {
+//            // Логирование ошибки e
+//            throw new AppException(IMAGE_UPLOAD_ERROR, e);
+//        } catch (IllegalArgumentException e) {
+//            // Логирование ошибки e
+//            throw new AppException(INVALID_FILE_TYPE, e);
+//        }
+//    }
+//
+//    public void uploadFromExistingFile(String fileName, String imageId) {
+//        if (fileName == null || fileName.trim().isEmpty()) {
+//            throw new AppException(ERROR_FILE_NULL_OR_EMPTY);
+//        }
+//        Path filePath = getImagePath(fileName);
+//        if (!Files.exists(filePath)) {
+//            throw new AppException(ERROR_FILE_PATH_NOT_EXIST);
+//        }
+//        try (InputStream inputStream = Files.newInputStream(filePath)) {
+//            isValid(filePath); // Проверка уже произведена в getImagePath, можно опустить, если проверка на mimeType не нужна
+//            processFileUpload(inputStream, filePath.getFileName().toString(), imageId, false);
+//        } catch (IOException e) {
+//            // Логирование ошибки e
+//            throw new AppException(IMAGE_UPLOAD_ERROR, e);
+//        }
+//    }
 
     public String uploadFromMultipartFile(MultipartFile file, String imageId, boolean isTemporary) {
         try {
@@ -73,7 +109,7 @@ public class ImageService {
         }
         return NO_IMAGE_JPG;
     }
-
+    // TODO в этих двух методах проверить работу с ошибками в исключениях
     public void uploadFromExistingFile(String fileName, String imageId) {
         try {
             Path filePath = getImagePath(fileName);
@@ -124,15 +160,33 @@ public class ImageService {
     private void deleteOldFiles(String filename) {
         Key.EXTENSIONS.stream()
                 .map(ext -> imagesFolder.resolve(filename + ext))
-                .filter(Files::exists)
-                .forEach(p -> {
+                .forEach(path -> {
                     try {
-                        Files.deleteIfExists(p);
+                        if (Files.exists(path)) {
+                            Files.delete(path);
+                            // TODO Логирование успешного удаления
+                            //logger.info("File deleted successfully: {}", path);
+                        }
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        // TODO Логирование исключения, возможно, с подробностями о файле
+//                        logger.error("Error deleting file: " + path, e);
+                        throw new AppException("Error deleting file: " + path, e);
                     }
                 });
     }
+
+//    private void deleteOldFiles(String filename) {
+//        Key.EXTENSIONS.stream()
+//                .map(ext -> imagesFolder.resolve(filename + ext))
+//                .filter(Files::exists)
+//                .forEach(p -> {
+//                    try {
+//                        Files.deleteIfExists(p);
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                });
+//    }
 
     private void uploadImageInternal(String name, InputStream data) throws IOException {
         try (data) {

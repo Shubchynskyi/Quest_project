@@ -9,16 +9,14 @@ import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.constant.Route;
+import com.javarush.quest.shubchynskyi.service.ValidationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -36,7 +34,9 @@ public class UserController {
     private final UserService userService;
     private final ImageService imageService;
     private final UserMapper userMapper;
-    private final MessageSource messageSource;
+    private final ValidationService validationService;
+
+    private final List<Role> acceptedRoles = List.of(Role.ADMIN, Role.MODERATOR);
 
     @GetMapping(USER)
     public String showUser(
@@ -47,7 +47,7 @@ public class UserController {
             @RequestParam(value = SOURCE, required = false) String source,
             @SessionAttribute(name = USER, required = false) UserDTO userFromSession
     ) {
-        if (UsersController.validateUserRole(session, redirectAttributes)) {
+        if (validationService.checkUserAccessDenied(session, acceptedRoles, redirectAttributes)) {
             return REDIRECT + Route.INDEX;
         }
 
@@ -95,13 +95,7 @@ public class UserController {
     ) {
 
         if (bindingResult.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            Locale locale = LocaleContextHolder.getLocale();
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                String localizedErrorMessage = messageSource.getMessage(error, locale);
-                errors.put(error.getField(), localizedErrorMessage);
-            }
-            redirectAttributes.addFlashAttribute(FIELD_ERRORS, errors);
+            validationService.processFieldErrors(bindingResult, redirectAttributes);
             return REDIRECT + Route.USER_ID + userDTOFromModel.getId();
         }
 
@@ -131,6 +125,9 @@ public class UserController {
                 .orElseThrow();
     }
 
+    // TODO сюда добавить список разрешенных ролей
+    //метод проверяет редактирует ли пользователь себя или другого пользователя
+    //если пользователь не админ или не модератор, но хочет кого-то отредактировать, то доступа не будет
     private boolean isUserPermitted(UserDTO userDTOFromModel, UserDTO userDTOFromSession) {
         if (!userDTOFromSession.getId().equals(userDTOFromModel.getId())) {
             Role userRole = userDTOFromSession.getRole();

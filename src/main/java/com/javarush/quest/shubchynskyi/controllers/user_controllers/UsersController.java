@@ -2,10 +2,10 @@ package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
-import com.javarush.quest.shubchynskyi.localization.ViewErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.constant.Route;
+import com.javarush.quest.shubchynskyi.service.ValidationService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -18,7 +18,6 @@ import java.util.Optional;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
-import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.YOU_DONT_HAVE_PERMISSIONS;
 
 @Controller
 @RequiredArgsConstructor
@@ -26,6 +25,8 @@ public class UsersController {
 
     private final UserService userService;
     private final UserMapper userMapper;
+    private final ValidationService validationService;
+    private final List<Role> acceptedRoles = List.of(Role.ADMIN, Role.MODERATOR);
 
     @GetMapping(USERS)
     public String showUsers(
@@ -33,7 +34,8 @@ public class UsersController {
             HttpSession session,
             RedirectAttributes redirectAttributes
     ) {
-        if (validateUserRole(session, redirectAttributes)) {
+        // TODO метод изменен, проверить
+        if (validationService.checkUserAccessDenied(session, acceptedRoles, redirectAttributes)) {
             return REDIRECT + Route.INDEX;
         }
 
@@ -48,15 +50,15 @@ public class UsersController {
 
     // TODO метод статический и используется двумя контроллерами
     // лучше вынести в какой-то класс userValidator или делать проверки через Secur
-    static boolean validateUserRole(HttpSession session, RedirectAttributes redirectAttributes) {
-        UserDTO currentUser = (UserDTO) session.getAttribute(USER);
-        if (currentUser == null
-            || (!currentUser.getRole().equals(Role.ADMIN)
-                && !currentUser.getRole().equals(Role.MODERATOR))) {
-            String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(YOU_DONT_HAVE_PERMISSIONS);
-            redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
-            return true;
-        }
-        return false;
-    }
+//    static boolean validateUserRole(HttpSession session, RedirectAttributes redirectAttributes) {
+//        UserDTO currentUser = (UserDTO) session.getAttribute(USER);
+//        if (currentUser == null
+//            || (!currentUser.getRole().equals(Role.ADMIN)
+//                && !currentUser.getRole().equals(Role.MODERATOR))) {
+//            String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(YOU_DONT_HAVE_PERMISSIONS);
+//            redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
+//            return true;
+//        }
+//        return false;
+//    }
 }

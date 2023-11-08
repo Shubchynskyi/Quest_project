@@ -93,4 +93,6 @@ public class Key {
     public static final String MB = "MB";
     public static final int KB_TO_MB = 1024;
 
+    public static final String USER_DTO_FROM_MODEL = "userDTOFromModel";
+    public static final String TEMP_IMAGE_ID = "tempImageId";
 }
