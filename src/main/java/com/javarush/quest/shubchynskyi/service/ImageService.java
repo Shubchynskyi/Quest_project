@@ -34,104 +34,92 @@ public class ImageService {
     }
 
     public Path getImagePath(String filename) {
-        Path potentialPath = imagesFolder.resolve(filename);
-        if (Files.exists(potentialPath)) {
-            return potentialPath;
+        Path resolvedPath = imagesFolder.resolve(filename).normalize();
+
+        if (!resolvedPath.startsWith(imagesFolder)) {
+            throw new SecurityException("Invalid file path, access denied");
+        }
+
+        if (Files.exists(resolvedPath)) {
+            return resolvedPath;
         }
 
         for (String ext : Key.EXTENSIONS) {
-            Path pathWithExtension = imagesFolder.resolve(filename + ext);
+            Path pathWithExtension = resolvedPath.getParent().resolve(resolvedPath.getFileName().toString() + ext);
             if (Files.exists(pathWithExtension)) {
                 return pathWithExtension;
             }
         }
-        // TODO добавить логирование для случаев, когда файл не найден
+
+        // TODO: Добавить логирование для случаев, когда файл не найден
         return imagesFolder.resolve(Key.NO_IMAGE_JPG);
     }
 
-    public static final String ERROR_FILE_NULL_OR_EMPTY = "File is null or empty";
-    public static final String ERROR_ORIGINAL_FILENAME_EMPTY = "Original filename is null or empty";
-    public static final String ERROR_FILE_PATH_NOT_EXIST = "File path does not exist";
-
-
-//    public String uploadFromMultipartFile(MultipartFile file, String imageId, boolean isTemporary) {
-//        if (file == null || file.isEmpty()) {
-//            throw new AppException(ERROR_FILE_NULL_OR_EMPTY);
-//        }
-//        String originalFilename = file.getOriginalFilename();
-//        if (originalFilename == null || originalFilename.trim().isEmpty()) {
-//            throw new AppException(ERROR_ORIGINAL_FILENAME_EMPTY);
-//        }
-//        try {
-//            try {
-//                isValid(file);
-//            } catch (NullPointerException e) {
-//                throw new AppException("NPE");
-//            }
-//            // Вы можете добавить логирование перед каждым throw, если это необходимо
-//            return processFileUpload(file.getInputStream(), originalFilename, imageId, isTemporary);
-//        } catch (IOException e) {
-//            // Логирование ошибки e
-//            throw new AppException(IMAGE_UPLOAD_ERROR, e);
-//        } catch (IllegalArgumentException e) {
-//            // Логирование ошибки e
-//            throw new AppException(INVALID_FILE_TYPE, e);
-//        }
-//    }
-//
-//    public void uploadFromExistingFile(String fileName, String imageId) {
-//        if (fileName == null || fileName.trim().isEmpty()) {
-//            throw new AppException(ERROR_FILE_NULL_OR_EMPTY);
-//        }
-//        Path filePath = getImagePath(fileName);
-//        if (!Files.exists(filePath)) {
-//            throw new AppException(ERROR_FILE_PATH_NOT_EXIST);
-//        }
-//        try (InputStream inputStream = Files.newInputStream(filePath)) {
-//            isValid(filePath); // Проверка уже произведена в getImagePath, можно опустить, если проверка на mimeType не нужна
-//            processFileUpload(inputStream, filePath.getFileName().toString(), imageId, false);
-//        } catch (IOException e) {
-//            // Логирование ошибки e
-//            throw new AppException(IMAGE_UPLOAD_ERROR, e);
-//        }
-//    }
 
     public String uploadFromMultipartFile(MultipartFile file, String imageId, boolean isTemporary) {
-        try {
-            if (!file.isEmpty()) {
-                isValid(file);
-                return processFileUpload(file.getInputStream(), Objects.requireNonNull(file.getOriginalFilename()), imageId, isTemporary);
-            }
-        } catch (IOException e) {
-            throw new AppException(IMAGE_UPLOAD_ERROR);
-        } catch (IllegalArgumentException e) {
-            throw new AppException(INVALID_FILE_TYPE);
+        if (file == null || file.isEmpty()) {
+            throw new AppException("File is null or empty");
         }
-        return NO_IMAGE_JPG;
+
+        if (!isPathSecure(imageId)) {
+            throw new AppException("The file path is insecure");
+        }
+
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || originalFilename.isEmpty()) {
+            throw new AppException("Original filename is null or empty");
+        }
+
+        try {
+            if (!isValid(file)) {
+                throw new AppException(INVALID_FILE_TYPE);
+            }
+            return processFileUpload(file.getInputStream(), originalFilename, imageId, isTemporary);
+        } catch (IOException e) {
+            throw new AppException(IMAGE_UPLOAD_ERROR, e);
+        }
     }
-    // TODO в этих двух методах проверить работу с ошибками в исключениях
+
     public void uploadFromExistingFile(String fileName, String imageId) {
+        if (fileName == null || fileName.isEmpty()) {
+            throw new AppException("File name is null or empty");
+        }
+
+        if (!isPathSecure(imageId)) {
+            throw new AppException("The file path is insecure");
+        }
+
         try {
             Path filePath = getImagePath(fileName);
-            if (Files.exists(filePath)) {
-                isValid(filePath);
-                processFileUpload(
-                        Files.newInputStream(filePath),
-                        filePath.getFileName().toString(),
-                        imageId,
-                        false
-                );
+            if (!Files.exists(filePath)) {
+                throw new AppException("File does not exist");
             }
+
+            if (!isValid(filePath)) {
+                throw new AppException(INVALID_FILE_TYPE);
+            }
+
+            processFileUpload(
+                    Files.newInputStream(filePath),
+                    filePath.getFileName().toString(),
+                    imageId,
+                    false
+            );
         } catch (IOException e) {
-            throw new AppException(IMAGE_UPLOAD_ERROR);
+            throw new AppException(IMAGE_UPLOAD_ERROR, e);
         }
     }
 
     private String processFileUpload(InputStream data, String filename, String imageId, boolean isTemporary) throws IOException {
+        if (!filename.contains(".")) {
+            throw new AppException("Filename does not contain an extension");
+        }
+
         String ext = filename.substring(filename.lastIndexOf("."));
         String newFileName = isTemporary ?
                 generateTemporaryFileName(imageId, ext) :
                 imageId + ext;
+
         deleteOldFiles(imageId);
         uploadImageInternal(newFileName, data);
         return newFileName;
@@ -141,58 +129,74 @@ public class ImageService {
         return "temp_" + System.currentTimeMillis() + "_" + imageId + ext;
     }
 
-    // TODO пользователю нужно как-то сообщать об ошибках в форму ввода изображения
-    private boolean isValid(String filePath) throws IOException {
-        String mimeType = Files.probeContentType(Paths.get(filePath));
-        return mimeType != null && Key.ALLOWED_MIME_TYPES.contains(mimeType);
+    public boolean isValid(MultipartFile file) {
+        // Проверка на непустое содержимое и наличие файла не требует чтения MIME-типа.
+        if (file.isEmpty() || file.getOriginalFilename() == null || file.getOriginalFilename().isEmpty()) {
+            return false;
+        }
+
+        try {
+            // Создаем временный файл для получения Path.
+            Path tempFile = Files.createTempFile("upload_", file.getOriginalFilename());
+            file.transferTo(tempFile.toFile());
+
+            // Проверяем MIME-тип.
+            boolean valid = isValid(tempFile);
+
+            // Удаляем временный файл.
+            Files.delete(tempFile);
+
+            return valid;
+        } catch (IOException e) {
+            // Логирование ошибки с уровнем WARN.
+            return false;
+        }
     }
 
-    //TODO обработать
-    public boolean isValid(MultipartFile file) throws IOException {
-        return isValid(Objects.requireNonNull(file.getOriginalFilename()));
+    public boolean isValid(Path filePath) {
+        if (!Files.exists(filePath) || !Files.isReadable(filePath)) {
+            return false;
+        }
+
+        try {
+            String mimeType = Files.probeContentType(filePath);
+            return mimeType != null && Key.ALLOWED_MIME_TYPES.contains(mimeType);
+        } catch (IOException e) {
+            // Логирование ошибки с уровнем WARN.
+            return false;
+        }
     }
 
-    //TODO обработать
-    private boolean isValid(Path filePath) throws IOException {
-        return isValid(filePath.toString());
+
+
+    private boolean isPathSecure(String imageId) {
+        return imageId != null && !imageId.contains("..");
     }
 
-    private void deleteOldFiles(String filename) {
-        Key.EXTENSIONS.stream()
-                .map(ext -> imagesFolder.resolve(filename + ext))
-                .forEach(path -> {
-                    try {
-                        if (Files.exists(path)) {
-                            Files.delete(path);
-                            // TODO Логирование успешного удаления
-                            //logger.info("File deleted successfully: {}", path);
-                        }
-                    } catch (IOException e) {
-                        // TODO Логирование исключения, возможно, с подробностями о файле
-//                        logger.error("Error deleting file: " + path, e);
-                        throw new AppException("Error deleting file: " + path, e);
-                    }
-                });
+    private void deleteOldFiles(String imageId) {
+        for (String ext : Key.EXTENSIONS) {
+            Path path = imagesFolder.resolve(imageId + ext);
+            if (Files.exists(path)) {
+                tryDeleteFile(path);
+            }
+        }
     }
 
-//    private void deleteOldFiles(String filename) {
-//        Key.EXTENSIONS.stream()
-//                .map(ext -> imagesFolder.resolve(filename + ext))
-//                .filter(Files::exists)
-//                .forEach(p -> {
-//                    try {
-//                        Files.deleteIfExists(p);
-//                    } catch (IOException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                });
-//    }
+    private void tryDeleteFile(Path path) {
+        try {
+            Files.delete(path);
+            // logger.info("File deleted successfully: {}", path);
+        } catch (IOException e) {
+            // logger.error("Error deleting file: " + path, e);
+            throw new AppException("Error deleting file: " + path, e);
+        }
+    }
 
     private void uploadImageInternal(String name, InputStream data) throws IOException {
-        try (data) {
-            if (data.available() > 0) {
-                Files.copy(data, imagesFolder.resolve(name), StandardCopyOption.REPLACE_EXISTING);
-            }
+        Path targetPath = imagesFolder.resolve(name);
+        long copiedBytes = Files.copy(data, targetPath, StandardCopyOption.REPLACE_EXISTING);
+        if (copiedBytes == 0) {
+            throw new AppException("The file is empty and cannot be uploaded.");
         }
     }
 

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -19,6 +20,8 @@ import java.nio.file.Paths;
 import static com.javarush.quest.shubchynskyi.constant.Key.INVALID_FILE_TYPE;
 import static com.javarush.quest.shubchynskyi.constant.Key.NO_IMAGE_JPG;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -122,4 +125,67 @@ public class ImageServiceTest {
 
         assertNotEquals(fileBytes1, fileBytes2);
     }
+
+    @Test
+    public void Should_ThrowException_When_FilePathIsInsecure() {
+        String insecureImageId = "../testId";
+        MockMultipartFile mockFile = new MockMultipartFile("file", "test.png", "image/png", "fakeImageContent".getBytes());
+
+        assertThrows(
+                AppException.class,
+                () -> imageService.uploadFromMultipartFile(mockFile, insecureImageId, false));
+    }
+
+    @Test
+    public void Should_ThrowException_When_FileExtensionIsNotAllowed() {
+        MockMultipartFile mockFile = new MockMultipartFile("file", "test.exe", "application/octet-stream", new byte[0]);
+
+        assertThrows(
+                AppException.class,
+                () -> imageService.uploadFromMultipartFile(mockFile, "testId", false));
+    }
+
+    @Test
+    public void Should_CorrectlyHandleEmptyAndWhitespaceImageId_When_Uploading() {
+        MockMultipartFile mockFile = new MockMultipartFile("file", "test.png", "image/png", new byte[0]);
+
+        assertThrows(
+                AppException.class,
+                () -> imageService.uploadFromMultipartFile(mockFile, " ", false));
+
+        assertThrows(
+                AppException.class,
+                () -> imageService.uploadFromMultipartFile(mockFile, "", false));
+    }
+
+    @Test
+    public void Should_ReturnDefaultImagePath_When_ImageWithMultipleExtensionsNotFound() {
+        String filename = "multiextension";
+        Path expectedPath = Paths.get(imagesDirectory, NO_IMAGE_JPG);
+
+        Path result = imageService.getImagePath(filename);
+
+        assertEquals(expectedPath, result);
+    }
+
+    @Test
+    public void should_ThrowException_When_FileDoesNotExist() throws IOException {
+        String imageId = "secureImageId";
+        String nonExistingFileName = "nonExisting.png";
+        Path filePath = Paths.get(nonExistingFileName);
+
+        // Мокирование статического метода Files.exists
+        Mockito.mockStatic(Files.class).when(() -> Files.exists(filePath)).thenReturn(false);
+
+        // Проверка, что метод выбросит исключение AppException, если файл не существует
+        assertThrows(
+                AppException.class,
+                () -> imageService.uploadFromExistingFile(nonExistingFileName, imageId),
+                "Expected AppException to be thrown if the file does not exist"
+        );
+    }
+
+
+
+
 }

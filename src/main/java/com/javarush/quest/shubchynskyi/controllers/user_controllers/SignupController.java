@@ -155,20 +155,5 @@ public class SignupController {
         return hasErrors;
     }
 
-//    private boolean isErrorsPresent(BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-//        if (bindingResult.hasErrors()) {
-//            Map<String, String> errors = new HashMap<>();
-//            Locale locale = LocaleContextHolder.getLocale();
-//            for (FieldError error : bindingResult.getFieldErrors()) {
-//                String localizedErrorMessage = messageSource.getMessage(error, locale);
-//                errors.put(error.getField(), localizedErrorMessage);
-//            }
-//            redirectAttributes.addFlashAttribute(FIELD_ERRORS, errors);
-//            return true;
-//        }
-//        return false;
-//    }
-
-
 }
 
