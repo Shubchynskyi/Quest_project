@@ -22,7 +22,7 @@ public class Key {
 
     //**************  ImageService  **************//
     public static final String NO_IMAGE_JPG = "no-image.jpg";
-    public static final List<String> EXTENSIONS = List.of(
+    public static final List<String> ALLOWED_EXTENSIONS = List.of(
             ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp"
     );
     public static final List<String> ALLOWED_MIME_TYPES = List.of(
