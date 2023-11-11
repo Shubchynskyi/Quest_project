@@ -12,9 +12,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.PATH_IMAGES;
+import static com.javarush.quest.shubchynskyi.constant.Key.PATH_IMAGES_TEMP;
 
 @Controller
-@RequestMapping(PATH_IMAGES)
+@RequestMapping({PATH_IMAGES, PATH_IMAGES_TEMP})
 @RequiredArgsConstructor
 public class ImageController {
 
@@ -22,9 +23,7 @@ public class ImageController {
 
     @GetMapping(value = Key.PATH_IMAGE_NAME)
     public void getImage(@PathVariable(Key.PARAM_IMAGE_NAME) String imageName, HttpServletResponse response) throws IOException {
-        System.err.println("imageName in ImageController - " + imageName);
         Path imagePath = imageService.getImagePath(imageName);
-        System.out.println("Serving image from path: " + imagePath.toString());  // Для отладки
         Files.copy(imagePath, response.getOutputStream());
         response.getOutputStream().flush();
     }

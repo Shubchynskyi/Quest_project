@@ -86,6 +86,7 @@ public class Key {
     //**************  File Upload and Storage  **************//
     public static final String IMAGE_UPLOAD_ERROR = "Image upload error";
     public static final String PATH_IMAGES = "/images";
+    public static final String PATH_IMAGES_TEMP = "/images/temp";
     public static final String PATH_IMAGE_NAME = "/{imageName}";
     public static final String PARAM_IMAGE_NAME = "imageName";
     public static final String IMAGE = "image";

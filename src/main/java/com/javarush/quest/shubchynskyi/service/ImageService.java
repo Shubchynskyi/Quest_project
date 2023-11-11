@@ -35,6 +35,7 @@ public class ImageService {
     @Autowired
     public ImageService(@Value("${app.images-directory}") String imagesDirectory) throws IOException {
         this.imagesFolder = Paths.get(imagesDirectory);
+//        this.tempFilesDir = imagesFolder;
         this.tempFilesDir = this.imagesFolder.resolve("temp");
 
         Files.createDirectories(this.imagesFolder);
@@ -42,16 +43,25 @@ public class ImageService {
     }
 
     public Path getImagePath(String filename) {
-        Path resolvedPath = imagesFolder.resolve(filename).normalize();
+        // Определение, является ли файл временным на основе префикса
+        boolean isTemporary = filename.startsWith("temp_");
 
-        if (!resolvedPath.startsWith(imagesFolder)) {
+        // Выбор корневой директории в зависимости от того, временный ли это файл
+        Path rootDir = isTemporary ? tempFilesDir : imagesFolder;
+
+        Path resolvedPath = rootDir.resolve(filename).normalize();
+
+        // Проверка, что путь файла начинается с корневой директории (защита от путей типа "../")
+        if (!resolvedPath.startsWith(rootDir)) {
             throw new SecurityException("Invalid file path, access denied");
         }
 
+        // Проверка существования файла
         if (Files.exists(resolvedPath)) {
             return resolvedPath;
         }
 
+        // Попытка найти файл с учетом возможных расширений
         for (String ext : Key.ALLOWED_EXTENSIONS) {
             Path pathWithExtension = resolvedPath.getParent().resolve(resolvedPath.getFileName().toString() + ext);
             if (Files.exists(pathWithExtension)) {
@@ -60,7 +70,7 @@ public class ImageService {
         }
 
         // TODO: Добавить логирование для случаев, когда файл не найден
-        return imagesFolder.resolve(Key.NO_IMAGE_JPG);
+        return rootDir.resolve(Key.NO_IMAGE_JPG);
     }
 
 
@@ -297,7 +307,7 @@ public class ImageService {
     }
 
 
-    @Scheduled(cron = "0 0 * * * ?")  // каждый час
+    @Scheduled(cron = "0 */10 * * * ?")  // 10 min
     public void scheduledDeleteExpiredFiles() {
         deleteExpiredTempFiles();
     }

@@ -14,6 +14,12 @@ public class ResourceConfig implements WebMvcConfigurer {
     @Value("${images.resource.locations}")
     private String imagesResourceLocations;
 
+    @Value("${images.resource.temp.handler}")
+    private String imagesTempResourceHandler;
+
+    @Value("${images.resource.temp.locations}")
+    private String imagesTempResourceLocations;
+
     @Value("${ico.resource.handler}")
     private String icoResourceHandler;
 
@@ -24,6 +30,8 @@ public class ResourceConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler(imagesResourceHandler)
                 .addResourceLocations(imagesResourceLocations);
+        registry.addResourceHandler(imagesTempResourceHandler)
+                .addResourceLocations(imagesTempResourceLocations);
         registry.addResourceHandler(icoResourceHandler)
                 .addResourceLocations(icoResourceLocations);
     }
