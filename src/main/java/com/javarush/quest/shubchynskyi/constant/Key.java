@@ -3,6 +3,7 @@ package com.javarush.quest.shubchynskyi.constant;
 import lombok.experimental.UtilityClass;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 @UtilityClass
 public class Key {
@@ -44,6 +45,12 @@ public class Key {
     public static final String INVALID_FILE_TYPE = "Invalid file type";
     public static final String QUEST_TEXT_IS_NOT_VALID = "Quest text is not valid";
     public static final String QUEST_WITH_THIS_NAME_ALREADY_EXISTS = "Quest with this name already exists";
+
+    public static final String INVALID_FILE_PATH_ACCESS_DENIED = "Invalid file path, access denied";
+    public static final String THE_FILE_PATH_IS_INSECURE = "The file path is insecure";
+    public static final String ORIGINAL_FILENAME_IS_NULL_OR_EMPTY = "Original filename is null or empty";
+    public static final String FILE_DOES_NOT_EXIST = "File does not exist";
+    public static final String FILE_NAME_IS_NULL_OR_EMPTY = "File name is null or empty";
 
     //**************  Quest parser settings  **************// //TODO move to properties
     public static final int MINIMUM_QUESTION_IN_QUEST = 1;
@@ -90,10 +97,17 @@ public class Key {
     public static final String PATH_IMAGE_NAME = "/{imageName}";
     public static final String PARAM_IMAGE_NAME = "imageName";
     public static final String IMAGE = "image";
-    public static final int MAX_FILE_SIZE = 2097152;    //TODO move to properties
     public static final String MB = "MB";
     public static final int KB_TO_MB = 1024;
-
     public static final String USER_DTO_FROM_MODEL = "userDTOFromModel";
     public static final String TEMP_IMAGE_ID = "tempImageId";
+
+
+    //TODO move to properties
+    public static final int MAX_FILE_SIZE = 2097152;
+    public static final long THIRTY_MINUTES_IN_MILLIS = 1800000L;
+    public static final int MAX_LENGTH = 100;
+    public static final Pattern TEMP_FILE_PATTERN = Pattern.compile("^temp_(\\d+)_.*$");
+    public static final String PREFIX_FOR_TEMP_IMAGES = "temp";
+
 }

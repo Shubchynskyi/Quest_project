@@ -3,10 +3,10 @@ package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
-import com.javarush.quest.shubchynskyi.entity.User;
+import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.localization.ViewErrorLocalizer;
-import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.ImageService;
+import com.javarush.quest.shubchynskyi.service.UserRegistrationService;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.service.ValidationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,8 +37,8 @@ public class SignupController {
 
     private final UserService userService;
     private final ImageService imageService;
-    private final UserMapper userMapper;
     private final ValidationService validationService;
+    private final UserRegistrationService userRegistrationService;
 
     @GetMapping(SIGNUP)
     public String showSignup(Model model,
@@ -86,63 +86,80 @@ public class SignupController {
                          @RequestParam(name = TEMP_IMAGE_ID, required = false) String tempImageId,
                          HttpServletRequest request,
                          RedirectAttributes redirectAttributes
-    ) throws IOException {
+    ) {
 
-        // получаем ошибки в полях, добавляем в редирект
+        try {
+            boolean hasFieldsErrors = processFieldErrors(bindingResult, redirectAttributes);
+            boolean imageIsValid = imageService.isValid(imageFile);
+            boolean isTempImagePresent = !tempImageId.isEmpty();
+
+            if (imageIsValid && imageFile.getSize() > MAX_FILE_SIZE) {
+                addLocalizedMaxSizeError(redirectAttributes);
+                hasFieldsErrors = true;
+                imageIsValid = false;
+                if (!tempImageId.isEmpty()) {
+                    tempImageId = "";
+                }
+            } else if ((!imageIsValid && !imageFile.isEmpty())) {
+                addLocalizedIncorrectImageError(redirectAttributes);
+                hasFieldsErrors = true;
+            }
+
+            hasFieldsErrors = isLoginExist(userDTOFromModel, redirectAttributes, hasFieldsErrors);
+
+            if (hasFieldsErrors && imageIsValid) {
+                String tempImageUUID = UUID.randomUUID().toString();
+                String fullTempImageName = imageService.uploadFromMultipartFile(imageFile, tempImageUUID, true);
+                redirectAttributes.addFlashAttribute(TEMP_IMAGE_ID, fullTempImageName);
+            } else if (hasFieldsErrors && isTempImagePresent) {
+                redirectAttributes.addFlashAttribute(TEMP_IMAGE_ID, tempImageId);
+            }
+
+            if (hasFieldsErrors) {
+                redirectAttributes.addFlashAttribute(USER_DTO_FROM_MODEL, userDTOFromModel);
+                return REDIRECT + Route.SIGNUP;
+            }
+
+            UserDTO userDTO = userRegistrationService.registerNewUser(
+                    userDTOFromModel,
+                    imageFile,
+                    tempImageId,
+                    imageIsValid,
+                    isTempImagePresent);
+
+            request.getSession().setAttribute(USER, userDTO);
+        } catch (AppException e) {
+            // TODO log
+            addLocalizedUnexpectedError(redirectAttributes);
+            return REDIRECT + Route.SIGNUP;
+        }
+        return REDIRECT + Route.PROFILE;
+    }
+
+    private void addLocalizedUnexpectedError(RedirectAttributes redirectAttributes) {
+        String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(UNEXPECTED_ERROR);
+        redirectAttributes.addFlashAttribute(IMAGING_ERROR, localizedMessage);
+    }
+
+    private void addLocalizedIncorrectImageError(RedirectAttributes redirectAttributes) {
+        String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(IMAGE_FILE_IS_INCORRECT);
+        redirectAttributes.addFlashAttribute(IMAGING_ERROR, localizedMessage);
+    }
+
+    private void addLocalizedMaxSizeError(RedirectAttributes redirectAttributes) {
+        String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(FILE_IS_TOO_LARGE);
+        redirectAttributes.addFlashAttribute(
+                IMAGING_ERROR, localizedMessage
+                               + " " + (MAX_FILE_SIZE / KB_TO_MB / KB_TO_MB)
+                               + " " + MB);
+    }
+
+    private boolean processFieldErrors(BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         boolean hasFieldsErrors = bindingResult.hasErrors();
         if (hasFieldsErrors) {
             validationService.processFieldErrors(bindingResult, redirectAttributes);
         }
-
-        boolean imageIsValid = imageService.isValid(imageFile);
-        boolean isTempImagePresent = !tempImageId.isEmpty();
-
-        if (imageIsValid && imageFile.getSize() > MAX_FILE_SIZE) {
-            String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(FILE_IS_TOO_LARGE);
-            redirectAttributes.addFlashAttribute(
-                    IMAGING_ERROR, localizedMessage
-                                   + " " + (MAX_FILE_SIZE / KB_TO_MB / KB_TO_MB)
-                                   + " " + MB);
-            hasFieldsErrors = true;
-            imageIsValid = false;
-            if (!tempImageId.isEmpty()) {
-                tempImageId = "";
-            }
-        } else if ((!imageIsValid && !imageFile.isEmpty())) {
-            String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(IMAGE_FILE_IS_INCORRECT);
-            redirectAttributes.addFlashAttribute(IMAGING_ERROR, localizedMessage);
-            hasFieldsErrors = true;
-        }
-
-        hasFieldsErrors = isLoginExist(userDTOFromModel, redirectAttributes, hasFieldsErrors);
-
-        if (hasFieldsErrors && imageIsValid) {
-            String tempImageUUID = UUID.randomUUID().toString();
-            String fullTempImageName = imageService.uploadFromMultipartFile(imageFile, tempImageUUID, true);
-            redirectAttributes.addFlashAttribute(TEMP_IMAGE_ID, fullTempImageName);
-        } else if (hasFieldsErrors && isTempImagePresent) {
-            redirectAttributes.addFlashAttribute(TEMP_IMAGE_ID, tempImageId);
-        }
-
-
-        if (hasFieldsErrors) {
-            redirectAttributes.addFlashAttribute(USER_DTO_FROM_MODEL, userDTOFromModel);
-            return REDIRECT + Route.SIGNUP;
-        }
-
-        User user = userMapper.userDTOToUser(userDTOFromModel);
-        User createdUser = userService.create(user).orElseThrow();
-
-        if (imageIsValid) {
-            imageService.uploadFromMultipartFile(imageFile, createdUser.getImage(), false);
-        } else if (isTempImagePresent) {
-            imageService.uploadFromExistingFile(tempImageId, createdUser.getImage());
-        }
-
-        UserDTO userDTO = userMapper.userToUserDTOWithoutPassword(createdUser);
-        request.getSession()
-                .setAttribute(USER, userDTO);
-        return REDIRECT + Route.PROFILE;
+        return hasFieldsErrors;
     }
 
     private boolean isLoginExist(UserDTO userDTOFromModel, RedirectAttributes redirectAttributes, boolean hasErrors) {

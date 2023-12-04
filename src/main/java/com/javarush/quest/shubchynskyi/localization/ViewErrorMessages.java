@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ViewErrorMessages {
+    public static final String UNEXPECTED_ERROR = "view_error.unexpected_error";
     public static final String LOGIN_ALREADY_EXIST = "view_error.login_already_exist";
     public static final String DATA_IS_INCORRECT = "view_error.data_is_incorrect";
     public static final String IMAGE_FILE_IS_INCORRECT = "view_error.image_file_is_incorrect";
