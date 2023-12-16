@@ -16,7 +16,7 @@ import java.nio.file.*;
 import java.util.UUID;
 import java.util.regex.Matcher;
 
-import static com.javarush.quest.shubchynskyi.constant.Key.IMAGE_UPLOAD_ERROR;
+import static com.javarush.quest.shubchynskyi.constant.Key.IMAGE_UPLOAD_IO_ERROR;
 import static com.javarush.quest.shubchynskyi.constant.Key.INVALID_FILE_TYPE;
 
 @Service
@@ -35,6 +35,10 @@ public class ImageService {
     }
 
     public Path getImagePath(String filename) {
+
+        if (filename == null) {
+            throw new AppException(Key.FILE_NAME_IS_NULL_OR_EMPTY);
+        }
 
         try {
             if (filename.trim().isEmpty()) {
@@ -98,7 +102,7 @@ public class ImageService {
             }
             return processFileUpload(file.getInputStream(), originalFilename, imageId, isTemporary);
         } catch (IOException e) {
-            throw new AppException(IMAGE_UPLOAD_ERROR);
+            throw new AppException(IMAGE_UPLOAD_IO_ERROR);
         }
     }
 
@@ -132,7 +136,7 @@ public class ImageService {
                     false
             );
         } catch (IOException e) {
-            throw new AppException(IMAGE_UPLOAD_ERROR);
+            throw new AppException(IMAGE_UPLOAD_IO_ERROR);
         }
     }
 

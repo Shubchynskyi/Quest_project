@@ -45,7 +45,6 @@ public class Key {
     public static final String INVALID_FILE_TYPE = "Invalid file type";
     public static final String QUEST_TEXT_IS_NOT_VALID = "Quest text is not valid";
     public static final String QUEST_WITH_THIS_NAME_ALREADY_EXISTS = "Quest with this name already exists";
-
     public static final String INVALID_FILE_PATH_ACCESS_DENIED = "Invalid file path, access denied";
     public static final String THE_FILE_PATH_IS_INSECURE = "The file path is insecure";
     public static final String ORIGINAL_FILENAME_IS_NULL_OR_EMPTY = "Original filename is null or empty";
@@ -91,7 +90,7 @@ public class Key {
     public static final String ANSWER = "answer";
 
     //**************  File Upload and Storage  **************//
-    public static final String IMAGE_UPLOAD_ERROR = "Image upload error";
+    public static final String IMAGE_UPLOAD_IO_ERROR = "Image upload IO error";
     public static final String PATH_IMAGES = "/images";
     public static final String PATH_IMAGES_TEMP = "/images/temp";
     public static final String PATH_IMAGE_NAME = "/{imageName}";
@@ -109,5 +108,6 @@ public class Key {
     public static final int MAX_LENGTH = 100;
     public static final Pattern TEMP_FILE_PATTERN = Pattern.compile("^temp_(\\d+)_.*$");
     public static final String PREFIX_FOR_TEMP_IMAGES = "temp";
+
 
 }
