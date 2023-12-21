@@ -9,13 +9,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -27,31 +25,36 @@ import java.nio.file.StandardCopyOption;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.INVALID_FILE_TYPE;
 import static com.javarush.quest.shubchynskyi.constant.Key.NO_IMAGE_JPG;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ImageServiceTest {
 
     private ImageService imageService;
     private MockedStatic<Files> mockedFiles;
-    @Mock
-    private MultipartFile file;
-    private static final String imagesDirectory = "target/test-images";
+    private static final String TEST_IMAGES_DIRECTORY = "target/test-images";
+    private static final String TEST_IMAGE_ID = "testImageId";
+    private static final String VALID_FILE_NAME = TEST_IMAGE_ID + ".jpeg";
+    private static final String INVALID_FILE_NAME = TEST_IMAGE_ID + ".txt";
+    private static final String MULTIPART_FILE_NAME = "file";
+    private static final String GENERAL_CONTENT_TYPE = "application/octet-stream";
+    public static final String EXPECTED_APP_EXCEPTION_TO_BE_THROWN_IF_THE_FILE_DOES_NOT_EXIST = "Expected AppException to be thrown if the file does not exist";
+    private static final Path uploadedImagePath = Paths.get(TEST_IMAGES_DIRECTORY, VALID_FILE_NAME);
+    private static final Path expectedFilePath = Paths.get(TEST_IMAGES_DIRECTORY).resolve(VALID_FILE_NAME);
+    private static final MockMultipartFile MOCK_MULTIPART_FILE =
+            new MockMultipartFile(MULTIPART_FILE_NAME, VALID_FILE_NAME, MediaType.IMAGE_JPEG_VALUE, new byte[10]);
 
     @BeforeEach
     public void setUp() throws IOException {
-        imageService = new ImageService(imagesDirectory);
+        imageService = new ImageService(TEST_IMAGES_DIRECTORY);
 
         mockedFiles = Mockito.mockStatic(Files.class);
         mockedFiles.when(() -> Files.exists(any(Path.class))).thenReturn(true);
-        mockedFiles.when(() -> Files.probeContentType(any(Path.class))).thenReturn("image/jpeg");
+        mockedFiles.when(() -> Files.probeContentType(any(Path.class))).thenReturn(MediaType.IMAGE_JPEG_VALUE);
     }
 
     @AfterEach
@@ -59,225 +62,137 @@ public class ImageServiceTest {
         mockedFiles.close();
     }
 
-
-    // Тестирование создания директорий при инициализации сервиса
     @Test
-    public void shouldCreateDirectoriesOnInitialization() throws IOException {
-        // Вызов конструктора для инициализации сервиса
-        new ImageService(imagesDirectory);
+    public void should_CreateDirectories_When_Initialization() throws IOException {
+        new ImageService(TEST_IMAGES_DIRECTORY);
 
-        // Проверка, что метод createDirectories был вызван для основной директории
-        mockedFiles.verify(() -> Files.createDirectories(Paths.get(imagesDirectory)), times(1));
+        mockedFiles.verify(() -> Files.createDirectories(Paths.get(TEST_IMAGES_DIRECTORY)), times(1));
 
-        // Проверка, что метод createDirectories был вызван для директории временных файлов
-        Path tempFilesDir = Paths.get(imagesDirectory).resolve(Key.PREFIX_FOR_TEMP_IMAGES);
+        Path tempFilesDir = Paths.get(TEST_IMAGES_DIRECTORY).resolve(Key.PREFIX_FOR_TEMP_IMAGES);
         mockedFiles.verify(() -> Files.createDirectories(tempFilesDir), times(1));
     }
 
-
-    // ***************************** ТЕСТИРОВАНИЕ ПУТИ ***************************** //
-
-    // Тестирование получения пути к изображению с корректным именем файла
     @Test
-    public void shouldReturnPathWhenImagePathIsValid() {
-        String validFileName = "testImage.jpg";
-        Path expectedPath = Paths.get(imagesDirectory).resolve(validFileName);
+    public void should_ReturnPath_When_ImagePathIsValid() {
+        Path result = imageService.getImagePath(VALID_FILE_NAME);
 
-        Path result = imageService.getImagePath(validFileName);
-
-        assertEquals(expectedPath, result);
-        mockedFiles.verify(() -> Files.exists(expectedPath), times(1));
+        assertEquals(expectedFilePath, result);
+        mockedFiles.verify(() -> Files.exists(expectedFilePath), times(1));
     }
 
-    // Тестирование получения пути к изображению с некорректным именем файла (параметризованный тест)
     @ParameterizedTest
     @ValueSource(strings = {"../invalidPath", "invalid*path", "invalid?path", "", " ", "invalid\0path", "\ninvalid"})
-    public void shouldThrowExceptionWhenImagePathIsInvalid(String invalidePath) {
+    public void should_ThrowException_When_ImagePathIsInvalid(String invalidePath) {
         assertThrows(SecurityException.class, () -> imageService.getImagePath(invalidePath));
     }
 
     @Test
-    public void Should_ReturnDefaultImagePath_When_FileDoesNotExist() {
+    public void should_ReturnDefaultImagePath_When_FileDoesNotExist() {
         mockedFiles.when(() -> Files.exists(any(Path.class))).thenReturn(false);
 
-        String filename = "nonexistent";
-        Path expectedPath = Paths.get(imagesDirectory, NO_IMAGE_JPG);
-
-        Path result = imageService.getImagePath(filename);
+        Path expectedPath = Paths.get(TEST_IMAGES_DIRECTORY, NO_IMAGE_JPG);
+        Path result = imageService.getImagePath(VALID_FILE_NAME);
 
         assertEquals(expectedPath, result);
     }
 
     @Test
-    public void shouldThrowExceptionWhenFileNameIsNull() {
-        // Проверка, что метод бросает исключение при передаче null в качестве имени файла
+    public void should_ThrowException_When_FileNameIsNull() {
         assertThrows(AppException.class, () -> imageService.getImagePath(null));
     }
 
-
-// ***************************** Тесты, связанные с загрузкой файла через MultipartFile ***************************** //
-
-    // Тестирование загрузки файла через MultipartFile с корректными данными
     @Test
-    public void shouldUploadFileFromMultipartFile() {
-        // Настройка мока MultipartFile
-        String originalFilename = "testImage.jpg";
-        String imageId = "uniqueImageId";
-        boolean isTemporary = false;
-        byte[] fileContent = "fileContent".getBytes();
-        MockMultipartFile mockMultipartFile =
-                new MockMultipartFile("file", originalFilename, MediaType.IMAGE_JPEG_VALUE, fileContent);
-
+    public void should_UploadFile_When_GivenMultipartFile() {
         mockedFiles.when(() -> Files.copy(any(InputStream.class), any(Path.class), any(StandardCopyOption.class)))
                 .thenReturn(1L);
         mockedFiles.when(() -> Files.deleteIfExists(any(Path.class)))
                 .thenReturn(true);
 
-        String resultFilename = imageService.uploadFromMultipartFile(mockMultipartFile, imageId, isTemporary);
+        String resultFilename = imageService.uploadFromMultipartFile(MOCK_MULTIPART_FILE, TEST_IMAGE_ID, false);
 
         Assertions.assertNotNull(resultFilename);
-        Assertions.assertTrue(resultFilename.contains(imageId));
+        Assertions.assertTrue(resultFilename.contains(TEST_IMAGE_ID));
 
-        Path expectedPath = Paths.get(imagesDirectory).resolve(imageId + ".jpg");
         mockedFiles.verify(() -> Files.copy(
                 any(InputStream.class),
-                eq(expectedPath),
+                eq(expectedFilePath),
                 eq(StandardCopyOption.REPLACE_EXISTING)
         ), times(1));
     }
 
-    // Тестирование Обработки Исключений при Загрузке
     @Test
-    public void shouldHandleIOExceptionOnFileUpload() {
-        // Настройка мока MultipartFile
-        String originalFilename = "testImage.jpg";
-        String imageId = "uniqueImageId";
-        boolean isTemporary = false;
-        byte[] fileContent = "fileContent".getBytes();
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", originalFilename, MediaType.IMAGE_JPEG_VALUE, fileContent);
-
-        // Имитация IOException при попытке сохранить файл
+    public void should_HandleIOException_When_FileUploadFails() {
         mockedFiles.when(() -> Files.copy(any(InputStream.class), any(Path.class), any(StandardCopyOption.class)))
                 .thenThrow(new IOException());
 
-        // Ожидаемое исключение
         AppException exception = assertThrows(
                 AppException.class,
-                () -> imageService.uploadFromMultipartFile(mockMultipartFile, imageId, isTemporary)
+                () -> imageService.uploadFromMultipartFile(MOCK_MULTIPART_FILE, TEST_IMAGE_ID, false)
         );
 
-        // Проверка сообщения исключения
         assertEquals(INVALID_FILE_TYPE, exception.getMessage());
     }
 
-    // Ошибки Записи Файла
     @Test
-    public void shouldHandleZeroBytesWrittenOnMultipartFileUpload() {
-        String originalFilename = "testImage.jpeg";
-        String imageId = "uniqueImageId";
-        boolean isTemporary = false;
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", originalFilename, MediaType.IMAGE_JPEG_VALUE, new byte[10]);
-
+    public void should_HandleZeroBytesWritten_When_MultipartFileUpload() {
         mockedFiles.when(() -> Files.copy(any(InputStream.class), any(Path.class), any(StandardCopyOption.class)))
                 .thenReturn(0L);
         mockedFiles.when(() -> Files.probeContentType(any(Path.class)))
-                .thenReturn("application/octet-stream");
+                .thenReturn(GENERAL_CONTENT_TYPE);
 
         AppException exception = assertThrows(
                 AppException.class,
-                () -> imageService.uploadFromMultipartFile(mockMultipartFile, imageId, isTemporary)
+                () -> imageService.uploadFromMultipartFile(MOCK_MULTIPART_FILE, TEST_IMAGE_ID, false)
         );
 
         assertEquals(INVALID_FILE_TYPE, exception.getMessage());
     }
 
-    // Проверка MIME-типа
     @Test
-    public void shouldRejectInvalidMimeTypeOnMultipartFileUpload() {
-        String originalFilename = "testImage.jpg";
-        String imageId = "uniqueImageId";
-        boolean isTemporary = false;
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", originalFilename, MediaType.IMAGE_JPEG_VALUE, new byte[10]);
-
-        mockedFiles.when(() -> Files.probeContentType(any(Path.class))).thenReturn("application/octet-stream");
+    public void should_RejectInvalidMimeType_When_MultipartFileUpload() {
+        mockedFiles.when(() -> Files.probeContentType(any(Path.class))).thenReturn(GENERAL_CONTENT_TYPE);
 
         AppException exception = assertThrows(
                 AppException.class,
-                () -> imageService.uploadFromMultipartFile(mockMultipartFile, imageId, isTemporary)
+                () -> imageService.uploadFromMultipartFile(MOCK_MULTIPART_FILE, TEST_IMAGE_ID, false)
         );
 
         assertEquals(INVALID_FILE_TYPE, exception.getMessage());
     }
 
-    // Тестирование обработки пустого MultipartFile
     @Test
-    public void shouldHandleEmptyMultipartFile() {
-        // Создание пустого мока MultipartFile
-        MockMultipartFile emptyMultipartFile =
-                new MockMultipartFile("file", "", MediaType.IMAGE_JPEG_VALUE, new byte[0]);
+    public void should_HandleEmpty_When_MultipartFileUpload() {
+        MockMultipartFile emptyMultipartFile = new MockMultipartFile(MULTIPART_FILE_NAME, "", MediaType.IMAGE_JPEG_VALUE, new byte[0]);
 
-        // Вызов метода uploadFromMultipartFile с пустым файлом
-        String resultFilename = imageService.uploadFromMultipartFile(emptyMultipartFile, "uniqueImageId", false);
+        String resultFilename = imageService.uploadFromMultipartFile(emptyMultipartFile, TEST_IMAGE_ID, false);
 
-        // Проверка, что метод корректно обработал пустой файл
-        // Ожидаемое поведение - возврат null
         Assertions.assertNull(resultFilename);
     }
 
     @Test
-    public void Should_UploadImage_When_GivenValidFileAndImageId() {
-        String imageId = "testId";
-        String originalFilename = "test.jpeg";
-        String mimeType = "image/jpeg";
-        byte[] content = "fakeImageContent".getBytes();
+    public void should_UploadImage_When_GivenValidFileAndImageId() {
+        imageService.uploadFromMultipartFile(MOCK_MULTIPART_FILE, TEST_IMAGE_ID, false);
 
-        MockMultipartFile mockFile = new MockMultipartFile("file", originalFilename, mimeType, content);
-
-        imageService.uploadFromMultipartFile(mockFile, imageId, false);
-
-        Path uploadedImagePath = Paths.get(imagesDirectory, imageId + ".jpeg");
         Assertions.assertTrue(Files.exists(uploadedImagePath));
     }
 
     @Test
-    public void Should_ThrowAppException_When_MimeTypeIsInvalid() {
-        when(file.getOriginalFilename()).thenReturn("file.txt");
-        when(file.isEmpty()).thenReturn(false);
+    public void should_ThrowException_When_InvalidFileUploaded() {
+        MockMultipartFile invalidFile = new MockMultipartFile(MULTIPART_FILE_NAME, INVALID_FILE_NAME, MediaType.TEXT_PLAIN_VALUE, new byte[10]);
 
         AppException exception = assertThrows(
                 AppException.class,
-                () -> imageService.uploadFromMultipartFile(file, "testId", false));
-
-        Assertions.assertTrue(exception.getMessage().contains(INVALID_FILE_TYPE));
-    }
-
-    // Тестирование обработки недопустимого файла при загрузке
-    @Test
-    public void shouldThrowExceptionForInvalidFileOnUpload() {
-        MockMultipartFile invalidFile = new MockMultipartFile("file", "test.txt", MediaType.TEXT_PLAIN_VALUE, new byte[10]);
-
-        mockedFiles.when(() -> Files.probeContentType(any(Path.class))).thenReturn("text/plain");
-
-        AppException exception = assertThrows(
-                AppException.class,
-                () -> imageService.uploadFromMultipartFile(invalidFile, "uniqueImageId", false)
+                () -> imageService.uploadFromMultipartFile(invalidFile, TEST_IMAGE_ID, false)
         );
 
         assertEquals(INVALID_FILE_TYPE, exception.getMessage());
     }
 
-    // Тестирование валидации файла по MultipartFile
     @Test
-    public void shouldValidateMultipartFile() {
-        MockMultipartFile validFile = new MockMultipartFile("file", "image.jpg", MediaType.IMAGE_JPEG_VALUE, new byte[10]);
-
-        Assertions.assertTrue(imageService.isValid(validFile));
+    public void should_Validate_When_MultipartFileGiven() {
+        Assertions.assertTrue(imageService.isValid(MOCK_MULTIPART_FILE));
     }
 
-
-// ***************************** Тесты, связанные с безопасностью пути ***************************** //
-
-    // Тестирование обработки небезопасного пути при загрузке файла
     @ParameterizedTest
     @ValueSource(strings = {
             "../invalidPath",
@@ -294,66 +209,45 @@ public class ImageServiceTest {
             "/etc/passwd",
             "invalidName|"
     })
-    public void shouldThrowExceptionWhenPathIsInsecureForMultipartFile(String insecurePath) {
-        MockMultipartFile mockMultipartFile =
-                new MockMultipartFile("file", "testImage.jpg", MediaType.IMAGE_JPEG_VALUE, "testContent".getBytes());
-
+    public void should_ThrowException_When_PathIsInsecureForMultipartFile(String insecurePath) {
         AppException exception = assertThrows(
                 AppException.class,
-                () -> imageService.uploadFromMultipartFile(mockMultipartFile, insecurePath, false)
+                () -> imageService.uploadFromMultipartFile(MOCK_MULTIPART_FILE, insecurePath, false)
         );
 
-        // Проверка, что исключение содержит ожидаемое сообщение
         String expectedMessage = Key.THE_FILE_PATH_IS_INSECURE;
         Assertions.assertTrue(exception.getMessage().contains(expectedMessage));
     }
 
     @Test
-    public void Should_ThrowException_When_FilePathIsInsecure() {
+    public void should_ThrowException_When_FilePathIsInsecure() {
         String insecureImageId = "../testId";
-        MockMultipartFile mockFile = new MockMultipartFile("file", "test.png", "image/png", "fakeImageContent".getBytes());
 
         assertThrows(
                 AppException.class,
-                () -> imageService.uploadFromMultipartFile(mockFile, insecureImageId, false));
+                () -> imageService.uploadFromMultipartFile(MOCK_MULTIPART_FILE, insecureImageId, false));
     }
 
-
-    // ***************************** Тесты, связанные с обработкой существующих файлов ***************************** //
-
     @Test
-    public void shouldUploadExistingFile() throws IOException {
-        String existingFileName = "existingFile.jpg";
-        String imageId = "testImageId";
-
+    public void should_UploadFile_When_ExistingFileGiven() {
         mockedFiles.when(() -> Files.isReadable(any(Path.class)))
                 .thenReturn(true);
         mockedFiles.when(() -> Files.newInputStream(any(Path.class)))
                 .thenReturn(new ByteArrayInputStream(new byte[0]));
 
-        // Вызов метода uploadFromExistingFile
-        imageService.uploadFromExistingFile(existingFileName, imageId);
+        imageService.uploadFromExistingFile(VALID_FILE_NAME, TEST_IMAGE_ID);
 
-        // Проверка, что методы Files вызывались с правильными аргументами
-        Path expectedFilePath = Paths.get(imagesDirectory).resolve(existingFileName);
-        mockedFiles.verify(() -> Files.exists(expectedFilePath), times(3));
+        mockedFiles.verify(() -> Files.exists(expectedFilePath), times(4));
         mockedFiles.verify(() -> Files.newInputStream(expectedFilePath), times(1));
     }
 
-    // Тестирование Поведения После Успешной Валидации
     @Test
-    public void shouldSaveValidExistingFile() {
-        String existingFileName = "existingFile.jpg";
-        String imageId = "testImageId";
-
+    public void should_SaveFile_When_ValidExistingFileGiven() {
         mockedFiles.when(() -> Files.isReadable(any(Path.class))).thenReturn(true);
         mockedFiles.when(() -> Files.newInputStream(any(Path.class))).thenReturn(new ByteArrayInputStream(new byte[0]));
 
-        // Вызов метода uploadFromExistingFile
-        imageService.uploadFromExistingFile(existingFileName, imageId);
+        imageService.uploadFromExistingFile(VALID_FILE_NAME, TEST_IMAGE_ID);
 
-        // Проверка, что файл был сохранен
-        Path expectedFilePath = Paths.get(imagesDirectory).resolve(imageId + ".jpg");
         mockedFiles.verify(() -> Files.copy(
                 any(InputStream.class),
                 eq(expectedFilePath),
@@ -361,54 +255,27 @@ public class ImageServiceTest {
         ), times(1));
     }
 
-    // Проверка Сохранения Файла
     @Test
-    public void shouldSaveValidExistingFileAfterValidation() throws IOException {
-        String existingFileName = "existingFile.jpg";
-        String imageId = "testImageId";
-
-        mockedFiles.when(() -> Files.isReadable(any(Path.class))).thenReturn(true);
-        mockedFiles.when(() -> Files.newInputStream(any(Path.class))).thenReturn(new ByteArrayInputStream(new byte[0]));
-
-        imageService.uploadFromExistingFile(existingFileName, imageId);
-
-        Path expectedPath = Paths.get(imagesDirectory).resolve(imageId + ".jpg");
-        mockedFiles.verify(() -> Files.copy(
-                any(InputStream.class),
-                eq(expectedPath),
-                eq(StandardCopyOption.REPLACE_EXISTING)
-        ), times(1));
-    }
-
-    // Обработка Ошибок Чтения Файла
-    @Test
-    public void shouldHandleIOExceptionOnExistingFileUpload() throws IOException {
-        String existingFileName = "existingFile.jpg";
-        String imageId = "testImageId";
-
+    public void should_HandleIOException_When_ExistingFileUpload() {
         mockedFiles.when(() -> Files.newInputStream(any(Path.class))).thenThrow(new IOException());
 
         AppException exception = assertThrows(
                 AppException.class,
-                () -> imageService.uploadFromExistingFile(existingFileName, imageId)
+                () -> imageService.uploadFromExistingFile(VALID_FILE_NAME, TEST_IMAGE_ID)
         );
 
         assertEquals(INVALID_FILE_TYPE, exception.getMessage());
     }
 
-    // Валидация Конечного Файла
     @Test
-    public void shouldValidateFinalFileOnExistingFileUpload() {
-        String invalidFileName = "invalidFile.mp3";
-        String imageId = "testImageId";
-
+    public void should_ValidateFinalFile_When_ExistingFileUploaded() {
         mockedFiles.when(() -> Files.isReadable(any(Path.class))).thenReturn(true);
         mockedFiles.when(() -> Files.newInputStream(any(Path.class))).thenReturn(new ByteArrayInputStream(new byte[0]));
-        mockedFiles.when(() -> Files.probeContentType(any(Path.class))).thenReturn("audio/mpeg");
+        mockedFiles.when(() -> Files.probeContentType(any(Path.class))).thenReturn(MediaType.TEXT_PLAIN_VALUE);
 
         AppException exception = assertThrows(
                 AppException.class,
-                () -> imageService.uploadFromExistingFile(invalidFileName, imageId)
+                () -> imageService.uploadFromExistingFile(VALID_FILE_NAME, TEST_IMAGE_ID)
         );
 
         assertEquals(INVALID_FILE_TYPE, exception.getMessage());
@@ -416,90 +283,69 @@ public class ImageServiceTest {
 
     @Test
     public void should_ThrowException_When_FileDoesNotExist() {
-        String imageId = "secureImageId";
-        String nonExistingFileName = "nonExisting.png";
-        Path filePath = Paths.get(nonExistingFileName);
+        mockedFiles.when(() -> Files.exists(any(Path.class))).thenReturn(false);
 
-        mockedFiles.when(() -> Files.exists(filePath)).thenReturn(false);
-
-        // Проверка, что метод выбросит исключение AppException, если файл не существует
         assertThrows(
                 AppException.class,
-                () -> imageService.uploadFromExistingFile(nonExistingFileName, imageId),
-                "Expected AppException to be thrown if the file does not exist"
+                () -> imageService.uploadFromExistingFile(VALID_FILE_NAME, TEST_IMAGE_ID),
+                EXPECTED_APP_EXCEPTION_TO_BE_THROWN_IF_THE_FILE_DOES_NOT_EXIST
         );
     }
 
-
-// ***************************** Тесты, связанные с обработкой идентификаторов изображений ***************************** //
-
     @Test
-    public void Should_ThrowAppException_When_ImageIdIsEmpty() {
+    public void should_ThrowAppException_When_ImageIdIsEmpty() {
         assertThrows(
                 AppException.class,
-                () -> imageService.uploadFromMultipartFile(file, "", false));
+                () -> imageService.uploadFromMultipartFile(MOCK_MULTIPART_FILE, "", false));
     }
 
     @Test
-    public void Should_ThrowAppException_When_ImageIdIsNull() {
+    public void should_ThrowAppException_When_ImageIdIsNull() {
         assertThrows(
                 AppException.class,
-                () -> imageService.uploadFromMultipartFile(file, null, false));
+                () -> imageService.uploadFromMultipartFile(MOCK_MULTIPART_FILE, null, false));
     }
 
     @Test
-    public void Should_ThrowException_When_FileExtensionIsNotAllowed() {
-        MockMultipartFile mockFile = new MockMultipartFile("file", "test.exe", "application/octet-stream", new byte[100]);
+    public void should_ThrowException_When_FileExtensionIsNotAllowed() {
+        MockMultipartFile mockFile = new MockMultipartFile(MULTIPART_FILE_NAME, INVALID_FILE_NAME, GENERAL_CONTENT_TYPE, new byte[10]);
 
         assertThrows(
                 AppException.class,
-                () -> imageService.uploadFromMultipartFile(mockFile, "testId", false));
+                () -> imageService.uploadFromMultipartFile(mockFile, TEST_IMAGE_ID, false));
     }
 
     @Test
-    public void Should_DeleteOldFiles_When_UploadNewFileWithSameImageId() throws IOException {
-
+    public void should_DeleteOldFiles_When_UploadNewFileWithSameImageId() throws IOException {
         mockedFiles.when(() -> Files.readAllBytes(any(Path.class)))
-                .thenReturn("fakeImageContent1".getBytes(), "fakeImageContent2".getBytes()); // Возвращаем содержимое файла
-
-
-        String imageId = "testId";
-        Path uploadedImagePath = Paths.get(imagesDirectory, imageId + ".jpeg");
+                .thenReturn("fakeImageContent1".getBytes())
+                .thenReturn("fakeImageContent2".getBytes());
 
         String originalFilename1 = "test1.jpeg";
-        String mimeType1 = "image/jpeg";
         byte[] content1 = "fakeImageContent1".getBytes();
-        MockMultipartFile mockFile1 = new MockMultipartFile("file", originalFilename1, mimeType1, content1);
+        MockMultipartFile mockFile1 = new MockMultipartFile(MULTIPART_FILE_NAME, originalFilename1, MediaType.IMAGE_JPEG_VALUE, content1);
 
         String originalFilename2 = "test2.jpeg";
-        String mimeType2 = "image/jpeg";
         byte[] content2 = "fakeImageContent2".getBytes();
-        MockMultipartFile mockFile2 = new MockMultipartFile("file", originalFilename2, mimeType2, content2);
+        MockMultipartFile mockFile2 = new MockMultipartFile(MULTIPART_FILE_NAME, originalFilename2, MediaType.IMAGE_JPEG_VALUE, content2);
 
-        imageService.uploadFromMultipartFile(mockFile1, imageId, false);
+        imageService.uploadFromMultipartFile(mockFile1, TEST_IMAGE_ID, false);
         byte[] fileBytes1 = Files.readAllBytes(uploadedImagePath);
-        assertArrayEquals(content1, fileBytes1);
+        Assertions.assertArrayEquals(content1, fileBytes1);
 
-        imageService.uploadFromMultipartFile(mockFile2, imageId, false);
+        imageService.uploadFromMultipartFile(mockFile2, TEST_IMAGE_ID, false);
         byte[] fileBytes2 = Files.readAllBytes(uploadedImagePath);
-        assertArrayEquals(content2, fileBytes2);
+        Assertions.assertArrayEquals(content2, fileBytes2);
 
-        assertNotEquals(fileBytes1, fileBytes2);
+        Assertions.assertNotEquals(fileBytes1, fileBytes2);
     }
 
-
-    // ********************* Тестирование запланированного удаления временных файлов *********************
     @Test
-    public void shouldScheduleDeletionOfExpiredFiles() throws IOException {
-        // Создание мока сервиса
-        ImageService mockImageService = Mockito.spy(new ImageService(imagesDirectory));
+    public void should_ScheduleDeletion_When_FilesExpired() throws IOException {
+        ImageService mockImageService = Mockito.spy(new ImageService(TEST_IMAGES_DIRECTORY));
 
-        // Вызов запланированного метода
         mockImageService.scheduledDeleteExpiredFiles();
 
-        // Проверка, что метод deleteExpiredTempFiles был вызван
         Mockito.verify(mockImageService, times(1)).deleteExpiredTempFiles();
     }
-
-
 }
