@@ -6,7 +6,7 @@ import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.localization.ViewErrorLocalizer;
 import com.javarush.quest.shubchynskyi.service.ImageService;
-import com.javarush.quest.shubchynskyi.service.UserRegistrationService;
+import com.javarush.quest.shubchynskyi.service.UserAccountService;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.service.ValidationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
@@ -38,7 +37,7 @@ public class SignupController {
     private final UserService userService;
     private final ImageService imageService;
     private final ValidationService validationService;
-    private final UserRegistrationService userRegistrationService;
+    private final UserAccountService userAccountService;
 
     @GetMapping(SIGNUP)
     public String showSignup(Model model,
@@ -120,11 +119,10 @@ public class SignupController {
                 return REDIRECT + Route.SIGNUP;
             }
 
-            UserDTO userDTO = userRegistrationService.registerNewUser(
+            UserDTO userDTO = userAccountService.registerNewUser(
                     userDTOFromModel,
                     imageFile,
                     tempImageId,
-                    imageIsValid,
                     isTempImagePresent);
 
             request.getSession().setAttribute(USER, userDTO);
@@ -172,4 +170,3 @@ public class SignupController {
     }
 
 }
-

@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
+import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
@@ -8,7 +9,6 @@ import com.javarush.quest.shubchynskyi.localization.ViewErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.UserService;
-import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.service.ValidationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -45,7 +45,8 @@ public class UserController {
             RedirectAttributes redirectAttributes,
             @RequestParam(value = ID, required = false) Long id,
             @RequestParam(value = SOURCE, required = false) String source,
-            @SessionAttribute(name = USER, required = false) UserDTO userFromSession
+            @SessionAttribute(name = USER, required = false) UserDTO userFromSession,
+            @ModelAttribute(name = TEMP_IMAGE_ID) String tempImageId
     ) {
         if (validationService.checkUserAccessDenied(session, acceptedRoles, redirectAttributes)) {
             return REDIRECT + Route.INDEX;
@@ -58,17 +59,28 @@ public class UserController {
                 session.setAttribute(SOURCE, source);
             }
 
-            if (userFromSession != null) {
-                UserDTO userDTO = getUserDTOWithPassword(userFromSession);
-
-                if (userDTO.getId().equals(id)) {
-                    model.addAttribute(USER, userDTO);
-                } else {
-                    addUserDtoToModel(model, id);
-                }
-            } else {
-                addUserDtoToModel(model, id);
+            if (tempImageId != null && !tempImageId.isEmpty()) {
+                model.addAttribute(TEMP_IMAGE_ID, tempImageId);
             }
+
+            UserDTO userDTO;
+
+            if (userFromSession != null && userFromSession.getId().equals(id)) {
+                userDTO = getUserDTOWithPassword(userFromSession);
+                model.addAttribute(USER, userDTO);
+                session.setAttribute("originalLogin", userDTO.getLogin());
+            } else {
+                userDTO = addUserDtoToModel(model, id);
+                if (userDTO != null) {
+                    session.setAttribute("originalLogin", userDTO.getLogin());
+                }
+            }
+
+//            // Проверяем, существует ли у пользователя изображение
+//            boolean userImageExists = userDTO != null && userDTO. != null && !user.getImagePath().isEmpty();
+//
+//            // Добавляем эту информацию в модель
+//            model.addAttribute("userImageExists", userImageExists);
 
             return Route.USER;
         } else {
@@ -76,47 +88,145 @@ public class UserController {
         }
     }
 
-    private void addUserDtoToModel(Model model, Long id) {
+    private UserDTO addUserDtoToModel(Model model, Long id) {
         Optional<User> optionalUser = userService.get(id);
-        optionalUser.ifPresent(value -> model.addAttribute(
-                USER,
-                userMapper.userToUserDTOWithoutCollections(value))
-        );
+        if (optionalUser.isPresent()) {
+            UserDTO userDTO = userMapper.userToUserDTOWithoutCollections(optionalUser.get());
+            model.addAttribute(USER, userDTO);
+            return userDTO; // Теперь метод возвращает UserDTO
+        }
+        return null;
     }
 
     @PostMapping(USER)
     public String editUser(
             @Valid @ModelAttribute UserDTO userDTOFromModel,
             BindingResult bindingResult,
+            @RequestParam(name = IMAGE, required = false) MultipartFile imageFile,
+            @RequestParam(name = TEMP_IMAGE_ID, required = false) String tempImageId,
+
             @SessionAttribute(name = USER, required = false) UserDTO userDTOFromSession,
             RedirectAttributes redirectAttributes,
-            @RequestParam(IMAGE) MultipartFile imageFile,
+            @SessionAttribute(name = "originalLogin", required = false) String originalLogin,
+//            @RequestParam(IMAGE) MultipartFile imageFile,
             HttpServletRequest request
     ) {
 
-        if (bindingResult.hasErrors()) {
-            validationService.processFieldErrors(bindingResult, redirectAttributes);
-            return REDIRECT + Route.USER_ID + userDTOFromModel.getId();
-        }
-
+        //если пользователя нет в сессии, то редирект на логин
         if (userDTOFromSession == null) {
             return REDIRECT + Route.LOGIN;
         }
+
+        // проверяет есть ли у пользователя права на редактирование
         if (!isUserPermitted(userDTOFromModel, userDTOFromSession)) {
             return REDIRECT + Route.PROFILE;
         }
 
-        userDTOFromSession = getUserDTOWithPassword(userDTOFromSession);
-        User userFromModel = userMapper.userDTOToUser(userDTOFromModel);
 
-        String redirectUrl = performUserActionAndResolveRedirect(userDTOFromSession, redirectAttributes, request, userFromModel);
-        if (redirectUrl != null) {
-            return redirectUrl;
+        try {
+
+            // проверяю есть ли ошибки и вношу их локализованные сообщения в редирект атрибут
+            boolean hasFieldsErrors = processFieldErrors(bindingResult, redirectAttributes);
+            boolean imageIsValid = imageService.isValid(imageFile);
+            boolean isTempImagePresent = !tempImageId.isEmpty(); // есть ли временное изображение
+
+            // если изображение валидное, но большое
+            if (imageIsValid && imageFile.getSize() > MAX_FILE_SIZE) {
+                addLocalizedMaxSizeError(redirectAttributes);
+                hasFieldsErrors = true;
+                imageIsValid = false;
+                if (!tempImageId.isEmpty()) {
+                    tempImageId = "";
+                }
+                // если не валидное, но при этом файл изображения не пустой
+            } else if ((!imageIsValid && !imageFile.isEmpty())) {
+                addLocalizedIncorrectImageError(redirectAttributes);
+                hasFieldsErrors = true;
+            }
+
+            if (!userDTOFromModel.getLogin().equals(originalLogin)) {
+                hasFieldsErrors = isLoginExist(userDTOFromModel, redirectAttributes, hasFieldsErrors);
+            }
+
+            // если все таки есть ошибки и при этом изображение было валидным, то его надо сохранить как временное
+            if (hasFieldsErrors && imageIsValid && !isTempImagePresent) {
+                String tempImageUUID = UUID.randomUUID().toString();
+                String fullTempImageName = imageService.uploadFromMultipartFile(imageFile, tempImageUUID, true);
+                redirectAttributes.addFlashAttribute(TEMP_IMAGE_ID, fullTempImageName);
+                // если есть ошибки, но временное присутствует (по сути - не менялось в текущем редактировании
+            } else if (hasFieldsErrors && isTempImagePresent) {
+                redirectAttributes.addFlashAttribute(TEMP_IMAGE_ID, tempImageId);
+            }
+
+            // если есть ошибки, то добавляем текущего пользователя и отправляем в get
+            if (hasFieldsErrors) {
+                redirectAttributes.addFlashAttribute(USER_DTO_FROM_MODEL, userDTOFromModel);
+                return REDIRECT + Route.USER_ID + userDTOFromModel.getId();
+            }
+
+            // TODO вынести весь код ниже в транзакцию
+            // получаем юзера из сессии
+            userDTOFromSession = getUserDTOWithPassword(userDTOFromSession);
+            User userFromModel = userMapper.userDTOToUser(userDTOFromModel);
+
+
+            // Здесь в зависимости от команды внутри выполняем действие и возвращаем правильный редирект
+            String redirectUrl = performUserActionAndResolveRedirect(userDTOFromSession, redirectAttributes, request, userFromModel);
+
+            if (redirectUrl != null) {
+                return redirectUrl;
+            }
+
+            // TODO обработать изображение нужно в правильный момент
+//            загружаем изображение
+            if (!isTempImagePresent) {
+                imageService.uploadFromMultipartFile(imageFile, userFromModel.getImage(), false);
+            } else {
+                imageService.uploadFromExistingFile(tempImageId, userFromModel.getImage());
+            }
+
+            // возвращает правильный редирект
+            return handleAdminFlow(request, userDTOFromSession, userFromModel);
+        } catch (AppException e) {
+            // TODO log
+            addLocalizedUnexpectedError(redirectAttributes);
+            return REDIRECT + Route.USERS;
         }
+    }
 
-        imageService.uploadFromMultipartFile(imageFile, userFromModel.getImage(),false);
+    private void addLocalizedUnexpectedError(RedirectAttributes redirectAttributes) {
+        String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(UNEXPECTED_ERROR);
+        redirectAttributes.addFlashAttribute(IMAGING_ERROR, localizedMessage);
+    }
 
-        return handleAdminFlow(request, userDTOFromSession, userFromModel);
+    private void addLocalizedIncorrectImageError(RedirectAttributes redirectAttributes) {
+        String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(IMAGE_FILE_IS_INCORRECT);
+        redirectAttributes.addFlashAttribute(IMAGING_ERROR, localizedMessage);
+    }
+
+    private void addLocalizedMaxSizeError(RedirectAttributes redirectAttributes) {
+        String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(FILE_IS_TOO_LARGE);
+        redirectAttributes.addFlashAttribute(
+                IMAGING_ERROR, localizedMessage
+                        + " " + (MAX_FILE_SIZE / KB_TO_MB / KB_TO_MB)
+                        + " " + MB);
+    }
+
+    private boolean processFieldErrors(BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        boolean hasFieldsErrors = bindingResult.hasErrors();
+        if (hasFieldsErrors) {
+            validationService.processFieldErrors(bindingResult, redirectAttributes);
+        }
+        return hasFieldsErrors;
+    }
+
+    private boolean isLoginExist(UserDTO userDTOFromModel, RedirectAttributes redirectAttributes, boolean hasErrors) {
+        if (userService.isLoginExist(userDTOFromModel.getLogin())) {
+            String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(LOGIN_ALREADY_EXIST);
+            redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
+            hasErrors = true;
+        }
+        return hasErrors;
     }
 
     private UserDTO getUserDTOWithPassword(UserDTO userDTOFromSession) {
@@ -125,9 +235,6 @@ public class UserController {
                 .orElseThrow();
     }
 
-    // TODO сюда добавить список разрешенных ролей
-    //метод проверяет редактирует ли пользователь себя или другого пользователя
-    //если пользователь не админ или не модератор, но хочет кого-то отредактировать, то доступа не будет
     private boolean isUserPermitted(UserDTO userDTOFromModel, UserDTO userDTOFromSession) {
         if (!userDTOFromSession.getId().equals(userDTOFromModel.getId())) {
             Role userRole = userDTOFromSession.getRole();
@@ -167,7 +274,7 @@ public class UserController {
 
     private String checkExistingLogin(RedirectAttributes redirectAttributes, User userFromModel, User originalUser) {
         if (!originalUser.getLogin().equals(userFromModel.getLogin())
-            && userService.isLoginExist(userFromModel.getLogin())) {
+                && userService.isLoginExist(userFromModel.getLogin())) {
             String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(LOGIN_ALREADY_EXIST);
             redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
             return REDIRECT + Route.USER_ID + userFromModel.getId();

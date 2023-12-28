@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
-public class UserRegistrationService {
+public class UserAccountService {
 
     private final UserService userService;
     private final ImageService imageService;
@@ -21,19 +21,18 @@ public class UserRegistrationService {
     public UserDTO registerNewUser(UserDTO userDTOFromModel,
                                    MultipartFile imageFile,
                                    String tempImageId,
-                                   boolean imageIsValid,
-                                   boolean isTempImagePresent)
-    {
+                                   boolean isTempImagePresent) {
         User user = userMapper.userDTOToUser(userDTOFromModel);
         User createdUser = userService.create(user).orElseThrow();
 
-        if (imageIsValid) {
+        if (!isTempImagePresent) {
             imageService.uploadFromMultipartFile(imageFile, createdUser.getImage(), false);
-        } else if (isTempImagePresent) {
+        } else {
             imageService.uploadFromExistingFile(tempImageId, createdUser.getImage());
         }
 
         return userMapper.userToUserDTOWithoutPassword(createdUser);
     }
+
 
 }

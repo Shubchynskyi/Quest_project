@@ -10,6 +10,7 @@
 </head>
 <body>
 <div th:replace="~{parts/header :: header}"></div>
+
 <div class="container">
     <form class="form-horizontal"
           th:action="@{/user(id=${user.id})}"
@@ -20,17 +21,20 @@
             <!-- Form Name -->
             <legend th:text="#{user.form.label}">User Form</legend>
 
+            <!-- Error Image Message -->
+            <div class="alert alert-danger" th:if="${imagingError}" th:text="${imagingError}"></div>
+
             <!-- File Button -->
             <div class="form-group">
-                <label class="col-md-4 control-label" for="image">
-                    <div class="form-group">
+                <div class="form-group">
+                    <label class="col-md-4 control-label" for="image">
                         <img id="previewId"
-                             th:src="@{'images/' + ${user.image}}"
+                             th:src="${#strings.isEmpty(tempImageId) ? ('/images/' + user.image) : ('/images/temp/' + tempImageId)}"
                              width="150"
                              th:alt="${user.image}">
-                    </div>
-                    <span th:text="#{user.click.label}">press to change</span>
-                </label>
+                        <span th:text="#{user.click.label}">press to change</span>
+                    </label>
+                </div>
                 <div class="col-md-4">
                     <input onchange="PreviewImage(this);"
                            id="image"
@@ -53,6 +57,8 @@
                     };
                 }
             </script>
+
+            <input th:type="hidden" th:name="tempImageId" th:value="${tempImageId}">
 
             <!-- Error Login Message -->
             <!--suppress ThymeleafVariablesResolveInspection -->
@@ -101,6 +107,7 @@
                 </div>
             </div>
 
+            <!-- Buttons -->
             <div class="form-group">
                 <label class="col-md-4 control-label" for="updateOrCreate"></label>
                 <div class="col-md-8">
