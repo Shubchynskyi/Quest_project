@@ -237,7 +237,7 @@ public class ImageServiceTest {
 
         imageService.uploadFromExistingFile(VALID_FILE_NAME, TEST_IMAGE_ID);
 
-        mockedFiles.verify(() -> Files.exists(expectedFilePath), times(4));
+        mockedFiles.verify(() -> Files.exists(expectedFilePath), times(3));
         mockedFiles.verify(() -> Files.newInputStream(expectedFilePath), times(1));
     }
 

@@ -63,7 +63,8 @@ public class Key {
     public static final String LOGIN = "login";
     public static final String PASSWORD = "password";
     public static final String ROLES = "roles";
-    public static final String CREATE = "create";
+//    public static final String CREATE = "create"; //todo need or not?
+    public static final String ORIGINAL_LOGIN = "originalLogin";
     public static final String UPDATE = "update";
     public static final String DELETE = "delete";
     public static final String PROFILE = "profile";
@@ -108,6 +109,5 @@ public class Key {
     public static final int MAX_LENGTH = 100;
     public static final Pattern TEMP_FILE_PATTERN = Pattern.compile("^temp_(\\d+)_.*$");
     public static final String PREFIX_FOR_TEMP_IMAGES = "temp";
-
 
 }

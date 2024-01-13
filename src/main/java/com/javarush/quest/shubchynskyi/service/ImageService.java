@@ -86,7 +86,7 @@ public class ImageService {
         }
 
         // если путь не безопасный, то ошибка
-        if (!isPathSecure(imageId)) {
+        if (isPathUnsecure(imageId)) {
             throw new AppException(Key.THE_FILE_PATH_IS_INSECURE);
         }
 
@@ -115,7 +115,7 @@ public class ImageService {
         }
 
         // проверка пути, хотя тут файл уже должен быть сохранен. ?
-        if (!isPathSecure(imageId)) {
+        if (isPathUnsecure(imageId)) {
             throw new AppException(Key.THE_FILE_PATH_IS_INSECURE);
         }
 
@@ -231,24 +231,26 @@ public class ImageService {
     }
 
 
-    private boolean isPathSecure(String imageId) {
+    private boolean isPathUnsecure(String imageId) {
         if (imageId == null
             || imageId.length() > Key.MAX_LENGTH
             || !imageId.matches("^[a-zA-Z0-9_.-]+$")
             || imageId.contains("..")) {
 //            logger.warn("Unsafe path: {}", imageId);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
-    private void deleteOldFiles(String imageId) {
+    public void deleteOldFiles(String imageId) {
         for (String ext : Key.ALLOWED_EXTENSIONS) {
             Path path = imagesFolder.resolve(imageId + ext);
             if (Files.exists(path)) {
                 if (!tryDeleteFile(path)) {
-                    // TODO log
+                    // Логирование неудачной попытки удаления файла
+//  todo                  logger.warn("Не удалось удалить файл: " + path);
                 }
+                break;
             }
         }
     }
@@ -264,6 +266,12 @@ public class ImageService {
         }
     }
 
+    @Scheduled(cron = "0 */10 * * * ?")  // 10 min
+    public void scheduledDeleteExpiredFiles() {
+        deleteExpiredTempFiles();
+    }
+
+    //TODO private? (have one call in tests)
     public void deleteExpiredTempFiles() {
         File folder = tempFilesDir.toFile();
         File[] listOfFiles = folder.listFiles();
@@ -296,9 +304,6 @@ public class ImageService {
         }
     }
 
-    @Scheduled(cron = "0 */10 * * * ?")  // 10 min
-    public void scheduledDeleteExpiredFiles() {
-        deleteExpiredTempFiles();
-    }
+
 
 }

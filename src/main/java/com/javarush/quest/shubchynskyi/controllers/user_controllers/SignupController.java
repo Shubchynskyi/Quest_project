@@ -5,10 +5,8 @@ import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.localization.ViewErrorLocalizer;
-import com.javarush.quest.shubchynskyi.service.ImageService;
+import com.javarush.quest.shubchynskyi.result.UserDataProcessResult;
 import com.javarush.quest.shubchynskyi.service.UserAccountService;
-import com.javarush.quest.shubchynskyi.service.UserService;
-import com.javarush.quest.shubchynskyi.service.ValidationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -23,20 +21,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.UUID;
-
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
-import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.*;
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.UNEXPECTED_ERROR;
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.YOU_ARE_ALREADY_LOGGED_IN;
 
 
 @Controller
 @RequiredArgsConstructor
 public class SignupController {
 
-    private final UserService userService;
-    private final ImageService imageService;
-    private final ValidationService validationService;
     private final UserAccountService userAccountService;
 
     @GetMapping(SIGNUP)
@@ -84,37 +78,19 @@ public class SignupController {
                          @RequestParam(name = IMAGE, required = false) MultipartFile imageFile,
                          @RequestParam(name = TEMP_IMAGE_ID, required = false) String tempImageId,
                          HttpServletRequest request,
-                         RedirectAttributes redirectAttributes
-    ) {
+                         RedirectAttributes redirectAttributes) {
 
         try {
-            boolean hasFieldsErrors = processFieldErrors(bindingResult, redirectAttributes);
-            boolean imageIsValid = imageService.isValid(imageFile);
-            boolean isTempImagePresent = !tempImageId.isEmpty();
+            UserDataProcessResult registrationResult = userAccountService.processUserData(
+                    userDTOFromModel,
+                    bindingResult,
+                    imageFile,
+                    tempImageId,
+                    redirectAttributes,
+                    ""
+            );
 
-            if (imageIsValid && imageFile.getSize() > MAX_FILE_SIZE) {
-                addLocalizedMaxSizeError(redirectAttributes);
-                hasFieldsErrors = true;
-                imageIsValid = false;
-                if (!tempImageId.isEmpty()) {
-                    tempImageId = "";
-                }
-            } else if ((!imageIsValid && !imageFile.isEmpty())) {
-                addLocalizedIncorrectImageError(redirectAttributes);
-                hasFieldsErrors = true;
-            }
-
-            hasFieldsErrors = isLoginExist(userDTOFromModel, redirectAttributes, hasFieldsErrors);
-
-            if (hasFieldsErrors && imageIsValid) {
-                String tempImageUUID = UUID.randomUUID().toString();
-                String fullTempImageName = imageService.uploadFromMultipartFile(imageFile, tempImageUUID, true);
-                redirectAttributes.addFlashAttribute(TEMP_IMAGE_ID, fullTempImageName);
-            } else if (hasFieldsErrors && isTempImagePresent) {
-                redirectAttributes.addFlashAttribute(TEMP_IMAGE_ID, tempImageId);
-            }
-
-            if (hasFieldsErrors) {
+            if (registrationResult.hasFieldsErrors()) {
                 redirectAttributes.addFlashAttribute(USER_DTO_FROM_MODEL, userDTOFromModel);
                 return REDIRECT + Route.SIGNUP;
             }
@@ -122,51 +98,22 @@ public class SignupController {
             UserDTO userDTO = userAccountService.registerNewUser(
                     userDTOFromModel,
                     imageFile,
-                    tempImageId,
-                    isTempImagePresent);
+                    registrationResult.tempImageId(),
+                    registrationResult.isTempImagePresent(),
+                    registrationResult.imageIsValid());
 
             request.getSession().setAttribute(USER, userDTO);
         } catch (AppException e) {
             // TODO log
             addLocalizedUnexpectedError(redirectAttributes);
-            return REDIRECT + Route.SIGNUP;
+            return REDIRECT + Route.INDEX;
         }
         return REDIRECT + Route.PROFILE;
     }
 
     private void addLocalizedUnexpectedError(RedirectAttributes redirectAttributes) {
         String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(UNEXPECTED_ERROR);
-        redirectAttributes.addFlashAttribute(IMAGING_ERROR, localizedMessage);
-    }
-
-    private void addLocalizedIncorrectImageError(RedirectAttributes redirectAttributes) {
-        String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(IMAGE_FILE_IS_INCORRECT);
-        redirectAttributes.addFlashAttribute(IMAGING_ERROR, localizedMessage);
-    }
-
-    private void addLocalizedMaxSizeError(RedirectAttributes redirectAttributes) {
-        String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(FILE_IS_TOO_LARGE);
-        redirectAttributes.addFlashAttribute(
-                IMAGING_ERROR, localizedMessage
-                               + " " + (MAX_FILE_SIZE / KB_TO_MB / KB_TO_MB)
-                               + " " + MB);
-    }
-
-    private boolean processFieldErrors(BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        boolean hasFieldsErrors = bindingResult.hasErrors();
-        if (hasFieldsErrors) {
-            validationService.processFieldErrors(bindingResult, redirectAttributes);
-        }
-        return hasFieldsErrors;
-    }
-
-    private boolean isLoginExist(UserDTO userDTOFromModel, RedirectAttributes redirectAttributes, boolean hasErrors) {
-        if (userService.isLoginExist(userDTOFromModel.getLogin())) {
-            String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(LOGIN_ALREADY_EXIST);
-            redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
-            hasErrors = true;
-        }
-        return hasErrors;
+        redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
     }
 
 }
