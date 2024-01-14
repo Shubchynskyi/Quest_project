@@ -6,7 +6,8 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.BindingResult;
@@ -19,7 +20,8 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.YOU_DONT_HAVE_PERMISSIONS;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -60,10 +62,12 @@ class ValidationServiceTest {
     void should_ProcessFieldErrors() {
         mockFieldErrors();
 
-        validationService.processFieldErrors(bindingResult, redirectAttributes);
+        boolean result = validationService.processFieldErrors(bindingResult, redirectAttributes);
 
-        verifyRedirectAttributesAddedOnceWith();
+        assertTrue(result);
+        verify(redirectAttributes, times(1)).addFlashAttribute(eq(ValidationServiceTest.FIELD_ERRORS_ATTR), any());
     }
+
 
     @Test
     void should_ReturnTrue_When_UserAccessIsDenied() {
@@ -90,12 +94,14 @@ class ValidationServiceTest {
 
     @Test
     void should_HandleNoFieldErrors() {
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.emptyList());
+        when(bindingResult.hasErrors()).thenReturn(false);
 
-        validationService.processFieldErrors(bindingResult, redirectAttributes);
+        boolean result = validationService.processFieldErrors(bindingResult, redirectAttributes);
 
-        verifyRedirectAttributesAddedOnceWith();
+        assertFalse(result);
+        verify(redirectAttributes, never()).addFlashAttribute(eq(ValidationServiceTest.FIELD_ERRORS_ATTR), any());
     }
+
 
     @Test
     void should_ReturnFalse_When_UserHasOneOfMultipleValidRoles() {
@@ -122,16 +128,13 @@ class ValidationServiceTest {
 
     private void mockFieldErrors() {
         List<FieldError> fieldErrors = List.of(new FieldError("objectName", "field", "defaultMessage"));
+        when(bindingResult.hasErrors()).thenReturn(true);
         when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
         when(messageSource.getMessage(any(FieldError.class), any(Locale.class))).thenReturn(ERROR_MESSAGE);
     }
 
     private void mockSessionUser(UserDTO user) {
         when(httpSession.getAttribute(USER_ATTR)).thenReturn(user);
-    }
-
-    private void verifyRedirectAttributesAddedOnceWith() {
-        verify(redirectAttributes, times(1)).addFlashAttribute(eq(ValidationServiceTest.FIELD_ERRORS_ATTR), any());
     }
 
     private void assertAccessIsDeniedForRoles(List<Role> validRoles) {

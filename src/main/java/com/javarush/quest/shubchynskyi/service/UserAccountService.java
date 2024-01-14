@@ -74,7 +74,7 @@ public class UserAccountService {
             String tempImageId,
             RedirectAttributes redirectAttributes,
             String originalLogin) {
-        boolean hasFieldsErrors = processFieldErrors(bindingResult, redirectAttributes);
+        boolean hasFieldsErrors = validationService.processFieldErrors(bindingResult, redirectAttributes);
         boolean imageIsValid = imageService.isValid(imageFile);
         boolean isTempImagePresent = !tempImageId.isEmpty();
 
@@ -119,13 +119,13 @@ public class UserAccountService {
     }
 
     //TODO refactoring - need to call validationService.processFieldErrors and modify to return boolean
-    private boolean processFieldErrors(BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        boolean hasFieldsErrors = bindingResult.hasErrors();
-        if (hasFieldsErrors) {
-            validationService.processFieldErrors(bindingResult, redirectAttributes);
-        }
-        return hasFieldsErrors;
-    }
+//    private boolean processFieldErrors(BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+//        boolean hasFieldsErrors = bindingResult.hasErrors();
+//        if (hasFieldsErrors) {
+//            validationService.processFieldErrors(bindingResult, redirectAttributes);
+//        }
+//        return hasFieldsErrors;
+//    }
 
     private boolean isLoginExist(UserDTO userDTOFromModel, RedirectAttributes redirectAttributes, boolean hasErrors) {
         if (userService.isLoginExist(userDTOFromModel.getLogin())) {

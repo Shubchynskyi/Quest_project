@@ -130,7 +130,7 @@ class UserAccountServiceTest {
             "false, false, false, false, false"
     })
     void processUserData_ShouldValidateAndProcessData(boolean hasFieldsErrors, boolean isImageValid, boolean isTempImagePresent, boolean loginExists, boolean fileSizeExceedsLimit) {
-        when(bindingResult.hasErrors()).thenReturn(hasFieldsErrors);
+        when(validationService.processFieldErrors(bindingResult, redirectAttributes)).thenReturn(hasFieldsErrors);
         when(imageService.isValid(imageFile)).thenReturn(isImageValid);
         when(userService.isLoginExist(anyString())).thenReturn(loginExists);
         long fileSize = fileSizeExceedsLimit ? MAX_FILE_SIZE + 1 : MAX_FILE_SIZE - 1;
@@ -139,6 +139,8 @@ class UserAccountServiceTest {
         UserDataProcessResult result = userAccountService.processUserData(
                 userDTOFromModel, bindingResult, imageFile, tempImageId,
                 redirectAttributes, originalLogin);
+
+        verify(validationService).processFieldErrors(bindingResult, redirectAttributes);
 
         if (isImageValid && imageFile.getSize() > MAX_FILE_SIZE) {
             isImageValid = false;
@@ -149,10 +151,6 @@ class UserAccountServiceTest {
         }
 
         assertNotNull(result);
-
-        if (hasFieldsErrors) {
-            verify(validationService).processFieldErrors(bindingResult, redirectAttributes);
-        }
 
         verify(imageService).isValid(imageFile);
         if (!isImageValid && !imageFile.isEmpty()) {
@@ -171,7 +169,6 @@ class UserAccountServiceTest {
         }
 
         if (!hasFieldsErrors && isImageValid && !fileSizeExceedsLimit) {
-            verify(validationService, never()).processFieldErrors(any(BindingResult.class), any(RedirectAttributes.class));
             verify(redirectAttributes, never()).addFlashAttribute(eq(IMAGING_ERROR), anyString());
         }
 

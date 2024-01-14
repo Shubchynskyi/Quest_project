@@ -25,7 +25,9 @@ public class ValidationService {
 
     private final MessageSource messageSource;
 
-    public void processFieldErrors(BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public boolean processFieldErrors(BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        boolean hasFieldsErrors = bindingResult.hasErrors();
+        if (hasFieldsErrors) {
             Map<String, String> errors = new HashMap<>();
             Locale locale = LocaleContextHolder.getLocale();
             for (FieldError error : bindingResult.getFieldErrors()) {
@@ -33,6 +35,8 @@ public class ValidationService {
                 errors.put(error.getField(), localizedErrorMessage);
             }
             redirectAttributes.addFlashAttribute(FIELD_ERRORS, errors);
+        }
+        return hasFieldsErrors;
     }
 
     public boolean checkUserAccessDenied(HttpSession session, List<Role> validRoles, RedirectAttributes redirectAttributes) {
