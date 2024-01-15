@@ -6,6 +6,9 @@ import com.javarush.quest.shubchynskyi.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,6 +33,9 @@ class UserServiceTest {
     private UserService userService;
 
     private static final Long TEST_USER_ID = 1L;
+    private static final String TEST_LOGIN = "testLogin";
+    private static final String TEST_PASSWORD = "testPassword";
+    private static final String INVALID_PASSWORD = "wrongPassword";
 
     private User testUser;
 
@@ -37,8 +43,8 @@ class UserServiceTest {
     void setUp() {
         testUser = User.builder()
                 .id(TEST_USER_ID)
-                .login("testLogin")
-                .password("testPassword")
+                .login(TEST_LOGIN)
+                .password(TEST_PASSWORD)
                 .role(Role.USER)
                 .build();
     }
@@ -47,16 +53,16 @@ class UserServiceTest {
     void should_ReturnTrue_When_LoginExists() {
         when(userRepository.exists(any())).thenReturn(true);
 
-        assertTrue(userService.isLoginExist("testLogin"));
-        verify(userRepository, times(1)).exists(any());
+        assertTrue(userService.isLoginExist(TEST_LOGIN));
+        verify(userRepository).exists(any());
     }
 
     @Test
     void should_ReturnFalse_When_LoginDoesNotExist() {
         when(userRepository.exists(any())).thenReturn(false);
 
-        assertFalse(userService.isLoginExist("testLogin"));
-        verify(userRepository, times(1)).exists(any());
+        assertFalse(userService.isLoginExist(TEST_LOGIN));
+        verify(userRepository).exists(any());
     }
 
     @Test
@@ -64,7 +70,7 @@ class UserServiceTest {
         when(userRepository.save(any())).thenReturn(testUser);
 
         assertEquals(Optional.of(testUser), userService.create(testUser));
-        verify(userRepository, times(1)).save(testUser);
+        verify(userRepository).save(testUser);
     }
 
     @Test
@@ -72,7 +78,7 @@ class UserServiceTest {
         when(userRepository.save(any())).thenReturn(testUser);
 
         assertEquals(Optional.of(testUser), userService.update(testUser));
-        verify(userRepository, times(1)).save(testUser);
+        verify(userRepository).save(testUser);
     }
 
     @Test
@@ -81,7 +87,7 @@ class UserServiceTest {
 
         userService.delete(testUser);
 
-        verify(userRepository, times(1)).delete(testUser);
+        verify(userRepository).delete(testUser);
     }
 
     @Test
@@ -97,7 +103,7 @@ class UserServiceTest {
         assertEquals(2, result.size());
         assertTrue(result.contains(Optional.of(user1)));
         assertTrue(result.contains(Optional.of(user2)));
-        verify(userRepository, times(1)).findAll();
+        verify(userRepository).findAll();
     }
 
     @Test
@@ -107,7 +113,7 @@ class UserServiceTest {
         Collection<Optional<User>> result = userService.getAll();
 
         assertTrue(result.isEmpty());
-        verify(userRepository, times(1)).findAll();
+        verify(userRepository).findAll();
     }
 
     @Test
@@ -115,7 +121,7 @@ class UserServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(testUser));
 
         assertEquals(Optional.of(testUser), userService.get(TEST_USER_ID));
-        verify(userRepository, times(1)).findById(TEST_USER_ID);
+        verify(userRepository).findById(TEST_USER_ID);
     }
 
     @Test
@@ -123,7 +129,7 @@ class UserServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertEquals(Optional.empty(), userService.get(TEST_USER_ID));
-        verify(userRepository, times(1)).findById(TEST_USER_ID);
+        verify(userRepository).findById(TEST_USER_ID);
     }
 
     @Test
@@ -131,8 +137,8 @@ class UserServiceTest {
         when(userRepository.findAll(ArgumentMatchers.<Example<User>>any()))
                 .thenReturn(List.of(testUser));
 
-        assertEquals(Optional.of(testUser), userService.get("testLogin", "testPassword"));
-        verify(userRepository, times(1)).findAll(ArgumentMatchers.<Example<User>>any());
+        assertEquals(Optional.of(testUser), userService.get(TEST_LOGIN, TEST_PASSWORD));
+        verify(userRepository).findAll(ArgumentMatchers.<Example<User>>any());
     }
 
     @Test
@@ -140,8 +146,8 @@ class UserServiceTest {
         when(userRepository.findAll(ArgumentMatchers.<Example<User>>any()))
                 .thenReturn(List.of());
 
-        assertEquals(Optional.empty(), userService.get("testLogin", "testPassword"));
-        verify(userRepository, times(1)).findAll(ArgumentMatchers.<Example<User>>any());
+        assertEquals(Optional.empty(), userService.get(TEST_LOGIN, TEST_PASSWORD));
+        verify(userRepository).findAll(ArgumentMatchers.<Example<User>>any());
     }
 
     @Test
@@ -149,35 +155,27 @@ class UserServiceTest {
         when(userRepository.findAll(ArgumentMatchers.<Example<User>>any()))
                 .thenReturn(List.of());
 
-        assertEquals(Optional.empty(), userService.get("testLogin", "wrongPassword"));
-        verify(userRepository, times(1)).findAll(ArgumentMatchers.<Example<User>>any());
+        assertEquals(Optional.empty(), userService.get(TEST_LOGIN, INVALID_PASSWORD));
+        verify(userRepository).findAll(ArgumentMatchers.<Example<User>>any());
     }
 
-    @Test
-    void should_ReturnFalse_When_NullLogin() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    void should_ReturnFalse_When_LoginIsInvalid(String login) {
         when(userRepository.exists(any())).thenReturn(false);
 
-        assertFalse(userService.isLoginExist(null));
-        verify(userRepository, times(1)).exists(any());
+        assertFalse(userService.isLoginExist(login));
+        verify(userRepository).exists(any());
     }
 
-    @Test
-    void should_ReturnFalse_When_EmptyLogin() {
-        when(userRepository.exists(any())).thenReturn(false);
-
-        assertFalse(userService.isLoginExist(""));
-        verify(userRepository, times(1)).exists(any());
+    @ParameterizedTest
+    @CsvSource({
+            "'', TEST_PASSWORD",
+            "TEST_LOGIN, ''"
+    })
+    void should_ReturnEmptyOptionalByLoginAndPassword_When_LoginOrPasswordIsEmpty(String login, String password) {
+        assertEquals(Optional.empty(), userService.get(login, password));
+        verify(userRepository).findAll(ArgumentMatchers.<Example<User>>any());
     }
 
-    @Test
-    void should_ReturnEmptyOptionalByLoginAndPassword_When_EmptyLogin() {
-        assertEquals(Optional.empty(), userService.get("", "testPassword"));
-        verify(userRepository, times(1)).findAll(ArgumentMatchers.<Example<User>>any());
-    }
-
-    @Test
-    void should_ReturnEmptyOptionalByLoginAndPassword_When_EmptyPassword() {
-        assertEquals(Optional.empty(), userService.get("testLogin", ""));
-        verify(userRepository, times(1)).findAll(ArgumentMatchers.<Example<User>>any());
-    }
 }
