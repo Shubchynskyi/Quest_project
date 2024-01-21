@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.stream.Stream;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.INVALID_FILE_TYPE;
 import static com.javarush.quest.shubchynskyi.constant.Key.NO_IMAGE_JPG;
@@ -34,19 +35,19 @@ import static org.mockito.Mockito.times;
 @ExtendWith(MockitoExtension.class)
 public class ImageServiceTest {
 
-    private ImageService imageService;
-    private MockedStatic<Files> mockedFiles;
     private static final String TEST_IMAGES_DIRECTORY = "target/test-images";
     private static final String TEST_IMAGE_ID = "testImageId";
     private static final String VALID_FILE_NAME = TEST_IMAGE_ID + ".jpeg";
     private static final String INVALID_FILE_NAME = TEST_IMAGE_ID + ".txt";
     private static final String MULTIPART_FILE_NAME = "file";
     private static final String GENERAL_CONTENT_TYPE = "application/octet-stream";
-    public static final String EXPECTED_APP_EXCEPTION_TO_BE_THROWN_IF_THE_FILE_DOES_NOT_EXIST = "Expected AppException to be thrown if the file does not exist";
+    private static final String EXPECTED_APP_EXCEPTION_TO_BE_THROWN_IF_THE_FILE_DOES_NOT_EXIST = "Expected AppException to be thrown if the file does not exist";
     private static final Path uploadedImagePath = Paths.get(TEST_IMAGES_DIRECTORY, VALID_FILE_NAME);
     private static final Path expectedFilePath = Paths.get(TEST_IMAGES_DIRECTORY).resolve(VALID_FILE_NAME);
     private static final MockMultipartFile MOCK_MULTIPART_FILE =
             new MockMultipartFile(MULTIPART_FILE_NAME, VALID_FILE_NAME, MediaType.IMAGE_JPEG_VALUE, new byte[10]);
+    private ImageService imageService;
+    private MockedStatic<Files> mockedFiles;
 
     @BeforeEach
     public void setUp() throws IOException {
@@ -341,11 +342,22 @@ public class ImageServiceTest {
     }
 
     @Test
-    public void should_ScheduleDeletion_When_FilesExpired() throws IOException {
-        ImageService mockImageService = Mockito.spy(new ImageService(TEST_IMAGES_DIRECTORY));
+    @SuppressWarnings("resource")
+    public void should_ScheduleDeletion_When_FilesExpired() {
+        Path mockFile = Mockito.mock(Path.class);
 
-        mockImageService.scheduledDeleteExpiredFiles();
+        long expiredTimestamp = System.currentTimeMillis() - (Key.TIME_TO_DELETE_IN_MILLIS + 1);
+        String expiredFileName = "temp_" + expiredTimestamp + "_expired_file.txt";
 
-        Mockito.verify(mockImageService, times(1)).deleteExpiredTempFiles();
+        Mockito.when(mockFile.getFileName()).thenReturn(Paths.get(expiredFileName));
+
+        mockedFiles.when(() -> Files.list(any(Path.class)))
+                .thenAnswer(invocation -> Stream.of(mockFile));
+        mockedFiles.when(() -> Files.isRegularFile(mockFile)).thenReturn(true);
+
+        imageService.scheduledDeleteExpiredFiles();
+
+        mockedFiles.verify(() -> Files.delete(mockFile), Mockito.times(1));
     }
+
 }

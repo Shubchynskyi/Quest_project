@@ -41,6 +41,7 @@ public class Key {
     public static final String INCORRECT_TEXT_BLOCK = "Incorrect text block";
     public static final String UNKNOWN_COMMAND = "Unknown command";
     public static final String UNEXPECTED_VALUE = "Unexpected value: ";
+    public static final String ERROR_UPLOADING_IMAGE = "Error uploading image: ";
     public static final String UNKNOWN_GAME_STATE = "Unknown Game State";
     public static final String INVALID_FILE_TYPE = "Invalid file type";
     public static final String QUEST_TEXT_IS_NOT_VALID = "Quest text is not valid";
@@ -63,7 +64,6 @@ public class Key {
     public static final String LOGIN = "login";
     public static final String PASSWORD = "password";
     public static final String ROLES = "roles";
-//    public static final String CREATE = "create"; //todo need or not?
     public static final String ORIGINAL_LOGIN = "originalLogin";
     public static final String UPDATE = "update";
     public static final String DELETE = "delete";
@@ -101,13 +101,9 @@ public class Key {
     public static final int KB_TO_MB = 1024;
     public static final String USER_DTO_FROM_MODEL = "userDTOFromModel";
     public static final String TEMP_IMAGE_ID = "tempImageId";
-
-
-    //TODO move to properties
     public static final int MAX_FILE_SIZE = 2097152;
-    public static final long THIRTY_MINUTES_IN_MILLIS = 1800000L;
+    public static final long TIME_TO_DELETE_IN_MILLIS = 1800000L; // THIRTY_MINUTES_IN_MILLIS
     public static final int MAX_LENGTH = 100;
     public static final Pattern TEMP_FILE_PATTERN = Pattern.compile("^temp_(\\d+)_.*$");
     public static final String PREFIX_FOR_TEMP_IMAGES = "temp";
-
 }

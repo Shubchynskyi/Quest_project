@@ -9,12 +9,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
 import java.util.UUID;
 import java.util.regex.Matcher;
+import java.util.stream.Stream;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.IMAGE_UPLOAD_IO_ERROR;
 import static com.javarush.quest.shubchynskyi.constant.Key.INVALID_FILE_TYPE;
@@ -45,25 +45,18 @@ public class ImageService {
                 throw new SecurityException(Key.INVALID_FILE_PATH_ACCESS_DENIED);
             }
 
-            // Определение, является ли файл временным на основе префикса
             boolean isTemporary = filename.startsWith(Key.PREFIX_FOR_TEMP_IMAGES);
-
-            // Выбор корневой директории в зависимости от того, временный ли это файл
             Path rootDir = isTemporary ? tempFilesDir : imagesFolder;
-
             Path resolvedPath = rootDir.resolve(filename).normalize();
 
-            // Проверка, что путь файла начинается с корневой директории (защита от путей типа "../")
             if (!resolvedPath.startsWith(rootDir)) {
                 throw new SecurityException(Key.INVALID_FILE_PATH_ACCESS_DENIED);
             }
 
-            // Проверка существования файла
             if (Files.exists(resolvedPath)) {
                 return resolvedPath;
             }
 
-            // Попытка найти файл с учетом возможных расширений
             for (String ext : Key.ALLOWED_EXTENSIONS) {
                 Path pathWithExtension = resolvedPath.getParent().resolve(resolvedPath.getFileName().toString() + ext);
                 if (Files.exists(pathWithExtension)) {
@@ -77,19 +70,15 @@ public class ImageService {
         }
     }
 
-
     public String uploadFromMultipartFile(MultipartFile file, String imageId, boolean isTemporary) {
-        // Если файл пустой, возвращаем null или путь к изображению по умолчанию
         if (file == null || file.isEmpty()) {
             // logger.info("No new file provided, using default image.");
-            return null; // или возвращаем путь к изображению по умолчанию
+            return null;
         }
 
-        // если путь не безопасный, то ошибка
         if (isPathUnsecure(imageId)) {
             throw new AppException(Key.THE_FILE_PATH_IS_INSECURE);
         }
-
 
         String originalFilename = file.getOriginalFilename();
         if (originalFilename == null || originalFilename.isEmpty()) {
@@ -106,15 +95,11 @@ public class ImageService {
         }
     }
 
-    // вызываем из контроллера если это временное изображение (уже сохраненное)
     public void uploadFromExistingFile(String fileName, String imageId) {
-        // может ли быть пустым?.. если уже сохранен как временный
-        // или это надо для RESTа например?
         if (fileName == null || fileName.isEmpty()) {
             throw new AppException(Key.FILE_NAME_IS_NULL_OR_EMPTY);
         }
 
-        // проверка пути, хотя тут файл уже должен быть сохранен. ?
         if (isPathUnsecure(imageId)) {
             throw new AppException(Key.THE_FILE_PATH_IS_INSECURE);
         }
@@ -162,28 +147,25 @@ public class ImageService {
             Files.copy(data, targetPath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             // TODO log
-            throw new AppException("Error uploading image: " + name, e);
+            throw new AppException(Key.ERROR_UPLOADING_IMAGE + name, e);
         }
     }
 
     private String generateTemporaryFileName(String imageId) {
         return "temp_"
-               + System.currentTimeMillis()
-               + "_"
-               + UUID.randomUUID()
-               + "_" + imageId;
+                + System.currentTimeMillis()
+                + "_"
+                + UUID.randomUUID()
+                + "_" + imageId;
     }
-
 
     public boolean isValid(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
 
-        // Проверка на наличие файла и его расширения
         if (file.isEmpty() || originalFilename == null || !originalFilename.contains(".")) {
             return false;
         }
 
-        // Извлечение расширения файла и проверка его допустимости
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
         if (!Key.ALLOWED_EXTENSIONS.contains(extension)) {
             return false;
@@ -191,16 +173,13 @@ public class ImageService {
 
         Path filePath = null;
         try {
-            // Генерация уникального имени файла и создание пути к временному файлу
             String uniqueFilename = generateTemporaryFileName(file.getOriginalFilename());
             filePath = tempFilesDir.resolve(uniqueFilename);
 
-            // Копирование данных из MultipartFile в файл
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
             }
 
-            // Проверка MIME-типа временного файла
             String mimeType = Files.probeContentType(filePath);
             return mimeType != null && Key.ALLOWED_MIME_TYPES.contains(mimeType);
         } catch (IOException e) {
@@ -225,17 +204,16 @@ public class ImageService {
             String mimeType = Files.probeContentType(filePath);
             return mimeType != null && Key.ALLOWED_MIME_TYPES.contains(mimeType);
         } catch (IOException e) {
-            // Логирование ошибки с уровнем WARN.
+//            logger.warn("...");
             return false;
         }
     }
 
-
     private boolean isPathUnsecure(String imageId) {
         if (imageId == null
-            || imageId.length() > Key.MAX_LENGTH
-            || !imageId.matches("^[a-zA-Z0-9_.-]+$")
-            || imageId.contains("..")) {
+                || imageId.length() > Key.MAX_LENGTH
+                || !imageId.matches("^[a-zA-Z0-9_.-]+$")
+                || imageId.contains("..")) {
 //            logger.warn("Unsafe path: {}", imageId);
             return true;
         }
@@ -247,7 +225,6 @@ public class ImageService {
             Path path = imagesFolder.resolve(imageId + ext);
             if (Files.exists(path)) {
                 if (!tryDeleteFile(path)) {
-                    // Логирование неудачной попытки удаления файла
 //  todo                  logger.warn("Не удалось удалить файл: " + path);
                 }
                 break;
@@ -271,39 +248,34 @@ public class ImageService {
         deleteExpiredTempFiles();
     }
 
-    //TODO private? (have one call in tests)
-    public void deleteExpiredTempFiles() {
-        File folder = tempFilesDir.toFile();
-        File[] listOfFiles = folder.listFiles();
+    private void deleteExpiredTempFiles() {
+        try (Stream<Path> paths = Files.list(tempFilesDir)) {
+            long currentTime = System.currentTimeMillis();
 
-        if (listOfFiles == null) {
-            // TODO log
-            return;
-        }
-
-        long currentTime = System.currentTimeMillis();
-
-        for (File file : listOfFiles) {
-            if (file.isFile()) {
-                Matcher matcher = Key.TEMP_FILE_PATTERN.matcher(file.getName());
-                if (matcher.matches()) {
-                    try {
-                        long timestamp = Long.parseLong(matcher.group(1));
-                        if (currentTime - timestamp > Key.THIRTY_MINUTES_IN_MILLIS) {
-                            if (!file.delete()) {
-                                // TODO log error
-                            } else {
-                                // TODO log success
+            paths.filter(Files::isRegularFile)
+                    .forEach(file -> {
+                        String fileName = file.getFileName().toString();
+                        Matcher matcher = Key.TEMP_FILE_PATTERN.matcher(fileName);
+                        if (matcher.matches()) {
+                            try {
+                                long timestamp = Long.parseLong(matcher.group(1));
+                                if (currentTime - timestamp > Key.TIME_TO_DELETE_IN_MILLIS) {
+                                    try {
+                                        Files.delete(file);
+                                        // TODO log success
+                                    } catch (IOException e) {
+                                        // TODO log error
+                                    }
+                                }
+                            } catch (NumberFormatException e) {
+                                // TODO log error parsing time
                             }
                         }
-                    } catch (NumberFormatException e) {
-                        // // TODO log error parsing time
-                    }
-                }
-            }
+                    });
+        } catch (IOException e) {
+            // TODO log error
         }
     }
-
 
 
 }
