@@ -12,6 +12,7 @@ public class Key {
     public static final String ERROR = "error";
     public static final String IMAGING_ERROR = "imagingError";
     public static final String FIELD_ERRORS = "fieldErrors";
+    public static final String SLASH = "/";
 
     //**************  Regex  **************//
     public static final String REGEX_EMPTY_STRING = "";
@@ -106,4 +107,5 @@ public class Key {
     public static final int MAX_LENGTH = 100;
     public static final Pattern TEMP_FILE_PATTERN = Pattern.compile("^temp_(\\d+)_.*$");
     public static final String PREFIX_FOR_TEMP_IMAGES = "temp";
+
 }

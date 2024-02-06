@@ -26,14 +26,13 @@ public class QuestCreateController {
 
     @GetMapping(CREATE_QUEST)
     public String showCreateQuestPage(
-            HttpSession session
+            HttpSession session,
+            RedirectAttributes redirectAttributes
     ) {
         if (Objects.nonNull(session.getAttribute(Key.USER))) {
             return CREATE_QUEST;
         } else {
-            // TODO if the user was not logged in and clicked "create quest":
-            //  - redirected to the login with the label "source" = "quest-create" (the label in the controller is optional
-            //  - if the label is present, then after login redirect to create a quest
+            redirectAttributes.addFlashAttribute(SOURCE, CREATE_QUEST);
             return REDIRECT + Route.LOGIN;
         }
     }

@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -34,6 +35,7 @@ public class LoginController {
     @PostMapping(LOGIN)
     public String doLogin(@RequestParam(LOGIN) String login,
                           @RequestParam(PASSWORD) String password,
+                          @ModelAttribute(SOURCE) String source,
                           HttpSession session,
                           RedirectAttributes redirectAttributes
     ) {
@@ -43,7 +45,10 @@ public class LoginController {
                     USER,
                     userMapper.userToUserDTOWithoutPassword(user.get())
             );
-            return REDIRECT + Route.PROFILE;
+            if (source.isEmpty()) {
+                return REDIRECT + Route.PROFILE;
+            }
+            return REDIRECT + SLASH + source;
         } else {
             String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(DATA_IS_INCORRECT);
             redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
