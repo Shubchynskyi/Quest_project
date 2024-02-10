@@ -1,0 +1,52 @@
+spring:
+  datasource:
+    hikari:
+      maxLifetime: '600000'
+      connectionTimeout: '20000'
+      minimumIdle: '5'
+      autoCommit: 'true'
+      idleTimeout: '300000'
+      maximumPoolSize: '10'
+    driver-class-name: org.postgresql.Driver
+    password: postgres
+    username: postgres
+    url: jdbc:postgresql://localhost:2345/postgres
+  liquibase:
+    change-log: classpath:db/db.changelog-master.xml
+    default-schema: public
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: 'true'
+    properties:
+      hibernate:
+        default_schema: public
+  messages:
+    encoding: UTF-8
+    basename: messages
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+ico:
+  resource:
+    handler: /images/icon/**
+    locations: classpath:/static/images/icon/
+app:
+  images-directory: src/main/webapp/WEB-INF/images/
+  default-locale: en
+logging:
+  level:
+    org:
+      springframework:
+        orm:
+          jpa:
+            JpaTransactionManager: DEBUG
+        web: DEBUG
+images:
+  resource:
+    handler: /images/**
+    locations: classpath:/images/
+    temp:
+      handler: /images/temp/**
+      locations: classpath:/images/temp/

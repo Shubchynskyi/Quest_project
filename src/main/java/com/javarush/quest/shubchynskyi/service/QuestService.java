@@ -39,7 +39,7 @@ public class QuestService {
             String authorId
     ) {
         if (questValidator.isQuestExist(name)) {
-            throw new AppException(QUEST_WITH_THIS_NAME_ALREADY_EXISTS);
+            throw new AppException(QUEST_WITH_THIS_NAME_ALREADY_EXISTS); // todo проверить сценарий
         }
         if (questValidator.isQuestTextValid(text)) {
             Quest quest = Quest.builder()
