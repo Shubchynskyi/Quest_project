@@ -1,0 +1,11 @@
+spring:
+  sql:
+    init:
+      mode: always
+  liquibase:
+    change-log: classpath:db/db.changelog-master.xml
+
+valid:
+  quest:
+    text:
+      path: validQuestText.txt

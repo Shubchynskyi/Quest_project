@@ -23,6 +23,6 @@ public class Route {
     public static final String QUESTS_LIST = "/quests-list";
     public static final String QUEST_EDIT = "/quest-edit";
     public static final String QUEST_EDIT_ID = "/quest-edit?id=";
-    public static final String QUEST_CREATE = "/create-quest";
+    public static final String CREATE_QUEST = "/create-quest";
 
 }

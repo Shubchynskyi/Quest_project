@@ -51,7 +51,7 @@ public class QuestEditController {
                 .orElseGet(() -> {
                     String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(QUEST_NOT_FOUND_ERROR);
                     redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
-                    return REDIRECT + Route.QUEST_CREATE;
+                    return REDIRECT + Route.CREATE_QUEST;
                 });
     }
 
