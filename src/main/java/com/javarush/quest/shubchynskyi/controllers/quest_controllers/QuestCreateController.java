@@ -2,7 +2,9 @@ package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
 import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.constant.Route;
+import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Quest;
+import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import jakarta.servlet.http.HttpSession;
@@ -14,14 +16,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Objects;
+import java.util.Set;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.YOU_DONT_HAVE_PERMISSIONS;
 
 @Controller
 @RequiredArgsConstructor
 public class QuestCreateController {
 
+    public static final Set<Role> ALLOWED_ROLES_FOR_QUEST_CREATE = Set.of(Role.USER, Role.MODERATOR, Role.ADMIN);
     private final QuestService questService;
 
     @GetMapping(CREATE_QUEST)
@@ -29,8 +34,15 @@ public class QuestCreateController {
             HttpSession session,
             RedirectAttributes redirectAttributes
     ) {
-        if (Objects.nonNull(session.getAttribute(Key.USER))) {
-            return CREATE_QUEST;
+        UserDTO userDTO = (UserDTO) session.getAttribute(Key.USER);
+
+        if (Objects.nonNull(userDTO)) {
+            if (ALLOWED_ROLES_FOR_QUEST_CREATE.contains(userDTO.getRole())) {
+                return CREATE_QUEST;
+            } else {
+                redirectAttributes.addFlashAttribute(ERROR, YOU_DONT_HAVE_PERMISSIONS);
+                return REDIRECT + Route.PROFILE;
+            }
         } else {
             redirectAttributes.addFlashAttribute(SOURCE, CREATE_QUEST);
             return REDIRECT + Route.LOGIN;

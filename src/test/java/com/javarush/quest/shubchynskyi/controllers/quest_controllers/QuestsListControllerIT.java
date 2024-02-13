@@ -22,7 +22,7 @@ class QuestsListControllerIT {
     public void showQuests_ShouldReturnQuestsList() throws Exception {
         int expectedQuestsSize = 1;
 
-        mockMvc.perform(get("/quests-list"))
+        mockMvc.perform(get(Route.QUESTS_LIST))
                 .andExpect(status().isOk())
                 .andExpect(view().name(Route.QUESTS_LIST))
                 .andExpect(model().attributeExists(QUESTS))

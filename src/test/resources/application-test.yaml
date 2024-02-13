@@ -9,3 +9,9 @@ valid:
   quest:
     text:
       path: validQuestText.txt
+    name: "Quest name"
+    description: "Quest description"
+    userId: "1"
+invalid:
+  quest:
+    text: "Invalid text"
