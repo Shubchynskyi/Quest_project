@@ -6,11 +6,17 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AnswerService {
 
     private final AnswerRepository answerRepository;
+
+    public Optional<Answer> get(Long id) {
+        return answerRepository.findById(id);
+    }
 
     public void create(Answer answer) {
         answerRepository.save(answer);

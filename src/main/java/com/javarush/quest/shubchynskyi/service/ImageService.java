@@ -151,6 +151,7 @@ public class ImageService {
         }
     }
 
+    // todo prefix to settings
     private String generateTemporaryFileName(String imageId) {
         return "temp_"
                 + System.currentTimeMillis()

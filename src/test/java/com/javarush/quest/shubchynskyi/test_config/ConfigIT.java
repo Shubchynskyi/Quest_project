@@ -17,6 +17,6 @@ import java.lang.annotation.Target;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(PostgresContainerConfiguration.class) // Импортируем конфигурацию контейнера Postgres
+@Import(PostgresContainerConfiguration.class)
 public @interface ConfigIT {
 }

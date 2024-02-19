@@ -15,3 +15,15 @@ valid:
 invalid:
   quest:
     text: "Invalid text"
+
+app:
+  images-directory: "src/test/resources/testImages"
+  valid-quest-id: "1"
+  invalid-quest-id: "999"
+  test-image:
+    name: "test-image.png"
+    content-type: "image/png"
+  localization:
+    supported-languages: en, ru, ua, de
+  tests:
+    expectedQuestsSize: 1

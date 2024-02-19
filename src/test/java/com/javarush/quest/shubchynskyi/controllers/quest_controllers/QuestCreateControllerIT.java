@@ -5,6 +5,7 @@ import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
+import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,21 +39,19 @@ class QuestCreateControllerIT {
 
     @Autowired
     MockMvc mockMvc;
+    @Autowired
+    QuestService questService;
     public static final String EMPTY_STREAM_MARKER = "NONE";
     private static String validQuestText;
 
     @Value("${valid.quest.text.path}")
     private String validQuestTextPath;
-
     @Value("${valid.quest.name}")
     private String validQuestName;
-
     @Value("${valid.quest.description}")
     private String validQuestDescription;
-
     @Value("${valid.quest.userId}")
     private String validUserId;
-
     @Value("${invalid.quest.text}")
     private String invalidQuestText;
 
@@ -161,7 +160,7 @@ class QuestCreateControllerIT {
                 Arguments.of(Key.QUEST_NAME, TestConstants.EMPTY_STRING, Route.QUEST_EDIT + TestConstants.REDIRECT_ANY_ID_URI_TEMPLATE),
                 Arguments.of(Key.QUEST_TEXT, TestConstants.EMPTY_STRING, Key.CREATE_QUEST),
                 Arguments.of(Key.QUEST_DESCRIPTION, TestConstants.EMPTY_STRING, Route.QUEST_EDIT + TestConstants.REDIRECT_ANY_ID_URI_TEMPLATE),
-                Arguments.of(Key.ID, TestConstants.INVALID, Key.CREATE_QUEST)
+                Arguments.of(Key.ID, TestConstants.EMPTY_STRING, Key.CREATE_QUEST)
         );
     }
 

@@ -9,5 +9,8 @@ public class TestConstants {
     public static final String REDIRECT_QUERY_ID_TEMPLATE = "?id={id}";
     public static final String EMPTY_STRING = "";
     public static final String NO_ROLES_TO_TEST = "No roles to test.";
-    public static final String INVALID = "invalid";
+    public static final String INVALID = "invalid"; // todo remove?
+    public static final String ACCEPT_LANGUAGE = "Accept-Language";
+    public static final String QUEST_EDIT_PATH = "/quest-edit?id=";
+    public static final String LABEL_FRAGMENT = "#label-";
 }
