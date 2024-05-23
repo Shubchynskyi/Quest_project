@@ -5,7 +5,7 @@ import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.exception.AppException;
-import com.javarush.quest.shubchynskyi.localization.ViewErrorLocalizer;
+import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.result.UserDataProcessResult;
 import com.javarush.quest.shubchynskyi.service.UserAccountService;
@@ -162,7 +162,7 @@ public class UserController {
     }
 
     private void addLocalizedUnexpectedError(RedirectAttributes redirectAttributes) {
-        String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(UNEXPECTED_ERROR);
+        String localizedMessage = ErrorLocalizer.getLocalizedMessage(UNEXPECTED_ERROR);
         redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
     }
 

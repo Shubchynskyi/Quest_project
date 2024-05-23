@@ -1,10 +1,11 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
+import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.exception.AppException;
-import com.javarush.quest.shubchynskyi.localization.ViewErrorLocalizer;
+import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.result.UserDataProcessResult;
 import com.javarush.quest.shubchynskyi.service.UserAccountService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,7 +64,7 @@ public class SignupController {
     }
 
     private void addErrorToRedirectAttributes(RedirectAttributes redirectAttributes) {
-        String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(YOU_ARE_ALREADY_LOGGED_IN);
+        String localizedMessage = ErrorLocalizer.getLocalizedMessage(YOU_ARE_ALREADY_LOGGED_IN);
         redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
     }
 
@@ -87,7 +88,7 @@ public class SignupController {
                     imageFile,
                     tempImageId,
                     redirectAttributes,
-                    ""
+                    EMPTY_STRING
             );
 
             if (registrationResult.hasFieldsErrors()) {
@@ -112,7 +113,7 @@ public class SignupController {
     }
 
     private void addLocalizedUnexpectedError(RedirectAttributes redirectAttributes) {
-        String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(UNEXPECTED_ERROR);
+        String localizedMessage = ErrorLocalizer.getLocalizedMessage(UNEXPECTED_ERROR);
         redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
     }
 

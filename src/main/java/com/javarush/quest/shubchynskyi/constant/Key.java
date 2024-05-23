@@ -13,6 +13,7 @@ public class Key {
     public static final String IMAGING_ERROR = "imagingError";
     public static final String FIELD_ERRORS = "fieldErrors";
     public static final String SLASH = "/";
+    public static final String EMPTY_STRING = "";
 
     //**************  Regex  **************//
     public static final String REGEX_EMPTY_STRING = "";
@@ -45,8 +46,6 @@ public class Key {
     public static final String ERROR_UPLOADING_IMAGE = "Error uploading image: ";
     public static final String UNKNOWN_GAME_STATE = "Unknown Game State";
     public static final String INVALID_FILE_TYPE = "Invalid file type";
-    public static final String QUEST_TEXT_IS_NOT_VALID = "Quest text is not valid";
-    public static final String QUEST_WITH_THIS_NAME_ALREADY_EXISTS = "Quest with this name already exists";
     public static final String INVALID_FILE_PATH_ACCESS_DENIED = "Invalid file path, access denied";
     public static final String THE_FILE_PATH_IS_INSECURE = "The file path is insecure";
     public static final String ORIGINAL_FILENAME_IS_NULL_OR_EMPTY = "Original filename is null or empty";
@@ -84,6 +83,7 @@ public class Key {
     public static final String CREATE_QUEST = "create-quest";
     public static final String QUEST_EDIT = "quest-edit";
     public static final String QUESTS_LIST = "quests-list";
+    public static final String QUEST_DTO = "questDTO";
 
     //**************  Questions  **************//
     public static final String QUESTION = "question";
@@ -107,5 +107,7 @@ public class Key {
     public static final int MAX_LENGTH = 100;
     public static final Pattern TEMP_FILE_PATTERN = Pattern.compile("^temp_(\\d+)_.*$");
     public static final String PREFIX_FOR_TEMP_IMAGES = "temp";
+
+
 
 }

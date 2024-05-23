@@ -2,7 +2,7 @@ package com.javarush.quest.shubchynskyi.service;
 
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.User;
-import com.javarush.quest.shubchynskyi.localization.ViewErrorLocalizer;
+import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.result.UserDataProcessResult;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +83,7 @@ public class UserAccountService {
             hasFieldsErrors = true;
             imageIsValid = false;
             if (!tempImageId.isEmpty()) {
-                tempImageId = "";
+                tempImageId = EMPTY_STRING;
             }
         } else if ((!imageIsValid && !imageFile.isEmpty())) {
             addLocalizedIncorrectImageError(redirectAttributes);
@@ -106,12 +106,12 @@ public class UserAccountService {
     }
 
     private void addLocalizedIncorrectImageError(RedirectAttributes redirectAttributes) {
-        String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(IMAGE_FILE_IS_INCORRECT);
+        String localizedMessage = ErrorLocalizer.getLocalizedMessage(IMAGE_FILE_IS_INCORRECT);
         redirectAttributes.addFlashAttribute(IMAGING_ERROR, localizedMessage);
     }
 
     private void addLocalizedMaxSizeError(RedirectAttributes redirectAttributes) {
-        String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(FILE_IS_TOO_LARGE);
+        String localizedMessage = ErrorLocalizer.getLocalizedMessage(FILE_IS_TOO_LARGE);
         redirectAttributes.addFlashAttribute(
                 IMAGING_ERROR, localizedMessage
                         + " " + (MAX_FILE_SIZE / KB_TO_MB / KB_TO_MB)
@@ -129,7 +129,7 @@ public class UserAccountService {
 
     private boolean isLoginExist(UserDTO userDTOFromModel, RedirectAttributes redirectAttributes, boolean hasErrors) {
         if (userService.isLoginExist(userDTOFromModel.getLogin())) {
-            String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(LOGIN_ALREADY_EXIST);
+            String localizedMessage = ErrorLocalizer.getLocalizedMessage(LOGIN_ALREADY_EXIST);
             redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
             hasErrors = true;
         }

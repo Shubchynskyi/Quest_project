@@ -1,7 +1,7 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
 import com.javarush.quest.shubchynskyi.entity.User;
-import com.javarush.quest.shubchynskyi.localization.ViewErrorLocalizer;
+import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.constant.Route;
@@ -50,7 +50,7 @@ public class LoginController {
             }
             return REDIRECT + SLASH + source;
         } else {
-            String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(DATA_IS_INCORRECT);
+            String localizedMessage = ErrorLocalizer.getLocalizedMessage(DATA_IS_INCORRECT);
             redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
             return REDIRECT + Route.LOGIN;
         }

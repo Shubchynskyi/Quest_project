@@ -16,9 +16,7 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
-//TODO надо эти ошибки прокидывать в контроллер пользователю, т.е. их по сути надо тоже локализировать
-import static com.javarush.quest.shubchynskyi.constant.Key.QUEST_TEXT_IS_NOT_VALID;
-import static com.javarush.quest.shubchynskyi.constant.Key.QUEST_WITH_THIS_NAME_ALREADY_EXISTS;
+import static com.javarush.quest.shubchynskyi.localization.ExceptionErrorMessages.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +24,7 @@ public class QuestService {
     private final QuestionService questionService;
     private final QuestRepository questRepository;
     private final AnswerRepository answerRepository;
+    private final UserService userService;
     private final QuestParser questParser;
     private final QuestValidator questValidator;
     private final BlockTypeResolver blockTypeResolver;
@@ -39,20 +38,29 @@ public class QuestService {
             String authorId
     ) {
         if (questValidator.isQuestExist(name)) {
-            throw new AppException(QUEST_WITH_THIS_NAME_ALREADY_EXISTS); // todo проверить сценарий
+            throw new AppException(QUEST_NAME_ALREADY_EXISTS);
         }
+
+        User author;
+        try {
+            author = userService.get(Long.parseLong(authorId))
+                    .orElseThrow(() -> new AppException(USER_NOT_FOUND));
+        } catch (NumberFormatException e) {
+            throw new AppException(INVALID_AUTHOR_ID_FORMAT);
+        }
+
         if (questValidator.isQuestTextValid(text)) {
             Quest quest = Quest.builder()
                     .name(name)
                     .description(description)
-                    .authorId(User.builder().id(Long.valueOf(authorId)).build())
+                    .author(author)
                     .build();
 
             parseQuestFromTextWall(quest, text);
 
             return quest;
         } else {
-            throw new AppException(QUEST_TEXT_IS_NOT_VALID);
+            throw new AppException(QUEST_TEXT_NOT_VALID);
         }
     }
 
@@ -60,7 +68,7 @@ public class QuestService {
         questRepository.save(quest);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unused") // todo add "delete" button for quest edit page
     public void delete(Quest quest) {
         questRepository.delete(quest);
     }
@@ -79,8 +87,6 @@ public class QuestService {
         return get(Long.parseLong(id));
     }
 
-
-    @Transactional
     private void parseQuestFromTextWall(Quest quest, String text) {
         Quest questWithId = questRepository.save(quest);
 

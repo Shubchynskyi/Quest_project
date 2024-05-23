@@ -9,7 +9,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @TestConfiguration
 public class PostgresContainerConfiguration {
 
-    private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15.2");
+    private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16.2");
 
     @Bean
     @ServiceConnection

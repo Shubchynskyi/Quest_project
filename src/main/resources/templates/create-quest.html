@@ -11,20 +11,35 @@
 <body>
 <div th:replace="~{parts/header :: header}"></div>
 <div class="container">
-  <!-- Error Message -->
-  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <form action="create-quest" th:object="${questDTO}" method="post">
 
-  <form action="create-quest" method="post">
+    <!-- Error Name Message -->
+    <!--suppress ThymeleafVariablesResolveInspection -->
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+    <div class="alert alert-danger" th:if="${fieldErrors != null && fieldErrors.containsKey('name')}"
+         th:text="${fieldErrors['name']}"></div>
+
+    <!-- Name input-->
     <div class="mb-3">
       <label for="questName" class="form-label" th:text="#{create-quest.quest.name.label}">Quest name</label>
       <input name="questName" type="text" class="form-control" id="questName"
-             th:placeholder="#{create-quest.quest.name.placeholder}">
+             th:placeholder="#{create-quest.quest.name.placeholder}" required=""
+             th:field="*{name}">
     </div>
 
+    <!-- Error Description Message -->
+    <!--suppress ThymeleafVariablesResolveInspection -->
+    <br th:if="${fieldErrors != null && fieldErrors.containsKey('description')}">
+    <div class="alert alert-danger" th:if="${fieldErrors != null && fieldErrors.containsKey('description')}"
+         th:text="${fieldErrors['description']}">
+    </div>
+
+    <!-- Description input-->
     <div class="mb-3">
       <label for="questDescription" class="form-label" th:text="#{create-quest.quest.description.label}">Quest description</label>
       <input name="questDescription" type="text" class="form-control" id="questDescription"
-             th:placeholder="#{create-quest.quest.description.placeholder}">
+             th:placeholder="#{create-quest.quest.description.placeholder}" required=""
+             th:field="*{description}">
     </div>
 
     <div th:replace="~{parts/quest-text-area :: quest-text-area}"></div>

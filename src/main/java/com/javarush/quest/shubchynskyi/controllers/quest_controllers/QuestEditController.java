@@ -5,7 +5,7 @@ import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.Question;
-import com.javarush.quest.shubchynskyi.localization.ViewErrorLocalizer;
+import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.QuestMapper;
 import com.javarush.quest.shubchynskyi.service.AnswerService;
 import com.javarush.quest.shubchynskyi.service.ImageService;
@@ -49,7 +49,7 @@ public class QuestEditController {
                     return QUEST_EDIT;
                 })
                 .orElseGet(() -> {
-                    String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(QUEST_NOT_FOUND_ERROR);
+                    String localizedMessage = ErrorLocalizer.getLocalizedMessage(QUEST_NOT_FOUND_ERROR);
                     redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
                     return REDIRECT + Route.CREATE_QUEST;
                 });

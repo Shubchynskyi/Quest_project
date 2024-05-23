@@ -12,7 +12,7 @@ public interface QuestMapper {
 
     @Named("questToQuestDTOWithOutQuestions")
     @Mappings({
-            @Mapping(target = "authorId", ignore = true),
+            @Mapping(target = "author", ignore = true),
             @Mapping(target = "questions", ignore = true),
             @Mapping(target = "players", ignore = true)
     })
@@ -20,7 +20,7 @@ public interface QuestMapper {
 
     @Named("questToQuestDTO")
     @Mappings({
-            @Mapping(target = "authorId", ignore = true),
+            @Mapping(target = "author", ignore = true),
             @Mapping(target = "players", ignore = true)
     })
     QuestDTO questToQuestDTO(Quest quest);

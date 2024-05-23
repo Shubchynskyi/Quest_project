@@ -26,7 +26,7 @@ public class Quest implements AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
     @ToString.Exclude
-    private User authorId;
+    private User author;
 
     @OneToMany()
     @JoinColumn(name = "quest_id")

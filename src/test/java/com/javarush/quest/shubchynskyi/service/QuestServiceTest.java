@@ -32,6 +32,8 @@ public class QuestServiceTest {
     @Mock
     private QuestionService questionService;
     @Mock
+    private UserService userService;
+    @Mock
     private AnswerRepository answerRepository;
     @Mock
     private QuestRepository questRepository;
@@ -49,13 +51,14 @@ public class QuestServiceTest {
     private static final String QUEST_DESCRIPTION = "Quest Description";
     private static final String TEXT = "Quest text";
     private Quest testQuest;
+    private User testUser;
 
     @BeforeEach
     public void setup() {
-        User testUser = User.builder().id(USER_ID).build();
+        testUser = User.builder().id(USER_ID).build();
 
         testQuest = Quest.builder()
-                .authorId(testUser)
+                .author(testUser)
                 .id(QUEST_ID)
                 .name(QUEST_NAME)
                 .description(QUEST_DESCRIPTION)
@@ -66,6 +69,7 @@ public class QuestServiceTest {
     void should_CreateQuest_When_ParametersAreValid() {
         when(questRepository.save(any())).thenReturn(testQuest);
         when(questValidator.isQuestTextValid(anyString())).thenReturn(true);
+        when(userService.get(USER_ID)).thenReturn(Optional.of(testUser));
 
         Quest createdQuest = questService.create(
                 QUEST_NAME,
@@ -75,7 +79,7 @@ public class QuestServiceTest {
 
         assertEquals(QUEST_NAME, createdQuest.getName());
         assertEquals(QUEST_DESCRIPTION, createdQuest.getDescription());
-        assertEquals(USER_ID, createdQuest.getAuthorId().getId());
+        assertEquals(USER_ID, createdQuest.getAuthor().getId());
 
         verify(questRepository, times(2)).save(any());
         verify(lock, times(1)).lock();
@@ -84,7 +88,9 @@ public class QuestServiceTest {
 
     @Test
     public void should_ThrowAppException_When_QuestTextIsInvalid() {
+        when(questValidator.isQuestExist(anyString())).thenReturn(false);
         when(questValidator.isQuestTextValid(anyString())).thenReturn(false);
+        when(userService.get(USER_ID)).thenReturn(Optional.of(testUser));
 
         assertThrows(AppException.class,
                 () -> questService.create(
@@ -93,6 +99,8 @@ public class QuestServiceTest {
                 QUEST_DESCRIPTION,
                 String.valueOf(USER_ID))
         );
+
+        verify(questValidator, times(1)).isQuestExist(any());
         verify(questValidator, times(1)).isQuestTextValid(any());
         verifyNoInteractions(questRepository);
     }
