@@ -26,6 +26,8 @@ public class UsersController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final ValidationService validationService;
+
+    // Todo move to constant or in yaml
     private final List<Role> acceptedRoles = List.of(Role.ADMIN, Role.MODERATOR);
 
     @GetMapping(USERS)
@@ -34,7 +36,7 @@ public class UsersController {
             HttpSession session,
             RedirectAttributes redirectAttributes
     ) {
-        // TODO метод изменен, проверить
+        // TODO если пользователя нет, то редирект на логин?
         if (validationService.checkUserAccessDenied(session, acceptedRoles, redirectAttributes)) {
             return REDIRECT + Route.INDEX;
         }
@@ -48,17 +50,4 @@ public class UsersController {
         return Route.USERS;
     }
 
-    // TODO метод статический и используется двумя контроллерами
-    // лучше вынести в какой-то класс userValidator или делать проверки через Secur
-//    static boolean validateUserRole(HttpSession session, RedirectAttributes redirectAttributes) {
-//        UserDTO currentUser = (UserDTO) session.getAttribute(USER);
-//        if (currentUser == null
-//            || (!currentUser.getRole().equals(Role.ADMIN)
-//                && !currentUser.getRole().equals(Role.MODERATOR))) {
-//            String localizedMessage = ViewErrorLocalizer.getLocalizedMessage(YOU_DONT_HAVE_PERMISSIONS);
-//            redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
-//            return true;
-//        }
-//        return false;
-//    }
 }

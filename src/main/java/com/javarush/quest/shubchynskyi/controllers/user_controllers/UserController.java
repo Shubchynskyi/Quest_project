@@ -40,7 +40,8 @@ public class UserController {
     private final ValidationService validationService;
     private final UserAccountService userAccountService;
 
-    private final List<Role> acceptedRolesForEditing = List.of(Role.ADMIN, Role.MODERATOR);
+    // TODO to config
+    private final List<Role> acceptedRolesForEditing = List.of(Role.ADMIN, Role.MODERATOR, Role.USER);
 
     @GetMapping(USER)
     public String showUser(
@@ -52,6 +53,10 @@ public class UserController {
             @SessionAttribute(name = USER, required = false) UserDTO userFromSession,
             @ModelAttribute(name = TEMP_IMAGE_ID) String tempImageId
     ) {
+
+        // TODO сейчас пользователь (обычный USER) не может редактировать свой профиль из профиля
+        // нужно дать пользователю права редактировать себя если он заходит из профиля (ROUTE)
+        //
         if (validationService.checkUserAccessDenied(session, acceptedRolesForEditing, redirectAttributes)) {
             return REDIRECT + Route.INDEX;
         }
@@ -149,6 +154,7 @@ public class UserController {
     private String processUpdate(UserDTO userDTOFromModel, User userFromModel, BindingResult bindingResult,
                                  MultipartFile imageFile, String tempImageId, RedirectAttributes redirectAttributes,
                                  String originalLogin, UserDTO userDTOFromSession, HttpServletRequest request) {
+
         UserDataProcessResult updateResult = userAccountService.processUserData(
                 userDTOFromModel, bindingResult, imageFile, tempImageId, redirectAttributes, originalLogin);
 

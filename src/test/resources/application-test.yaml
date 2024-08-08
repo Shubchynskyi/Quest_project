@@ -12,17 +12,24 @@ valid:
     name: "Quest name"
     description: "Quest description"
     userId: "1"
+  user:
+    id: "1"
+    role: "USER"
 invalid:
   quest:
     text: "Invalid text"
 
 app:
-  images-directory: "src/test/resources/testImages"
+  images-directory: "src/test/resources/images"
   valid-quest-id: "1"
   invalid-quest-id: "999"
-  test-image:
-    name: "test-image.png"
-    content-type: "image/png"
+  images:
+    base-path: "/images/"
+    test-image:
+      name: "test-image.png"
+      no-ext: "test-image"
+      nonexistent: "nonexistent.png"
+      content-type: "image/png"
   localization:
     supported-languages: en, ru, ua, de
   tests:

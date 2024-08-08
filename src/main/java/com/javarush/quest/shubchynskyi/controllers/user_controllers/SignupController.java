@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
-import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
@@ -81,7 +80,7 @@ public class SignupController {
                          HttpServletRequest request,
                          RedirectAttributes redirectAttributes) {
 
-        try {
+        try { // todo перегрузить метод чтобы избавиться от пустой строки
             UserDataProcessResult registrationResult = userAccountService.processUserData(
                     userDTOFromModel,
                     bindingResult,

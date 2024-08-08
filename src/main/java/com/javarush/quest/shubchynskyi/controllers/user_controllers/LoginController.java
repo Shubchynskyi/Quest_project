@@ -39,6 +39,10 @@ public class LoginController {
                           HttpSession session,
                           RedirectAttributes redirectAttributes
     ) {
+        // todo check and add tests
+        login = login.trim();
+        password = password.trim();
+
         Optional<User> user = userService.get(login, password);
         if (user.isPresent()) {
             session.setAttribute(

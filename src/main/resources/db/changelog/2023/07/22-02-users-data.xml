@@ -30,6 +30,18 @@
             <column name="password" value="user"/>
             <column name="role" value="USER"/>
         </insert>
+        <insert tableName="users">
+            <column name="id" valueNumeric="5"/>
+            <column name="login" value="User@123"/>
+            <column name="password" value="Password#123"/>
+            <column name="role" value="USER"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" valueNumeric="6"/>
+            <column name="login" value="a"/>
+            <column name="password" value="a"/>
+            <column name="role" value="USER"/>
+        </insert>
     </changeSet>
 
 </databaseChangeLog>

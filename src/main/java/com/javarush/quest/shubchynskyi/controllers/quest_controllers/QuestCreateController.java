@@ -33,7 +33,7 @@ import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.YOU
 @Controller
 @RequiredArgsConstructor
 public class QuestCreateController {
-
+    // Todo move to constant or to yaml
     public static final Set<Role> ALLOWED_ROLES_FOR_QUEST_CREATE = Set.of(Role.USER, Role.MODERATOR, Role.ADMIN);
     private final QuestService questService;
     private final ValidationService validationService;

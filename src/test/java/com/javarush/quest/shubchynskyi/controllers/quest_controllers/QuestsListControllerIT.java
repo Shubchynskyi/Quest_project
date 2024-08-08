@@ -3,6 +3,7 @@ package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.web.servlet.MockMvc;
@@ -13,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ConfigIT
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QuestsListControllerIT {
 
     @Autowired

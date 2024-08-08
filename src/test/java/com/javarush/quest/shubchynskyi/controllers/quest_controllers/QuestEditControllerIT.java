@@ -61,9 +61,9 @@ class QuestEditControllerIT {
     private String validQuestId;
     @Value("${app.invalid-quest-id}")
     private String invalidQuestId;
-    @Value("${app.test-image.name}")
+    @Value("${app.images.test-image.name}")
     private String testImageName;
-    @Value("${app.test-image.content-type}")
+    @Value("${app.images.test-image.content-type}")
     private String testImageContentType;
     @Value("${app.localization.supported-languages}")
     private String[] supportedLanguages;
