@@ -34,28 +34,28 @@ public class ImageControllerIT {
     @Autowired
     private MockMvc mockMvc;
 
-    private String getImageUrl(String imageName) {
+    private String buildImageUrl(String imageName) {
         return basePath + imageName;
+    }
+
+    private void performGetRequestAndExpectStatusAndContentType(String imageName, String expectedContentType) throws Exception {
+        mockMvc.perform(get(buildImageUrl(imageName)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(expectedContentType));
     }
 
     @Test
     public void getImage_WhenImageFound_ShouldReturnImage() throws Exception {
-        mockMvc.perform(get(getImageUrl(testImageName)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(testImageContentType));
+        performGetRequestAndExpectStatusAndContentType(testImageName, testImageContentType);
     }
 
     @Test
     public void getImage_WhenImageHasNoExtension_ShouldHandleGracefully() throws Exception {
-        mockMvc.perform(get(getImageUrl(testImageNoExt)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(testImageContentType));
+        performGetRequestAndExpectStatusAndContentType(testImageNoExt, testImageContentType);
     }
 
     @Test
     public void getImage_WhenImageNotFound_ShouldReturnDefault() throws Exception {
-        mockMvc.perform(get(getImageUrl(testImageNonexistent)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.IMAGE_JPEG_VALUE));
+        performGetRequestAndExpectStatusAndContentType(testImageNonexistent, MediaType.IMAGE_JPEG_VALUE);
     }
 }

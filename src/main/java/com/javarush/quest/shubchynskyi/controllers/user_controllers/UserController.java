@@ -41,7 +41,8 @@ public class UserController {
     private final UserAccountService userAccountService;
 
     // TODO to config
-    private final List<Role> acceptedRolesForEditing = List.of(Role.ADMIN, Role.MODERATOR, Role.USER);
+    private final List<Role> acceptedRolesForSelfEditing = List.of(Role.ADMIN, Role.MODERATOR, Role.USER);
+    private final List<Role> acceptedRolesForAnotherEditing = List.of(Role.ADMIN, Role.MODERATOR);
 
     @GetMapping(USER)
     public String showUser(
@@ -54,10 +55,8 @@ public class UserController {
             @ModelAttribute(name = TEMP_IMAGE_ID) String tempImageId
     ) {
 
-        // TODO сейчас пользователь (обычный USER) не может редактировать свой профиль из профиля
-        // нужно дать пользователю права редактировать себя если он заходит из профиля (ROUTE)
-        //
-        if (validationService.checkUserAccessDenied(session, acceptedRolesForEditing, redirectAttributes)) {
+
+        if (validationService.checkUserAccessDenied(session, acceptedRolesForSelfEditing, redirectAttributes)) {
             return REDIRECT + Route.INDEX;
         }
 
@@ -112,6 +111,8 @@ public class UserController {
             RedirectAttributes redirectAttributes,
             HttpServletRequest request
     ) {
+        // TODO редактировать может только админ или модератор, а пользователь обычный может это сделать только
+        // TODO если он редактирует сам себя
         if (userDTOFromSession == null) {
             return REDIRECT + Route.LOGIN;
         }
@@ -175,7 +176,7 @@ public class UserController {
     private boolean isUserPermitted(UserDTO userDTOFromModel, UserDTO userDTOFromSession) {
         if (!userDTOFromSession.getId().equals(userDTOFromModel.getId())) {
             Role userRole = userDTOFromSession.getRole();
-            return acceptedRolesForEditing.contains(userRole);
+            return acceptedRolesForSelfEditing.contains(userRole);
         }
         return true;
     }

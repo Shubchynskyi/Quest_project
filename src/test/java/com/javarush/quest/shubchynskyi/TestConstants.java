@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class TestConstants {
 
+    // todo check if all constants are used
     public static final String REDIRECT_ANY_ID_URI_TEMPLATE = "?id=";
     public static final String REDIRECT_QUERY_ID_TEMPLATE = "?id={id}";
     public static final String EMPTY_STRING = "";

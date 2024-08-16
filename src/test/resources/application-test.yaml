@@ -15,6 +15,15 @@ valid:
   user:
     id: "1"
     role: "USER"
+    model:
+      id: "2"
+      login: "guest"
+      password: "guest123"
+      role: "GUEST"
+    session:
+      id: "5"
+      login: "User@123"
+      password: "Password#123"
 invalid:
   quest:
     text: "Invalid text"

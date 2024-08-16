@@ -14,7 +14,7 @@
 <div class="container">
     <div th:each="user : ${users}">
         <img th:src="@{/images/{image}(image=${user.image})}" th:alt="${user.image}" width="100px">
-        Edit user <a th:href="@{/user(id=${user.id}, source='users')}"> <span th:text="${user.login}"></span><br></a>
+        Edit user <a th:href="@{/user(id=${user.id}, source='/users')}"> <span th:text="${user.login}"></span><br></a>
         User login = <span th:text="${user.login}"></span> <br>
     </div>
 </div>

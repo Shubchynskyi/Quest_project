@@ -15,7 +15,7 @@
         <insert tableName="users">
             <column name="id" valueNumeric="2"/>
             <column name="login" value="guest"/>
-            <column name="password" value="guest"/>
+            <column name="password" value="guest123"/>
             <column name="role" value="GUEST"/>
         </insert>
         <insert tableName="users">
