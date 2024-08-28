@@ -6,17 +6,12 @@ import lombok.experimental.UtilityClass;
 public class TestConstants {
 
     // todo check if all constants are used
-    public static final String REDIRECT_ANY_ID_URI_TEMPLATE = "?id=";
-    public static final String REDIRECT_QUERY_ID_TEMPLATE = "?id={id}";
-    public static final String NO_ROLES_TO_TEST = "No roles to test.";
-    public static final String INVALID = "invalid"; // todo remove?
+
     public static final String ACCEPT_LANGUAGE = "Accept-Language";
     public static final String QUEST_EDIT_PATH = "/quest-edit?id=";
     public static final String LABEL_FRAGMENT = "#label-";
-    public static final String NO_ALLOWED_ROLES_AVAILABLE = "No allowed roles available";
     public static final String NAME = "name";
     public static final String DESCRIPTION = "description";
-    public static final String EMPTY_STREAM_MARKER = "NONE";
     public static final String UPDATED_QUEST_NAME = "Updated Quest Name";
     public static final String UPDATED_QUEST_DESCRIPTION = "Updated Quest Description";
     public static final String UPDATED_QUESTION_TEXT = "Updated Question Text";
