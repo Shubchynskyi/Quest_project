@@ -1,7 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
 
-import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
@@ -15,6 +14,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.ID_URI_PATTERN;
+import static com.javarush.quest.shubchynskyi.constant.Key.USER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -25,13 +25,14 @@ public class ProfileControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
-    private UserDTO validUserDTO;
-    private UserDTO invalidUserDTOWithNoId;
 
     @Value("${valid.user.role}")
     private String validUserRoleString;
     @Value("${valid.user.id}")
     private Long validUserId;
+
+    private UserDTO validUserDTO;
+    private UserDTO invalidUserDTOWithNoId;
 
     @BeforeAll
     public void setup() {
@@ -46,19 +47,19 @@ public class ProfileControllerIT {
 
     private MockHttpSession createSessionWithUser(UserDTO userDTO) {
         MockHttpSession session = new MockHttpSession();
-        session.setAttribute(Key.USER, userDTO);
+        session.setAttribute(USER, userDTO);
         return session;
     }
 
     @Test
-    public void whenGetRequestWithoutUser_ThenRedirectToLogin() throws Exception {
+    void whenGetRequestWithoutUser_ThenRedirectToLogin() throws Exception {
         mockMvc.perform(get(Route.PROFILE))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN));
     }
 
     @Test
-    public void whenGetRequestWithInvalidUser_ThenRedirectToLogin() throws Exception {
+    void whenGetRequestWithInvalidUser_ThenRedirectToLogin() throws Exception {
         MockHttpSession session = createSessionWithUser(invalidUserDTOWithNoId);
 
         mockMvc.perform(get(Route.PROFILE).session(session))
@@ -67,23 +68,23 @@ public class ProfileControllerIT {
     }
 
     @Test
-    public void whenGetRequestWithValidUser_ThenReturnExpectedModel() throws Exception {
+    void whenGetRequestWithValidUser_ThenReturnExpectedModel() throws Exception {
         MockHttpSession session = createSessionWithUser(validUserDTO);
 
         mockMvc.perform(get(Route.PROFILE).session(session))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute(Key.USER, validUserDTO));
+                .andExpect(model().attribute(USER, validUserDTO));
     }
 
     @Test
-    public void whenPostRequestWithoutUser_ThenRedirectToLogin() throws Exception {
+    void whenPostRequestWithoutUser_ThenRedirectToLogin() throws Exception {
         mockMvc.perform(post(Route.PROFILE))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN));
     }
 
     @Test
-    public void whenPostRequestWithInvalidUser_ThenRedirectToLogin() throws Exception {
+    void whenPostRequestWithInvalidUser_ThenRedirectToLogin() throws Exception {
         MockHttpSession session = createSessionWithUser(invalidUserDTOWithNoId);
 
         mockMvc.perform(post(Route.PROFILE).session(session))
@@ -92,7 +93,7 @@ public class ProfileControllerIT {
     }
 
     @Test
-    public void whenPostRequestWithValidUser_ThenRedirectToExpectedUrl() throws Exception {
+    void whenPostRequestWithValidUser_ThenRedirectToExpectedUrl() throws Exception {
         MockHttpSession session = createSessionWithUser(validUserDTO);
 
         mockMvc.perform(post(Route.PROFILE).session(session))

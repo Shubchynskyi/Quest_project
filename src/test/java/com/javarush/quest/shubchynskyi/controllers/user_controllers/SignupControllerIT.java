@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
-import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
@@ -66,7 +65,7 @@ public class SignupControllerIT {
 
     private MockHttpSession createSessionWithUser(UserDTO userDTO) {
         MockHttpSession session = new MockHttpSession();
-        session.setAttribute(Key.USER, userDTO);
+        session.setAttribute(USER, userDTO);
         return session;
     }
 
@@ -76,7 +75,7 @@ public class SignupControllerIT {
     }
 
     @Test
-    public void whenGetSignupPageWithoutUser_ThenShowSignup() throws Exception {
+    void whenGetSignupPageWithoutUser_ThenShowSignup() throws Exception {
         mockMvc.perform(get(Route.SIGNUP))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(USER_DTO_FROM_MODEL, ROLES, TEMP_IMAGE_ID))
@@ -84,7 +83,7 @@ public class SignupControllerIT {
     }
 
     @Test
-    public void whenAuthenticatedUserTriesToSignup_ThenRedirectToProfileWithError() throws Exception {
+    void whenAuthenticatedUserTriesToSignup_ThenRedirectToProfileWithError() throws Exception {
         MockHttpSession session = createSessionWithUser(validUserDTO);
 
         mockMvc.perform(get(Route.SIGNUP).session(session))
@@ -95,7 +94,7 @@ public class SignupControllerIT {
 
     @Test
     @Transactional
-    public void whenSignupWithValidData_ThenRegisterAndRedirectToProfile() throws Exception {
+    void whenSignupWithValidData_ThenRegisterAndRedirectToProfile() throws Exception {
         MockMultipartFile mockImage = createMockImage();
         String uniqueLogin = validUserLogin + System.currentTimeMillis();
 
@@ -111,7 +110,7 @@ public class SignupControllerIT {
     }
 
     @Test
-    public void whenSignupWithInvalidData_ThenRedirectBackToSignupWithErrors() throws Exception {
+    void whenSignupWithInvalidData_ThenRedirectBackToSignupWithErrors() throws Exception {
         MockMultipartFile mockImage = createMockImage();
 
         mockMvc.perform(MockMvcRequestBuilders.multipart(Route.SIGNUP)

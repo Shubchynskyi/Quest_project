@@ -32,4 +32,5 @@ public class TestConstants {
     // todo take them from the test_config
     public static final String GAME_STATE_PLAY = "PLAY";
     public static final String GAME_STATE_WIN = "WIN";
+    public static final String SESSION_SHOULD_BE_INVALIDATED_AFTER_LOGOUT = "Session should be invalidated after logout";
 }
