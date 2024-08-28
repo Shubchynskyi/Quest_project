@@ -44,8 +44,14 @@ public class ProfileControllerIT {
         invalidUserDTOWithNoId = new UserDTO();
     }
 
+    private MockHttpSession createSessionWithUser(UserDTO userDTO) {
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(Key.USER, userDTO);
+        return session;
+    }
+
     @Test
-    public void whenGetRequestWithNullUser_ThenRedirectToLogin() throws Exception {
+    public void whenGetRequestWithoutUser_ThenRedirectToLogin() throws Exception {
         mockMvc.perform(get(Route.PROFILE))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN));
@@ -53,19 +59,16 @@ public class ProfileControllerIT {
 
     @Test
     public void whenGetRequestWithInvalidUser_ThenRedirectToLogin() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute(Key.USER, invalidUserDTOWithNoId);
+        MockHttpSession session = createSessionWithUser(invalidUserDTOWithNoId);
 
         mockMvc.perform(get(Route.PROFILE).session(session))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN));
     }
 
-    // todo logik?
     @Test
     public void whenGetRequestWithValidUser_ThenReturnExpectedModel() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute(Key.USER, validUserDTO);
+        MockHttpSession session = createSessionWithUser(validUserDTO);
 
         mockMvc.perform(get(Route.PROFILE).session(session))
                 .andExpect(status().isOk())
@@ -73,7 +76,7 @@ public class ProfileControllerIT {
     }
 
     @Test
-    public void whenPostRequestWithNullUser_ThenRedirectToLogin() throws Exception {
+    public void whenPostRequestWithoutUser_ThenRedirectToLogin() throws Exception {
         mockMvc.perform(post(Route.PROFILE))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN));
@@ -81,8 +84,7 @@ public class ProfileControllerIT {
 
     @Test
     public void whenPostRequestWithInvalidUser_ThenRedirectToLogin() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute(Key.USER, invalidUserDTOWithNoId);
+        MockHttpSession session = createSessionWithUser(invalidUserDTOWithNoId);
 
         mockMvc.perform(post(Route.PROFILE).session(session))
                 .andExpect(status().is3xxRedirection())
@@ -91,18 +93,11 @@ public class ProfileControllerIT {
 
     @Test
     public void whenPostRequestWithValidUser_ThenRedirectToExpectedUrl() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute(Key.USER, validUserDTO);
+        MockHttpSession session = createSessionWithUser(validUserDTO);
 
         mockMvc.perform(post(Route.PROFILE).session(session))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(ID_URI_PATTERN.formatted(Route.USER, validUserDTO.getId())));
     }
-
-    @Test
-    public void whenGetProfilePageWithoutAuthentication_ThenRedirectToLoginPage() throws Exception {
-        mockMvc.perform(get(Route.PROFILE))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(Route.LOGIN));
-    }
 }
+

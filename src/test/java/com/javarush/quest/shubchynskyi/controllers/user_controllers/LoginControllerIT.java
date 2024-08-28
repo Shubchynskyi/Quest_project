@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -32,20 +33,20 @@ public class LoginControllerIT {
     private final String INVALID_PASSWORD = "admin1";
 
     @Test
-    public void whenUserLogsInWithValidCredentials_ThenUserIsAuthenticated_And_RedirectToProfile() throws Exception {
+    void whenUserLogsInWithValidCredentials_ThenUserIsAuthenticated_And_RedirectToProfile() throws Exception {
         mockMvc.perform(post(Route.LOGIN)
-                        .param(Key.LOGIN, VALID_LOGIN)
+                        .param(LOGIN, VALID_LOGIN)
                         .param(Key.PASSWORD, VALID_PASSWORD))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.PROFILE))
-                .andExpect(request().sessionAttribute(Key.USER, notNullValue()));
+                .andExpect(request().sessionAttribute(USER, notNullValue()));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {INVALID_LOGIN, VALID_LOGIN})
-    public void whenUserLogsInWithInvalidCredentials_ThenUserIsNotAuthenticated_And_RedirectToLogin(String login) throws Exception {
+    void whenUserLogsInWithInvalidCredentials_ThenUserIsNotAuthenticated_And_RedirectToLogin(String login) throws Exception {
         mockMvc.perform(post(Route.LOGIN)
-                        .param(Key.LOGIN, login)
+                        .param(LOGIN, login)
                         .param(Key.PASSWORD, INVALID_PASSWORD))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN))
@@ -53,12 +54,12 @@ public class LoginControllerIT {
     }
 
     @Test
-    public void whenUserIsAlreadyAuthenticated_ThenRedirectToProfile() throws Exception {
+    void whenUserIsAlreadyAuthenticated_ThenRedirectToProfile() throws Exception {
         MockHttpSession session = new MockHttpSession();
-        session.setAttribute(Key.USER, new UserDTO()); // assuming UserDTO is the session attribute for authenticated users
+        session.setAttribute(USER, new UserDTO()); // assuming UserDTO is the session attribute for authenticated users
 
         mockMvc.perform(post(Route.LOGIN)
-                        .param(Key.LOGIN, VALID_LOGIN)
+                        .param(LOGIN, VALID_LOGIN)
                         .param(Key.PASSWORD, VALID_PASSWORD)
                         .session(session))
                 .andExpect(status().is3xxRedirection())
@@ -67,54 +68,47 @@ public class LoginControllerIT {
 
     @ParameterizedTest
     @EnumSource(Role.class)
-    public void whenUserWithDifferentRolesLogsIn_ThenRedirectAccordingly(Role role) throws Exception {
+    void whenUserWithDifferentRolesLogsIn_ThenRedirectAccordingly(Role role) throws Exception {
         UserDTO userDTO = new UserDTO();
         userDTO.setRole(role);
 
         mockMvc.perform(post(Route.LOGIN)
-                        .param(Key.LOGIN, VALID_LOGIN)
-                        .param(Key.PASSWORD, VALID_PASSWORD)
-                        .sessionAttr(Key.USER, userDTO))
+                        .param(LOGIN, VALID_LOGIN)
+                        .param(PASSWORD, VALID_PASSWORD)
+                        .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(getRedirectUrlForRole(role)));
-    }
-
-    // если админ например будет по умолчанию перенаправлен на страницу администратора, то логику внутри надо поменять
-    private String getRedirectUrlForRole(Role role) {
-        // return the appropriate redirect URL based on the user's role
-        // this is just a placeholder, replace with your actual logic
-        return Route.PROFILE;
+                .andExpect(redirectedUrl(Route.PROFILE));
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = "/logins.csv")
-    public void whenUserLogsInWithDifferentCases_ThenUserIsAuthenticated(String login, String password) throws Exception {
+    void whenUserLogsInWithDifferentCases_ThenUserIsAuthenticated(String login, String password) throws Exception {
         mockMvc.perform(post(Route.LOGIN)
-                        .param(Key.LOGIN, login)
-                        .param(Key.PASSWORD, password))
+                        .param(LOGIN, login)
+                        .param(PASSWORD, password))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.PROFILE))
-                .andExpect(request().sessionAttribute(Key.USER, notNullValue()));
+                .andExpect(request().sessionAttribute(USER, notNullValue()));
     }
 
     @Test
-    public void whenUserLogsInWithSpecialCharacters_ThenUserIsAuthenticated() throws Exception {
+    void whenUserLogsInWithSpecialCharacters_ThenUserIsAuthenticated() throws Exception {
         mockMvc.perform(post(Route.LOGIN)
-                        .param("login", "User@123")
-                        .param("password", "Password#123"))
+                        .param(LOGIN, "User@123")
+                        .param(PASSWORD, "Password#123"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.PROFILE))
-                .andExpect(request().sessionAttribute(Key.USER, notNullValue()));
+                .andExpect(request().sessionAttribute(USER, notNullValue()));
     }
 
     @Test
-    public void whenUserLogsInWithMaxLength_ThenUserIsNotAuthenticated() throws Exception {
+    void whenUserLogsInWithMaxLength_ThenUserIsNotAuthenticated() throws Exception {
         String login = new String(new char[256]).replace("\0", "a");
         String password = new String(new char[256]).replace("\0", "a");
 
         mockMvc.perform(post(Route.LOGIN)
-                        .param("login", login)
-                        .param("password", password))
+                        .param(LOGIN, login)
+                        .param(PASSWORD, password))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN))
                 .andExpect(flash().attribute(Key.ERROR, notNullValue()));

@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
+
 import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
@@ -22,7 +23,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.javarush.quest.shubchynskyi.TestConstants.EMPTY_STRING;
+import static com.javarush.quest.shubchynskyi.constant.Key.EMPTY_STRING;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -37,6 +38,8 @@ public class UserControllerIT {
     public String sessionUserLogin;
     @Value("${valid.user.session.id}")
     public long sessionUserId;
+    @Value("${valid.user.session.role}")
+    public String sessionUserBaseRole;
 
     @Value("${valid.user.model.password}")
     public String modelUserPassword;
@@ -62,11 +65,13 @@ public class UserControllerIT {
 
     private UserDTO sessionUserDTO;
     private UserDTO modelUserDTO;
+    private String testImagePath;
 
     @BeforeAll
     public void setup() {
-        sessionUserDTO = createUserDTO(sessionUserId, sessionUserLogin, sessionUserPassword, null);
+        sessionUserDTO = createUserDTO(sessionUserId, sessionUserLogin, sessionUserPassword, Role.valueOf(sessionUserBaseRole));
         modelUserDTO = createUserDTO(modelUserId, modelUserLogin, modelUserPassword, Role.valueOf(modelUserRole));
+        testImagePath = Paths.get(imagesDirectory, testImage).toString();
     }
 
     private UserDTO createUserDTO(long id, String login, String password, Role role) {
@@ -74,9 +79,7 @@ public class UserControllerIT {
         userDTO.setId(id);
         userDTO.setLogin(login);
         userDTO.setPassword(password);
-        if (role != null) {
-            userDTO.setRole(role);
-        }
+        userDTO.setRole(role);
         return userDTO;
     }
 
@@ -88,22 +91,31 @@ public class UserControllerIT {
     }
 
     private MockMultipartFile createMockImage() throws Exception {
-        byte[] fileContent = Files.readAllBytes(Paths.get(imagesDirectory + "/" + testImage));
+        byte[] fileContent = Files.readAllBytes(Paths.get(testImagePath));
         return new MockMultipartFile(Key.IMAGE, testImage, contentType, fileContent);
     }
 
     // todo take from config
-    private static List<Role> allowedRoles() {
+    private List<Role> allowedRoles() {
         return Arrays.asList(Role.ADMIN, Role.MODERATOR, Role.USER);
     }
-    // todo take from config
-    private static List<Role> disallowedRoles() {
+
+    private List<Role> disallowedRoles() {
         return List.of(Role.GUEST);
+    }
+
+    private void performDeleteUserAction(MockHttpSession session, String userId, String expectedRedirectUrl) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post(Route.USER)
+                        .session(session)
+                        .param(Key.ID, userId)
+                        .param(Key.DELETE, EMPTY_STRING))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(expectedRedirectUrl));
     }
 
     @ParameterizedTest
     @MethodSource("allowedRoles")
-    public void whenGetUserById_ForAllowedRoles_ThenShowUserData(Role accessRole) throws Exception {
+    public void whenGetUserById_WithAllowedRoles_ThenShowUserData(Role accessRole) throws Exception {
         MockHttpSession session = createSessionWithRole(accessRole);
 
         mockMvc.perform(get(Route.USER)
@@ -116,7 +128,7 @@ public class UserControllerIT {
 
     @ParameterizedTest
     @MethodSource("disallowedRoles")
-    public void whenGetUserById_ForDisallowedRoles_ThenRedirectToIndex(Role accessRole) throws Exception {
+    public void whenGetUserById_WithDisallowedRoles_ThenRedirectToIndex(Role accessRole) throws Exception {
         MockHttpSession session = createSessionWithRole(accessRole);
 
         mockMvc.perform(get(Route.USER)
@@ -129,7 +141,7 @@ public class UserControllerIT {
     @ParameterizedTest
     @MethodSource("allowedRoles")
     @Transactional
-    public void whenEditUser_ForAllowedRoles_ThenReturnCorrectStatus(Role accessRole) throws Exception {
+    public void whenEditCurrentUser_WithAllowedRoles_ThenRedirectToProfile(Role accessRole) throws Exception {
         MockHttpSession session = createSessionWithRole(accessRole);
         MockMultipartFile mockImage = createMockImage();
 
@@ -151,7 +163,7 @@ public class UserControllerIT {
     @ParameterizedTest
     @MethodSource("allowedRoles")
     @Transactional
-    public void whenEditAnotherUser_ForAllowedRoles_ThenReturnCorrectStatus(Role accessRole) throws Exception {
+    public void whenEditAnotherUser_WithAllowedRoles_ThenRedirectToUsers(Role accessRole) throws Exception {
         MockHttpSession session = createSessionWithRole(accessRole);
         MockMultipartFile mockImage = createMockImage();
 
@@ -174,7 +186,7 @@ public class UserControllerIT {
     @ParameterizedTest
     @MethodSource("disallowedRoles")
     @Transactional
-    public void whenEditUser_ForDisallowedRoles_ThenReturnCorrectStatus(Role accessRole) throws Exception {
+    public void whenEditCurrentUser_WithDisallowedRoles_ThenRedirectToProfile(Role accessRole) throws Exception {
         MockHttpSession session = createSessionWithRole(accessRole);
         MockMultipartFile mockImage = createMockImage();
 
@@ -196,37 +208,19 @@ public class UserControllerIT {
     @ParameterizedTest
     @MethodSource("allowedRoles")
     @Transactional
-    public void whenDeleteUser_ForAllowedRoles_ThenReturnCorrectStatus(Role accessRole) throws Exception {
+    public void whenDeleteUser_WithAllowedRoles_ThenRedirectCorrectly(Role accessRole) throws Exception {
         MockHttpSession session = createSessionWithRole(accessRole);
-        session.setAttribute(Key.USER, sessionUserDTO);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(Route.USER)
-                        .session(session)
-                        .param(Key.ID, userIdForDelete)
-                        .param(Key.DELETE, EMPTY_STRING))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(Route.USERS));
-
-        mockMvc.perform(MockMvcRequestBuilders.post(Route.USER)
-                        .session(session)
-                        .param(Key.ID, sessionUserDTO.getId().toString())
-                        .param(Key.DELETE, EMPTY_STRING))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(Route.LOGOUT));
+        performDeleteUserAction(session, userIdForDelete, Route.USERS);
+        performDeleteUserAction(session, sessionUserDTO.getId().toString(), Route.LOGOUT);
     }
 
     @ParameterizedTest
     @MethodSource("disallowedRoles")
     @Transactional
-    public void whenDeleteUser_ForDisallowedRoles_ThenReturnCorrectStatus(Role accessRole) throws Exception {
+    public void whenDeleteUser_WithDisallowedRoles_ThenRedirectToProfile(Role accessRole) throws Exception {
         MockHttpSession session = createSessionWithRole(accessRole);
-        session.setAttribute(Key.USER, sessionUserDTO);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(Route.USER)
-                        .session(session)
-                        .param(Key.ID, userIdForDelete)
-                        .param(Key.DELETE, EMPTY_STRING))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(Route.PROFILE));
+        performDeleteUserAction(session, userIdForDelete, Route.PROFILE);
     }
 }

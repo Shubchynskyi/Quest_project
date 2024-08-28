@@ -18,13 +18,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class QuestsListControllerIT {
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Value("${app.tests.expectedQuestsSize}")
     private int expectedQuestsSize;
 
     @Test
-    public void showQuests_ShouldReturnQuestsList() throws Exception {
+    void showQuests_ShouldReturnQuestsList() throws Exception {
         mockMvc.perform(get(Route.QUESTS_LIST))
                 .andExpect(status().isOk())
                 .andExpect(view().name(Route.QUESTS_LIST))

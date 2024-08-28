@@ -16,23 +16,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ImageControllerIT {
 
+    @Autowired
+    private MockMvc mockMvc;
+
     @Value("${app.images.base-path}")
     private String basePath;
-
     @Value("${app.images.test-image.name}")
     private String testImageName;
-
     @Value("${app.images.test-image.no-ext}")
     private String testImageNoExt;
-
     @Value("${app.images.test-image.nonexistent}")
     private String testImageNonexistent;
-
     @Value("${app.images.test-image.content-type}")
     private String testImageContentType;
 
-    @Autowired
-    private MockMvc mockMvc;
 
     private String buildImageUrl(String imageName) {
         return basePath + imageName;

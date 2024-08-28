@@ -67,7 +67,7 @@ public class QuestEditController {
         } else if (allParams.containsKey(QUESTION_ID)) {
             viewName = questionEdit(allParams, imageFile);
         } else {
-            viewName = Route.QUESTS_LIST;
+            viewName = QUESTS_LIST; // todo убрал /, было из Route, проверить
         }
 
         return viewName;

@@ -57,16 +57,16 @@ class QuestEditControllerIT {
 
     @Value("${app.images-directory}")
     private String imagesDirectory;
-    @Value("${app.valid-quest-id}")
-    private String validQuestId;
-    @Value("${app.invalid-quest-id}")
-    private String invalidQuestId;
     @Value("${app.images.test-image.name}")
     private String testImageName;
     @Value("${app.images.test-image.content-type}")
     private String testImageContentType;
     @Value("${app.localization.supported-languages}")
     private String[] supportedLanguages;
+    @Value("${app.valid-quest-id}")
+    private String validQuestId;
+    @Value("${app.invalid-quest-id}")
+    private String invalidQuestId;
 
     @Test
     void showQuestEditForm_WithValidQuestId_ShouldDisplayQuestForm() throws Exception {
@@ -83,7 +83,6 @@ class QuestEditControllerIT {
         Locale testLocale = Locale.forLanguageTag(localeTag);
         LocaleContextHolder.setLocale(testLocale);
         String expectedMessage = messageSource.getMessage(QUEST_NOT_FOUND_ERROR, null, testLocale);
-        System.err.println(expectedMessage);
 
         mockMvc.perform(get(Route.QUEST_EDIT)
                         .param(ID, invalidQuestId)
@@ -93,16 +92,12 @@ class QuestEditControllerIT {
                 .andExpect(flash().attribute(ERROR, expectedMessage));
     }
 
-    Stream<String> supportedLanguagesProvider() {
-        return Arrays.stream(supportedLanguages);
-    }
-
     @Test
     void postWithoutQuestAndQuestionParams_WithValidQuestId_ShouldShowQuestsList() throws Exception {
         mockMvc.perform(post(Route.QUEST_EDIT)
                         .param(ID, validQuestId))
                 .andExpect(status().isOk())
-                .andExpect(view().name(Route.QUESTS_LIST));
+                .andExpect(view().name(QUESTS_LIST));
     }
 
     @Test
@@ -110,26 +105,19 @@ class QuestEditControllerIT {
     void updateQuest_WithValidData_ShouldRedirectToQuestEdit() throws Exception {
         Quest existingQuest = getExistingQuest();
 
-        String baseQuestName = "Updated Quest Name";
-        String baseQuestDescription = "Updated Quest Description";
-
-        StringBuilder questName = new StringBuilder(baseQuestName);
-        StringBuilder questDescription = new StringBuilder(baseQuestDescription);
-        while (questName.toString().equals(existingQuest.getName()) || questDescription.toString().equals(existingQuest.getDescription())) {
-            questName.append("a");
-            questDescription.append("a");
-        }
+        String questName = generateUniqueString(TestConstants.UPDATED_QUEST_NAME, existingQuest.getName());
+        String questDescription = generateUniqueString(TestConstants.UPDATED_QUEST_DESCRIPTION, existingQuest.getDescription());
 
         mockMvc.perform(post(Route.QUEST_EDIT)
                         .param(ID, validQuestId)
-                        .param(QUEST_NAME, questName.toString())
-                        .param(QUEST_DESCRIPTION, questDescription.toString()))
+                        .param(QUEST_NAME, questName)
+                        .param(QUEST_DESCRIPTION, questDescription))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(QUEST_EDIT_PATH + validQuestId));
 
         Quest updatedQuest = getExistingQuest();
-        assertEquals(questName.toString(), updatedQuest.getName());
-        assertEquals(questDescription.toString(), updatedQuest.getDescription());
+        assertEquals(questName, updatedQuest.getName());
+        assertEquals(questDescription, updatedQuest.getDescription());
     }
 
     @Test
@@ -137,22 +125,17 @@ class QuestEditControllerIT {
     void updateQuestion_WithValidData_ShouldRedirectToUpdatedQuestion() throws Exception {
         Quest existingQuest = getExistingQuest();
         Question question = getFirstQuestionFromQuest(existingQuest);
-        Long questionId = question.getId();
 
-        String originalQuestionText = question.getText();
-        String updatedQuestionText = "Updated Question Text";
-        if (originalQuestionText.equals(updatedQuestionText)) {
-            updatedQuestionText += "a";
-        }
+        String updatedQuestionText = generateUniqueString(TestConstants.UPDATED_QUESTION_TEXT, question.getText());
 
         mockMvc.perform(post(Route.QUEST_EDIT)
                         .param(ID, validQuestId)
-                        .param(QUESTION_ID, questionId.toString())
+                        .param(QUESTION_ID, question.getId().toString())
                         .param(QUESTION_TEXT, updatedQuestionText))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_PATH + validQuestId + LABEL_FRAGMENT + questionId));
+                .andExpect(redirectedUrl(QUEST_EDIT_PATH + validQuestId + LABEL_FRAGMENT + question.getId()));
 
-        Question updatedQuestion = questionService.get(questionId).orElseThrow();
+        Question updatedQuestion = questionService.get(question.getId()).orElseThrow();
         assertEquals(updatedQuestionText, updatedQuestion.getText());
     }
 
@@ -161,69 +144,45 @@ class QuestEditControllerIT {
     void updateAnswers_WithValidData_ShouldRedirectToUpdatedAnswers() throws Exception {
         Quest existingQuest = getExistingQuest();
         Question question = getFirstQuestionFromQuest(existingQuest);
-        Long questionId = question.getId();
-
         Answer answer = question.getAnswers().stream().findFirst().orElseThrow();
-        long answerId = answer.getId();
-        String originalAnswerText = answer.getText();
 
-        StringBuilder updatedAnswerText = new StringBuilder("Updated Answer Text");
-        while (updatedAnswerText.toString().equals(originalAnswerText)) {
-            updatedAnswerText.append("a");
-        }
+        String updatedAnswerText = generateUniqueString(TestConstants.UPDATED_ANSWER_TEXT, answer.getText());
 
         mockMvc.perform(MockMvcRequestBuilders.post(Route.QUEST_EDIT)
                         .param(ID, validQuestId)
-                        .param(QUESTION_ID, questionId.toString())
-                        .param(ANSWER + answerId, updatedAnswerText.toString()))
+                        .param(QUESTION_ID, question.getId().toString())
+                        .param(ANSWER + answer.getId(), updatedAnswerText))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_PATH + validQuestId + LABEL_FRAGMENT + questionId));
+                .andExpect(redirectedUrl(QUEST_EDIT_PATH + validQuestId + LABEL_FRAGMENT + question.getId()));
 
-        Answer updatedAnswer = answerService.get(answerId).orElseThrow();
-        assertEquals(updatedAnswerText.toString(), updatedAnswer.getText());
+        Answer updatedAnswer = answerService.get(answer.getId()).orElseThrow();
+        assertEquals(updatedAnswerText, updatedAnswer.getText());
     }
 
     @Test
     @Transactional
     void uploadImages_ForQuestAndQuestion_ShouldMatchTestImage() throws Exception {
-        Path imagePath = Path.of(imagesDirectory, testImageName);
-        byte[] imageBytes = Files.readAllBytes(imagePath);
-
+        byte[] imageBytes = loadImageBytes(testImageName);
         MockMultipartFile imageFile = new MockMultipartFile(IMAGE, testImageName, testImageContentType, imageBytes);
 
         Quest existingQuest = getExistingQuest();
         Question question = getFirstQuestionFromQuest(existingQuest);
-        String questionId = question.getId().toString();
 
-        mockMvc.perform(multipart(Route.QUEST_EDIT)
+        mockMvc.perform(MockMvcRequestBuilders.multipart(Route.QUEST_EDIT)
                         .file(imageFile)
                         .param(QUEST_NAME, existingQuest.getName())
                         .param(ID, validQuestId))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(QUEST_EDIT_PATH + validQuestId));
 
-        mockMvc.perform(multipart(Route.QUEST_EDIT)
+        mockMvc.perform(MockMvcRequestBuilders.multipart(Route.QUEST_EDIT)
                         .file(imageFile)
                         .param(ID, validQuestId)
-                        .param(QUESTION_ID, questionId))
+                        .param(QUESTION_ID, question.getId().toString()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_PATH + validQuestId + LABEL_FRAGMENT + questionId));
+                .andExpect(redirectedUrl(QUEST_EDIT_PATH + validQuestId + LABEL_FRAGMENT + question.getId()));
 
-        Quest updatedQuest = getExistingQuest();
-        Question updatedQuestion = questionService.get(questionId).orElseThrow();
-
-        String fileExtension = FilenameUtils.getExtension(testImageName);
-        Path questImagePath = Paths.get(imagesDirectory, updatedQuest.getImage() + "." + fileExtension);
-        Path questionImagePath = Paths.get(imagesDirectory, updatedQuestion.getImage() + "." + fileExtension);
-
-        byte[] savedQuestImage = Files.readAllBytes(questImagePath);
-        byte[] savedQuestionImage = Files.readAllBytes(questionImagePath);
-
-        assertArrayEquals(imageBytes, savedQuestImage, "The quest image does not match the test image.");
-        assertArrayEquals(imageBytes, savedQuestionImage, "The question image does not match the test image.");
-
-        Files.deleteIfExists(questImagePath);
-        Files.deleteIfExists(questionImagePath);
+        validateImages(imageBytes, existingQuest.getImage(), question.getImage());
     }
 
     @NotNull
@@ -234,5 +193,37 @@ class QuestEditControllerIT {
     @NotNull
     private Question getFirstQuestionFromQuest(Quest existingQuest) {
         return existingQuest.getQuestions().stream().findFirst().orElseThrow();
+    }
+
+    private byte[] loadImageBytes(String imageName) throws Exception {
+        Path imagePath = Path.of(imagesDirectory, imageName);
+        return Files.readAllBytes(imagePath);
+    }
+
+    private void validateImages(byte[] originalImageBytes, String questImage, String questionImage) throws Exception {
+        String fileExtension = FilenameUtils.getExtension(testImageName);
+        Path questImagePath = Paths.get(imagesDirectory, questImage + "." + fileExtension);
+        Path questionImagePath = Paths.get(imagesDirectory, questionImage + "." + fileExtension);
+
+        byte[] savedQuestImage = Files.readAllBytes(questImagePath);
+        byte[] savedQuestionImage = Files.readAllBytes(questionImagePath);
+
+        assertArrayEquals(originalImageBytes, savedQuestImage, TestConstants.THE_QUEST_IMAGE_DOES_NOT_MATCH_THE_TEST_IMAGE);
+        assertArrayEquals(originalImageBytes, savedQuestionImage, TestConstants.THE_QUESTION_IMAGE_DOES_NOT_MATCH_THE_TEST_IMAGE);
+
+        Files.deleteIfExists(questImagePath);
+        Files.deleteIfExists(questionImagePath);
+    }
+
+    private String generateUniqueString(String base, String existingValue) {
+        StringBuilder stringBuilder = new StringBuilder(base);
+        while (stringBuilder.toString().equals(existingValue)) {
+            stringBuilder.append(TestConstants.APPEND_LETTER);
+        }
+        return stringBuilder.toString();
+    }
+
+    private Stream<String> supportedLanguagesProvider() {
+        return Arrays.stream(supportedLanguages);
     }
 }

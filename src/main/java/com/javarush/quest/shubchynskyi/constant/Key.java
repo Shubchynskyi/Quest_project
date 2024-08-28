@@ -64,6 +64,7 @@ public class Key {
     public static final String LOGIN = "login";
     public static final String PASSWORD = "password";
     public static final String ROLES = "roles";
+    public static final String ROLE = "role";
     public static final String ORIGINAL_LOGIN = "originalLogin";
     public static final String UPDATE = "update";
     public static final String DELETE = "delete";

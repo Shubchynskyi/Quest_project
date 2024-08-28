@@ -1,7 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers;
 
 import com.javarush.quest.shubchynskyi.service.ImageService;
-import com.javarush.quest.shubchynskyi.constant.Key;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,8 +12,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.javarush.quest.shubchynskyi.constant.Key.PATH_IMAGES;
-import static com.javarush.quest.shubchynskyi.constant.Key.PATH_IMAGES_TEMP;
+import static com.javarush.quest.shubchynskyi.constant.Key.*;
 
 @Controller
 @RequestMapping({PATH_IMAGES, PATH_IMAGES_TEMP})
@@ -35,8 +33,8 @@ public class ImageController {
         extensionToMimeType.put(".webp", "image/webp");
     }
 
-    @GetMapping(value = Key.PATH_IMAGE_NAME)
-    public void getImage(@PathVariable(Key.PARAM_IMAGE_NAME) String imageName, HttpServletResponse response) throws IOException {
+    @GetMapping(value = PATH_IMAGE_NAME)
+    public void getImage(@PathVariable(PARAM_IMAGE_NAME) String imageName, HttpServletResponse response) throws IOException {
         Path imagePath = imageService.getImagePath(imageName);
         String mimeType = determineMimeType(imagePath);
         response.setContentType(mimeType);
