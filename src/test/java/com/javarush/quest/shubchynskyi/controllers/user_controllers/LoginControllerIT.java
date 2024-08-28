@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
-import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
@@ -10,10 +9,13 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.stream.Stream;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static org.hamcrest.Matchers.notNullValue;
@@ -27,40 +29,52 @@ public class LoginControllerIT {
     @Autowired
     private MockMvc mockMvc;
 
-    private final String VALID_LOGIN = "admin";
-    private final String INVALID_LOGIN = "admin1";
-    private final String VALID_PASSWORD = "admin";
-    private final String INVALID_PASSWORD = "admin1";
+    @Value("${valid.user.model.login}")
+    private String validLogin;
+    @Value("${invalid.user.login}")
+    private String invalidLogin;
+    @Value("${valid.user.model.password}")
+    private String validPassword;
+    @Value("${invalid.user.password}")
+    private String invalidPassword;
+    @Value("${valid.user.special.login}")
+    public String specialValidLogin;
+    @Value("${valid.user.special.password}")
+    public String specialValidPassword;
 
     @Test
     void whenUserLogsInWithValidCredentials_ThenUserIsAuthenticated_And_RedirectToProfile() throws Exception {
         mockMvc.perform(post(Route.LOGIN)
-                        .param(LOGIN, VALID_LOGIN)
-                        .param(Key.PASSWORD, VALID_PASSWORD))
+                        .param(LOGIN, validLogin)
+                        .param(PASSWORD, validPassword))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.PROFILE))
                 .andExpect(request().sessionAttribute(USER, notNullValue()));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {INVALID_LOGIN, VALID_LOGIN})
+    @MethodSource("loginsProvider")
     void whenUserLogsInWithInvalidCredentials_ThenUserIsNotAuthenticated_And_RedirectToLogin(String login) throws Exception {
         mockMvc.perform(post(Route.LOGIN)
                         .param(LOGIN, login)
-                        .param(Key.PASSWORD, INVALID_PASSWORD))
+                        .param(PASSWORD, invalidPassword))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN))
-                .andExpect(flash().attribute(Key.ERROR, notNullValue()));
+                .andExpect(flash().attribute(ERROR, notNullValue()));
+    }
+
+    private Stream<String> loginsProvider() {
+        return Stream.of(validLogin, invalidLogin, specialValidLogin);
     }
 
     @Test
     void whenUserIsAlreadyAuthenticated_ThenRedirectToProfile() throws Exception {
         MockHttpSession session = new MockHttpSession();
-        session.setAttribute(USER, new UserDTO()); // assuming UserDTO is the session attribute for authenticated users
+        session.setAttribute(USER, new UserDTO());
 
         mockMvc.perform(post(Route.LOGIN)
-                        .param(LOGIN, VALID_LOGIN)
-                        .param(Key.PASSWORD, VALID_PASSWORD)
+                        .param(LOGIN, validLogin)
+                        .param(PASSWORD, validPassword)
                         .session(session))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.PROFILE));
@@ -73,8 +87,8 @@ public class LoginControllerIT {
         userDTO.setRole(role);
 
         mockMvc.perform(post(Route.LOGIN)
-                        .param(LOGIN, VALID_LOGIN)
-                        .param(PASSWORD, VALID_PASSWORD)
+                        .param(LOGIN, validLogin)
+                        .param(PASSWORD, validPassword)
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.PROFILE));
@@ -94,8 +108,8 @@ public class LoginControllerIT {
     @Test
     void whenUserLogsInWithSpecialCharacters_ThenUserIsAuthenticated() throws Exception {
         mockMvc.perform(post(Route.LOGIN)
-                        .param(LOGIN, "User@123")
-                        .param(PASSWORD, "Password#123"))
+                        .param(LOGIN, specialValidLogin)
+                        .param(PASSWORD, specialValidPassword))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.PROFILE))
                 .andExpect(request().sessionAttribute(USER, notNullValue()));
@@ -111,6 +125,6 @@ public class LoginControllerIT {
                         .param(PASSWORD, password))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN))
-                .andExpect(flash().attribute(Key.ERROR, notNullValue()));
+                .andExpect(flash().attribute(ERROR, notNullValue()));
     }
 }

@@ -30,7 +30,6 @@ valid:
       path: "validQuestText.txt"
     name: "Quest name"
     description: "Quest description"
-    userId: "1"
     question-id: "1"
     start-question-id: "12"
     expected-name: "Перед волшебным камнем"
@@ -44,17 +43,21 @@ valid:
       role: "GUEST"
     session:
       id: "5"
-      login: "User@123"
-      password: "Password#123"
-      role: "USER"
+      login: "moderator"
+      password: "moderator"
+      role: "MODERATOR"
     new_user:
       login: "newUser"
       password: "new1Pass12"
+    special:
+      login: "User@123"
+      password: "Password#123"
 invalid:
   quest:
     text: "Invalid text"
   user:
     login: "invalid654User976479"
+    password: "invalidPassword"
 
 
 
