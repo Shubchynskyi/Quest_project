@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ConfigIT
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class QuestGameControllerIT {
+public class QuestGameControllerIT {
 
     @Autowired
     private MockMvc mockMvc;

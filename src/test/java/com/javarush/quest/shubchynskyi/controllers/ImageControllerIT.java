@@ -30,29 +30,24 @@ public class ImageControllerIT {
     @Value("${app.images.test-image.content-type}")
     private String testImageContentType;
 
-
-    private String buildImageUrl(String imageName) {
-        return basePath + imageName;
-    }
-
     private void performGetRequestAndExpectStatusAndContentType(String imageName, String expectedContentType) throws Exception {
-        mockMvc.perform(get(buildImageUrl(imageName)))
+        mockMvc.perform(get(basePath + imageName))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(expectedContentType));
     }
 
     @Test
-    public void getImage_WhenImageFound_ShouldReturnImage() throws Exception {
+    void whenGetImageFound_ThenShouldReturnImage() throws Exception {
         performGetRequestAndExpectStatusAndContentType(testImageName, testImageContentType);
     }
 
     @Test
-    public void getImage_WhenImageHasNoExtension_ShouldHandleGracefully() throws Exception {
+    void whenGetImageWithNoExtension_ThenShouldHandleGracefully() throws Exception {
         performGetRequestAndExpectStatusAndContentType(testImageNoExt, testImageContentType);
     }
 
     @Test
-    public void getImage_WhenImageNotFound_ShouldReturnDefault() throws Exception {
+    void whenGetImageNotFound_ThenShouldReturnDefault() throws Exception {
         performGetRequestAndExpectStatusAndContentType(testImageNonexistent, MediaType.IMAGE_JPEG_VALUE);
     }
 }

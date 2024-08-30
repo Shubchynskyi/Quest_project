@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ConfigIT
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class QuestEditControllerIT {
+public class QuestEditControllerIT {
 
     @Autowired
     private QuestService questService;
@@ -69,7 +69,7 @@ class QuestEditControllerIT {
     private String invalidQuestId;
 
     @Test
-    void showQuestEditForm_WithValidQuestId_ShouldDisplayQuestForm() throws Exception {
+    void whenQuestEditFormShownWithValidQuestId_ThenShouldDisplayQuestForm() throws Exception {
         mockMvc.perform(get(Route.QUEST_EDIT)
                         .param(ID, validQuestId))
                 .andExpect(status().isOk())
@@ -79,7 +79,7 @@ class QuestEditControllerIT {
 
     @ParameterizedTest
     @MethodSource("supportedLanguagesProvider")
-    void redirect_WithInvalidQuestId_ShouldShowCreateQuestWithErrorMessage(String localeTag) throws Exception {
+    void whenRedirectedWithInvalidQuestId_ThenShouldShowCreateQuestWithErrorMessage(String localeTag) throws Exception {
         Locale testLocale = Locale.forLanguageTag(localeTag);
         LocaleContextHolder.setLocale(testLocale);
         String expectedMessage = messageSource.getMessage(QUEST_NOT_FOUND_ERROR, null, testLocale);
@@ -93,7 +93,7 @@ class QuestEditControllerIT {
     }
 
     @Test
-    void postWithoutQuestAndQuestionParams_WithValidQuestId_ShouldShowQuestsList() throws Exception {
+    void whenPostWithoutQuestAndQuestionParams_ThenShouldShowQuestsList() throws Exception {
         mockMvc.perform(post(Route.QUEST_EDIT)
                         .param(ID, validQuestId))
                 .andExpect(status().isOk())
@@ -102,7 +102,7 @@ class QuestEditControllerIT {
 
     @Test
     @Transactional
-    void updateQuest_WithValidData_ShouldRedirectToQuestEdit() throws Exception {
+    void whenQuestUpdatedWithValidData_ThenShouldRedirectToQuestEdit() throws Exception {
         Quest existingQuest = getExistingQuest();
 
         String questName = generateUniqueString(TestConstants.UPDATED_QUEST_NAME, existingQuest.getName());
@@ -122,7 +122,7 @@ class QuestEditControllerIT {
 
     @Test
     @Transactional
-    void updateQuestion_WithValidData_ShouldRedirectToUpdatedQuestion() throws Exception {
+    void whenQuestionUpdatedWithValidData_ThenShouldRedirectToUpdatedQuestion() throws Exception {
         Quest existingQuest = getExistingQuest();
         Question question = getFirstQuestionFromQuest(existingQuest);
 
@@ -141,7 +141,7 @@ class QuestEditControllerIT {
 
     @Test
     @Transactional
-    void updateAnswers_WithValidData_ShouldRedirectToUpdatedAnswers() throws Exception {
+    void whenAnswersUpdatedWithValidData_ThenShouldRedirectToUpdatedAnswers() throws Exception {
         Quest existingQuest = getExistingQuest();
         Question question = getFirstQuestionFromQuest(existingQuest);
         Answer answer = question.getAnswers().stream().findFirst().orElseThrow();
@@ -161,7 +161,7 @@ class QuestEditControllerIT {
 
     @Test
     @Transactional
-    void uploadImages_ForQuestAndQuestion_ShouldMatchTestImage() throws Exception {
+    void whenImagesUploadedForQuestAndQuestion_ThenShouldMatchTestImage() throws Exception {
         byte[] imageBytes = loadImageBytes(testImageName);
         MockMultipartFile imageFile = new MockMultipartFile(IMAGE, testImageName, testImageContentType, imageBytes);
 

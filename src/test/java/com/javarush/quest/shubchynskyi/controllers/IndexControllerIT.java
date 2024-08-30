@@ -13,12 +13,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ConfigIT
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class IndexControllerIT {
+public class IndexControllerIT {
+
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void getIndex_WhenCalled_ShouldReturnIndexPage() throws Exception {
+    void whenGetIndexCalled_ThenShouldReturnIndexPage() throws Exception {
         mockMvc.perform(get(Route.INDEX))
                 .andExpect(status().isOk())
                 .andExpect(view().name(Route.INDEX_PAGE));

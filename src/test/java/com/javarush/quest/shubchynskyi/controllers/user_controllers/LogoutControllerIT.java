@@ -22,7 +22,7 @@ public class LogoutControllerIT {
     private MockMvc mockMvc;
 
     @Test
-    void whenUserLogsOut_ThenSessionIsInvalidated_And_RedirectToIndex() throws Exception {
+    void whenUserLogsOut_ThenSessionInvalidated_AndRedirectToIndex() throws Exception {
         MockHttpSession session = new MockHttpSession();
 
         mockMvc.perform(get(Route.LOGOUT).session(session))

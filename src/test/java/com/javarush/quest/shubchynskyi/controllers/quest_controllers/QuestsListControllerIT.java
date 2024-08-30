@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ConfigIT
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class QuestsListControllerIT {
+public class QuestsListControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -24,7 +24,7 @@ class QuestsListControllerIT {
     private int expectedQuestsSize;
 
     @Test
-    void showQuests_ShouldReturnQuestsList() throws Exception {
+    void whenShowQuests_ThenShouldReturnQuestsList() throws Exception {
         mockMvc.perform(get(Route.QUESTS_LIST))
                 .andExpect(status().isOk())
                 .andExpect(view().name(Route.QUESTS_LIST))

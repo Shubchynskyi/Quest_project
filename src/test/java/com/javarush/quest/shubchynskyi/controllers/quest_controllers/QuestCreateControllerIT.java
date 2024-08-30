@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ConfigIT
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class QuestCreateControllerIT {
+public class QuestCreateControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -150,7 +150,7 @@ class QuestCreateControllerIT {
                 .andExpect(redirectedUrl(CREATE_QUEST))
                 .andExpect(flash().attributeExists(ERROR));
     }
-
+    //TODO warn
     private Long createQuestAndAssertRedirect(String name, String description, String text, String userId, String expectedRedirect) throws Exception {
         MvcResult result = mockMvc.perform(post(Route.CREATE_QUEST)
                         .param(TestConstants.NAME, name)

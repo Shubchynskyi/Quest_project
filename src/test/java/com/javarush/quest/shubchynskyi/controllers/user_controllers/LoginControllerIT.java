@@ -43,7 +43,7 @@ public class LoginControllerIT {
     public String specialValidPassword;
 
     @Test
-    void whenUserLogsInWithValidCredentials_ThenUserIsAuthenticated_And_RedirectToProfile() throws Exception {
+    void whenUserLogsInWithValidCredentials_ThenUserIsAuthenticated_AndRedirectsToProfile() throws Exception {
         mockMvc.perform(post(Route.LOGIN)
                         .param(LOGIN, validLogin)
                         .param(PASSWORD, validPassword))
@@ -54,7 +54,7 @@ public class LoginControllerIT {
 
     @ParameterizedTest
     @MethodSource("loginsProvider")
-    void whenUserLogsInWithInvalidCredentials_ThenUserIsNotAuthenticated_And_RedirectToLogin(String login) throws Exception {
+    void whenUserLogsInWithInvalidCredentials_ThenUserIsNotAuthenticated_AndRedirectsToLogin(String login) throws Exception {
         mockMvc.perform(post(Route.LOGIN)
                         .param(LOGIN, login)
                         .param(PASSWORD, invalidPassword))
@@ -68,7 +68,7 @@ public class LoginControllerIT {
     }
 
     @Test
-    void whenUserIsAlreadyAuthenticated_ThenRedirectToProfile() throws Exception {
+    void whenUserAlreadyAuthenticated_ThenRedirectsToProfile() throws Exception {
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(USER, new UserDTO());
 
@@ -82,7 +82,7 @@ public class LoginControllerIT {
 
     @ParameterizedTest
     @EnumSource(Role.class)
-    void whenUserWithDifferentRolesLogsIn_ThenRedirectAccordingly(Role role) throws Exception {
+    void whenUserLogsInWithDifferentRoles_ThenRedirectsAccordingly(Role role) throws Exception {
         UserDTO userDTO = new UserDTO();
         userDTO.setRole(role);
 
