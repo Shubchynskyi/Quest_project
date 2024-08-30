@@ -9,10 +9,10 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "2345:5432"
     volumes:
       - postgresql_quest_data:/var/lib/postgresql/data
-    networks:
-      - quests-network
 
   app:
     container_name: quests-app
@@ -26,13 +26,10 @@ services:
     volumes:
       - ./src/main/resources/templates:/app/templates
       - ./src/main/webapp/WEB-INF/images:/app/images
-    networks:
-      - quests-network
+    ports:
+      - "8080:8080"
     depends_on:
       - db
-
-networks:
-  quests-network:
 
 volumes:
   postgresql_quest_data:
