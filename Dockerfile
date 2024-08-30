@@ -9,10 +9,14 @@ RUN mvn clean package
 FROM amazoncorretto:21-alpine-full
 WORKDIR /app
 
-# Установка Dockerize для ожидания зависимостей
+# Установка wget
+RUN apk update && \
+    apk add --no-cache wget && \
+    rm -rf /var/lib/apt/lists/*
+
+# Установка Dockerize
 ENV DOCKERIZE_VERSION v0.6.1
-RUN apt-get update && apt-get install -y wget && \
-    wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
