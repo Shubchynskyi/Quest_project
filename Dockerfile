@@ -3,7 +3,8 @@ FROM maven:3.9.6-eclipse-temurin-21-jammy as build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
-RUN mvn clean package -DskipTests
+RUN mvn clean package
+#RUN #mvn clean package -DskipTests
 
 # Этап 2: Создание окончательного Docker образа
 FROM amazoncorretto:21-alpine-full
