@@ -9,6 +9,10 @@ RUN mvn clean package -DskipTests
 FROM amazoncorretto:21-alpine-full
 WORKDIR /app
 
+# Копирование шаблонов и изображений
+COPY src/main/resources/templates /app/templates
+COPY src/main/webapp/WEB-INF/images /app/images
+
 # Установка wget
 RUN apk update && \
     apk add --no-cache wget && \
