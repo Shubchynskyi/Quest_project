@@ -24,8 +24,8 @@ services:
       SPRING_THYMELEAF_PREFIX: file:/app/templates/
       APP_IMAGES_DIRECTORY: /app/images/
     volumes:
-      - ./src/main/resources/templates:/app/templates
-      - ./src/main/webapp/WEB-INF/images:/app/images
+      - ./src/main/resources/templates:/app/templates:ro
+      - ./src/main/webapp/WEB-INF/images:/app/images:ro
     networks:
       - quests-network
     depends_on:

@@ -28,6 +28,11 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  thymeleaf:
+    prefix: file:/app/templates/   # Здесь указаны пути, чтобы Thymeleaf искал шаблоны в папке /app/templates внутри контейнера
+    suffix: .html
+    check-template-location: true
+    cache: false
 
 logging:
   level:
