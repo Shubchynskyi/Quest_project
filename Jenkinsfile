@@ -1,5 +1,11 @@
 pipeline {
-    agent any
+    agent {
+        // Настраиваем Jenkins для использования Docker агента с доступом к Docker демону
+        docker {
+            image 'docker:latest'
+            args '-v /var/run/docker.sock:/var/run/docker.sock --privileged'
+        }
+    }
 
     stages {
         stage('Checkout') {
@@ -20,8 +26,10 @@ pipeline {
 
         stage('Test') {
             steps {
-                // Здесь вы можете добавить шаги для тестирования вашего приложения
-                echo 'Running tests...'
+                script {
+                    // Запускаем тесты; доступ к Docker внутри контейнера будет через сокет
+                    sh 'docker-compose exec <название контейнера> ./run-tests.sh' // Замените на ваш контейнер и команду тестов
+                }
             }
         }
     }
