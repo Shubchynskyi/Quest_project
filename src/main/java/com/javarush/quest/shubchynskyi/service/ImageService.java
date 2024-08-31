@@ -35,6 +35,7 @@ public class ImageService {
     }
 
     public Path getImagePath(String filename) {
+
         if (filename == null) {
             throw new AppException(Key.FILE_NAME_IS_NULL_OR_EMPTY);
         }
@@ -46,10 +47,9 @@ public class ImageService {
 
             boolean isTemporary = filename.startsWith(Key.PREFIX_FOR_TEMP_IMAGES);
             Path rootDir = isTemporary ? tempFilesDir : imagesFolder;
-            Path resolvedPath = rootDir.resolve(filename).normalize().toAbsolutePath();
+            Path resolvedPath = rootDir.resolve(filename).normalize();
 
-            // Проверка, что путь не выходит за пределы rootDir
-            if (!resolvedPath.startsWith(rootDir.toAbsolutePath())) {
+            if (!resolvedPath.startsWith(rootDir)) {
                 throw new SecurityException(Key.INVALID_FILE_PATH_ACCESS_DENIED);
             }
 

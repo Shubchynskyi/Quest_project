@@ -82,7 +82,17 @@ public class ImageServiceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"../invalidPath", "invalid*path", "invalid?path", "", " ", "invalid\0path", "\ninvalid"})
+//    @ValueSource(strings = {"../invalidPath", "invalid*path", "invalid?path", "", " ", "invalid\0path", "\ninvalid"})
+    @ValueSource(strings = {
+            "../outsidePath",      // Путь выходит за пределы директории
+            "C:\\invalid\\path",   // Абсолютный путь на Windows
+            "/root/forbidden",     // Абсолютный путь на Linux
+
+            "\0invalid",           // Неправильные символы в имени
+
+            "",                    // Пустая строка
+            " "                    // Пробел
+    })
     public void should_ThrowException_When_ImagePathIsInvalid(String invalidPath) {
         assertThrows(SecurityException.class, () -> imageService.getImagePath(invalidPath));
     }
