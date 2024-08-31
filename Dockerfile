@@ -11,9 +11,7 @@ WORKDIR /app
 
 # Копирование шаблонов и изображений
 COPY src/main/resources/templates /app/templates
-RUN ls -la /app/templates
 COPY src/main/webapp/WEB-INF/images /app/images
-RUN ls -la /app/images
 
 # Установка wget
 RUN apk update && \
@@ -31,14 +29,3 @@ COPY --from=build /app/target/*.jar Quest_project-1.0.jar
 
 # Запуск с использованием Dockerize для ожидания базы данных
 ENTRYPOINT ["dockerize", "-wait", "tcp://quest-postgres-db:5432", "-timeout", "60s", "java", "-jar", "Quest_project-1.0.jar"]
-
-
-
-
-
-
-
-#FROM openjdk:17-jdk
-#MAINTAINER d.shubchynskyi@gmail.com
-#COPY target/Quest_project-1.0.jar Quest_project-1.0.jar
-#ENTRYPOINT ["java", "-jar", "/Quest_project-1.0.jar"]
