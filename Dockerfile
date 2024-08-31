@@ -11,7 +11,9 @@ WORKDIR /app
 
 # Копирование шаблонов и изображений
 COPY src/main/resources/templates /app/templates
+RUN ls -la /app/templates
 COPY src/main/webapp/WEB-INF/images /app/images
+RUN ls -la /app/images
 
 # Установка wget
 RUN apk update && \
