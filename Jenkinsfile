@@ -8,9 +8,10 @@ pipeline {
             }
         }
 
-        stage('Build and Run') {
+        stage('Build') {
             steps {
                 script {
+                    // Сборка образа без выполнения тестов
                     sh "docker-compose up --build -d"
                 }
             }
@@ -19,8 +20,8 @@ pipeline {
         stage('Integration Test') {
             steps {
                 script {
-                    // Замените 'quests-app' на имя контейнера
-                    sh "docker-compose exec --privileged quests-app mvn clean verify"
+                    // Запуск интеграционных тестов внутри работающего контейнера с доступом к Docker
+                    sh "docker-compose exec --privileged quests-app mvn verify"
                 }
             }
         }
