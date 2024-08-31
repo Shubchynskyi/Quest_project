@@ -83,8 +83,8 @@ public class ImageServiceTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"../invalidPath", "invalid*path", "invalid?path", "", " ", "invalid\0path", "\ninvalid"})
-    public void should_ThrowException_When_ImagePathIsInvalid(String invalidePath) {
-        assertThrows(SecurityException.class, () -> imageService.getImagePath(invalidePath));
+    public void should_ThrowException_When_ImagePathIsInvalid(String invalidPath) {
+        assertThrows(SecurityException.class, () -> imageService.getImagePath(invalidPath));
     }
 
     @Test
