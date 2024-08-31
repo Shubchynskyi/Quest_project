@@ -35,55 +35,37 @@ public class ImageService {
     }
 
     public Path getImagePath(String filename) {
-
-        // Логируем начальное значение аргумента
-        System.out.println("Received filename: " + filename);
-
         if (filename == null) {
-            System.out.println("Filename is null");
             throw new AppException(Key.FILE_NAME_IS_NULL_OR_EMPTY);
         }
 
         try {
             if (filename.trim().isEmpty()) {
-                System.out.println("Filename is empty after trim");
                 throw new SecurityException(Key.INVALID_FILE_PATH_ACCESS_DENIED);
             }
 
             boolean isTemporary = filename.startsWith(Key.PREFIX_FOR_TEMP_IMAGES);
             Path rootDir = isTemporary ? tempFilesDir : imagesFolder;
-            Path resolvedPath = rootDir.resolve(filename).normalize();
+            Path resolvedPath = rootDir.resolve(filename).normalize().toAbsolutePath();
 
-            System.out.println("Root directory: " + rootDir);
-            System.out.println("Resolved path: " + resolvedPath);
-
-            //TODO remove
-
-            if (!resolvedPath.startsWith(rootDir)) {
-                System.out.println("Resolved path does not start with rootDir");
+            // Проверка, что путь не выходит за пределы rootDir
+            if (!resolvedPath.startsWith(rootDir.toAbsolutePath())) {
                 throw new SecurityException(Key.INVALID_FILE_PATH_ACCESS_DENIED);
             }
 
             if (Files.exists(resolvedPath)) {
-                System.out.println("File exists: " + resolvedPath);
                 return resolvedPath;
             }
 
             for (String ext : Key.ALLOWED_EXTENSIONS) {
                 Path pathWithExtension = resolvedPath.getParent().resolve(resolvedPath.getFileName().toString() + ext);
-                System.out.println("Checking path with extension: " + pathWithExtension);
                 if (Files.exists(pathWithExtension)) {
-                    System.out.println("File exists with extension: " + pathWithExtension);
                     return pathWithExtension;
                 }
             }
 
-            // Если ни один путь не подходит, возвращаем путь к изображению-заглушке
-            System.out.println("Returning no-image path: " + rootDir.resolve(Key.NO_IMAGE_JPG));
             return rootDir.resolve(Key.NO_IMAGE_JPG);
         } catch (InvalidPathException e) {
-            // Логируем исключение
-            System.out.println("Caught InvalidPathException for filename: " + filename);
             throw new SecurityException(Key.INVALID_FILE_PATH_ACCESS_DENIED, e);
         }
     }
