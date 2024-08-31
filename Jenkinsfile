@@ -13,7 +13,11 @@ pipeline {
             steps {
                 script {
                     // Запускаем Docker контейнеры с помощью основного docker-compose.yml
-                    sh "docker-compose up --build -d"
+                    // sh "docker-compose up --build -d"
+
+                    // Пересборка без использования кэша
+                    sh "docker-compose build --no-cache"
+                    sh "docker-compose up -d"
                 }
             }
         }
