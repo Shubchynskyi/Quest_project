@@ -1,34 +1,34 @@
 pipeline {
-    agent {
-        docker {
-            image 'amazoncorretto:21-alpine-full' // Используем образ с Java 21 от Amazon Corretto
-            args '--privileged -v /var/run/docker.sock:/var/run/docker.sock' // Даем доступ к Docker сокету
-        }
-    }
+    agent any
 
     stages {
         stage('Checkout') {
             steps {
-                // Получаем исходный код из репозитория
                 checkout scm
             }
         }
 
-        stage('Build and Run Containers') {
+        stage('Build') {
             steps {
                 script {
-                    // Сборка образа и запуск контейнеров с помощью docker-compose
-                    sh "docker-compose up --build -d"
+                    // Сборка Docker образа приложения
+                    sh 'docker-compose up --build -d'
                 }
             }
         }
 
         stage('Integration Test') {
+            agent {
+                // Запуск контейнера с доступом к Docker сокету и привилегиями для выполнения тестов
+                docker {
+                    image 'maven:3.9.6-eclipse-temurin-21-jammy'
+                    args '--privileged -v /var/run/docker.sock:/var/run/docker.sock'
+                }
+            }
             steps {
                 script {
-                    // Запуск тестов внутри работающего контейнера с доступом к Docker
-                    // Убедитесь, что 'quests-app' соответствует имени вашего контейнера
-                    sh "docker-compose exec --privileged quests-app mvn verify"
+                    // Выполнение интеграционных тестов внутри контейнера с доступом к Docker
+                    sh 'mvn verify'
                 }
             }
         }
@@ -36,20 +36,17 @@ pipeline {
 
     post {
         success {
-            echo 'Build was successful!'
+            echo 'Build and Tests succeeded!'
         }
-
         failure {
-            echo 'Build failed, cleaning up...'
+            echo 'Build or Tests failed. Cleaning up...'
             script {
-                // Останавливаем контейнеры и очищаем ненужные образы
                 sh 'docker-compose down'
                 sh 'docker image prune -f'
             }
         }
-
         always {
-            echo 'Always block done...'
+            echo 'Pipeline finished.'
         }
     }
 }
