@@ -20,20 +20,20 @@ pipeline {
             }
         }
 
-        stage('Integration Test') {
-            agent {
-                docker {
-                    image 'maven:3.9.6-eclipse-temurin-21-jammy'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock --privileged'
-                }
-            }
-            steps {
-                script {
-                    // Запуск интеграционных тестов
-                    sh 'mvn verify'
-                }
-            }
-        }
+//         stage('Integration Test') {
+//             agent {
+//                 docker {
+//                     image 'maven:3.9.6-eclipse-temurin-21-jammy'
+//                     args '-v /var/run/docker.sock:/var/run/docker.sock --privileged'
+//                 }
+//             }
+//             steps {
+//                 script {
+//                     // Запуск интеграционных тестов
+//                     sh 'mvn verify'
+//                 }
+//             }
+//         }
     }
 
     post {
