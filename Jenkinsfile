@@ -4,14 +4,17 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                script {
+                    // Проверка исходного кода из репозитория
+                    checkout scm
+                }
             }
         }
 
         stage('Build') {
             steps {
                 script {
-                    // Сборка Docker образа приложения
+                    // Сборка Docker контейнера приложения
                     sh 'docker-compose up --build -d'
                 }
             }
@@ -19,15 +22,14 @@ pipeline {
 
         stage('Integration Test') {
             agent {
-                // Запуск контейнера с доступом к Docker сокету и привилегиями для выполнения тестов
                 docker {
                     image 'maven:3.9.6-eclipse-temurin-21-jammy'
-                    args '--privileged -v /var/run/docker.sock:/var/run/docker.sock'
+                    args '-v /var/run/docker.sock:/var/run/docker.sock --privileged'
                 }
             }
             steps {
                 script {
-                    // Выполнение интеграционных тестов внутри контейнера с доступом к Docker
+                    // Запуск интеграционных тестов
                     sh 'mvn verify'
                 }
             }
@@ -36,17 +38,17 @@ pipeline {
 
     post {
         success {
-            echo 'Build and Tests succeeded!'
+            echo 'Сборка и тесты успешно выполнены!'
         }
         failure {
-            echo 'Build or Tests failed. Cleaning up...'
+            echo 'Сборка или тесты не прошли, очистка...'
             script {
                 sh 'docker-compose down'
                 sh 'docker image prune -f'
             }
         }
         always {
-            echo 'Pipeline finished.'
+            echo 'Пайплайн завершён.'
         }
     }
 }
