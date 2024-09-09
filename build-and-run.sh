@@ -93,12 +93,12 @@ docker build -t quests-app -f "$SCRIPT_DIR/Docker-Final.Dockerfile" .
 rm "$JAR_PATH"
 echo "Удален временный JAR-файл: $JAR_PATH"
 
-## Запуск Docker Compose для развертывания приложения и базы данных
-#echo "Запуск Docker Compose..."
-#docker-compose up -d
-
-# Запуск Docker Compose для развертывания приложения и базы данных с использованием локального файла
+# Запуск Docker Compose для развертывания приложения и базы данных
 echo "Запуск Docker Compose..."
-docker-compose -f docker-compose-local.yaml up -d
+docker-compose up -d
+
+## Запуск Docker Compose для развертывания приложения и базы данных с использованием локального файла
+#echo "Запуск Docker Compose..."
+#docker-compose -f docker-compose-local.yaml up -d
 
 echo "Скрипт завершен, приложение запущено через Docker Compose."
