@@ -82,6 +82,7 @@ echo "Удален временный JAR-файл: $JAR_PATH"
 
 # Запуск Docker Compose для развертывания приложения и базы данных с использованием локального файла
 echo "Запуск Docker Compose..."
-docker-compose -f docker-compose-local.yaml up -d
+#docker-compose -f docker-compose-local.yaml up -d
+docker-compose -f docker-compose-server.yaml up -d
 
 echo "Скрипт завершен, приложение запущено через Docker Compose."
