@@ -14,8 +14,7 @@ services:
 
   app:
     container_name: quests-app
-    image: quests
-    build: .
+    image: quests-app  # Используем финальный образ
     restart: unless-stopped
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}

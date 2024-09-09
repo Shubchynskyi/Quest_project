@@ -41,7 +41,7 @@ until [ "$(docker inspect --format='{{.State.Status}}' my-app-container 2>/dev/n
     sleep 2
 done
 
-# Цикл проверки состояния контейнера с помощью docker inspect
+# Цикл проверки состояния контейнера
 echo "Контейнер запущен, проверка состояния каждые 2 секунды..."
 while true; do
     STATUS=$(docker inspect --format='{{.State.Status}}' my-app-container)
@@ -77,18 +77,28 @@ else
     exit 1
 fi
 
-# Вывод логов контейнера для проверки статуса
-echo "Логи контейнера:"
-docker logs my-app-container
-
 # Удаление контейнера после копирования файла
 echo "Удаление контейнера..."
 docker rm my-app-container
 
-# Сборка финального образа
-echo "Сборка финального образа..."
-docker build -t my-app-final -f "$SCRIPT_DIR/Docker-Final.Dockerfile" .
+# Удаление образа сборки, так как он больше не нужен
+echo "Удаление промежуточного образа..."
+docker rmi my-app-builder
 
-# Удаление JAR-файла после сборки финального образа
+# Сборка финального образа с новым именем
+echo "Сборка финального образа..."
+docker build -t quests-app -f "$SCRIPT_DIR/Docker-Final.Dockerfile" .
+
+# Удаление временного JAR-файла
 rm "$JAR_PATH"
 echo "Удален временный JAR-файл: $JAR_PATH"
+
+## Запуск Docker Compose для развертывания приложения и базы данных
+#echo "Запуск Docker Compose..."
+#docker-compose up -d
+
+# Запуск Docker Compose для развертывания приложения и базы данных с использованием локального файла
+echo "Запуск Docker Compose..."
+docker-compose -f docker-compose-local.yaml up -d
+
+echo "Скрипт завершен, приложение запущено через Docker Compose."
