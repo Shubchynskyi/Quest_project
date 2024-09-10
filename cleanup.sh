@@ -1,26 +1,37 @@
 #!/usr/bin/env bash
-set -x  # Включение режима отладки
+set -x  # Enable debugging mode
 
-echo "Начало очистки Docker..."
+# Load environment variables from .env file
+source .env
 
-# Удаление контейнеров, созданных приложением (без базы данных)
-APP_CONTAINERS=("my-app-container" "quests-app")
+echo "Starting Docker cleanup..."
 
-for CONTAINER in "${APP_CONTAINERS[@]}"; do
+# Define the containers to be removed based on the settings
+ALL_CONTAINERS=("$APP_TEST_CONTAINER_NAME" "$DATABASE_CONTAINER_NAME" "$FINAL_APP_CONTAINER_NAME")
+
+# Remove all containers related to the application
+for CONTAINER in "${ALL_CONTAINERS[@]}"; do
   if docker ps -a | grep -q "$CONTAINER"; then
-    echo "Удаление контейнера $CONTAINER..."
+    echo "Removing container $CONTAINER..."
     docker rm -f "$CONTAINER" || true
   fi
 done
 
-# Удаление конкретных образов, созданных приложением
-APP_IMAGES=("my-app-builder" "quests-app")
+# Define the images to be removed based on the settings
+ALL_IMAGES=("$BUILDER_IMAGE_NAME" "$FINAL_IMAGE_NAME")
 
-for IMAGE in "${APP_IMAGES[@]}"; do
+# Remove all images related to the application
+for IMAGE in "${ALL_IMAGES[@]}"; do
   if docker images | grep -q "$IMAGE"; then
-    echo "Удаление образа $IMAGE..."
+    echo "Removing image $IMAGE..."
     docker rmi -f "$IMAGE" || true
   fi
 done
 
-echo "Очистка завершена."
+# Remove the JAR file if it exists
+if [[ -f "$JAR_PATH" ]]; then
+  echo "Removing JAR file: $JAR_PATH..."
+  rm -f "$JAR_PATH" || true
+fi
+
+echo "Cleanup completed."

@@ -2,10 +2,17 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout') {
+            steps {
+                // Fetch the source code from the repository
+                checkout scm
+            }
+        }
+
         stage('Cleanup Docker Resources') {
             steps {
                 script {
-                    // Запуск скрипта очистки перед сборкой
+                    // Run cleanup script before building
                     sh './cleanup.sh'
                 }
             }
@@ -14,7 +21,7 @@ pipeline {
         stage('Build and Run Application') {
             steps {
                 script {
-                    // Запуск основного скрипта для сборки и запуска приложения
+                    // Run the main script to build and run the application
                     sh './build-and-run.sh'
                 }
             }
@@ -22,14 +29,11 @@ pipeline {
     }
 
     post {
-        always {
-            echo 'Сборка завершена. Выполняется финальная очистка...'
-        }
         failure {
-            echo 'Сборка завершилась с ошибкой.'
+            echo 'Build failed.'
         }
         success {
-            echo 'Сборка завершилась успешно!'
+            echo 'Build succeeded!'
         }
     }
 }

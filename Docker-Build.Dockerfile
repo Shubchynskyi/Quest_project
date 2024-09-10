@@ -1,22 +1,19 @@
-# Этап 1: Создание промежуточного образа с Docker, Maven и Java 17
-FROM docker:24.0.5 AS build
+# Create an intermediate image with Maven and Java 21
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 
-# Установка Java 17, Maven и Git
-RUN apk add --no-cache openjdk17 maven git
-
-# Настраиваем рабочую директорию
+# Set up the working directory
 WORKDIR /app
 
-# Копируем файлы проекта
+# Copy project files
 COPY pom.xml .
 COPY src ./src
 
-# Копирование шаблонов и изображений
+# Copy templates and images
 COPY src/main/resources/templates /app/templates
 COPY src/main/webapp/WEB-INF/images /app/images
 
-# Загружаем зависимости для Maven
+# Download Maven dependencies
 RUN mvn dependency:go-offline
 
-# Запуск тестов и сборка JAR
+# Run tests and build the JAR
 CMD ["mvn", "verify"]

@@ -1,88 +1,93 @@
 #!/usr/bin/env bash
-set -x  # Включение режима отладки
+set -x  # Enable debugging mode
 
-# Определение пути к директории скрипта
+# Load environment variables from .env file
+source .env
+
+# Define the path to the script directory
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# Имя JAR-файла, который генерируется в процессе сборки
-JAR_NAME="Quest_project-1.0.jar"
+# Use variables from .env
 JAR_PATH="$SCRIPT_DIR/$JAR_NAME"
-FINAL_IMAGE_NAME="quests-app"
 
-# Очистка проекта перед сборкой
-echo "Очистка проекта..."
+# Clean the project before building
+echo "Cleaning the project..."
 mvn clean
 
-# Сборка образа с тестовой средой
-echo "Сборка образа с тестовой средой..."
-docker build -t my-app-builder -f "$SCRIPT_DIR/Docker-Build.Dockerfile" .
+# Build the image with the test environment
+echo "Building the image with the test environment..."
+docker build -t "$BUILDER_IMAGE_NAME" -f "$SCRIPT_DIR/$DOCKERFILE_BUILD" .
 
-# Определение среды: Windows или Linux
+# Determine the environment: Windows or Linux
 if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
-    echo "Работаем в Windows среде. Настройка для Docker."
+    echo "Running in Windows environment. Configuring for Docker."
     DOCKER_SOCKET="//var/run/docker.sock"
     HOST_OVERRIDE="host.docker.internal"
 else
-    echo "Работаем в Linux среде. Настройка для Docker."
+    echo "Running in Linux environment. Configuring for Docker."
     DOCKER_SOCKET="/var/run/docker.sock"
-    HOST_OVERRIDE="172.17.0.1" # Явно указываем IP адрес Docker сети
+    HOST_OVERRIDE="172.17.0.1" # Explicitly setting the IP address of the Docker network
 fi
 
-# Запуск контейнера для тестов и сборки
-echo "Запуск контейнера для тестов с Testcontainers..."
-docker run --name my-app-container \
+# Run the container for testing and building
+echo "Starting the test container with Testcontainers..."
+docker run --name "$APP_TEST_CONTAINER_NAME" \
     -v "$DOCKER_SOCKET:/var/run/docker.sock" \
     -e TESTCONTAINERS_HOST_OVERRIDE="$HOST_OVERRIDE" \
-    my-app-builder
+    "$BUILDER_IMAGE_NAME"
 
-# Ловушка для удаления ресурсов при ошибке
-trap 'echo "Удаление промежуточных данных при ошибке..."; \
-      docker rm -f my-app-container 2>/dev/null || true; \
-      docker rmi my-app-builder 2>/dev/null || true; \
+# Trap to remove resources on error
+trap 'echo "Cleaning up intermediate data on error..."; \
+      docker rm -f $APP_TEST_CONTAINER_NAME 2>/dev/null || true; \
+      docker rmi $BUILDER_IMAGE_NAME 2>/dev/null || true; \
       rm -f "$JAR_PATH" 2>/dev/null || true; \
       exit 1' ERR
 
-# Проверка статуса завершения контейнера
-EXIT_CODE=$(docker inspect my-app-container --format='{{.State.ExitCode}}')
-echo "Контейнер завершил работу. Код завершения: $EXIT_CODE"
-echo "Логи контейнера после завершения:"
-docker logs my-app-container
+# Check the exit status of the container
+# shellcheck disable=SC2086
+EXIT_CODE=$(docker inspect $APP_TEST_CONTAINER_NAME --format='{{.State.ExitCode}}')
+echo "Container has finished. Exit code: $EXIT_CODE"
+echo "Container logs after completion:"
+docker logs "$APP_TEST_CONTAINER_NAME"
 
-# Проверка на успешное завершение работы контейнера
+# Check if the container finished successfully
 if [ "$EXIT_CODE" -ne 0 ]; then
-    echo "Контейнер завершился с ошибкой (код $EXIT_CODE). Проверьте логи:"
-    docker logs my-app-container
+    echo "Container exited with an error (code $EXIT_CODE). Check the logs:"
+    docker logs "$APP_TEST_CONTAINER_NAME"
     exit 1
 fi
 
-# Проверка и копирование JAR-файла из остановленного контейнера
-if docker cp my-app-container:/app/target/$JAR_NAME "$JAR_PATH"; then
-    echo "JAR-файл успешно скопирован."
+# Check and copy the JAR file from the stopped container
+if docker cp "$APP_TEST_CONTAINER_NAME":/app/target/"$JAR_NAME" "$JAR_PATH"; then
+    echo "JAR file copied successfully."
 else
-    echo "Не удалось скопировать JAR-файл. Проверьте логи контейнера:"
-    docker logs my-app-container
+    echo "Failed to copy the JAR file. Check the container logs:"
+    docker logs "$APP_TEST_CONTAINER_NAME"
     exit 1
 fi
 
-# Удаление контейнера после копирования файла
-echo "Удаление контейнера..."
-docker rm my-app-container
+# Remove the container after copying the file
+echo "Removing the container..."
+docker rm "$APP_TEST_CONTAINER_NAME"
 
-# Удаление образа сборки, так как он больше не нужен
-echo "Удаление промежуточного образа..."
-docker rmi my-app-builder
+# Remove the build image as it is no longer needed
+echo "Removing the intermediate image..."
+docker rmi "$BUILDER_IMAGE_NAME"
 
-# Сборка финального образа с новым именем
-echo "Сборка финального образа..."
-docker build -t $FINAL_IMAGE_NAME -f "$SCRIPT_DIR/Docker-Final.Dockerfile" .
+# Build the final image with the new name
+echo "Building the final image..."
+docker build \
+  --build-arg JAR_NAME="$JAR_NAME" \
+  --build-arg DATABASE_CONTAINER_NAME="$DATABASE_CONTAINER_NAME" \
+  -t "$FINAL_IMAGE_NAME" \
+  -f "$SCRIPT_DIR/$DOCKERFILE_FINAL" .
 
-# Удаление временного JAR-файла
+# Remove the temporary JAR file
 rm "$JAR_PATH"
-echo "Удален временный JAR-файл: $JAR_PATH"
+echo "Removed the temporary JAR file: $JAR_PATH"
 
-# Запуск Docker Compose для развертывания приложения и базы данных с использованием локального файла
-echo "Запуск Docker Compose..."
-#docker-compose -f docker-compose-local.yaml up -d
-docker-compose -f docker-compose-server.yaml up -d
+# Run Docker Compose to deploy the application and the database
+echo "Starting Docker Compose..."
+docker-compose -f "$COMPOSE_FILE" up -d
 
-echo "Скрипт завершен, приложение запущено через Docker Compose."
+echo "Script completed, application started via Docker Compose."

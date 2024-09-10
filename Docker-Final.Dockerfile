@@ -1,26 +1,35 @@
-# Этап 2: Создание окончательного Docker образа на основе легковесного Amazon Corretto
+# Create the final Docker image based on lightweight Amazon Corretto
 FROM amazoncorretto:21-alpine-full
 
-# Настраиваем рабочую директорию
+# Set up the working directory
 WORKDIR /app
 
-# Копирование шаблонов и изображений
+# Copy templates and images
 COPY src/main/resources/templates /app/templates
 COPY src/main/webapp/WEB-INF/images /app/images
 
-# Установка wget
+# Install wget
 RUN apk update && \
     apk add --no-cache wget && \
     rm -rf /var/lib/apt/lists/*
 
-# Установка Dockerize для ожидания внешних сервисов
+# Install Dockerize to wait for external services
 ENV DOCKERIZE_VERSION=v0.6.1
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
-# Копирование собранного JAR файла из локальной машины
-COPY Quest_project-1.0.jar /app/Quest_project-1.0.jar
+# Define build arguments
+ARG JAR_NAME
+ARG DATABASE_CONTAINER_NAME
 
-# Запуск приложения с использованием Dockerize для ожидания базы данных
-ENTRYPOINT ["dockerize", "-wait", "tcp://quest-postgres-db:5432", "-timeout", "60s", "java", "-jar", "Quest_project-1.0.jar"]
+# Set environment variables using the values of ARGs
+ENV JAR_NAME=${JAR_NAME}
+ENV DATABASE_CONTAINER_NAME=${DATABASE_CONTAINER_NAME}
+
+# Copy the built JAR file from the local machine
+COPY ${JAR_NAME} /app/${JAR_NAME}
+
+# Run the application using Dockerize to wait for the database
+# Use sh -c to ensure variable substitution works correctly
+ENTRYPOINT sh -c "dockerize -wait tcp://\$DATABASE_CONTAINER_NAME:5432 -timeout 60s java -jar /app/\$JAR_NAME"

@@ -1,6 +1,6 @@
 services:
   db:
-    container_name: quest-postgres-db
+    container_name: ${DATABASE_CONTAINER_NAME}
     image: postgres:16.2
     restart: unless-stopped
     environment:
@@ -13,8 +13,8 @@ services:
       - postgresql_quest_data:/var/lib/postgresql/data
 
   app:
-    container_name: quests-app
-    image: quests-app  # Используем финальный образ
+    container_name: ${FINAL_APP_CONTAINER_NAME}
+    image: ${FINAL_IMAGE_NAME}
     restart: unless-stopped
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
