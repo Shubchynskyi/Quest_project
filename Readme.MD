@@ -15,10 +15,30 @@ Developed as part of an educational project at [Javarush University](https://jav
 
 ## Technologies Used
 
-- **Backend**: Java with Spring Boot, Spring Data JPA.
-- **Frontend**: JSP and JSTL for dynamic rendering of pages, combined with HTML and Bootstrap for responsive design.
+- **Backend**: Java with Spring Boot, Spring Data JPA, Liquibase for database migrations.
+- **Frontend**: Thymeleaf, JSP, and JSTL for dynamic rendering of pages, combined with HTML and Bootstrap for responsive design.
 - **Testing**: JUnit for unit tests and Testcontainers for integration tests, simulating real environments with Docker containers.
-- **Deployment**: The application is packaged and deployed using Docker, managed by a Jenkins CI/CD pipeline.
+- **Deployment**: The application is packaged and deployed using Docker and Docker Compose, managed by a Jenkins CI/CD pipeline.
+
+## How to Start from IntelliJ IDEA
+
+1. **Update `.env` File**:
+    - Change the `COMPOSE_FILE` setting in the `.env` file:
+      ```plaintext
+      # Change from:
+      COMPOSE_FILE=docker-compose-server.yaml
+      # To:
+      COMPOSE_FILE=docker-compose-local.yaml
+      ```
+2. **Run the Build Script**:
+    - Run the `build-and-run.sh` script from the root of the project using Git Bash or another compatible terminal:
+      ```bash
+      ./build-and-run.sh
+      ```
+    - [Link to the build-and-run.sh script](./build-and-run.sh)
+
+3. **Ensure Docker is Running**:
+    - Make sure Docker is running on your machine before executing the script. You can check by running `docker ps` in your terminal.
 
 ## Live Application
 
