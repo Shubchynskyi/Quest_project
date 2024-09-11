@@ -30,10 +30,18 @@ pipeline {
 
     post {
         failure {
+            // Cleanup Docker Resources
+            sh './cleanup.sh'
             echo 'Build failed.'
         }
         success {
-            echo 'Build succeeded!'
+            script {
+                echo 'Build succeeded! Restarting NGINX in 60 seconds...'
+                // Delay before restarting NGINX
+                sleep(time: 60, unit: 'SECONDS')
+                // Restart NGINX
+                sh 'docker exec webserver nginx -s reload'
+            }
         }
     }
 }
