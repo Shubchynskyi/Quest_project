@@ -22,7 +22,7 @@ Developed as part of an educational project at [Javarush University](https://jav
 
 ## How to Start from IntelliJ IDEA
 
-1. **Update `.env` File**:
+1. **Update [`.env` File](./.env)**:
     - Change the `COMPOSE_FILE` setting in the `.env` file:
       ```plaintext
       # Change from:
