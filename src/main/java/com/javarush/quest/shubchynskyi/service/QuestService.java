@@ -10,6 +10,7 @@ import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 import com.javarush.quest.shubchynskyi.repository.QuestRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 import static com.javarush.quest.shubchynskyi.localization.ExceptionErrorMessages.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class QuestService {
@@ -31,13 +33,10 @@ public class QuestService {
     private final Lock lock;
 
     @Transactional
-    public Quest create(
-            String name,
-            String text,
-            String description,
-            String authorId
-    ) {
+    public Quest create(String name, String text, String description, String authorId) {
+        log.info("Creating quest with name: {}. Author ID : {}", name, authorId);
         if (questValidator.isQuestExist(name)) {
+            log.warn("Quest with name {} already exists. Author ID : {}", name, authorId);
             throw new AppException(QUEST_NAME_ALREADY_EXISTS);
         }
 
@@ -46,6 +45,7 @@ public class QuestService {
             author = userService.get(Long.parseLong(authorId))
                     .orElseThrow(() -> new AppException(USER_NOT_FOUND));
         } catch (NumberFormatException e) {
+            log.error("Invalid author ID format: {}", authorId, e);
             throw new AppException(INVALID_AUTHOR_ID_FORMAT);
         }
 
@@ -56,20 +56,24 @@ public class QuestService {
                     .author(author)
                     .build();
 
+            log.info("Parsing quest text for quest: {}", name);
             parseQuestFromTextWall(quest, text);
 
             return quest;
         } else {
+            log.warn("Parsing error. Quest text is not valid for quest: {}. Author ID : {}", name, authorId);
             throw new AppException(QUEST_TEXT_NOT_VALID);
         }
     }
 
     public void update(Quest quest) {
+        log.info("Updating quest with ID: {}", quest.getId());
         questRepository.save(quest);
     }
 
     @SuppressWarnings("unused") // todo add "delete" button for quest edit page
     public void delete(Quest quest) {
+        log.info("Deleting quest with ID: {}", quest.getId());
         questRepository.delete(quest);
     }
 
@@ -88,6 +92,7 @@ public class QuestService {
     }
 
     private void parseQuestFromTextWall(Quest quest, String text) {
+        log.info("Parsing quest text and building logic blocks for quest with ID: {}", quest.getId());
         Quest questWithId = questRepository.save(quest);
 
         lock.lock();
@@ -103,10 +108,7 @@ public class QuestService {
             }
 
             for (var AnswerEntry : answersMapWithNullNextQuestionId.entrySet()) {
-                Long nextQuestionId = questionsMapWithRawId
-                        .get(AnswerEntry.getValue())
-                        .getId();
-
+                Long nextQuestionId = questionsMapWithRawId.get(AnswerEntry.getValue()).getId();
                 AnswerEntry.getKey().setNextQuestionId(nextQuestionId);
             }
 
@@ -114,6 +116,7 @@ public class QuestService {
             questRepository.save(questWithId);
         } finally {
             lock.unlock();
+            log.info("Finished parsing and saving quest with ID: {}", quest.getId());
         }
     }
 
@@ -123,8 +126,8 @@ public class QuestService {
             Map<Answer, Integer> answersMapWithNullNextQuestionId,
             Collection<Answer> answers
     ) {
-
         String currentLine = questParser.takeNextLine();
+        // TODO парсер может возвращать обьект, и из него потом извлекать поля (а не из массива)
         String[] logicBlock = questParser.extractLogicBlock(currentLine);
         Integer blockNumber = Integer.valueOf(logicBlock[0]);
         String blockData = logicBlock[1];
@@ -147,7 +150,6 @@ public class QuestService {
             Collection<Answer> answers,
             Integer blockNumber, String blockData
     ) {
-
         Answer answer = Answer.builder()
                 .text(blockData)
                 .build();
@@ -161,6 +163,7 @@ public class QuestService {
 
         answerRepository.save(answer);
         answers.add(answer);
+        log.info("Built and saved new answer for block number: {}", blockNumber);
     }
 
     private void buildNewQuestion(
@@ -171,7 +174,6 @@ public class QuestService {
             String blockData,
             String blockType
     ) {
-
         Question question = Question.builder()
                 .questId(quest.getId())
                 .text(blockData)
@@ -188,6 +190,6 @@ public class QuestService {
         if (!questParser.isStringPresent()) {
             quest.setStartQuestionId(question.getId());
         }
+        log.info("Built and saved new question for block number: {}", blockNumber);
     }
-
 }

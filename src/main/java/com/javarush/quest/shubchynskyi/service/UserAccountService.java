@@ -6,6 +6,7 @@ import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.result.UserDataProcessResult;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -20,6 +21,7 @@ import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserAccountService {
 
     private final UserService userService;
@@ -33,12 +35,15 @@ public class UserAccountService {
                                    String tempImageId,
                                    boolean isTempImagePresent,
                                    boolean imageIsValid) {
+        log.info("Registering new user with login: {}", userDTOFromModel.getLogin());
         User user = userMapper.userDTOToUser(userDTOFromModel);
         User createdUser = userService.create(user).orElseThrow();
 
         if (!isTempImagePresent || imageIsValid) {
+            log.info("Uploading new image file for user ID: {}", createdUser.getId());
             imageService.uploadFromMultipartFile(imageFile, createdUser.getImage(), false);
         } else {
+            log.info("Uploading previously saved temporary image for user ID: {}", createdUser.getId());
             imageService.uploadFromExistingFile(tempImageId, createdUser.getImage());
         }
 
@@ -47,6 +52,7 @@ public class UserAccountService {
 
     @Transactional
     public void deleteExistingUser(User user) {
+        log.info("Deleting user with ID: {}", user.getId());
         userService.delete(user);
         imageService.deleteOldFiles(user.getImage());
     }
@@ -56,13 +62,15 @@ public class UserAccountService {
                                    MultipartFile imageFile,
                                    String tempImageId,
                                    boolean isTempImagePresent,
-                                   boolean imageIsValid
-    ) {
+                                   boolean imageIsValid) {
+        log.info("Updating user with ID: {}", userFromModel.getId());
         userService.update(userFromModel);
 
         if (!isTempImagePresent || imageIsValid) {
+            log.info("Uploading updated image for user ID: {}", userFromModel.getId());
             imageService.uploadFromMultipartFile(imageFile, userFromModel.getImage(), false);
         } else {
+            log.info("Using existing temporary image for user ID: {}", userFromModel.getId());
             imageService.uploadFromExistingFile(tempImageId, userFromModel.getImage());
         }
     }
@@ -74,18 +82,21 @@ public class UserAccountService {
             String tempImageId,
             RedirectAttributes redirectAttributes,
             String originalLogin) {
+        log.info("Processing user data for login: {}", userDTOFromModel.getLogin());
         boolean hasFieldsErrors = validationService.processFieldErrors(bindingResult, redirectAttributes);
         boolean imageIsValid = imageService.isValid(imageFile);
         boolean isTempImagePresent = !tempImageId.isEmpty();
 
         if (imageIsValid && imageFile.getSize() > MAX_FILE_SIZE) {
+            log.warn("Image file size is too large for user: {}", userDTOFromModel.getLogin());
             addLocalizedMaxSizeError(redirectAttributes);
             hasFieldsErrors = true;
             imageIsValid = false;
             if (!tempImageId.isEmpty()) {
                 tempImageId = EMPTY_STRING;
             }
-        } else if ((!imageIsValid && !imageFile.isEmpty())) {
+        } else if (!imageIsValid && !imageFile.isEmpty()) {
+            log.warn("Incorrect image file for user: {}", userDTOFromModel.getLogin());
             addLocalizedIncorrectImageError(redirectAttributes);
             hasFieldsErrors = true;
         }
@@ -113,19 +124,8 @@ public class UserAccountService {
     private void addLocalizedMaxSizeError(RedirectAttributes redirectAttributes) {
         String localizedMessage = ErrorLocalizer.getLocalizedMessage(FILE_IS_TOO_LARGE);
         redirectAttributes.addFlashAttribute(
-                IMAGING_ERROR, localizedMessage
-                        + " " + (MAX_FILE_SIZE / KB_TO_MB / KB_TO_MB)
-                        + " " + MB);
+                IMAGING_ERROR, localizedMessage + " " + (MAX_FILE_SIZE / KB_TO_MB / KB_TO_MB) + " " + MB);
     }
-
-    //TODO refactoring - need to call validationService.processFieldErrors and modify to return boolean
-//    private boolean processFieldErrors(BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-//        boolean hasFieldsErrors = bindingResult.hasErrors();
-//        if (hasFieldsErrors) {
-//            validationService.processFieldErrors(bindingResult, redirectAttributes);
-//        }
-//        return hasFieldsErrors;
-//    }
 
     private boolean isLoginExist(UserDTO userDTOFromModel, RedirectAttributes redirectAttributes, boolean hasErrors) {
         if (userService.isLoginExist(userDTOFromModel.getLogin())) {
@@ -135,5 +135,4 @@ public class UserAccountService {
         }
         return hasErrors;
     }
-
 }

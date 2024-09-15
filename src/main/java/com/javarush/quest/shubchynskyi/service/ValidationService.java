@@ -4,6 +4,7 @@ import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.Map;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.YOU_DONT_HAVE_PERMISSIONS;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ValidationService {
@@ -35,6 +37,7 @@ public class ValidationService {
                 errors.put(error.getField(), localizedErrorMessage);
             }
             redirectAttributes.addFlashAttribute(FIELD_ERRORS, errors);
+            log.warn("Validation errors found: {}", errors);
         }
         return hasFieldsErrors;
     }
@@ -44,10 +47,9 @@ public class ValidationService {
         if (currentUser == null || validRoles.stream().noneMatch(role -> role.equals(currentUser.getRole()))) {
             String localizedMessage = messageSource.getMessage(YOU_DONT_HAVE_PERMISSIONS, null, LocaleContextHolder.getLocale());
             redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
+            log.warn("Access denied for user: {}", currentUser != null ? currentUser.getLogin() : "unknown");
             return true;
         }
         return false;
     }
-
-
 }

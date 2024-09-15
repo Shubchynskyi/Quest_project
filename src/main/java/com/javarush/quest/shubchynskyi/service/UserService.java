@@ -61,8 +61,4 @@ public class UserService {
         return userRepository.findAll(Example.of(patternUser)).stream().findAny();
     }
 
-    @Override
-    public String toString() {
-        return "UserService";
-    }
 }

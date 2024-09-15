@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,6 +32,7 @@ import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.UNEXPECTED_ERROR;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class UserController {
@@ -54,13 +56,15 @@ public class UserController {
             @SessionAttribute(name = USER, required = false) UserDTO userFromSession,
             @ModelAttribute(name = TEMP_IMAGE_ID) String tempImageId
     ) {
-
+        log.info("Entering showUser with id: {}", id);
 
         if (validationService.checkUserAccessDenied(session, acceptedRolesForSelfEditing, redirectAttributes)) {
+            log.warn("Access denied for showing user with id: {}", id);
             return REDIRECT + Route.INDEX;
         }
 
         if (Objects.nonNull(id)) {
+            log.info("Loading user data for id: {}", id);
             model.addAttribute(ROLES, Role.values());
 
             if (Objects.nonNull(source)) {
@@ -88,6 +92,7 @@ public class UserController {
 
             return Route.USER;
         } else {
+            log.warn("User id is null, redirecting to users list.");
             return REDIRECT + Route.USERS;
         }
     }
@@ -111,12 +116,15 @@ public class UserController {
             RedirectAttributes redirectAttributes,
             HttpServletRequest request
     ) {
+        log.info("Entering editUser for user: {}", userDTOFromModel.getId());
         // TODO редактировать может только админ или модератор, а пользователь обычный может это сделать только
         // TODO если он редактирует сам себя
         if (userDTOFromSession == null) {
+            log.warn("User session is null, redirecting to login.");
             return REDIRECT + Route.LOGIN;
         }
         if (!isUserPermitted(userDTOFromModel, userDTOFromSession)) {
+            log.warn("User {} is not permitted to edit user {}", userDTOFromSession.getId(), userDTOFromModel.getId());
             return REDIRECT + Route.PROFILE;
         }
 
@@ -133,17 +141,20 @@ public class UserController {
                         originalLogin, userDTOFromSession, request
                 );
             } else {
-//  todo              logger.warn("Unknown action in editUser");
+                log.warn("Unknown action in editUser");
                 throw new AppException(UNKNOWN_COMMAND);
             }
         } catch (Exception e) {
-//  todo          logger.error("Error in editUser: " + e.getMessage(), e);
+            log.error("Unexpected error in editUser for user: {}", userDTOFromModel.getId(), e);
             addLocalizedUnexpectedError(redirectAttributes);
             return REDIRECT + Route.INDEX;
         }
     }
 
     private String processDeletion(User userFromModel, UserDTO userDTOFromSession) {
+        log.info("User [{}] with role [{}] is deleting user [{}]",
+                userDTOFromSession.getId(), userDTOFromSession.getRole(), userFromModel.getId());
+
         userAccountService.deleteExistingUser(userFromModel);
         if (userFromModel.getId().equals(userDTOFromSession.getId())) {
             return REDIRECT + Route.LOGOUT;
@@ -155,6 +166,8 @@ public class UserController {
     private String processUpdate(UserDTO userDTOFromModel, User userFromModel, BindingResult bindingResult,
                                  MultipartFile imageFile, String tempImageId, RedirectAttributes redirectAttributes,
                                  String originalLogin, UserDTO userDTOFromSession, HttpServletRequest request) {
+        log.info("User [{}] with role [{}] is updating user [{}]",
+                userDTOFromSession.getId(), userDTOFromSession.getRole(), userDTOFromModel.getId());
 
         UserDataProcessResult updateResult = userAccountService.processUserData(
                 userDTOFromModel, bindingResult, imageFile, tempImageId, redirectAttributes, originalLogin);
@@ -174,11 +187,19 @@ public class UserController {
     }
 
     private boolean isUserPermitted(UserDTO userDTOFromModel, UserDTO userDTOFromSession) {
+        boolean permitted;
+
         if (!userDTOFromSession.getId().equals(userDTOFromModel.getId())) {
             Role userRole = userDTOFromSession.getRole();
-            return acceptedRolesForSelfEditing.contains(userRole);
+            permitted = acceptedRolesForSelfEditing.contains(userRole);
+        } else {
+            permitted = true;
         }
-        return true;
+
+        log.info("Permission check for user {} editing user {}: {}",
+                userDTOFromSession.getId(), userDTOFromModel.getId(), permitted);
+
+        return permitted;
     }
 
     private String userFlowAndRedirect(HttpServletRequest request, UserDTO userDTOFromSession, User userFromModel) {
