@@ -15,6 +15,11 @@ public class Key {
     public static final String SLASH = "/";
     public static final String EMPTY_STRING = "";
 
+    //**************  Localization  **************//
+    public static final String LOCALIZATION_MESSAGES_BUNDLE = "messages";
+    public static final String LOCALE_PARAM_NAME = "lang";
+    public static final String ALL_PATHS_PATTERN = "/**";
+
     //**************  Regex  **************//
     public static final String REGEX_EMPTY_STRING = "";
     public static final String REGEX_NEW_LINE = "\n";
@@ -108,7 +113,5 @@ public class Key {
     public static final int MAX_LENGTH = 100;
     public static final Pattern TEMP_FILE_PATTERN = Pattern.compile("^temp_(\\d+)_.*$");
     public static final String PREFIX_FOR_TEMP_IMAGES = "temp";
-
-
 
 }

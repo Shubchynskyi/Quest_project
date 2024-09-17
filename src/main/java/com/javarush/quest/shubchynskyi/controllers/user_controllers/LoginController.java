@@ -7,6 +7,7 @@ import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,6 +21,7 @@ import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.*;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class LoginController {
@@ -45,6 +47,7 @@ public class LoginController {
 
         Optional<User> user = userService.get(login, password);
         if (user.isPresent()) {
+            log.info("User {} logged in successfully.", login);
             session.setAttribute(
                     USER,
                     userMapper.userToUserDTOWithoutPassword(user.get())
@@ -54,10 +57,10 @@ public class LoginController {
             }
             return REDIRECT + SLASH + source;
         } else {
+            log.warn("Failed login attempt for user: {}", login);
             String localizedMessage = ErrorLocalizer.getLocalizedMessage(DATA_IS_INCORRECT);
             redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
             return REDIRECT + Route.LOGIN;
         }
     }
-
 }

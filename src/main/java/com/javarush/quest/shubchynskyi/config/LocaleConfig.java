@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.config;
 
+import com.javarush.quest.shubchynskyi.constant.Key;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,12 +42,12 @@ public class LocaleConfig implements WebMvcConfigurer {
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-        lci.setParamName("lang");
+        lci.setParamName(Key.LOCALE_PARAM_NAME);
         return lci;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localeChangeInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(localeChangeInterceptor()).addPathPatterns(Key.ALL_PATHS_PATTERN);
     }
 }

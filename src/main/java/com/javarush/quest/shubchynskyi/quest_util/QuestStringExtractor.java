@@ -9,6 +9,7 @@ import static com.javarush.quest.shubchynskyi.constant.Key.INCORRECT_STRING;
 @Component
 public class QuestStringExtractor {
 
+    // TODO return Object with 3 fields
     public String[] getExtractedData(String currentLine) {
         String[] result = new String[3];
         result[0] = extractNumber(currentLine);

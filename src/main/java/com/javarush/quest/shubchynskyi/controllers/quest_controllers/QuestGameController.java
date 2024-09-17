@@ -11,6 +11,7 @@ import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.service.QuestionService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class QuestGameController {
@@ -33,8 +35,14 @@ public class QuestGameController {
             HttpServletRequest request
     ) {
         return questService.get(questId)
-                .map(quest -> prepareQuestStart(request, quest))
-                .orElse(REDIRECT + Route.QUESTS_LIST);
+                .map(quest -> {
+                    log.info("Starting quest with ID: {}", questId);
+                    return prepareQuestStart(request, quest);
+                })
+                .orElseGet(() -> {
+                    log.warn("Quest not found with ID: {}", questId);
+                    return REDIRECT + Route.QUESTS_LIST;
+                });
     }
 
     @PostMapping(QUEST)
@@ -42,11 +50,13 @@ public class QuestGameController {
                            @RequestParam(name = QUESTION_ID, required = false) String questionId,
                            HttpServletRequest request) {
         if (gameState != null && !gameState.equals(GameState.PLAY.toString())) {
+            log.info("Game ended with state: {}", gameState);
             return REDIRECT + Route.QUESTS_LIST;
         } else {
             if (questionId != null) {
                 return fillRequestAndRedirect(request, questionId);
             } else {
+                log.warn("Question ID is missing, redirecting to quests list.");
                 return REDIRECT + Route.QUESTS_LIST;
             }
         }
@@ -62,6 +72,7 @@ public class QuestGameController {
         }
         request.setAttribute(ID, quest.getId());
         request.setAttribute(QUEST_NAME, quest.getName());
+        log.info("Prepared quest start for quest ID: {}", quest.getId());
         return Route.QUEST;
     }
 
@@ -69,14 +80,23 @@ public class QuestGameController {
         String questionId = request.getParameter(QUESTION);
         QuestionDTO questionDTO = questionService.get(questionId)
                 .map(questionMapper::questionToQuestionDTO)
-                .orElseThrow();
+                .orElseThrow(() -> {
+                    log.warn("Question not found with ID: {}", questionId);
+                    return new RuntimeException("Question not found"); // TODO AppEx ???
+                });
         request.setAttribute(QUESTION, questionDTO);
     }
 
     private String fillRequestAndRedirect(HttpServletRequest request, String questionId) {
         return questionService.get(questionId)
-                .map(question -> prepareQuestionRedirect(request, question))
-                .orElse(REDIRECT + Route.QUESTS_LIST);
+                .map(question -> {
+                    log.info("Filling request and redirecting for question ID: {}", questionId);
+                    return prepareQuestionRedirect(request, question);
+                })
+                .orElseGet(() -> {
+                    log.warn("Question not found with ID: {}", questionId);
+                    return REDIRECT + Route.QUESTS_LIST;
+                });
     }
 
     private String prepareQuestionRedirect(HttpServletRequest request, Question question) {
@@ -87,6 +107,7 @@ public class QuestGameController {
         request.setAttribute(ID, questId);
         request.setAttribute(QUEST_NAME, questName);
         String newUri = NEXT_QUESTION_URI_PATTERN.formatted(Route.QUEST, ID, questId, QUESTION, questionDTO.getId());
+        log.info("Prepared redirect to the next question with ID: {}", question.getId());
         return REDIRECT + newUri;
     }
 }

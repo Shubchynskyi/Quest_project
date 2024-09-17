@@ -29,7 +29,11 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   thymeleaf:
-    prefix: file:/app/templates/   # Здесь указаны пути, чтобы Thymeleaf искал шаблоны в папке /app/templates внутри контейнера
+#    TODO для докера, надо как-то брать из настроек только для контейнера
+#    prefix: file:/app/templates/   # Здесь указаны пути, чтобы Thymeleaf искал шаблоны в папке /app/templates внутри контейнера
+#    spring:
+#      thymeleaf:
+#        prefix=classpath:/templates/:
     suffix: .html
     check-template-location: true
     cache: false

@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,6 +28,7 @@ import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.UNE
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.YOU_ARE_ALREADY_LOGGED_IN;
 
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class SignupController {
@@ -41,13 +43,14 @@ public class SignupController {
                              @ModelAttribute(name = TEMP_IMAGE_ID) String tempImageId
     ) {
         if (isUserNotLoggedIn(session)) {
+            log.info("Displaying signup page.");
             prepareSignupModel(model, userDTOFromModel, tempImageId);
             return Route.SIGNUP;
         } else {
+            log.warn("User already logged in attempted to access signup page.");
             addErrorToRedirectAttributes(redirectAttributes);
             return REDIRECT + Route.PROFILE;
         }
-
     }
 
     private void prepareSignupModel(Model model, UserDTO userDTOFromModel, String tempImageId) {
@@ -80,7 +83,7 @@ public class SignupController {
                          HttpServletRequest request,
                          RedirectAttributes redirectAttributes) {
 
-        try { // todo перегрузить метод чтобы избавиться от пустой строки
+        try {
             UserDataProcessResult registrationResult = userAccountService.processUserData(
                     userDTOFromModel,
                     bindingResult,
@@ -91,6 +94,7 @@ public class SignupController {
             );
 
             if (registrationResult.hasFieldsErrors()) {
+                log.warn("Validation errors during signup for user: {}", userDTOFromModel.getLogin());
                 redirectAttributes.addFlashAttribute(USER_DTO_FROM_MODEL, userDTOFromModel);
                 return REDIRECT + Route.SIGNUP;
             }
@@ -102,9 +106,10 @@ public class SignupController {
                     registrationResult.isTempImagePresent(),
                     registrationResult.imageIsValid());
 
+            log.info("User registered successfully with login: {}", userDTO.getLogin());
             request.getSession().setAttribute(USER, userDTO);
         } catch (AppException e) {
-            // TODO log
+            log.error("Error during signup: {}", e.getMessage(), e);
             addLocalizedUnexpectedError(redirectAttributes);
             return REDIRECT + Route.INDEX;
         }
@@ -115,5 +120,4 @@ public class SignupController {
         String localizedMessage = ErrorLocalizer.getLocalizedMessage(UNEXPECTED_ERROR);
         redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
     }
-
 }

@@ -44,6 +44,16 @@
             <AppenderRef ref="UserActivityLogAppender"/>
         </Logger>
 
+        <!-- Настройка уровня логирования для Spring, чтобы убрать DEBUG -->
+        <Logger name="org.springframework" level="WARN" additivity="false">
+            <AppenderRef ref="RollingFileAppender"/>
+        </Logger>
+
+        <!-- Установи уровень логирования для Hibernate или других пакетов, если нужно -->
+        <Logger name="org.hibernate" level="WARN" additivity="false">
+            <AppenderRef ref="RollingFileAppender"/>
+        </Logger>
+
         <!-- Общий логгер для ошибок -->
         <Root level="error">
             <AppenderRef ref="AppLogAppender"/>

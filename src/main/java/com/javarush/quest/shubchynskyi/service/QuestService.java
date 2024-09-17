@@ -67,13 +67,11 @@ public class QuestService {
     }
 
     public void update(Quest quest) {
-        log.info("Updating quest with ID: {}", quest.getId());
         questRepository.save(quest);
     }
 
     @SuppressWarnings("unused") // todo add "delete" button for quest edit page
     public void delete(Quest quest) {
-        log.info("Deleting quest with ID: {}", quest.getId());
         questRepository.delete(quest);
     }
 
@@ -92,7 +90,6 @@ public class QuestService {
     }
 
     private void parseQuestFromTextWall(Quest quest, String text) {
-        log.info("Parsing quest text and building logic blocks for quest with ID: {}", quest.getId());
         Quest questWithId = questRepository.save(quest);
 
         lock.lock();
@@ -116,7 +113,6 @@ public class QuestService {
             questRepository.save(questWithId);
         } finally {
             lock.unlock();
-            log.info("Finished parsing and saving quest with ID: {}", quest.getId());
         }
     }
 
@@ -163,7 +159,6 @@ public class QuestService {
 
         answerRepository.save(answer);
         answers.add(answer);
-        log.info("Built and saved new answer for block number: {}", blockNumber);
     }
 
     private void buildNewQuestion(
@@ -190,6 +185,5 @@ public class QuestService {
         if (!questParser.isStringPresent()) {
             quest.setStartQuestionId(question.getId());
         }
-        log.info("Built and saved new question for block number: {}", blockNumber);
     }
 }

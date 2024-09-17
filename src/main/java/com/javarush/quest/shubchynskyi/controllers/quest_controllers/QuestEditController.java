@@ -12,6 +12,7 @@ import com.javarush.quest.shubchynskyi.service.ImageService;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.service.QuestionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -27,6 +28,7 @@ import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.QUEST_NOT_FOUND_ERROR;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class QuestEditController {
@@ -46,11 +48,13 @@ public class QuestEditController {
         return questService.get(id)
                 .map(quest -> {
                     model.addAttribute(QUEST, questMapper.questToQuestDTO(quest));
+                    log.info("Displaying quest edit page for quest ID: {}", id);
                     return QUEST_EDIT;
                 })
                 .orElseGet(() -> {
                     String localizedMessage = ErrorLocalizer.getLocalizedMessage(QUEST_NOT_FOUND_ERROR);
                     redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
+                    log.warn("Quest not found with ID: {}", id);
                     return REDIRECT + Route.CREATE_QUEST;
                 });
     }
@@ -70,6 +74,7 @@ public class QuestEditController {
             viewName = QUESTS_LIST; // todo убрал /, было из Route, проверить
         }
 
+        log.info("Saving quest with parameters: {}", allParams);
         return viewName;
     }
 
@@ -82,9 +87,13 @@ public class QuestEditController {
         return questService.get(questId)
                 .map(quest -> {
                     updateQuest(allParams, quest, imageFile);
+                    log.info("Quest updated successfully: {}", questId);
                     return REDIRECT + ID_URI_PATTERN.formatted(Route.QUEST_EDIT, questId);
                 })
-                .orElse(Route.QUESTS_LIST);
+                .orElseGet(() -> {
+                    log.warn("Quest not found for updating with ID: {}", questId);
+                    return Route.QUESTS_LIST;
+                });
     }
 
     private void updateQuest(
@@ -97,9 +106,11 @@ public class QuestEditController {
 
         if (newName != null) {
             quest.setName(newName);
+            log.info("Updated quest name to: {}", newName);
         }
         if (newDescription != null) {
             quest.setDescription(newDescription);
+            log.info("Updated quest description. Quest name: {}", quest.getName());
         }
 
         imageService.uploadFromMultipartFile(imageFile, quest.getImage(), false);
@@ -117,10 +128,13 @@ public class QuestEditController {
         return optionalQuestion.map(question -> {
             updateQuestion(allParams, question, imageFile);
             updateAnswers(allParams, question);
+            log.info("Question updated successfully: {}", questionId);
             return REDIRECT + ID_URI_PATTERN.formatted(Route.QUEST_EDIT, allParams.getFirst(ID))
-                   + LABEL_URI_PATTERN + question.getId();
-        }).orElse(Route.QUESTS_LIST);
-
+                    + LABEL_URI_PATTERN + question.getId();
+        }).orElseGet(() -> {
+            log.warn("Question not found with ID: {}", questionId);
+            return Route.QUESTS_LIST;
+        });
     }
 
     private void updateQuestion(
@@ -134,6 +148,7 @@ public class QuestEditController {
         if (newQuestionText != null && !newQuestionText.equals(question.getText())) {
             question.setText(newQuestionText);
             questionService.update(question);
+            log.info("Updated question text for question ID: {}", question.getId());
         }
     }
 
@@ -143,8 +158,8 @@ public class QuestEditController {
             if (answerNewText != null && !answerNewText.equals(answer.getText())) {
                 answer.setText(answerNewText);
                 answerService.update(answer);
+                log.info("Updated answer text for answer ID: {}", answer.getId());
             }
         }
     }
-
 }

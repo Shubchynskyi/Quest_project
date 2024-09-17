@@ -23,7 +23,7 @@ public class QuestParser {
     }
 
     public boolean isStringPresent() {
-        return stringList.size() > 0;
+        return !stringList.isEmpty();
     }
 
     private String fillData(String currentLine) {
@@ -54,7 +54,7 @@ public class QuestParser {
     }
 
     private boolean isNumeric(final CharSequence cs) {
-        if (cs == null || cs.length() == 0) {
+        if (cs == null || cs.isEmpty()) {
             return false;
         }
         final int sz = cs.length();

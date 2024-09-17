@@ -8,6 +8,7 @@ import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.service.ValidationService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class UsersController {
@@ -36,8 +38,8 @@ public class UsersController {
             HttpSession session,
             RedirectAttributes redirectAttributes
     ) {
-        // TODO если пользователя нет, то редирект на логин?
         if (validationService.checkUserAccessDenied(session, acceptedRoles, redirectAttributes)) {
+            log.warn("Access denied to user list: insufficient permissions.");
             return REDIRECT + Route.INDEX;
         }
 
@@ -46,8 +48,8 @@ public class UsersController {
                 .flatMap(Optional::stream)
                 .toList();
 
+        log.info("Displaying users list with {} users.", users.size());
         model.addAttribute(USERS, users);
         return Route.USERS;
     }
-
 }

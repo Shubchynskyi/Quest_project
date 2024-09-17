@@ -13,6 +13,7 @@ import com.javarush.quest.shubchynskyi.service.ValidationService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,7 +33,9 @@ import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.YOU
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class QuestCreateController {
+
     // Todo move to constant or to yaml
     public static final Set<Role> ALLOWED_ROLES_FOR_QUEST_CREATE = Set.of(Role.USER, Role.MODERATOR, Role.ADMIN);
     private final QuestService questService;
@@ -48,15 +51,18 @@ public class QuestCreateController {
 
         if (Objects.nonNull(userDTO)) {
             if (ALLOWED_ROLES_FOR_QUEST_CREATE.contains(userDTO.getRole())) {
+                log.info("User {} with role {} is accessing the create quest page.", userDTO.getLogin(), userDTO.getRole());
                 if (!model.containsAttribute(QUEST_DTO)) {
                     model.addAttribute(QUEST_DTO, QuestDTO.builder().build());
                 }
                 return CREATE_QUEST;
             } else {
+                log.warn("Access denied for user {} with role {} when accessing the create quest page.", userDTO.getLogin(), userDTO.getRole());
                 redirectAttributes.addFlashAttribute(ERROR, YOU_DONT_HAVE_PERMISSIONS);
                 return REDIRECT + Route.PROFILE;
             }
         } else {
+            log.info("User is not logged in, redirecting to login page.");
             redirectAttributes.addFlashAttribute(SOURCE, CREATE_QUEST);
             return REDIRECT + Route.LOGIN;
         }
@@ -72,20 +78,23 @@ public class QuestCreateController {
     ) {
         boolean hasFieldsErrors = validationService.processFieldErrors(bindingResult, redirectAttributes);
         if (hasFieldsErrors) {
+            log.info("Quest creation failed due to validation errors for quest: {}", questDTO.getName());
             addQuestCreationDataToRedirectAttributes(questDTO, questText, redirectAttributes);
             return REDIRECT + CREATE_QUEST;
         }
 
         try {
             Quest quest = questService.create(questDTO.getName(), questText, questDTO.getDescription(), authorId);
+            log.info("Quest created successfully with ID: {}", quest.getId());
             return REDIRECT + Route.QUEST_EDIT_ID + quest.getId();
         } catch (AppException e) {
+            log.error("Error occurred while creating quest: {}", questDTO.getName(), e);
             addQuestCreationDataToRedirectAttributes(questDTO, questText, redirectAttributes);
             var errorLocalizedMessage = ErrorLocalizer.getExceptionLocalizedMessage(e.getMessage());
             if (!errorLocalizedMessage.isMessageService()) {
                 redirectAttributes.addFlashAttribute(ERROR, errorLocalizedMessage.message());
             } else {
-                //TODO log
+                log.error("Unexpected error occurred during quest creation: {}", e.getMessage());
                 redirectAttributes.addFlashAttribute(ERROR, UNEXPECTED_ERROR);
             }
             return REDIRECT + CREATE_QUEST;
@@ -96,5 +105,5 @@ public class QuestCreateController {
         redirectAttributes.addFlashAttribute(QUEST_TEXT, questText);
         redirectAttributes.addFlashAttribute(QUEST_DTO, questDTO);
     }
-
 }
+
