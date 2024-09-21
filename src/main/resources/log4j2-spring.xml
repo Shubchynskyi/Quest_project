@@ -1,5 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
+
     <Appenders>
+        <!-- Консольный аппендер для логов Spring и Hibernate -->
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"/>
+        </Console>
+
         <!-- Логгер для логики приложения -->
         <RollingFile name="AppLogAppender" fileName="logs/app.log"
                      filePattern="logs/app-%i.log.gz">
@@ -26,12 +33,6 @@
         <Logger name="com.javarush.quest.shubchynskyi.service" level="info" additivity="false">
             <AppenderRef ref="AppLogAppender"/>
         </Logger>
-<!--        <Logger name="com.javarush.quest.shubchynskyi.repository" level="info" additivity="false">-->
-<!--            <AppenderRef ref="AppLogAppender"/>-->
-<!--        </Logger>-->
-<!--        <Logger name="com.javarush.quest.shubchynskyi.mapper" level="info" additivity="false">-->
-<!--            <AppenderRef ref="AppLogAppender"/>-->
-<!--        </Logger>-->
         <Logger name="com.javarush.quest.shubchynskyi.quest_util" level="info" additivity="false">
             <AppenderRef ref="AppLogAppender"/>
         </Logger>
@@ -44,19 +45,20 @@
             <AppenderRef ref="UserActivityLogAppender"/>
         </Logger>
 
-        <!-- Настройка уровня логирования для Spring, чтобы убрать DEBUG -->
-        <Logger name="org.springframework" level="WARN" additivity="false">
-            <AppenderRef ref="RollingFileAppender"/>
+        <!-- Логи Spring выводятся в консоль -->
+        <Logger name="org.springframework" level="INFO" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
         </Logger>
 
-        <!-- Установи уровень логирования для Hibernate или других пакетов, если нужно -->
-        <Logger name="org.hibernate" level="WARN" additivity="false">
-            <AppenderRef ref="RollingFileAppender"/>
+        <!-- Логи Hibernate выводятся в консоль -->
+        <Logger name="org.hibernate" level="INFO" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
         </Logger>
 
-        <!-- Общий логгер для ошибок -->
-        <Root level="error">
+        <!-- Общий логгер для ошибок, выводит в файл и консоль -->
+        <Root level="ERROR">
             <AppenderRef ref="AppLogAppender"/>
+            <AppenderRef ref="ConsoleAppender"/>
         </Root>
     </Loggers>
 </Configuration>
