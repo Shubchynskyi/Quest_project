@@ -76,9 +76,8 @@ public class QuestCreateController {
             @RequestParam(ID) String authorId,
             RedirectAttributes redirectAttributes
     ) {
-        boolean hasFieldsErrors = validationService.processFieldErrors(bindingResult, redirectAttributes);
-        if (hasFieldsErrors) {
-            log.info("Quest creation failed due to validation errors for quest: {}", questDTO.getName());
+        if (validationService.processFieldErrors(bindingResult, redirectAttributes)) {
+            log.info("Validation failed for quest: {}", questDTO.getName());
             addQuestCreationDataToRedirectAttributes(questDTO, questText, redirectAttributes);
             return REDIRECT + CREATE_QUEST;
         }
@@ -88,15 +87,16 @@ public class QuestCreateController {
             log.info("Quest created successfully with ID: {}", quest.getId());
             return REDIRECT + Route.QUEST_EDIT_ID + quest.getId();
         } catch (AppException e) {
-            log.error("Error occurred while creating quest: {}", questDTO.getName(), e);
+            log.error("Failed to create quest: {}", questDTO.getName(), e);
             addQuestCreationDataToRedirectAttributes(questDTO, questText, redirectAttributes);
             var errorLocalizedMessage = ErrorLocalizer.getExceptionLocalizedMessage(e.getMessage());
+
             if (!errorLocalizedMessage.isMessageService()) {
                 redirectAttributes.addFlashAttribute(ERROR, errorLocalizedMessage.message());
             } else {
-                log.error("Unexpected error occurred during quest creation: {}", e.getMessage());
                 redirectAttributes.addFlashAttribute(ERROR, UNEXPECTED_ERROR);
             }
+
             return REDIRECT + CREATE_QUEST;
         }
     }
@@ -106,4 +106,3 @@ public class QuestCreateController {
         redirectAttributes.addFlashAttribute(QUEST_DTO, questDTO);
     }
 }
-
