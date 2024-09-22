@@ -1,6 +1,7 @@
 package com.javarush.quest.shubchynskyi.aspects;
 
-
+import com.github.valfirst.slf4jtest.TestLogger;
+import com.github.valfirst.slf4jtest.TestLoggerFactory;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
 import com.javarush.quest.shubchynskyi.test_config.TestExceptionService;
 import org.junit.jupiter.api.Assertions;
@@ -12,29 +13,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GlobalExceptionAspectIT {
 
-//    @Autowired
-//    private TestExceptionService testExceptionService;
-//
-//    @Test
-//    void testExceptionLoggingAspect() {
-//        // Создаем LogCaptor для класса GlobalExceptionAspect
-//        LogCaptor logCaptor = LogCaptor.forClass(GlobalExceptionAspect.class);
-//
-//        // Вызываем метод сервиса, который выбрасывает исключение
-//        try {
-//            testExceptionService.methodThatThrowsException();
-//        } catch (Exception e) {
-//            // Ожидаемое исключение, ничего не делаем
-//        }
-//
-//        // Проверяем, что был записан лог уровня ERROR
-//        Assertions.assertFalse(logCaptor.getErrorLogs().isEmpty(), "Должен быть хотя бы один лог уровня ERROR");
-//
-//        // Получаем записанный лог
-//        String logMessage = logCaptor.getErrorLogs().get(0);
-//
-//        // Проверяем содержимое лога
-//        Assertions.assertTrue(logMessage.contains("Exception caught in class"),
-//                "Сообщение лога должно содержать 'Exception caught in class'");
-//    }
+    @Autowired
+    private TestExceptionService testExceptionService;
+
+    @Test
+    void testExceptionLoggingAspect() {
+        // Получаем TestLogger для класса GlobalExceptionAspect
+        TestLogger testLogger = TestLoggerFactory.getTestLogger(GlobalExceptionAspect.class);
+
+        // Вызываем метод, который выбрасывает исключение
+        try {
+            testExceptionService.methodThatThrowsException();
+        } catch (Exception e) {
+            // Ожидаемое исключение
+        }
+
+        // Проверяем, что лог-сообщение было записано
+        Assertions.assertFalse(testLogger.getAllLoggingEvents().isEmpty(), "Must be one log minimum");
+
+        // Получаем записанное сообщение
+        String logMessage = testLogger.getLoggingEvents().get(0).getMessage();
+
+        // Проверяем содержимое сообщения
+        Assertions.assertTrue(logMessage.contains("Exception caught in class"),
+                "Must be 'Exception caught in class'");
+
+        // Очищаем логгер после теста
+        TestLoggerFactory.clear();
+    }
 }
