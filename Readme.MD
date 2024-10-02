@@ -11,6 +11,7 @@ Developed as part of an educational project at [Javarush University](https://jav
 - **Quest Creation**: Create quests from text templates.
 - **Quest Editing**: Edit quests even after creation, allowing for flexibility and updates.
 - **Testing**: Comprehensive unit and integration tests using Testcontainers to ensure reliability and stability.
+- **Logging**: Persistent logging to assist with monitoring and debugging. Logs are stored and preserved across application updates.
 - **Automated CI/CD Pipeline**: The project is built, tested, and deployed using Jenkins on a server within Docker, ensuring continuous integration and delivery.
 
 ## Technologies Used
@@ -39,6 +40,7 @@ Developed as part of an educational project at [Javarush University](https://jav
 
 3. **Ensure Docker is Running**:
     - Make sure Docker is running on your machine before executing the script. You can check by running `docker ps` in your terminal.
+
 
 ## Live Application
 

@@ -10,6 +10,12 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # Use variables from .env
 JAR_PATH="$SCRIPT_DIR/$JAR_NAME"
 
+# Check and create log directory on the host (only necessary for Linux)
+if [ ! -d "$HOST_LOGS_DIR" ]; then
+    echo "Creating log directory on host: $HOST_LOGS_DIR"
+    mkdir -p "$HOST_LOGS_DIR" || true  # Ignore error if command fails
+fi
+
 # Clean the project before building
 echo "Cleaning the project..."
 mvn clean

@@ -2,72 +2,61 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Parent configuration for Spring Boot -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.0</version>
+        <version>3.3.4</version>
     </parent>
 
-    <groupId>com.example</groupId>
+    <!-- Project coordinates -->
+    <groupId>ua.pp.shubchynskyi</groupId>
     <artifactId>Quest_project</artifactId>
     <version>1.0</version>
-    <name>Quest_project</name>
     <packaging>jar</packaging>
+    <name>Quest_project</name>
 
+    <!-- Project properties -->
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>21</maven.compiler.target>
-        <maven.compiler.source>21</maven.compiler.source>
-        <postgresql.version>42.3.8</postgresql.version>
-        <testcontainers-postgresql.version>1.18.0</testcontainers-postgresql.version>
-        <maven-war-plugin.version>3.3.2</maven-war-plugin.version>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <java.version>21</java.version>
         <lombok.version>1.18.30</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
-        <maven.plugin.validation>VERBOSE</maven.plugin.validation>
     </properties>
 
-    <dependencyManagement>
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies -->
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>3.1.5</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
-        <!-- ********************* Core Libraries ******************** -->
 
-        <!-- Spring Boot -->
+        <!-- ********************* Core Libraries ********************* -->
+
+        <!-- Spring Boot Web Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <!-- Spring Boot Validation Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+
+        <!-- Spring Boot JPA Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- optional for development -->
+        <!-- DevTools for development -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
 
-        <!-- Lombok -->
+        <!-- Lombok for boilerplate code -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -75,63 +64,45 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- MapStruct -->
+        <!-- MapStruct for mapping DTOs -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
         </dependency>
 
-        <!-- ********************* Web and UI ******************** -->
+        <!-- ********************* Web and UI ********************* -->
 
-        <!-- Thymeleaf -->
+        <!-- Thymeleaf Template Engine -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-        <!-- ********************* Database and JPA ******************** -->
+        <!-- ********************* Database and JPA ********************* -->
 
-        <!-- PostgreSQL -->
+        <!-- PostgreSQL Driver -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
 
-        <!-- Liquibase -->
+        <!-- Liquibase for database migrations -->
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>
 
-        <!-- ********************* Testing ******************** -->
+        <!-- ********************* Testing Libraries ********************* -->
 
+        <!-- Spring Boot Testing Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <!-- Исключаем реализации логгера -->
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-slf4j2-impl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.logging.log4j</groupId>
-                    <artifactId>log4j-to-slf4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
-        <!-- Junit Jupiter API and Engine -->
+        <!-- JUnit Jupiter API and Engine for testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -143,7 +114,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Mockito Core and Junit Jupiter Support-->
+        <!-- Mockito Core and JUnit Jupiter Support for mocking -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -155,8 +126,7 @@
             <scope>test</scope>
         </dependency>
 
-
-        <!-- Testcontainers -->
+        <!-- Testcontainers for integration tests with PostgreSQL -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-testcontainers</artifactId>
@@ -168,7 +138,9 @@
             <scope>test</scope>
         </dependency>
 
-        <!--        logger slf4j-log4j       -->
+        <!-- ********************* Logging Configuration ********************* -->
+
+        <!-- Spring Boot Starter without default logging -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -179,12 +151,14 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- Log4j2 Logging -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.github.valfirst/slf4j-test -->
+        <!-- SLF4J Testing for logging -->
         <dependency>
             <groupId>com.github.valfirst</groupId>
             <artifactId>slf4j-test</artifactId>
@@ -194,28 +168,31 @@
 
     </dependencies>
 
-
+    <!-- Build Plugins -->
     <build>
         <plugins>
+
+            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
-            <!-- Add surefire plugin configuration for tests -->
+            <!-- Surefire Plugin for Unit Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <!-- Add JVM arguments -->
+                    <!-- JVM arguments for dynamic agent loading -->
                     <argLine>-XX:+EnableDynamicAgentLoading</argLine>
-                    <!-- Исключаю стандарный логер из тестов -->
+                    <!-- Exclude standard logging implementation from tests -->
                     <classpathDependencyExcludes>
                         <classpathDependencyExclude>org.apache.logging.log4j:log4j-slf4j2-impl</classpathDependencyExclude>
                     </classpathDependencyExcludes>
                 </configuration>
             </plugin>
 
+            <!-- Failsafe Plugin for Integration Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -228,9 +205,14 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <!-- Include only integration tests with *IT.java suffix -->
                     <includes>
                         <include>**/*IT.java</include>
                     </includes>
+                    <!-- Exclude standard logging implementation from integration tests -->
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExclude>org.apache.logging.log4j:log4j-slf4j2-impl</classpathDependencyExclude>
+                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
 
@@ -238,10 +220,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
                     <annotationProcessorPaths>
                         <!-- MapStruct Processor -->
                         <path>
@@ -249,7 +228,7 @@
                             <artifactId>mapstruct-processor</artifactId>
                             <version>${mapstruct.version}</version>
                         </path>
-                        <!-- Lombok -->
+                        <!-- Lombok Processor -->
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
@@ -264,7 +243,6 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-
 
         </plugins>
     </build>

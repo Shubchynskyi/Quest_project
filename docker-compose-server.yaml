@@ -26,6 +26,7 @@ services:
       - db
     privileged: true
     volumes:
+      - ${HOST_LOGS_DIR}:/app/logs
       - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
