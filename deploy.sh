@@ -6,6 +6,8 @@ source .env
 
 # Define the path to the script directory
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Use variables from .env
 JAR_PATH="$SCRIPT_DIR/$JAR_NAME"
 
 # Build the final image with the new name
@@ -24,4 +26,4 @@ echo "Removed the temporary JAR file: $JAR_PATH"
 echo "Starting Docker Compose..."
 docker-compose -f "$COMPOSE_FILE" up -d
 
-echo "Application deployed successfully."
+echo "Script completed, application started via Docker Compose."

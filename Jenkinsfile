@@ -8,6 +8,16 @@ pipeline {
             }
         }
 
+        stage('Set Permissions') {
+            steps {
+                script {
+                    sh 'chmod +x ./build-and-test.sh'
+                    sh 'chmod +x ./cleanup.sh'
+                    sh 'chmod +x ./deploy.sh'
+                }
+            }
+        }
+
         stage('Test and Build') {
             steps {
                 script {
