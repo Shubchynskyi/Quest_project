@@ -12,7 +12,6 @@ pipeline {
             steps {
                 script {
                     sh 'chmod +x ./build-and-test.sh'
-//                     sh 'chmod +x ./cleanup.sh'
                     sh 'chmod +x ./deploy.sh'
                 }
             }
@@ -25,14 +24,6 @@ pipeline {
                 }
             }
         }
-
-//         stage('Cleanup') {
-//             steps {
-//                 script {
-//                     sh './cleanup.sh'
-//                 }
-//             }
-//         }
 
         stage('Deploy') {
             steps {

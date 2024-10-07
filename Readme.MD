@@ -32,11 +32,11 @@ Developed as part of an educational project at [Javarush University](https://jav
       COMPOSE_FILE=docker-compose-local.yaml
       ```
 2. **Run the Build Script**:
-    - Run the `build-and-run.sh` script from the root of the project using Git Bash or another compatible terminal:
+    - Run the `local-build-and-run.sh` script from the root of the project using Git Bash or another compatible terminal:
       ```bash
-      ./build-and-run.sh
+      ./local-build-and-run.sh
       ```
-    - [Link to the build-and-run.sh script](./build-and-run.sh)
+    - [Link to the local-build-and-run.sh script](./local-build-and-run.sh)
 
 3. **Ensure Docker is Running**:
     - Make sure Docker is running on your machine before executing the script. You can check by running `docker ps` in your terminal.
