@@ -4,25 +4,30 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Fetch the source code from the repository
                 checkout scm
             }
         }
 
-        stage('Cleanup Docker Resources') {
+        stage('Test and Build') {
             steps {
                 script {
-                    // Run cleanup script before building
+                    sh './build-and-test.sh'
+                }
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                script {
                     sh './cleanup.sh'
                 }
             }
         }
 
-        stage('Build and Run Application') {
+        stage('Deploy') {
             steps {
                 script {
-                    // Run the main script to build and run the application
-                    sh './build-and-run.sh'
+                    sh './deploy.sh'
                 }
             }
         }
@@ -30,16 +35,11 @@ pipeline {
 
     post {
         failure {
-            // Cleanup Docker Resources
-            sh './cleanup.sh'
-            echo 'Build failed.'
+            echo 'Build or deployment failed.'
         }
         success {
             script {
-                echo 'Build succeeded! Restarting NGINX in 60 seconds...'
-                // Delay before restarting NGINX
-                sleep(time: 60, unit: 'SECONDS')
-                // Restart NGINX
+                echo 'Build and deployment succeeded! Restarting NGINX...'
                 sh 'docker exec webserver nginx -s reload'
             }
         }
