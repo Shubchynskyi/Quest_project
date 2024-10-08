@@ -7,50 +7,133 @@
           integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
           crossorigin="anonymous">
     <link rel="stylesheet" th:href="@{/css/appStyles.css}">
-
 </head>
 <body>
+<!-- Importing header -->
 <div th:replace="~{parts/header :: header}"></div>
-<div class="container">
-    <div th:each="user : ${users}">
-        <img th:src="@{/images/{image}(image=${user.image})}" th:alt="${user.image}" width="100px">
-        Edit user <a th:href="@{/user(id=${user.id}, source='/users')}"> <span th:text="${user.login}"></span><br></a>
-        User login = <span th:text="${user.login}"></span> <br>
+
+<!-- Main Container -->
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-center" th:text="#{users.title}">Users</h1>
+        <!-- Button to create a new user -->
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createUserModal" th:text="#{users.create.button}">
+            Create User
+        </button>
+    </div>
+
+    <!-- User List -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col" th:each="user : ${users}">
+            <div class="card h-100 shadow-sm">
+                <!-- User Image -->
+                <img th:src="@{/images/{image}(image=${user.image})}" th:alt="${user.login}"
+                     class="card-img-top img-fluid rounded-circle mx-auto mt-3"
+                     style="width: 100px; height: 100px; object-fit: cover;">
+
+                <!-- User Info -->
+                <div class="card-body text-center">
+                    <h5 class="card-title" th:text="${user.login}">User Login</h5>
+                    <p class="card-text">ID: <span th:text="${user.id}"></span></p>
+                </div>
+
+                <!-- Card Footer with Edit and Delete Buttons -->
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <a th:href="@{/user(id=${user.id}, source='/users')}" class="btn btn-primary button-fixed-width" th:text="#{users.edit.button}">
+                        Edit
+                    </a>
+                    <form th:action="@{/user(id=${user.id})}" method="post">
+                        <input type="hidden" name="delete" value="delete"/>
+                        <!-- Store localized message in data-* attribute -->
+                        <button type="submit" class="btn btn-danger button-fixed-width"
+                                th:text="#{users.delete.button}"
+                                th:attr="data-confirm-message=#{user.confirm.delete}">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-                                <!--draft for modal window-->
-<!--<br><br><br>-->
-<!--<button id="openCreateUserModalBtn" class="btn btn-success mb-3">Создать пользователя</button>-->
+<!-- Modal for Creating a New User (50% width) -->
+<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width: 50%;"> <!-- 50% width modal -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createUserModalLabel" th:text="#{users.modal.title}">Create New User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/users/create}" method="post">
+                    <!-- Avatar Selection -->
+                    <div class="mb-3 text-center">
+                        <label for="image" class="form-label" th:text="#{users.modal.image.label}">Profile Image</label>
+                        <div>
+                            <img id="previewId" src="/images/no-image.jpg" class="rounded-circle" style="width: 100px; height: 100px;" alt="Avatar">
+                        </div>
+                        <input onchange="PreviewImage('image','previewId');" id="image" name="image" style="visibility:hidden;" class="input-file" type="file">
+                        <button type="button" class="btn btn-primary mt-2" onclick="document.getElementById('image').click();">Choose Avatar</button>
+                    </div>
 
-<!--<div id="createUserModal">-->
-<!--    <div class="modal-content">-->
-<!--        <span id="closeCreateUserModalBtn">&times;</span>-->
-<!--        <h3>Создать пользователя</h3>-->
-<!--        <div th:insert="~{parts/form}"></div>-->
-<!--    </div>-->
-<!--</div>-->
+                    <script type="text/javascript">
+                        function PreviewImage(inputFileId, imageId) {
+                            const oFReader = new FileReader();
+                            oFReader.readAsDataURL(document.getElementById(inputFileId).files[0]);
+                            oFReader.onload = function (oFREvent) {
+                                document.getElementById(imageId).src = oFREvent.target.result;
+                            };
+                        }
+                    </script>
 
-<!--<div th:replace="~{parts/footer :: footer}"></div>-->
+                    <!-- Login input -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label" th:text="#{users.modal.username.label}">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
 
-<!--<script>-->
-<!--    const createUserModal = document.getElementById('createUserModal');-->
-<!--    const openCreateUserModalBtn = document.getElementById('openCreateUserModalBtn');-->
-<!--    const closeCreateUserModalBtn = document.getElementById('closeCreateUserModalBtn');-->
+                    <!-- Email input -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label" th:text="#{users.modal.email.label}">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
 
-<!--    openCreateUserModalBtn.onclick = function() {-->
-<!--        createUserModal.style.display = "block";-->
-<!--    }-->
+                    <!-- Password input -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label" th:text="#{users.modal.password.label}">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
 
-<!--    closeCreateUserModalBtn.onclick = function() {-->
-<!--        createUserModal.style.display = "none";-->
-<!--    }-->
+                    <!-- Submit button -->
+                    <div class="mb-3 text-center">
+                        <button type="submit" class="btn btn-success" th:text="#{users.modal.create.button}">Create User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-<!--    window.onclick = function(event) {-->
-<!--        if (event.target === createUserModal) {-->
-<!--            createUserModal.style.display = "none";-->
-<!--        }-->
-<!--    }-->
-<!--</script>-->
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-mQ93h6KT49d2Z8E5rRH6LOX1BFDOKA45E9SAB0XhHlI72i3elcxGrF5dxnD3ZXRT"
+        crossorigin="anonymous"></script>
+
+<script>
+    // Adding click event handler for delete button
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButtons = document.querySelectorAll('button[data-confirm-message]');
+        deleteButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                const confirmMessage = button.getAttribute('data-confirm-message');
+                if (!confirm(confirmMessage)) {
+                    event.preventDefault();  // Prevent form submission if user cancels
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 </html>
