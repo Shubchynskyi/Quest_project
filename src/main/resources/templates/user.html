@@ -63,7 +63,9 @@
                 }
             </script>
 
-            <input th:type="hidden" th:name="tempImageId" th:value="${tempImageId}">
+            <label>
+                <input th:type="hidden" th:name="tempImageId" th:value="${tempImageId}">
+            </label>
 
             <!-- Error Login Message -->
             <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
