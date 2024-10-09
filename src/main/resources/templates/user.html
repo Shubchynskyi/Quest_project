@@ -7,6 +7,11 @@
           integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
           crossorigin="anonymous">
     <link rel="stylesheet" th:href="@{/css/appStyles.css}">
+    <style>
+        .button-fixed-width {
+            width: 135px; /* Fixed width for both buttons */
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{parts/header :: header}"></div>
@@ -61,12 +66,11 @@
             <input th:type="hidden" th:name="tempImageId" th:value="${tempImageId}">
 
             <!-- Error Login Message -->
-            <!--suppress ThymeleafVariablesResolveInspection -->
             <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
             <div class="alert alert-danger" th:if="${fieldErrors != null && fieldErrors.containsKey('login')}"
                  th:text="${fieldErrors['login']}"></div>
 
-            <!-- Login input-->
+            <!-- Login input -->
             <div class="form-group">
                 <label class="col-md-4 control-label" for="login" th:text="#{user.login.label}">Login</label>
                 <div class="col-md-4">
@@ -78,13 +82,11 @@
             </div>
 
             <!-- Error Password Message -->
-            <!--suppress ThymeleafVariablesResolveInspection -->
-            <br th:if="${fieldErrors != null && fieldErrors.containsKey('password')}">
             <div class="alert alert-danger" th:if="${fieldErrors != null && fieldErrors.containsKey('password')}"
                  th:text="${fieldErrors['password']}">
             </div>
 
-            <!-- Password input-->
+            <!-- Password input -->
             <div class="form-group">
                 <label class="col-md-4 control-label" for="password" th:text="#{user.password.label}">Password</label>
                 <div class="col-md-4">
@@ -97,7 +99,7 @@
 
             <!-- Role input -->
             <div class="form-group">
-                <label class="col-md-4 control-label" for="role">Role</label>
+                <label class="col-md-4 control-label" for="role" th:text="#{user.role.label}">Role</label>
                 <div class="col-md-4">
                     <select id="role" name="role" class="form-control">
                         <option th:each="role : ${roles}" th:value="${role}"
@@ -111,8 +113,13 @@
             <div class="form-group">
                 <label class="col-md-4 control-label" for="updateOrCreate"></label>
                 <div class="col-md-8">
-                    <button id="updateOrCreate" name="update" class="btn btn-success">Update</button>
-                    <button id="delete" name="delete" class="btn btn-danger">Delete</button>
+                    <button id="updateOrCreate" name="update" class="btn btn-success button-fixed-width"
+                            th:text="#{user.update.button}">Update</button>
+                    <form th:action="@{/user/delete/{id}(id=${user.id})}" method="post">
+                        <button id="delete" name="delete" class="btn btn-danger button-fixed-width"
+                                th:text="#{user.delete.button}"
+                                th:attr="data-confirm-message=#{user.confirm.delete}">Delete</button>
+                    </form>
                 </div>
             </div>
 
@@ -121,6 +128,25 @@
 </div>
 
 <div th:replace="~{parts/footer :: footer}"></div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+
+<script>
+    // Adding click event handler for delete button
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButtons = document.querySelectorAll('button[data-confirm-message]');
+        deleteButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                const confirmMessage = button.getAttribute('data-confirm-message');
+                if (!confirm(confirmMessage)) {
+                    event.preventDefault();  // Prevent form submission if user cancels
+                }
+            });
+        });
+    });
+</script>
 
 </body>
 </html>
