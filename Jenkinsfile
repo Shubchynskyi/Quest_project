@@ -45,6 +45,16 @@ pipeline {
                 sleep(time: 60, unit: 'SECONDS')
                 // Restart NGINX
                 sh 'docker exec webserver nginx -s reload'
+
+                // Remove all images that start with 'testcontainers'
+                sh '''
+                    docker images --format "{{.Repository}}:{{.Tag}}" | grep "^testcontainers" | while read image; do
+                        docker rmi $image || true
+                    done
+                '''
+
+                // Clean up unused Docker images
+                sh 'docker image prune -f'
             }
         }
     }

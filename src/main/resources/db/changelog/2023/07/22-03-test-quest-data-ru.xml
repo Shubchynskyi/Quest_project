@@ -9,7 +9,7 @@
         <insert tableName="quest">
             <column name="id" valueNumeric="1"/>
             <column name="users_id" valueNumeric="1"/>
-            <column name="description" value="Описание квеста"/>
+            <column name="description" value="Исследуй мистические земли, столкнись с древними существами и сделай выборы, которые определят твою судьбу перед магическим камнем."/>
             <column name="name" value="Перед волшебным камнем"/>
         </insert>
     </changeSet>

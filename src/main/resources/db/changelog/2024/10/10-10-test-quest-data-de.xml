@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="d.shubchynskyi@gmail.com" id="Create Quest without start id for quest 3">
+        <insert tableName="quest">
+            <column name="id" valueNumeric="3"/>
+            <column name="users_id" valueNumeric="1"/>
+            <column name="description" value="Erkunde mystische Länder, begegne uralten Kreaturen und triff Entscheidungen, die dein Schicksal vor dem magischen Stein bestimmen."/>
+            <column name="name" value="Vor dem magischen Stein"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add questions for quest 3">
+        <insert tableName="question">
+            <column name="id" valueNumeric="34"/>
+            <column name="quest_id" valueNumeric="3"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Du siehst eine Höhle, was wirst du tun?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="33"/>
+            <column name="quest_id" valueNumeric="3"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Du siehst eine Sumpf-Kikimora, die begeistert auf einem Laptop tippt."/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="32"/>
+            <column name="quest_id" valueNumeric="3"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Die Kikimora sprang ins Moor, der Laptop sank mit ihr, aber rechts sehe ich einen Tunnel."/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="30"/>
+            <column name="quest_id" valueNumeric="3"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Wow. Da ist er, ein großer Haufen Gold."/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="28"/>
+            <column name="quest_id" valueNumeric="3"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Eine seltsame Straße, führt sie zurück oder kommt es mir nur so vor?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="36"/>
+            <column name="quest_id" valueNumeric="3"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Du stehst vor einem magischen Stein mit Inschriften.&#13;&#10;Was wirst du wählen?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="35"/>
+            <column name="quest_id" valueNumeric="3"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Du siehst eine verschlossene Truhe, nun...&#13;&#10;Was sollen wir tun?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="31"/>
+            <column name="quest_id" valueNumeric="3"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Eine echte Tat eines wahren Programmierers.&#13;&#10;Jetzt muss ich nur noch Java fertiglernen, und das war's."/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="25"/>
+            <column name="quest_id" valueNumeric="3"/>
+            <column name="game_state" value="LOST"/>
+            <column name="text" value="Und hier endet die Geschichte.&#13;&#10;Ein schrecklicher Tod in einem ungleichen Kampf.&#13;&#10;Das ist eine Niederlage!"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="26"/>
+            <column name="quest_id" valueNumeric="3"/>
+            <column name="game_state" value="LOST"/>
+            <column name="text" value="Da kamen böse Petschenegen und töteten dich.&#13;&#10;Gier führt zu nichts Gutem.&#13;&#10;Das ist eine Niederlage!"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="29"/>
+            <column name="quest_id" valueNumeric="3"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Du betrittst die Höhle, und dort schauen Koshchei, Baba Yaga und der Drache Gorynych Videos auf YouTube.&#13;&#10;Was wirst du tun?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="27"/>
+            <column name="quest_id" valueNumeric="3"/>
+            <column name="game_state" value="WIN"/>
+            <column name="text" value="Hurra! Es ist ein Sieg!&#13;&#10;Aber jetzt ist es wirklich Zeit für mich zu programmieren, genug herumgealbert."/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add start id into quest 3">
+        <update tableName="quest">
+            <column name="start_question_id" valueNumeric="36"/>
+            <where>id = 3</where>
+        </update>
+    </changeSet>
+
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add answers for quest 3">
+        <insert tableName="answer">
+            <column name="id" valueNumeric="35"/>
+            <column name="next_question_id" valueNumeric="36"/>
+            <column name="question_id" valueNumeric="28"/>
+            <column name="text" value="Es bleibt nichts anderes übrig, ich gehe weiter..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="36"/>
+            <column name="next_question_id" valueNumeric="25"/>
+            <column name="question_id" valueNumeric="29"/>
+            <column name="text" value="Na klar! In den Kampf!!!"/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="37"/>
+            <column name="next_question_id" valueNumeric="35"/>
+            <column name="question_id" valueNumeric="30"/>
+            <column name="text" value="Irgendetwas stimmt hier nicht, ich schließe diese Truhe..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="38"/>
+            <column name="next_question_id" valueNumeric="26"/>
+            <column name="question_id" valueNumeric="30"/>
+            <column name="text" value="Hurra. Ich fülle meine Taschen..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="39"/>
+            <column name="next_question_id" valueNumeric="27"/>
+            <column name="question_id" valueNumeric="31"/>
+            <column name="text" value="Ja, genau. Ich gehe schnell alles wiederholen, lernen und programmieren-programmieren-programmieren. Spiele sind böse."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="40"/>
+            <column name="next_question_id" valueNumeric="28"/>
+            <column name="question_id" valueNumeric="31"/>
+            <column name="text" value="Moment, ich brauche noch Literatur... Ich suche danach, dort ist ein Pfad mit dem Schild 'zur Bibliothek'."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="41"/>
+            <column name="next_question_id" valueNumeric="34"/>
+            <column name="question_id" valueNumeric="32"/>
+            <column name="text" value="Okay, ich gehe dorthin, es bleibt nichts anderes zu tun."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="42"/>
+            <column name="next_question_id" valueNumeric="31"/>
+            <column name="question_id" valueNumeric="33"/>
+            <column name="text" value="Anscheinend kann ich ohne Laptop kein Entwickler werden. Ich schlage die Kikimora mit einer Keule auf den Kopf, und jetzt habe ich eine große Zukunft."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="43"/>
+            <column name="next_question_id" valueNumeric="32"/>
+            <column name="question_id" valueNumeric="33"/>
+            <column name="text" value="Ich sage laut: 'Hey du, weg vom Laptop, ich zeige dir was...'" />
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="44"/>
+            <column name="next_question_id" valueNumeric="36"/>
+            <column name="question_id" valueNumeric="33"/>
+            <column name="text" value="Kikimora? Laptop? Ich muss gefährliche Pilze gegessen haben... Nichts wie weg..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="45"/>
+            <column name="next_question_id" valueNumeric="29"/>
+            <column name="question_id" valueNumeric="34"/>
+            <column name="text" value="Haltet mich fest! Ich ziehe mein Schwert und betrete schnell die Höhle..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="46"/>
+            <column name="next_question_id" valueNumeric="36"/>
+            <column name="question_id" valueNumeric="34"/>
+            <column name="text" value="Lass es sein. Ich habe Angst. Ich gehe zurück, um Hilfe zu holen."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="47"/>
+            <column name="next_question_id" valueNumeric="30"/>
+            <column name="question_id" valueNumeric="35"/>
+            <column name="text" value="Ich fürchte mich nicht, ich öffne sie..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="48"/>
+            <column name="next_question_id" valueNumeric="36"/>
+            <column name="question_id" valueNumeric="35"/>
+            <column name="text" value="Wer weiß, was da drin ist, ich gehe zurück..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="49"/>
+            <column name="next_question_id" valueNumeric="33"/>
+            <column name="question_id" valueNumeric="36"/>
+            <column name="text" value="Gehst du geradeaus - wirst du Entwickler"/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="50"/>
+            <column name="next_question_id" valueNumeric="34"/>
+            <column name="question_id" valueNumeric="36"/>
+            <column name="text" value="Gehst du nach rechts - findest du deinen Tod"/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="51"/>
+            <column name="next_question_id" valueNumeric="35"/>
+            <column name="question_id" valueNumeric="36"/>
+            <column name="text" value="Gehst du nach links - kommst du ins Märchen"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

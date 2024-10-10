@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="d.shubchynskyi@gmail.com" id="Create Quest without start id for quest 4">
+        <insert tableName="quest">
+            <column name="id" valueNumeric="4"/>
+            <column name="users_id" valueNumeric="1"/>
+            <column name="description" value="Досліджуй містичні землі, зустрічайся з давніми істотами та роби вибори, які визначать твою долю перед чарівним каменем."/>
+            <column name="name" value="Перед чарівним каменем"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add questions for quest 4">
+        <insert tableName="question">
+            <column name="id" valueNumeric="46"/>
+            <column name="quest_id" valueNumeric="4"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Ти бачиш якусь печеру, що будеш робити?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="45"/>
+            <column name="quest_id" valueNumeric="4"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Ти бачиш Кікімору Болотяну, яка щось захоплено друкує на ноутбуці."/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="44"/>
+            <column name="quest_id" valueNumeric="4"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Кікімора стрибнула в болото, ноут потонув разом з нею, але справа я бачу якийсь тунель."/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="42"/>
+            <column name="quest_id" valueNumeric="4"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Ого. Ось вона, велика купа золота."/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="40"/>
+            <column name="quest_id" valueNumeric="4"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Якась дивна дорога, вона веде назад чи мені це здається?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="48"/>
+            <column name="quest_id" valueNumeric="4"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Ти перед чарівним каменем, на ньому є написи.&#13;&#10;Що обереш?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="47"/>
+            <column name="quest_id" valueNumeric="4"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Ти бачиш закриту скриню, ну що ж...&#13;&#10;І що будемо робити?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="43"/>
+            <column name="quest_id" valueNumeric="4"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Справжній вчинок справжнього програміста.&#13;&#10;Тепер залишилося лише Java довчити, і все, справу зроблено."/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="37"/>
+            <column name="quest_id" valueNumeric="4"/>
+            <column name="game_state" value="LOST"/>
+            <column name="text" value="І тут казочці кінець.&#13;&#10;Жахлива смерть у нерівному бою.&#13;&#10;Це поразка!"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="38"/>
+            <column name="quest_id" valueNumeric="4"/>
+            <column name="game_state" value="LOST"/>
+            <column name="text" value="І тут прибігли злі печеніги і вбили тебе.&#13;&#10;Жадібність до добра не доведе.&#13;&#10;Це поразка!"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="41"/>
+            <column name="quest_id" valueNumeric="4"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Ти заходиш у печеру, а там Кощій, з Бабою Ягою, і Змієм Гориничем дивляться ролики на Youtube.&#13;&#10;Що будеш робити?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="39"/>
+            <column name="quest_id" valueNumeric="4"/>
+            <column name="game_state" value="WIN"/>
+            <column name="text" value="Ура! Це перемога!&#13;&#10;Але мені пора дійсно кодити, досить вже займатися дурницями."/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add start id into quest 4">
+        <update tableName="quest">
+            <column name="start_question_id" valueNumeric="48"/>
+            <where>id = 4</where>
+        </update>
+    </changeSet>
+
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add answers for quest 4">
+        <insert tableName="answer">
+            <column name="id" valueNumeric="52"/>
+            <column name="next_question_id" valueNumeric="48"/>
+            <column name="question_id" valueNumeric="40"/>
+            <column name="text" value="Робити нічого, йду далі..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="53"/>
+            <column name="next_question_id" valueNumeric="37"/>
+            <column name="question_id" valueNumeric="41"/>
+            <column name="text" value="Звісно! У бій!!!"/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="54"/>
+            <column name="next_question_id" valueNumeric="47"/>
+            <column name="question_id" valueNumeric="42"/>
+            <column name="text" value="Щось тут не так, закрию-но я цю скриню..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="55"/>
+            <column name="next_question_id" valueNumeric="38"/>
+            <column name="question_id" valueNumeric="42"/>
+            <column name="text" value="Ура. Набиваємо кишені..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="56"/>
+            <column name="next_question_id" valueNumeric="39"/>
+            <column name="question_id" valueNumeric="43"/>
+            <column name="text" value="Так, точно. Все, я швидко-швидко йду все повторювати, вчити, і кодити-кодити-кодити. Ігри - це зло."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="57"/>
+            <column name="next_question_id" valueNumeric="40"/>
+            <column name="question_id" valueNumeric="43"/>
+            <column name="text" value="Стоп, мені ж ще потрібна література... Пошукаю-но я її, он і стежка видна якась з табличкою 'в бібліотеку'."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="58"/>
+            <column name="next_question_id" valueNumeric="46"/>
+            <column name="question_id" valueNumeric="44"/>
+            <column name="text" value="Ок, піду-но я туди, робити ж нічого."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="59"/>
+            <column name="next_question_id" valueNumeric="43"/>
+            <column name="question_id" valueNumeric="45"/>
+            <column name="text" value="Схоже без ноута ніяк розробником не стати. Б'ю Кікімору дубиною по голові, і тепер у мене велике майбутнє."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="60"/>
+            <column name="next_question_id" valueNumeric="44"/>
+            <column name="question_id" valueNumeric="45"/>
+            <column name="text" value="Скажу голосно 'Ей ти, а ну відійшла від ноута, зараз я тобі покажу клас...'" />
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="61"/>
+            <column name="next_question_id" valueNumeric="48"/>
+            <column name="question_id" valueNumeric="45"/>
+            <column name="text" value="Кікімора? Ноутбук? Якісь небезпечні гриби я з'їв... Бігом звідси..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="62"/>
+            <column name="next_question_id" valueNumeric="41"/>
+            <column name="question_id" valueNumeric="46"/>
+            <column name="text" value="Тримайте мене семеро! Я дістаю меч і швидко заходжу в печеру..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="63"/>
+            <column name="next_question_id" valueNumeric="48"/>
+            <column name="question_id" valueNumeric="46"/>
+            <column name="text" value="Та ну її нафіг. Я боюся. Вернуся-но я за підмогою."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="64"/>
+            <column name="next_question_id" valueNumeric="42"/>
+            <column name="question_id" valueNumeric="47"/>
+            <column name="text" value="Я нічого не боюся, я її відкрию..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="65"/>
+            <column name="next_question_id" valueNumeric="48"/>
+            <column name="question_id" valueNumeric="47"/>
+            <column name="text" value="Хто ж його знає, що там, вернуся-но я назад..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="66"/>
+            <column name="next_question_id" valueNumeric="45"/>
+            <column name="question_id" valueNumeric="48"/>
+            <column name="text" value="прямо підеш - в розробники підеш"/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="67"/>
+            <column name="next_question_id" valueNumeric="46"/>
+            <column name="question_id" valueNumeric="48"/>
+            <column name="text" value="направо підеш - свою смерть знайдеш"/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="68"/>
+            <column name="next_question_id" valueNumeric="47"/>
+            <column name="question_id" valueNumeric="48"/>
+            <column name="text" value="наліво підеш - в казку попадеш"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
