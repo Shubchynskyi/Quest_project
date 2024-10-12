@@ -5,199 +5,199 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet author="d.shubchynskyi@gmail.com" id="Create Quest without start id">
+    <changeSet author="d.shubchynskyi@gmail.com" id="Create Quest without start id for quest 2">
         <insert tableName="quest">
             <column name="id" valueNumeric="1"/>
             <column name="users_id" valueNumeric="1"/>
-            <column name="description" value="Исследуй мистические земли, столкнись с древними существами и сделай выборы, которые определят твою судьбу перед магическим камнем."/>
-            <column name="name" value="Перед волшебным камнем"/>
+            <column name="description" value="Explore mystical lands, encounter ancient creatures, and make choices that will determine your fate before the magic stone."/>
+            <column name="name" value="Before the magic stone"/>
         </insert>
     </changeSet>
 
-    <changeSet author="d.shubchynskyi@gmail.com" id="Add questions">
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add questions for quest 2">
         <insert tableName="question">
             <column name="id" valueNumeric="10"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Ты видишь какую-то пещеру, что будешь делать?"/>
+            <column name="text" value="You see a cave, what will you do?"/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="9"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Ты видишь Кикимору Болотную, которая что-то увлеченно печатает на ноутбуке."/>
+            <column name="text" value="You see a Swamp Kikimora enthusiastically typing on a laptop."/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="8"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Кикимора прыгнула в болото, ноут утонул вместе с ней, но зато справа я вижу какой-то тоннель"/>
+            <column name="text" value="The Kikimora jumped into the swamp, the laptop sank with her, but I see a tunnel to the right."/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="6"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Ого. Вот она, большая куча золота."/>
+            <column name="text" value="Wow. There it is, a big pile of gold."/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="4"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Какая-то странная дорога, она ведет назад или мне это кажется?"/>
+            <column name="text" value="Some strange road, does it lead back or is it just me?"/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="12"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Ты перед волшебным камнем, на нем есть надписи.&#13;&#10;Что выберешь?"/>
+            <column name="text" value="You are before a magic stone with inscriptions.&#13;&#10;What will you choose?"/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="11"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Ты видишь закрытый сундук, ну-с...&#13;&#10;И что будем делать?"/>
+            <column name="text" value="You see a closed chest, well...&#13;&#10;What shall we do?"/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="7"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Настоящий поступок, настоящего программиста.&#13;&#10;Теперь осталось только Java доучить, и все, дело в шляпе."/>
+            <column name="text" value="A true act of a real programmer.&#13;&#10;Now just need to finish learning Java, and that's it, mission accomplished."/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="1"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="LOST"/>
-            <column name="text" value="Тут и сказочке конец.&#13;&#10;Ужасная смерть в неравном бою.&#13;&#10;Это поражение!"/>
+            <column name="text" value="And that's the end of the story.&#13;&#10;A terrible death in an unequal battle.&#13;&#10;This is a defeat!"/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="2"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="LOST"/>
-            <column name="text" value="И тут прибежали злые печенеги и убили тебя.&#13;&#10;Жадность до добра не доведет.&#13;&#10;Это поражение!"/>
+            <column name="text" value="Then evil Pechenegs ran in and killed you.&#13;&#10;Greed leads to no good.&#13;&#10;This is a defeat!"/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="5"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Ты заходишь в пещеру, а там Кащей, с Бабой Ягой, и Змеем Горынычем смотрят ролики на Youtube.&#13;&#10;Что будешь делать?"/>
+            <column name="text" value="You enter the cave, and there Koshchei, Baba Yaga, and Zmey Gorynych are watching videos on YouTube.&#13;&#10;What will you do?"/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="3"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="WIN"/>
-            <column name="text" value="Ура! Это победа!&#13;&#10;Но мне пора действительно кодить, хватит уже ерундой заниматься."/>
+            <column name="text" value="Hooray! It's a victory!&#13;&#10;But it's really time for me to code, enough fooling around."/>
         </insert>
     </changeSet>
 
-    <changeSet author="d.shubchynskyi@gmail.com" id="Add start id into quest">
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add start id into quest 2">
         <update tableName="quest">
             <column name="start_question_id" valueNumeric="12"/>
             <where>id = 1</where>
         </update>
     </changeSet>
 
-    <changeSet author="d.shubchynskyi@gmail.com" id="Add answers">
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add answers for quest 2">
         <insert tableName="answer">
             <column name="id" valueNumeric="1"/>
             <column name="next_question_id" valueNumeric="12"/>
             <column name="question_id" valueNumeric="4"/>
-            <column name="text" value="Делать нечего, иду дальше...."/>
+            <column name="text" value="Nothing else to do, I move on..."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="2"/>
             <column name="next_question_id" valueNumeric="1"/>
             <column name="question_id" valueNumeric="5"/>
-            <column name="text" value="Ясно что! В Бой!!!"/>
+            <column name="text" value="Of course! Into battle!!!"/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="3"/>
             <column name="next_question_id" valueNumeric="11"/>
             <column name="question_id" valueNumeric="6"/>
-            <column name="text" value="Что-то тут не то, закрою-ка я этот сундук.."/>
+            <column name="text" value="Something's not right, I'll close this chest..."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="4"/>
             <column name="next_question_id" valueNumeric="2"/>
             <column name="question_id" valueNumeric="6"/>
-            <column name="text" value="Ура. Набиваем карманы...."/>
+            <column name="text" value="Hooray. Filling my pockets..."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="5"/>
             <column name="next_question_id" valueNumeric="3"/>
             <column name="question_id" valueNumeric="7"/>
-            <column name="text" value="Да, точно. Все, я быстро-быстро иду все повторять, учить, и кодить-кодить-кодить. Игры - это зло."/>
+            <column name="text" value="Yes, exactly. I'm quickly going to review, learn, and code-code-code. Games are evil."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="6"/>
             <column name="next_question_id" valueNumeric="4"/>
             <column name="question_id" valueNumeric="7"/>
-            <column name="text" value="Стоп, мне же еще нужна литература... Поищу-ка я ее, вон и тропинка видна какая-то с табличкой &quot;в библиотеку&quot;"/>
+            <column name="text" value="Wait, I still need literature... I'll look for it, there's a path with a sign 'to the library'."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="7"/>
             <column name="next_question_id" valueNumeric="10"/>
             <column name="question_id" valueNumeric="8"/>
-            <column name="text" value="Ок, пойду-ка я туда, делать-то нечего."/>
+            <column name="text" value="Okay, I'll go there, nothing else to do."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="8"/>
             <column name="next_question_id" valueNumeric="7"/>
             <column name="question_id" valueNumeric="9"/>
-            <column name="text" value="Похоже без ноута никак разработчиком не стать. Бью Кикимору дубиной по башке, и теперь у меня большое будущее."/>
+            <column name="text" value="Looks like I can't become a developer without a laptop. I hit the Kikimora on the head with a club, and now I have a great future."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="9"/>
             <column name="next_question_id" valueNumeric="8"/>
             <column name="question_id" valueNumeric="9"/>
-            <column name="text" value="Скажу громко Эй ты, а ну отошла от ноута, ща я тебе покажу класс..."/>
+            <column name="text" value="I'll say loudly, 'Hey you, step away from the laptop, I'll show you something...'"/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="10"/>
             <column name="next_question_id" valueNumeric="12"/>
             <column name="question_id" valueNumeric="9"/>
-            <column name="text" value="Кикимора? Ноутбук? Какие-то опасные грибы я съел... Бегом отсюда..."/>
+            <column name="text" value="Kikimora? Laptop? I must have eaten some dangerous mushrooms... Run away..."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="11"/>
             <column name="next_question_id" valueNumeric="5"/>
             <column name="question_id" valueNumeric="10"/>
-            <column name="text" value="Держите меня семеро! Я достаю меч и быстро захожу в пещеру..."/>
+            <column name="text" value="Hold me back! I draw my sword and quickly enter the cave..."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="12"/>
             <column name="next_question_id" valueNumeric="12"/>
             <column name="question_id" valueNumeric="10"/>
-            <column name="text" value="Та ну её нафиг. Я боюсь. Вернусь-ка я за подмогой."/>
+            <column name="text" value="Forget it. I'm scared. I'll go back for help."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="13"/>
             <column name="next_question_id" valueNumeric="6"/>
             <column name="question_id" valueNumeric="11"/>
-            <column name="text" value="Я ничего не боюсь, я его открою..."/>
+            <column name="text" value="I'm not afraid, I'll open it..."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="14"/>
             <column name="next_question_id" valueNumeric="12"/>
             <column name="question_id" valueNumeric="11"/>
-            <column name="text" value="Кто ж его знает, что там, вернусь-ка я обратно..."/>
+            <column name="text" value="Who knows what's in there, I'll go back..."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="15"/>
             <column name="next_question_id" valueNumeric="9"/>
             <column name="question_id" valueNumeric="12"/>
-            <column name="text" value="прямо пойдешь - в разработчики пойдешь"/>
+            <column name="text" value="Go straight - you'll become a developer"/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="16"/>
             <column name="next_question_id" valueNumeric="10"/>
-            <column name="question_id" valueNumeric="12"/>
-            <column name="text" value="направо пойдешь - свою смерть найдешь"/>
+            <column name="question_id" valueNumeric="10"/>
+            <column name="text" value="Go right - you'll find your death"/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="17"/>
             <column name="next_question_id" valueNumeric="11"/>
             <column name="question_id" valueNumeric="12"/>
-            <column name="text" value="налево пойдешь - в сказку попадешь"/>
+            <column name="text" value="Go left - you'll enter a fairy tale"/>
         </insert>
     </changeSet>
 

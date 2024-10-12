@@ -21,7 +21,7 @@ app:
   localization:
     supported-languages: en, ru, ua, de
   tests:
-    expectedQuestsSize: 1
+    expectedQuestsSize: 4
 
 # Test data for quests and users
 valid:
@@ -32,7 +32,7 @@ valid:
     description: "Quest description"
     question-id: "1"
     start-question-id: "12"
-    expected-name: "Перед волшебным камнем"
+    expected-name: "Before the magic stone"
   user:
     id: "1"
     role: "USER"
