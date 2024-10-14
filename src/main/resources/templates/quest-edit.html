@@ -12,6 +12,15 @@
 <div th:replace="~{parts/header :: header}"></div>
 
 <div class="container">
+    <!-- Duplicate "To the list of quests" button at the top -->
+    <div class="d-flex justify-content-center mb-4">
+        <a href="quests-list">
+            <button type="button" class="btn btn-info" style="width: 500px;">
+                <span th:text="#{quest-edit.toQuests.button}">To the list of quests</span>
+            </button>
+        </a>
+    </div>
+
     <h4 style="margin: auto; padding-bottom: 50px; color: #565756">
         <span th:text="#{quest-edit.head.label}">Quest editing</span> <b th:text="${quest.name}"></b>
     </h4>
@@ -51,7 +60,7 @@
                    type="file">
         </div>
 
-        <!-- Button -->
+        <!-- Save Button -->
         <div class="mb-3">
             <button type="submit" class="btn btn-success"
                     style="width: 200px; margin-bottom: 50px">
@@ -121,15 +130,18 @@
         </form>
         <hr class="hr hr-blurry"/>
     </div>
+    <!-- Save button -->
+    <div class="d-flex justify-content-center mb-4">
+        <a href="quests-list">
+            <button type="button" class="btn btn-info" style="width: 500px;">
+                <span th:text="#{quest-edit.toQuests.button}">To the list of quests</span>
+            </button>
+        </a>
+    </div>
 </div>
-<div class="container">
-    <a href="quests-list">
-        <button type="button" class="btn btn-info" style="width: 500px;">
-            <span th:text="#{quest-edit.toQuests.button}">To the list of quests</span>
-        </button>
-    </a>
-</div>
+
 <div th:replace="~{parts/footer :: footer}"></div>
+
 <script type="text/javascript">
     function PreviewImage(inputElement) {
         const previewImageId = inputElement.getAttribute('data-preview-id');
