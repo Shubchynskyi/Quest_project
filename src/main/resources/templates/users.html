@@ -9,16 +9,13 @@
 </head>
 <body>
 
-<!-- Importing header -->
 <div th:replace="~{parts/header :: header}"></div>
 
-<!-- Main Container -->
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="text-center" th:text="#{users.title}">Users</h1>
     </div>
 
-    <!-- User List -->
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <div class="col" th:each="user : ${users}">
             <div class="card h-100 shadow-sm">
@@ -30,12 +27,12 @@
                     <p class="card-text">ID: <span th:text="${user.id}"></span></p>
                 </div>
                 <div class="card-footer d-flex justify-content-between align-items-center">
-                    <a th:href="@{/user(id=${user.id}, source='/users')}" class="btn btn-primary button-fixed-width" th:text="#{users.edit.button}">
+                    <a th:href="@{/user(id=${user.id}, source='/users')}" class="btn btn-primary fixed-width-button" th:text="#{users.edit.button}">
                         Edit
                     </a>
                     <form th:action="@{/user(id=${user.id})}" method="post">
                         <input type="hidden" name="delete" value="delete"/>
-                        <button type="submit" class="btn btn-danger button-fixed-width"
+                        <button type="submit" class="btn btn-danger fixed-width-button"
                                 th:text="#{users.delete.button}"
                                 th:attr="data-confirm-message=#{user.confirm.delete}">
                             Delete
@@ -47,19 +44,17 @@
     </div>
 </div>
 
-<!-- Bootstrap JS and dependencies -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
 
 <script>
-    // Adding click event handler for delete button
     document.addEventListener('DOMContentLoaded', function () {
         const deleteButtons = document.querySelectorAll('button[data-confirm-message]');
         deleteButtons.forEach(function (button) {
             button.addEventListener('click', function (event) {
                 const confirmMessage = button.getAttribute('data-confirm-message');
                 if (!confirm(confirmMessage)) {
-                    event.preventDefault();  // Prevent form submission if user cancels
+                    event.preventDefault();
                 }
             });
         });

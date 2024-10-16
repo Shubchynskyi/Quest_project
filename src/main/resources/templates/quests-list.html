@@ -21,9 +21,15 @@
         <div class="card-body">
           <h5 class="card-title" th:text="${quest.name}"></h5>
           <p class="card-text card-text-ellipsis" th:text="${quest.description}"></p>
-          <a th:href="@{/quest(id=${quest.id})}" class="btn btn-primary centered-button">
-            <span th:text="#{quests-list.button.play}">PLAY &raquo;</span>
-          </a>
+          <div class="d-flex justify-content-between">
+            <a th:href="@{/quest(id=${quest.id})}" class="btn btn-primary fixed-width-button">
+              <span th:text="#{quests-list.button.play}">PLAY &raquo;</span>
+            </a>
+            <a th:if="${session.user != null and (session.user.role.name() == 'ADMIN' || session.user.role.name() == 'MODERATOR')}"
+               th:href="@{/quest-edit(id=${quest.id})}" class="btn btn-secondary fixed-width-button">
+              <span th:text="#{quests-list.button.edit}">Edit</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>

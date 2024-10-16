@@ -19,6 +19,8 @@ import static com.javarush.quest.shubchynskyi.constant.Key.*;
 @Controller
 public class ProfileController {
 
+    // TODO список квестов пользователя с возможностью редактировать
+
     @GetMapping(PROFILE)
     public String showProfile(HttpSession session, Model model) {
         UserDTO user = getUserFromSession(session);

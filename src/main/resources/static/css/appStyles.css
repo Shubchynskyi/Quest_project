@@ -1,3 +1,5 @@
+/* General Styles */
+
 .img-icon {
     height: 25px;
     border-color: #0078ff;
@@ -29,11 +31,15 @@
     text-overflow: ellipsis;
 }
 
-.centered-button {
-    display: block;
-    width: 130px;
-    margin: auto;
+/* Button Styles: Fixed width buttons */
+
+.fixed-width-button {
+    width: 150px;
+    text-align: center;
+    white-space: nowrap;
 }
+
+/* Modal Styles */
 
 #createUserModal {
     display: none;
@@ -46,7 +52,7 @@
     background-color: rgba(0,0,0,0.5);
 }
 
-.modal-content {
+.custom-modal-content {
     background-color: #f4f4f4;
     padding: 20px;
     width: 60%;
@@ -56,8 +62,43 @@
     left: 20%;
 }
 
-.button-fixed-width {
-    width: 135px; /* Фиксированная ширина кнопок */
-    text-align: center; /* Центрирование текста */
-    margin: 0 10px; /* Отступы слева и справа для равного расстояния */
+/* Form Styles */
+
+.custom-form-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-group-right {
+    display: flex;
+    gap: 10px;
+}
+
+/* Toast Message Styles */
+
+.toast-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: none;
+    z-index: 9999;
+}
+
+/* Align the "Copy" and "Close" buttons in modal footer */
+
+.custom-modal-footer {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Preserve line breaks in modal body text */
+
+.modal-body pre {
+    white-space: pre-wrap;
 }

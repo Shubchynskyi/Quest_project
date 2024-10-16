@@ -2,42 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:fragment="head">
     <title th:text="#{create-quest.title}">Create Quest Page</title>
-    <!-- Подключение Bootstrap CSS -->
+    <!-- Include Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/appStyles.css}">
-    <style>
-        .form-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .btn-group-right {
-            display: flex;
-            gap: 10px;
-        }
-        /* Стили для всплывающего сообщения */
-        .toast-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.75);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            display: none;
-            z-index: 9999;
-        }
-        /* Выровнять кнопки "Copy" и "Close" */
-        .modal-footer {
-            display: flex;
-            justify-content: space-between;
-        }
-        /* Стили для сохранения переносов строк в тексте */
-        .modal-body pre {
-            white-space: pre-wrap; /* сохраняет переносы строк */
-        }
-    </style>
 </head>
 <body>
 <div th:replace="~{parts/header :: header}"></div>
@@ -49,7 +16,7 @@
         <div class="alert alert-danger" th:if="${fieldErrors != null && fieldErrors.containsKey('name')}"
              th:text="${fieldErrors['name']}"></div>
 
-        <!-- Name input-->
+        <!-- Name input -->
         <div class="mb-3">
             <label for="questName" class="form-label" th:text="#{create-quest.quest.name.label}">Quest name</label>
             <input name="questName" type="text" class="form-control" id="questName"
@@ -59,9 +26,9 @@
 
         <!-- Error Description Message -->
         <div class="alert alert-danger" th:if="${fieldErrors != null && fieldErrors.containsKey('description')}"
-             th:text="#{fieldErrors['description']}"></div>
+             th:text="${fieldErrors['description']}"></div>
 
-        <!-- Description input-->
+        <!-- Description input -->
         <div class="mb-3">
             <label for="questDescription" class="form-label" th:text="#{create-quest.quest.description.label}">Quest description</label>
             <input name="questDescription" type="text" class="form-control" id="questDescription"
@@ -73,11 +40,11 @@
 
         <input type="hidden" name="id" th:value="${session.user.id}">
 
-        <div class="form-group">
-            <!-- Кнопка создания квеста -->
+        <div class="custom-form-group">
+            <!-- Create quest button -->
             <button id="submit" name="create" class="btn btn-success" th:text="#{create-quest.quest.create.button}">Create quest</button>
 
-            <!-- Кнопки для открытия модальных окон -->
+            <!-- Buttons to open modal windows -->
             <div class="btn-group-right">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal1" th:text="#{create-quest.modal1.title}">Quest Example</button>
                 <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal2" th:text="#{create-quest.modal2.title}">Quest Example</button>
@@ -89,27 +56,15 @@
 <!-- Modal window 1 -->
 <div class="modal fade" id="modal1" tabindex="-1" aria-labelledby="modal1Label" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content custom-modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modal1Label" th:text="#{create-quest.modal1.title}">Quest Example 1</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-        <pre th:utext="#{create-quest.modal1.text}">
-        1: You've lost your memory. "Accept the UFO's challenge?"\n
-        2< Accept the challenge\n
-        91< Decline the challenge\n
-        2: You've accepted the challenge. Go up to the captain's bridge?\n
-        92< Refuse to go up\n
-        3< Go up to the bridge\n
-        3: You've reached the bridge. Who are you?\n
-        93< Lie about yourself\n
-        99< Tell the truth\n
-        91- You declined the challenge. Defeat.\n
-        99+ You won
-        </pre>
+                <pre th:utext="${@contentService.getText('quests_create_page', 'modal_example_1_text', #locale)}"></pre>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer custom-modal-footer">
                 <button id="copyBtn1" class="btn btn-primary" th:text="#{create-quest.modal.copy}">Copy</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{create-quest.modal.close}">Close</button>
             </div>
@@ -120,21 +75,15 @@
 <!-- Modal window 2 -->
 <div class="modal fade" id="modal2" tabindex="-1" aria-labelledby="modal2Label" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content custom-modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modal2Label" th:text="#{create-quest.modal2.title}">Quest Example 2</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-        <pre th:utext="#{create-quest.modal2.text}">
-        1: You are in front of a magical stone with inscriptions on it. What will you choose?\n
-        2< Go left - enter a fairytale\n
-        3< Go right - meet your death\n
-        4< Go straight - become a developer\n
-        ...
-        </pre>
+                <pre th:utext="${@contentService.getText('quests_create_page', 'modal_example_2_text', #locale)}"></pre>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer custom-modal-footer">
                 <button id="copyBtn2" class="btn btn-primary" th:text="#{create-quest.modal.copy}">Copy</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{create-quest.modal.close}">Close</button>
             </div>
@@ -166,7 +115,7 @@
         const modalBody = document.querySelector(`#${modalId} .modal-body`).innerText;
         navigator.clipboard.writeText(modalBody).then(function() {
             // Close the modal
-            var modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+            const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
             modal.hide();
 
             // Show toast message

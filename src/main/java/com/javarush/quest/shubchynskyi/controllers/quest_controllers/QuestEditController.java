@@ -33,6 +33,9 @@ import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.QUE
 @RequiredArgsConstructor
 public class QuestEditController {
 
+    // TODO настройки доступа, если ID пользователя = ID пользователя в квесте, то разрешить доступ.
+    // TODO для списка (админ, модер) - разрешить доступ
+
     private final QuestService questService;
     private final QuestionService questionService;
     private final AnswerService answerService;
@@ -71,7 +74,7 @@ public class QuestEditController {
         } else if (allParams.containsKey(QUESTION_ID)) {
             viewName = questionEdit(allParams, imageFile);
         } else {
-            viewName = QUESTS_LIST; // todo убрал /, было из Route, проверить
+            viewName = QUESTS_LIST;
         }
 
         log.info("Saving quest with parameters: {}", allParams);

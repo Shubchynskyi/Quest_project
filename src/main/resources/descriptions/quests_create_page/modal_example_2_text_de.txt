@@ -1,0 +1,38 @@
+1: Du stehst vor einem magischen Stein mit Inschriften. Was wirst du wählen?
+2< Gehe nach links - betrete ein Märchen
+3< Gehe nach rechts - triff den Tod
+4< Gehe geradeaus - werde Entwickler
+
+2: Du siehst eine verschlossene Truhe, was nun...
+1< Vielleicht sollte ich umkehren...
+7< Ich habe keine Angst, ich werde es öffnen...
+
+3: Du siehst eine Höhle, was wirst du tun?
+1< Nein, ich habe Angst. Ich werde zurückkehren, um Hilfe zu holen.
+8< Halt mein Schwert, ich gehe hinein...
+
+4: Du siehst Kikimora, die über einem Laptop sitzt. Was nun?
+1< Kikimora? Laptop? Welche Pilze habe ich gegessen... Wegrennen...
+5< Rufe: Hey, geh vom Laptop weg, lass mich dir was zeigen...
+6< Anscheinend braucht man einen Laptop, um Entwickler zu werden. Schlag Kikimora mit einer Keule und sichere deine Zukunft.
+
+5: Kikimora sprang ins Moor, aber rechts siehst du einen Tunnel.
+3< Okay, ich werde dorthin gehen...
+
+6: Das ist die Tat eines echten Programmierers.
+9< Warte, ich brauche noch Literatur... dort ist ein Weg mit einem Schild 'Bibliothek'.
+10< Ja, es ist Zeit, Java zu lernen und zu codieren. Spiele sind böse.
+
+7: Wow, ein großer Haufen Gold.
+11< Hurra, füllen wir unsere Taschen...
+2< Irgendwas stimmt hier nicht, ich werde die Truhe schließen.
+
+8: Du betrittst die Höhle und siehst Koschei, Baba Yaga und den Gorynych-Drache YouTube schauen.
+12< Angriff!!!
+
+9: Seltsamer Weg, er scheint zurück zu führen...
+1< Nichts zu tun, weitergehen...
+
+10+ Sieg! Aber jetzt ist es wirklich Zeit zu programmieren. Genug Unsinn.
+11- Gier führt zu nichts Gutem. Die Petschenegen haben dich getötet.
+12- Und das war das Ende der Geschichte. Schrecklicher Tod in einem unfairen Kampf. Niederlage.

@@ -1,0 +1,17 @@
+1: You've lost your memory. "Accept the UFO's challenge?"
+2< Accept the challenge
+91< Decline the challenge
+
+2: You've accepted the challenge. Go up to the captain's bridge?
+92< Refuse to go up
+3< Go up to the bridge
+
+3: You've reached the bridge. Who are you?
+93< Lie about yourself
+99< Tell the truth
+
+91- You declined the challenge. Defeat.
+92- You didn't go to negotiations. Defeat.
+93- Your lie was uncovered. Defeat.
+
+99+ You won

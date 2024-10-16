@@ -1,0 +1,38 @@
+1: You are in front of a magical stone with inscriptions on it. What will you choose?
+2< Go left - enter a fairytale
+3< Go right - meet your death
+4< Go straight - become a developer
+
+2: You see a locked chest, now what...
+1< Maybe I should turn back...
+7< I'm not afraid of anything, I'll open it...
+
+3: You see a cave, what will you do?
+1< No way, I'm scared. I'll return for help.
+8< Hold my sword, I'm going in...
+
+4: You see Kikimora swamped over a laptop. What now?
+1< Kikimora? Laptop? What kind of mushrooms did I eat... Run away...
+5< Shout: Hey, back off from the laptop, let me show you some skills...
+6< Looks like you need a laptop to become a developer. Hit Kikimora with a club and secure your future.
+
+5: Kikimora jumped into the swamp, but to the right, you see a tunnel.
+3< Alright, I'll head that way...
+
+6: That's the real deed of a real programmer.
+9< Wait, I still need literature... there's a path marked 'library'.
+10< Yes, time to study Java and get coding. Games are evil.
+
+7: Wow, a big pile of gold.
+11< Hooray, let's fill our pockets...
+2< Something's wrong here, I'll close the chest.
+
+8: You enter the cave and see Koschei, Baba Yaga, and the Gorynych dragon watching YouTube.
+12< Attack!!!
+
+9: Strange road, it seems to lead back...
+1< Nothing to do, keep going...
+
+10+ Victory! But now it's time to really code. Enough fooling around.
+11- Greed doesn't lead to good. The Pechenegs killed you.
+12- And that's the end of the tale. Horrible death in an unfair fight. Defeat.
