@@ -12,7 +12,7 @@
 <div th:replace="~{parts/header :: header}"></div>
 <div class="container">
 
-  <!-- Профиль пользователя -->
+  <!-- User profile -->
   <div class="profile-section">
     <div class="profile-image-container">
       <img th:src="@{/images/{image}(image=${user.image})}" class="profile-image" alt="" th:alt="${user.image}">
@@ -29,9 +29,9 @@
     </div>
   </div>
 
-  <!-- Список квестов -->
+  <!-- Quests list -->
   <div class="quest-list">
-    <p class="mb-4 fs-4 text-center" th:text="#{quests-list.choice.label}">Choose a quest</p>
+    <p class="mb-4 fs-4 text-center" th:text="#{profile.quests.list.title}">My quests</p>
     <div class="row">
       <div th:each="quest : ${quests}" class="col-lg-4 mb-4">
         <div class="card">

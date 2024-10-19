@@ -8,6 +8,7 @@ import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
+import com.javarush.quest.shubchynskyi.mapper.QuestMapper;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.service.ValidationService;
 import jakarta.servlet.http.HttpSession;
@@ -23,8 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
@@ -36,10 +37,12 @@ import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.YOU
 @Slf4j
 public class QuestCreateController {
 
-    // Todo move to constant or to yaml
-    public static final Set<Role> ALLOWED_ROLES_FOR_QUEST_CREATE = Set.of(Role.USER, Role.MODERATOR, Role.ADMIN);
     private final QuestService questService;
     private final ValidationService validationService;
+    private final QuestMapper questMapper;
+
+    // Todo move to constant or to yaml
+    public static final List<Role> ALLOWED_ROLES_FOR_QUEST_CREATE = List.of(Role.USER, Role.MODERATOR, Role.ADMIN);
 
     @GetMapping(CREATE_QUEST)
     public String showCreateQuestPage(
@@ -73,9 +76,15 @@ public class QuestCreateController {
             @Valid @ModelAttribute(QUEST_DTO) QuestDTO questDTO,
             BindingResult bindingResult,
             @RequestParam(QUEST_TEXT) String questText,
-            @RequestParam(ID) String authorId,
+            HttpSession session,
             RedirectAttributes redirectAttributes
     ) {
+
+        if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_CREATE, redirectAttributes)) {
+            log.warn("Access denied to quest create controller: insufficient permissions.");
+            return REDIRECT + Route.LOGIN;
+        }
+
         boolean hasFieldsErrors = validationService.processFieldErrors(bindingResult, redirectAttributes);
         if (hasFieldsErrors) {
             log.info("Quest creation failed due to validation errors for quest: {}", questDTO.getName());
@@ -84,7 +93,12 @@ public class QuestCreateController {
         }
 
         try {
-            Quest quest = questService.create(questDTO.getName(), questText, questDTO.getDescription(), authorId);
+            UserDTO userDTO = (UserDTO) session.getAttribute(USER);
+            Quest quest = questService.create(questDTO.getName(), questText, questDTO.getDescription(), String.valueOf(userDTO.getId()));
+            List<QuestDTO> quests = userDTO.getQuests();
+            quests.add(questMapper.questToQuestDTOWithOutQuestions(quest));
+            userDTO.setQuests(quests);
+            session.setAttribute(USER, userDTO);
             log.info("Quest created successfully with ID: {}", quest.getId());
             return REDIRECT + Route.QUEST_EDIT_ID + quest.getId();
         } catch (AppException e) {

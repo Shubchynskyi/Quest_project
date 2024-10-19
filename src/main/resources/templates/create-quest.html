@@ -38,8 +38,6 @@
 
         <div th:replace="~{parts/quest-text-area :: quest-text-area}"></div>
 
-        <input type="hidden" name="id" th:value="${session.user.id}">
-
         <div class="custom-form-group">
             <!-- Create quest button -->
             <button id="submit" name="create" class="btn btn-success" th:text="#{create-quest.quest.create.button}">Create quest</button>

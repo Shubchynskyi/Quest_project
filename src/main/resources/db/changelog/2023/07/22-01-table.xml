@@ -5,17 +5,36 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <!-- Create table users -->
     <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-1">
+        <createTable tableName="users">
+            <column autoIncrement="true" name="id" startWith="20" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="users_pkey"/>
+            </column>
+            <column name="login" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="role" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create table answer -->
+    <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-2">
         <createTable tableName="answer">
             <column autoIncrement="true" name="id" startWith="200" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="answer_pkey"/>
             </column>
             <column name="next_question_id" type="BIGINT"/>
             <column name="question_id" type="BIGINT"/>
-            <column name="text" type="VARCHAR(255)"/>
+            <column name="text" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
-    <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-2">
+
+    <!-- Create table game -->
+    <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-3">
         <createTable tableName="game">
             <column name="current_question_id" type="BIGINT"/>
             <column autoIncrement="true" name="id" type="BIGINT">
@@ -23,10 +42,14 @@
             </column>
             <column name="quest_id" type="BIGINT"/>
             <column name="users_id" type="BIGINT"/>
-            <column name="game_state" type="VARCHAR(255)"/>
+            <column name="game_state" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
-    <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-3">
+
+    <!-- Create table quest -->
+    <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-4">
         <createTable tableName="quest">
             <column autoIncrement="true" name="id" startWith="10" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="quest_pkey"/>
@@ -37,46 +60,106 @@
             <column name="name" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-4">
+
+    <!-- Create table question -->
+    <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-5">
         <createTable tableName="question">
             <column autoIncrement="true" name="id" startWith="100" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="question_pkey"/>
             </column>
             <column name="quest_id" type="BIGINT"/>
             <column name="game_state" type="VARCHAR(255)"/>
-            <column name="text" type="VARCHAR(255)"/>
-        </createTable>
-    </changeSet>
-    <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-5">
-        <createTable tableName="users">
-            <column autoIncrement="true" name="id" startWith="20" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="users_pkey"/>
+            <column name="text" type="VARCHAR(255)">
+                <constraints nullable="false"/>
             </column>
-            <column name="login" type="VARCHAR(255)"/>
-            <column name="password" type="VARCHAR(255)"/>
-            <column name="role" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
+
+    <!-- Add unique constraint to quest.name -->
     <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-6">
         <addUniqueConstraint columnNames="name" constraintName="quest_name_key" tableName="quest"/>
     </changeSet>
+
+    <!-- Add unique constraint to users.login -->
     <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-7">
         <addUniqueConstraint columnNames="login" constraintName="users_login_key" tableName="users"/>
     </changeSet>
+
+    <!-- Add foreign keys separately -->
+
+    <!-- Foreign key for game.users_id -->
     <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-8">
-        <addForeignKeyConstraint baseColumnNames="quest_id" baseTableName="question" constraintName="fk77jha3opawivtb5nx7xwbqbrs" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quest" validate="true"/>
+        <addForeignKeyConstraint
+                baseTableName="game"
+                baseColumnNames="users_id"
+                referencedTableName="users"
+                referencedColumnNames="id"
+                constraintName="fk_game_user"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                validate="true"/>
     </changeSet>
+
+    <!-- Foreign key for game.quest_id -->
     <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-9">
-        <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="answer" constraintName="fk8frr4bcabmmeyyu60qt7iiblo" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="question" validate="true"/>
+        <addForeignKeyConstraint
+                baseTableName="game"
+                baseColumnNames="quest_id"
+                referencedTableName="quest"
+                referencedColumnNames="id"
+                constraintName="fk_game_quest"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                validate="true"/>
     </changeSet>
+
+    <!-- Foreign key for quest.users_id -->
     <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-10">
-        <addForeignKeyConstraint baseColumnNames="users_id" baseTableName="game" constraintName="fkasc7c966y723ha9y0c7jc540s" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users" validate="true"/>
+        <addForeignKeyConstraint
+                baseTableName="quest"
+                baseColumnNames="users_id"
+                referencedTableName="users"
+                referencedColumnNames="id"
+                constraintName="fk_quest_user"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                validate="true"/>
     </changeSet>
+
+    <!-- Foreign key for question.quest_id -->
     <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-11">
-        <addForeignKeyConstraint baseColumnNames="quest_id" baseTableName="game" constraintName="fkg8857rr7h2arqxa28y42kj3lo" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="quest" validate="true"/>
+        <addForeignKeyConstraint
+                baseTableName="question"
+                baseColumnNames="quest_id"
+                referencedTableName="quest"
+                referencedColumnNames="id"
+                constraintName="fk_question_quest"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                validate="true"/>
     </changeSet>
+
+    <!-- Foreign key for answer.question_id -->
     <changeSet author="d.shubchynskyi@gmail.com" id="1689979476690-12">
-        <addForeignKeyConstraint baseColumnNames="users_id" baseTableName="quest" constraintName="fktgmka8v6dutkdojskm98dyntn" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users" validate="true"/>
+        <addForeignKeyConstraint
+                baseTableName="answer"
+                baseColumnNames="question_id"
+                referencedTableName="question"
+                referencedColumnNames="id"
+                constraintName="fk_answer_question"
+                deferrable="false"
+                initiallyDeferred="false"
+                onDelete="NO ACTION"
+                onUpdate="NO ACTION"
+                validate="true"/>
     </changeSet>
 
 </databaseChangeLog>

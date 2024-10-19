@@ -26,8 +26,8 @@ import org.springframework.util.MultiValueMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
@@ -57,6 +57,8 @@ public class QuestCreateControllerIT {
     private String validUserId;
     @Value("${invalid.quest.text}")
     private String invalidQuestText;
+    @Value("${valid.user.role}")
+    private String validUserRole;
 
     private String validQuestText;
     private UserDTO userDTO;
@@ -65,9 +67,12 @@ public class QuestCreateControllerIT {
     void setUp() throws IOException {
         validQuestText = loadTextFromFile(validQuestTextPath);
         userDTO = new UserDTO();
+        userDTO.setId(Long.valueOf(validUserId));
+        userDTO.setRole(Role.valueOf(validUserRole));
+        userDTO.setQuests(new ArrayList<>());
     }
 
-    private static String loadTextFromFile(String path) throws IOException {
+    private String loadTextFromFile(String path) throws IOException {
         try (InputStream inputStream = new ClassPathResource(path).getInputStream()) {
             return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         }
@@ -79,17 +84,14 @@ public class QuestCreateControllerIT {
 
     private static Stream<Role> notAllowedRolesProvider() {
         return EnumSet.allOf(Role.class).stream()
-                .filter(role -> !QuestCreateController.ALLOWED_ROLES_FOR_QUEST_CREATE.contains(role))
-                .map(Enum::name)
-                .map(Role::valueOf);
+                .filter(role -> !QuestCreateController.ALLOWED_ROLES_FOR_QUEST_CREATE.contains(role));
     }
 
     private static Stream<Arguments> provideParametersForMissingTest() {
         return Stream.of(
                 Arguments.of(QUEST_NAME, HttpStatus.FOUND),
                 Arguments.of(QUEST_TEXT, HttpStatus.BAD_REQUEST),
-                Arguments.of(QUEST_DESCRIPTION, HttpStatus.FOUND),
-                Arguments.of(ID, HttpStatus.BAD_REQUEST)
+                Arguments.of(QUEST_DESCRIPTION, HttpStatus.FOUND)
         );
     }
 
@@ -125,8 +127,6 @@ public class QuestCreateControllerIT {
 
     @Test
     void showCreateQuestPage_WhenQuestDTOAbsent_AddsQuestDTOToModel() throws Exception {
-        userDTO.setRole(QuestCreateController.ALLOWED_ROLES_FOR_QUEST_CREATE.iterator().next());
-
         mockMvc.perform(get(Route.CREATE_QUEST).sessionAttr(USER, userDTO))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(QUEST_DTO))
@@ -136,42 +136,49 @@ public class QuestCreateControllerIT {
     @Test
     @Transactional
     public void createQuest_SuccessAndNameAlreadyExists_ShouldReturnError() throws Exception {
-        Long questId = createQuestAndAssertRedirect(validQuestName, validQuestDescription, validQuestText, validUserId, Route.QUEST_EDIT);
+        // Create the first quest and verify redirection
+        Long questId = createQuestAndAssertRedirect(validQuestName, validQuestDescription, validQuestText, userDTO);
 
+        // Verify the created quest details
         Quest createdQuest = questService.get(questId).orElseThrow();
         assertQuestDetails(createdQuest, validQuestName, validQuestDescription, validUserId);
 
+        // Attempt to create a second quest with the same name and expect an error
         mockMvc.perform(post(Route.CREATE_QUEST)
                         .param(TestConstants.NAME, validQuestName)
                         .param(TestConstants.DESCRIPTION, validQuestDescription)
-                        .param(QUEST_TEXT, validQuestText)
-                        .param(ID, validUserId))
+                        .param(TestConstants.QUEST_TEXT, validQuestText)
+                        .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(CREATE_QUEST))
                 .andExpect(flash().attributeExists(ERROR));
     }
-    //TODO warn
-    private Long createQuestAndAssertRedirect(String name, String description, String text, String userId, String expectedRedirect) throws Exception {
+
+    private Long createQuestAndAssertRedirect(String name, String description, String text, UserDTO userDTO) throws Exception {
         MvcResult result = mockMvc.perform(post(Route.CREATE_QUEST)
                         .param(TestConstants.NAME, name)
                         .param(TestConstants.DESCRIPTION, description)
-                        .param(QUEST_TEXT, text)
-                        .param(ID, userId))
+                        .param(TestConstants.QUEST_TEXT, text)
+                        .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
                 .andReturn();
 
         String redirectedUrl = result.getResponse().getRedirectedUrl();
-        String expectedRedirectPattern = expectedRedirect + TestConstants.REDIRECT_URL_PATTERN;
-        assertTrue(Objects.requireNonNull(redirectedUrl).matches(expectedRedirectPattern), TestConstants.REDIRECTED_URL_DOES_NOT_MATCH_THE_EXPECTED_URL_PATTERN);
+        assertNotNull(redirectedUrl, TestConstants.REDIRECTED_URL_DOES_NOT_MATCH_THE_EXPECTED_URL_PATTERN);
 
-        return Long.parseLong(redirectedUrl.substring(redirectedUrl.lastIndexOf('=') + 1));
+        assertTrue(redirectedUrl.startsWith(Route.QUEST_EDIT), TestConstants.REDIRECTED_URL_DOES_NOT_MATCH_THE_EXPECTED_URL_PATTERN);
+
+        String questIdStr = redirectedUrl.substring(redirectedUrl.lastIndexOf('=') + 1);
+        return Long.parseLong(questIdStr);
     }
 
     private void assertQuestDetails(Quest quest, String expectedName, String expectedDescription, String expectedUserId) {
-        assertNotNull(quest);
-        assertEquals(expectedName, quest.getName());
-        assertEquals(expectedDescription, quest.getDescription());
-        assertEquals(expectedUserId, quest.getAuthor().getId().toString());
+        assertAll(
+                () -> assertNotNull(quest, TestConstants.QUEST_SHOULD_NOT_BE_NULL),
+                () -> assertEquals(expectedName, quest.getName(), TestConstants.QUEST_NAME_SHOULD_MATCH),
+                () -> assertEquals(expectedDescription, quest.getDescription(), TestConstants.QUEST_DESCRIPTION_SHOULD_MATCH),
+                () -> assertEquals(expectedUserId, String.valueOf(quest.getAuthor().getId()), TestConstants.AUTHOR_ID_SHOULD_MATCH)
+        );
     }
 
     @ParameterizedTest
@@ -189,29 +196,31 @@ public class QuestCreateControllerIT {
         params.add(QUEST_NAME, validQuestName);
         params.add(QUEST_DESCRIPTION, validQuestDescription);
         params.add(QUEST_TEXT, validQuestText);
-        params.add(ID, validUserId);
         return params;
     }
 
     @Test
     void createQuest_WhenQuestTextIsInvalid_ShouldRedirectToCreateQuestPageWithError() throws Exception {
+        userDTO.setRole(Role.valueOf(validUserRole));
         mockMvc.perform(post(Route.CREATE_QUEST)
                         .param(QUEST_NAME, validQuestName)
                         .param(QUEST_DESCRIPTION, validQuestDescription)
                         .param(QUEST_TEXT, invalidQuestText)
-                        .param(ID, validUserId))
+                        .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(CREATE_QUEST))
                 .andExpect(flash().attributeExists(FIELD_ERRORS));
     }
 
-    @Test
-    void whenCreateQuestWithInvalidData_ThenReturnValidationErrors() throws Exception {
+    @ParameterizedTest
+    @MethodSource("allowedRolesProvider")
+    void whenCreateQuestWithInvalidData_ThenReturnValidationErrors(Role allowedRole) throws Exception {
+        userDTO.setRole(allowedRole);
         mockMvc.perform(post(Route.CREATE_QUEST)
                         .param(QUEST_NAME, EMPTY_STRING)
                         .param(QUEST_DESCRIPTION, EMPTY_STRING)
                         .param(QUEST_TEXT, EMPTY_STRING)
-                        .param(ID, EMPTY_STRING))
+                        .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(CREATE_QUEST))
                 .andExpect(flash().attributeExists(FIELD_ERRORS));

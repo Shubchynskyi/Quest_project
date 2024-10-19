@@ -24,9 +24,9 @@ public class Quest implements AbstractEntity {
     private Long startQuestionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id")
+    @JoinColumn(name = "users_id", referencedColumnName = "id")
     @ToString.Exclude
-    private User author; // todo проверить где автор а где пользователь id - в таблицах бигинт!
+    private User author;
 
     @OneToMany()
     @JoinColumn(name = "quest_id")
