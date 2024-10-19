@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
+import com.javarush.quest.shubchynskyi.dto.QuestDTO;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import jakarta.servlet.http.HttpSession;
@@ -9,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -23,26 +25,31 @@ public class ProfileController {
 
     @GetMapping(PROFILE)
     public String showProfile(HttpSession session, Model model) {
-        UserDTO user = getUserFromSession(session);
-        if (user == null) {
+        UserDTO userDTO = getUserFromSession(session);
+
+        if (Objects.nonNull(userDTO)) {
+            log.info("Displaying profile for user {} (ID: {}).", userDTO.getLogin(), userDTO.getId());
+            List<QuestDTO> questDTOS = userDTO.getQuests();
+            model.addAttribute(USER, userDTO);
+            model.addAttribute(QUESTS, questDTOS);
+            return Route.PROFILE;
+        } else {
             log.warn("Access to profile denied: user not logged in.");
             return REDIRECT + Route.LOGIN;
         }
-
-        log.info("Displaying profile for user {} (ID: {}).", user.getLogin(), user.getId());
-        model.addAttribute(USER, user);
-        return Route.PROFILE;
     }
 
     @PostMapping(PROFILE)
     public String processProfile(HttpSession session) {
         UserDTO user = getUserFromSession(session);
-        if (user == null) {
+
+        if (Objects.nonNull(user)) {
+            log.info("Processing profile for user {} (ID: {}).", user.getLogin(), user.getId());
+            return REDIRECT + ID_URI_PATTERN.formatted(Route.USER, Objects.requireNonNull(user).getId());
+        } else {
             log.warn("Profile update attempt without login.");
             return REDIRECT + Route.LOGIN;
         }
-        log.info("Processing profile for user {} (ID: {}).", user.getLogin(), user.getId());
-        return REDIRECT + ID_URI_PATTERN.formatted(Route.USER, Objects.requireNonNull(user).getId());
     }
 
     private UserDTO getUserFromSession(HttpSession session) {

@@ -12,27 +12,49 @@
 <div th:replace="~{parts/header :: header}"></div>
 <div class="container">
 
-  <!-- Error Message -->
-  <!--suppress ThymeleafVariablesResolveInspection -->
-  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
-
-  <div class="px-4 py-5 my-5 text-center">
-    <p class="lead mb-4">
-    <div class="form-group">
-      <img th:src="@{/images/{image}(image=${user.image})}" width="250" alt="" th:alt="${user.image}">
+  <!-- Профиль пользователя -->
+  <div class="profile-section">
+    <div class="profile-image-container">
+      <img th:src="@{/images/{image}(image=${user.image})}" class="profile-image" alt="" th:alt="${user.image}">
     </div>
-      <h5 class="display-6 fw-bold" th:text="#{profile.login.label} + ' ' + ${user.login}"></h5>
-      <h5 class="display-6 fw-bold" th:text="#{profile.role.label} + ' ' + ${user.role}"></h5>
-    <div class="col-lg-6 mx-auto">
+    <div class="user-info">
+      <h5 th:text="#{profile.login.label} + ' ' + ${user.login}"></h5>
+      <h5 th:text="#{profile.role.label} + ' ' + ${user.role}"></h5>
       <form class="form-horizontal" th:action="@{/profile}" method="post" enctype="multipart/form-data">
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-          <input type="hidden" name="id" th:value="${user.id}">
-          <button type="submit" name="user" class="btn btn-primary btn-lg px-4 gap-3"
-                  th:text="#{profile.edit.button}">Edit</button>
-        </div>
+        <input type="hidden" name="id" th:value="${user.id}">
+        <button type="submit" name="user" class="btn btn-primary">
+          <span th:text="#{profile.edit.button}">Edit</span>
+        </button>
       </form>
     </div>
   </div>
+
+  <!-- Список квестов -->
+  <div class="quest-list">
+    <p class="mb-4 fs-4 text-center" th:text="#{quests-list.choice.label}">Choose a quest</p>
+    <div class="row">
+      <div th:each="quest : ${quests}" class="col-lg-4 mb-4">
+        <div class="card">
+          <img th:src="@{/images/{image}(image=${quest.image})}" class="quest-image" alt="...">
+          <div class="quest-info">
+            <h5 class="card-title" th:text="${quest.name}"></h5>
+            <p class="card-text" th:text="${quest.description}"></p>
+          </div>
+          <div class="button-container">
+            <a th:href="@{/quest(id=${quest.id})}" class="btn btn-primary fixed-width-button"
+               target="_blank">
+              <span th:text="#{quests-list.button.play}">PLAY &raquo;</span>
+            </a>
+            <a th:href="@{/quest-edit(id=${quest.id})}" class="btn btn-secondary fixed-width-button"
+               target="_blank">
+              <span th:text="#{quests-list.button.edit}">Edit</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 <div th:replace="~{parts/footer :: footer}"></div>
 </body>

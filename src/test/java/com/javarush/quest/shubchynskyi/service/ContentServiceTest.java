@@ -14,6 +14,7 @@ public class ContentServiceTest {
 
     private final ContentService contentService = new ContentService();
 
+    //TODO warn
     private String readExpected(String subdirectory, String filename) throws IOException {
         ClassPathResource resource = new ClassPathResource("expected/" + subdirectory + "/" + filename);
         try (InputStream inputStream = resource.getInputStream()) {

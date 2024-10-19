@@ -2,15 +2,15 @@ package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
 
 import com.javarush.quest.shubchynskyi.constant.Route;
+import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.Question;
+import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.QuestMapper;
-import com.javarush.quest.shubchynskyi.service.AnswerService;
-import com.javarush.quest.shubchynskyi.service.ImageService;
-import com.javarush.quest.shubchynskyi.service.QuestService;
-import com.javarush.quest.shubchynskyi.service.QuestionService;
+import com.javarush.quest.shubchynskyi.service.*;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
@@ -36,30 +38,49 @@ public class QuestEditController {
     // TODO настройки доступа, если ID пользователя = ID пользователя в квесте, то разрешить доступ.
     // TODO для списка (админ, модер) - разрешить доступ
 
+    private final List<Role> acceptedRoles = List.of(Role.ADMIN, Role.MODERATOR);
+
     private final QuestService questService;
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final ImageService imageService;
     private final QuestMapper questMapper;
+    private final ValidationService validationService;
 
     @GetMapping(QUEST_EDIT)
     public String showQuestForEdit(
             @RequestParam(ID) String id,
             Model model,
+            HttpSession session,
             RedirectAttributes redirectAttributes
     ) {
-        return questService.get(id)
-                .map(quest -> {
-                    model.addAttribute(QUEST, questMapper.questToQuestDTO(quest));
-                    log.info("Displaying quest edit page for quest ID: {}", id);
-                    return QUEST_EDIT;
-                })
-                .orElseGet(() -> {
-                    String localizedMessage = ErrorLocalizer.getLocalizedMessage(QUEST_NOT_FOUND_ERROR);
-                    redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
-                    log.warn("Quest not found with ID: {}", id);
-                    return REDIRECT + Route.CREATE_QUEST;
-                });
+        UserDTO currentUser = (UserDTO) session.getAttribute(USER);
+        Optional<Quest> questOptional = questService.get(id);
+
+        if (questOptional.isEmpty()) {
+            String localizedMessage = ErrorLocalizer.getLocalizedMessage(QUEST_NOT_FOUND_ERROR);
+            redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
+            log.warn("Quest not found with ID: {}", id);
+            return REDIRECT + Route.CREATE_QUEST;
+        }
+
+        if (Objects.nonNull(currentUser)) {
+            Quest quest = questOptional.get();
+            Long authorId = quest.getAuthor().getId();
+
+            if (validationService.checkUserAccessDenied(session, acceptedRoles, redirectAttributes)
+                    && !Objects.equals(currentUser.getId(), authorId)) {
+                log.warn("Access denied to quest edit: insufficient permissions. Quest ID: {}. User ID: {}", id, currentUser.getId());
+                return REDIRECT + Route.QUESTS_LIST;
+            }
+
+            model.addAttribute(QUEST, questMapper.questToQuestDTO(quest));
+            log.info("Displaying quest edit page for quest ID: {}", id);
+            return QUEST_EDIT;
+        } else {
+            log.warn("User is not logged in, redirecting to quests list page.");
+            return REDIRECT + Route.QUESTS_LIST;
+        }
     }
 
     @PostMapping(QUEST_EDIT)

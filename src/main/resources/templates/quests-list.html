@@ -11,6 +11,10 @@
 <body>
 <div th:replace="~{parts/header :: header}"></div>
 <div class="container">
+  <!-- Error Message -->
+  <!--suppress ThymeleafVariablesResolveInspection -->
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
   <p class="mb-4 fs-4 text-center" th:text="#{quests-list.choice.label}">Choose a quest</p>
   <div class="row">
     <div th:each="quest : ${quests}" class="col-lg-4 mb-4">

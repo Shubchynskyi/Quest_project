@@ -45,12 +45,6 @@ public class ProfileControllerIT {
         invalidUserDTOWithNoId = new UserDTO();
     }
 
-    private MockHttpSession createSessionWithUser(UserDTO userDTO) {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute(USER, userDTO);
-        return session;
-    }
-
     @Test
     void whenGetRequestWithoutUser_ThenRedirectToLogin() throws Exception {
         mockMvc.perform(get(Route.PROFILE))
@@ -99,6 +93,12 @@ public class ProfileControllerIT {
         mockMvc.perform(post(Route.PROFILE).session(session))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(ID_URI_PATTERN.formatted(Route.USER, validUserDTO.getId())));
+    }
+
+    private MockHttpSession createSessionWithUser(UserDTO userDTO) {
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(USER, userDTO);
+        return session;
     }
 }
 

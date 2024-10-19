@@ -2,14 +2,17 @@ package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
 import com.javarush.quest.shubchynskyi.TestConstants;
 import com.javarush.quest.shubchynskyi.constant.Route;
+import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.Question;
+import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.service.AnswerService;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.service.QuestionService;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,21 +23,20 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.shaded.org.apache.commons.io.FilenameUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import static com.javarush.quest.shubchynskyi.TestConstants.LABEL_FRAGMENT;
-import static com.javarush.quest.shubchynskyi.TestConstants.QUEST_EDIT_PATH;
+import static com.javarush.quest.shubchynskyi.TestConstants.*;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.QUEST_NOT_FOUND_ERROR;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -55,6 +57,8 @@ public class QuestEditControllerIT {
     @Autowired
     private MockMvc mockMvc;
 
+    private UserDTO userDTO;
+
     @Value("${app.images-directory}")
     private String imagesDirectory;
     @Value("${app.images.test-image.name}")
@@ -68,25 +72,99 @@ public class QuestEditControllerIT {
     @Value("${app.invalid-quest-id}")
     private String invalidQuestId;
 
+    @BeforeAll
+    public void setup() {
+        userDTO = new UserDTO();
+    }
+
+    private Stream<String> supportedLanguagesProvider() {
+        return Arrays.stream(supportedLanguages);
+    }
+
+    //todo take from config
+    private List<Role> allowedRolesProvider() {
+        return Arrays.asList(Role.ADMIN, Role.MODERATOR);
+    }
+
+    private List<Role> notAllowedRolesProvider() {
+        return Arrays.asList(Role.GUEST, Role.USER);
+    }
+
     @Test
-    void whenQuestEditFormShownWithValidQuestId_ThenShouldDisplayQuestForm() throws Exception {
+    void whenGetRequestWithoutUser_ThenRedirectToLogin() throws Exception {
         mockMvc.perform(get(Route.QUEST_EDIT)
-                        .param(ID, validQuestId))
+                    .param(ID, validQuestId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(Route.QUESTS_LIST));
+    }
+
+    @Test
+    @Transactional
+    void whenQuestEditFormShownWithValidQuestId_ByAuthor_ShouldDisplayQuestForm() throws Exception {
+        Quest existingQuest = getExistingQuest();
+
+        UserDTO authorUser = UserDTO.builder()
+                .id(existingQuest.getAuthor().getId())
+                .login(existingQuest.getAuthor().getLogin())
+                .password(existingQuest.getAuthor().getPassword())
+                .role(existingQuest.getAuthor().getRole())
+                .build();
+
+        mockMvc.perform(get(Route.QUEST_EDIT)
+                        .param(ID, validQuestId)
+                        .sessionAttr(USER, authorUser))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(QUEST))
                 .andExpect(view().name(QUEST_EDIT));
     }
 
     @ParameterizedTest
+    @MethodSource("notAllowedRolesProvider")
+    void whenQuestEditFormAccessedByOtherUser_ThenShouldRedirectToQuestsList(Role notAllowedRole) throws Exception {
+        userDTO.setId(Long.valueOf(validQuestId+1));
+        userDTO.setRole(notAllowedRole);
+
+        mockMvc.perform(get(Route.QUEST_EDIT)
+                        .param(ID, validQuestId)
+                        .sessionAttr(USER, userDTO))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(Route.QUESTS_LIST))
+                .andExpect(flash().attribute(ERROR, notNullValue()));
+    }
+
+    @ParameterizedTest
+    @MethodSource("allowedRolesProvider")
+    void whenQuestEditFormAccessedByAdmin_ThenShouldDisplayQuestForm(Role allowedRole) throws Exception {
+        userDTO.setRole(allowedRole);
+
+        mockMvc.perform(get(Route.QUEST_EDIT)
+                        .param(ID, validQuestId)
+                        .sessionAttr(USER, userDTO))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists(QUEST))
+                .andExpect(view().name(QUEST_EDIT));
+    }
+
+    @ParameterizedTest
+    @Transactional
     @MethodSource("supportedLanguagesProvider")
     void whenRedirectedWithInvalidQuestId_ThenShouldShowCreateQuestWithErrorMessage(String localeTag) throws Exception {
         Locale testLocale = Locale.forLanguageTag(localeTag);
         LocaleContextHolder.setLocale(testLocale);
         String expectedMessage = messageSource.getMessage(QUEST_NOT_FOUND_ERROR, null, testLocale);
 
+        Quest existingQuest = getExistingQuest();
+        UserDTO user = UserDTO.builder()
+                .id(existingQuest.getAuthor().getId())
+                .login(existingQuest.getAuthor().getLogin())
+                .password(existingQuest.getAuthor().getPassword())
+                .role(existingQuest.getAuthor().getRole())
+                .build();
+
         mockMvc.perform(get(Route.QUEST_EDIT)
                         .param(ID, invalidQuestId)
-                        .header(TestConstants.ACCEPT_LANGUAGE, localeTag))
+                        .header(TestConstants.ACCEPT_LANGUAGE, localeTag)
+                        .sessionAttr(USER, user))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.CREATE_QUEST))
                 .andExpect(flash().attribute(ERROR, expectedMessage));
@@ -148,7 +226,7 @@ public class QuestEditControllerIT {
 
         String updatedAnswerText = generateUniqueString(TestConstants.UPDATED_ANSWER_TEXT, answer.getText());
 
-        mockMvc.perform(MockMvcRequestBuilders.post(Route.QUEST_EDIT)
+        mockMvc.perform(post(Route.QUEST_EDIT)
                         .param(ID, validQuestId)
                         .param(QUESTION_ID, question.getId().toString())
                         .param(ANSWER + answer.getId(), updatedAnswerText))
@@ -168,14 +246,14 @@ public class QuestEditControllerIT {
         Quest existingQuest = getExistingQuest();
         Question question = getFirstQuestionFromQuest(existingQuest);
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart(Route.QUEST_EDIT)
+        mockMvc.perform(multipart(Route.QUEST_EDIT)
                         .file(imageFile)
                         .param(QUEST_NAME, existingQuest.getName())
                         .param(ID, validQuestId))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(QUEST_EDIT_PATH + validQuestId));
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart(Route.QUEST_EDIT)
+        mockMvc.perform(multipart(Route.QUEST_EDIT)
                         .file(imageFile)
                         .param(ID, validQuestId)
                         .param(QUESTION_ID, question.getId().toString()))
@@ -202,8 +280,8 @@ public class QuestEditControllerIT {
 
     private void validateImages(byte[] originalImageBytes, String questImage, String questionImage) throws Exception {
         String fileExtension = FilenameUtils.getExtension(testImageName);
-        Path questImagePath = Paths.get(imagesDirectory, questImage + "." + fileExtension);
-        Path questionImagePath = Paths.get(imagesDirectory, questionImage + "." + fileExtension);
+        Path questImagePath = Path.of(imagesDirectory, questImage + "." + fileExtension);
+        Path questionImagePath = Path.of(imagesDirectory, questionImage + "." + fileExtension);
 
         byte[] savedQuestImage = Files.readAllBytes(questImagePath);
         byte[] savedQuestionImage = Files.readAllBytes(questionImagePath);
@@ -223,7 +301,5 @@ public class QuestEditControllerIT {
         return stringBuilder.toString();
     }
 
-    private Stream<String> supportedLanguagesProvider() {
-        return Arrays.stream(supportedLanguages);
-    }
+
 }

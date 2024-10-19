@@ -1,3 +1,4 @@
+
 <p>Diese Anwendung wurde mit <strong>Java/Spring</strong> + <strong>Thymeleaf</strong> erstellt und dient zur Demonstration von Fähigkeiten in Java und Datenbanken (PostgreSQL).</p>
 <p>Die Anwendung ermöglicht es Benutzern, Textabenteuer mit Bildern zu erstellen und diese zu spielen, indem ein komplexer Textparser in Java verwendet wird.</p>
 <p>Es wurde die Möglichkeit der Benutzererstellung implementiert und die Verwaltung von Benutzerrollen (Administratoren haben Zugriff auf die Bearbeitung von Quests und anderen Benutzern, normale Benutzer können nur sich selbst und ihre eigenen Quests bearbeiten).</p>

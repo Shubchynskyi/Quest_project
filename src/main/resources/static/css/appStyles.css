@@ -102,3 +102,51 @@
 .modal-body pre {
     white-space: pre-wrap;
 }
+
+/* Profile and Quest Page Styles */
+.profile-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.profile-image {
+    max-width: 187.5px; /* Уменьшение фото профиля до 75% от 250px */
+    border-radius: 10px;
+}
+
+.user-info {
+    margin-left: 20px;
+    flex-grow: 1;
+}
+
+.quest-list .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Одинаковая высота всех карточек */
+    padding: 5px; /* Отступы по 5px с каждой стороны */
+}
+
+.quest-image {
+    max-width: 150px;
+    height: auto;
+    margin-right: 15px;
+}
+
+.quest-info {
+    flex-grow: 1;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between; /* Выравнивание кнопок по краям */
+    margin-top: 10px;
+}
+
+.fixed-width-button {
+    width: 150px;
+    text-align: center;
+    white-space: nowrap;
+}

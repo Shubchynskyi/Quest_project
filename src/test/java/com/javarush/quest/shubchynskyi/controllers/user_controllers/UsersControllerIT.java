@@ -10,7 +10,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -44,16 +43,14 @@ public class UsersControllerIT {
     @MethodSource("roleProvider")
     public void whenUserHasAccessRole_ThenShowUsers(Role accessRole) throws Exception {
         userDTO.setRole(accessRole);
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute(USER, userDTO);
 
         mockMvc.perform(get(Route.USERS)
-                        .session(session))
+                        .sessionAttr(USER, userDTO))
                 .andExpect(status().isOk())
                 .andExpect(view().name(Route.USERS))
                 .andExpect(model().attribute(USERS, notNullValue()));
     }
-
+    //todo ЧТО ЗА ТЕСТ?
     @Test
     public void whenUserHasAccessRole_ThenShowUsers() throws Exception {
         mockMvc.perform(get(Route.USERS))

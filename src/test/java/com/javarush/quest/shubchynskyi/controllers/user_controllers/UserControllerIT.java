@@ -94,11 +94,11 @@ public class UserControllerIT {
     }
 
     // todo take from config
-    private List<Role> allowedRoles() {
+    private List<Role> allowedRolesProvider() {
         return Arrays.asList(Role.ADMIN, Role.MODERATOR, Role.USER);
     }
 
-    private List<Role> disallowedRoles() {
+    private List<Role> deniedRolesProvider() {
         return List.of(Role.GUEST);
     }
 
@@ -130,9 +130,9 @@ public class UserControllerIT {
     }
 
     @ParameterizedTest
-    @MethodSource("allowedRoles")
-    void whenUserGetsUserByIdWithAllowedRoles_ThenShowUserData(Role accessRole) throws Exception {
-        MockHttpSession session = createSessionWithRole(accessRole);
+    @MethodSource("allowedRolesProvider")
+    void whenUserGetsUserByIdWithAllowedRoles_ThenShowUserData(Role allowedRole) throws Exception {
+        MockHttpSession session = createSessionWithRole(allowedRole);
 
         mockMvc.perform(get(Route.USER)
                         .session(session)
@@ -143,9 +143,9 @@ public class UserControllerIT {
     }
 
     @ParameterizedTest
-    @MethodSource("disallowedRoles")
-    void whenUserGetsUserByIdWithDisallowedRoles_ThenRedirectToIndex(Role accessRole) throws Exception {
-        MockHttpSession session = createSessionWithRole(accessRole);
+    @MethodSource("deniedRolesProvider")
+    void whenUserGetsUserByIdWithDisallowedRoles_ThenRedirectToIndex(Role deniedRole) throws Exception {
+        MockHttpSession session = createSessionWithRole(deniedRole);
 
         mockMvc.perform(get(Route.USER)
                         .session(session)
@@ -155,46 +155,46 @@ public class UserControllerIT {
     }
 
     @ParameterizedTest
-    @MethodSource("allowedRoles")
+    @MethodSource("allowedRolesProvider")
     @Transactional
-    void whenUserEditsCurrentUserWithAllowedRoles_ThenRedirectToProfile(Role accessRole) throws Exception {
-        MockHttpSession session = createSessionWithRole(accessRole);
+    void whenUserEditsCurrentUserWithAllowedRoles_ThenRedirectToProfile(Role allowedRole) throws Exception {
+        MockHttpSession session = createSessionWithRole(allowedRole);
         performUserEditAction(session, sessionUserDTO, Route.PROFILE, Route.PROFILE);
     }
 
     @ParameterizedTest
-    @MethodSource("allowedRoles")
+    @MethodSource("allowedRolesProvider")
     @Transactional
-    void whenUserEditsAnotherUserWithAllowedRoles_ThenRedirectToUsers(Role accessRole) throws Exception {
-        MockHttpSession session = createSessionWithRole(accessRole);
+    void whenUserEditsAnotherUserWithAllowedRoles_ThenRedirectToUsers(Role allowedRole) throws Exception {
+        MockHttpSession session = createSessionWithRole(allowedRole);
 
         performUserEditAction(session, modelUserDTO, Route.USERS, Route.USERS);
     }
 
     @ParameterizedTest
-    @MethodSource("disallowedRoles")
+    @MethodSource("deniedRolesProvider")
     @Transactional
-    void whenUserEditsCurrentUserWithDisallowedRoles_ThenRedirectToProfile(Role accessRole) throws Exception {
-        MockHttpSession session = createSessionWithRole(accessRole);
+    void whenUserEditsCurrentUserWithDisallowedRoles_ThenRedirectToProfile(Role deniedRole) throws Exception {
+        MockHttpSession session = createSessionWithRole(deniedRole);
 
         performUserEditAction(session, sessionUserDTO, Route.PROFILE, Route.PROFILE);
     }
 
     @ParameterizedTest
-    @MethodSource("allowedRoles")
+    @MethodSource("allowedRolesProvider")
     @Transactional
-    void whenUserDeletesUserWithAllowedRoles_ThenRedirectCorrectly(Role accessRole) throws Exception {
-        MockHttpSession session = createSessionWithRole(accessRole);
+    void whenUserDeletesUserWithAllowedRoles_ThenRedirectCorrectly(Role allowedRole) throws Exception {
+        MockHttpSession session = createSessionWithRole(allowedRole);
 
         performDeleteUserAction(session, userIdForDelete, Route.USERS);
         performDeleteUserAction(session, sessionUserDTO.getId().toString(), Route.LOGOUT);
     }
 
     @ParameterizedTest
-    @MethodSource("disallowedRoles")
+    @MethodSource("deniedRolesProvider")
     @Transactional
-    void whenUserDeletesUserWithDisallowedRoles_ThenRedirectToProfile(Role accessRole) throws Exception {
-        MockHttpSession session = createSessionWithRole(accessRole);
+    void whenUserDeletesUserWithDisallowedRoles_ThenRedirectToProfile(Role deniedRole) throws Exception {
+        MockHttpSession session = createSessionWithRole(deniedRole);
 
         performDeleteUserAction(session, userIdForDelete, Route.PROFILE);
     }

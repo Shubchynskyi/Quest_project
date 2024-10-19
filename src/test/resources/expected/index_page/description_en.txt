@@ -1,3 +1,4 @@
+
 <p>This application is built using <strong>Java/Spring</strong> + <strong>Thymeleaf</strong> and serves to demonstrate skills in Java and databases (PostgreSQL).</p>
 <p>The application allows users to create text quests with images and play them using a complex text parser in Java.</p>
 <p>Implemented user creation and demonstrated user role management (administrators have access to editing quests and other users, regular users can edit only themselves and their own quests).</p>

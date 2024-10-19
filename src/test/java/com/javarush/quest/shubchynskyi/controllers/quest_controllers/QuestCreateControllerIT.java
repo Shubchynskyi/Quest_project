@@ -59,10 +59,12 @@ public class QuestCreateControllerIT {
     private String invalidQuestText;
 
     private String validQuestText;
+    private UserDTO userDTO;
 
     @BeforeAll
     void setUp() throws IOException {
         validQuestText = loadTextFromFile(validQuestTextPath);
+        userDTO = new UserDTO();
     }
 
     private static String loadTextFromFile(String path) throws IOException {
@@ -75,10 +77,11 @@ public class QuestCreateControllerIT {
         return QuestCreateController.ALLOWED_ROLES_FOR_QUEST_CREATE.stream();
     }
 
-    private static Stream<String> notAllowedRolesProvider() {
+    private static Stream<Role> notAllowedRolesProvider() {
         return EnumSet.allOf(Role.class).stream()
                 .filter(role -> !QuestCreateController.ALLOWED_ROLES_FOR_QUEST_CREATE.contains(role))
-                .map(Enum::name);
+                .map(Enum::name)
+                .map(Role::valueOf);
     }
 
     private static Stream<Arguments> provideParametersForMissingTest() {
@@ -93,19 +96,18 @@ public class QuestCreateControllerIT {
     @ParameterizedTest
     @MethodSource("allowedRolesProvider")
     void showCreateQuestPage_WithAllowedRoles_ShouldReturnCreateQuestView(Role allowedRole) throws Exception {
-        UserDTO userDTO = new UserDTO();
         userDTO.setRole(allowedRole);
 
-        mockMvc.perform(get(Route.CREATE_QUEST).sessionAttr(USER, userDTO))
+        mockMvc.perform(get(Route.CREATE_QUEST)
+                        .sessionAttr(USER, userDTO))
                 .andExpect(status().isOk())
                 .andExpect(view().name(CREATE_QUEST));
     }
 
     @ParameterizedTest
     @MethodSource("notAllowedRolesProvider")
-    void showCreateQuestPage_WithForbiddenRoles_ShouldRedirectToProfile(String roleName) throws Exception {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setRole(Role.valueOf(roleName));
+    void showCreateQuestPage_WithForbiddenRoles_ShouldRedirectToProfile(Role notAllowedRole) throws Exception {
+        userDTO.setRole(notAllowedRole);
 
         mockMvc.perform(get(Route.CREATE_QUEST).sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
@@ -123,8 +125,6 @@ public class QuestCreateControllerIT {
 
     @Test
     void showCreateQuestPage_WhenQuestDTOAbsent_AddsQuestDTOToModel() throws Exception {
-        UserDTO userDTO = new UserDTO();
-        // todo role from config
         userDTO.setRole(QuestCreateController.ALLOWED_ROLES_FOR_QUEST_CREATE.iterator().next());
 
         mockMvc.perform(get(Route.CREATE_QUEST).sessionAttr(USER, userDTO))
@@ -174,7 +174,6 @@ public class QuestCreateControllerIT {
         assertEquals(expectedUserId, quest.getAuthor().getId().toString());
     }
 
-
     @ParameterizedTest
     @MethodSource("provideParametersForMissingTest")
     void createQuest_WhenMissingParameters_ShouldReturnExpectedStatus(String missingParam, HttpStatus expectedStatus) throws Exception {
@@ -220,9 +219,8 @@ public class QuestCreateControllerIT {
 
     @ParameterizedTest
     @MethodSource("notAllowedRolesProvider")
-    void whenUserLacksRole_ThenRedirectToProfileWithErrorMessage(String roleName) throws Exception {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setRole(Role.valueOf(roleName));
+    void whenUserLacksRole_ThenRedirectToProfileWithErrorMessage(Role notAllowedRole) throws Exception {
+        userDTO.setRole(notAllowedRole);
 
         mockMvc.perform(get(Route.CREATE_QUEST).sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
