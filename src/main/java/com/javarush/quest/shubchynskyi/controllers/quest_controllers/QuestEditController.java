@@ -64,10 +64,11 @@ public class QuestEditController {
             return REDIRECT + Route.CREATE_QUEST;
         }
 
-        if (Objects.nonNull(currentUser)) {
+        if (Objects.nonNull(currentUser)) { // todo проверяем что пользователь не null
             Quest quest = questOptional.get();
             Long authorId = quest.getAuthor().getId();
 
+            // todo проверяем что пользователь не null еще раз???
             if (validationService.checkUserAccessDenied(session, acceptedRoles, redirectAttributes)
                     && !Objects.equals(currentUser.getId(), authorId)) {
                 log.warn("Access denied to quest edit: insufficient permissions. Quest ID: {}. User ID: {}", id, currentUser.getId());
@@ -88,6 +89,7 @@ public class QuestEditController {
             @RequestParam MultiValueMap<String, String> allParams,
             @RequestParam(name = IMAGE, required = false) MultipartFile imageFile
     ) {
+        // todo при загрузке некорректного фото ошибка сервера 500 вместе с AppException
         String viewName;
 
         if (allParams.containsKey(QUEST_NAME)) {

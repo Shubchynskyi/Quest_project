@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -27,8 +28,12 @@ public class AnswerService {
         answerRepository.save(answer);
     }
 
-    @SuppressWarnings("unused")
     public void delete(Answer answer) {
         answerRepository.delete(answer);
+    }
+
+    @Transactional
+    public void deleteAll(Collection<Answer> answers) {
+        answerRepository.deleteAll(answers);
     }
 }

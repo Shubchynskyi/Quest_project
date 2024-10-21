@@ -49,6 +49,7 @@ public class Key {
     public static final String UNKNOWN_COMMAND = "Unknown command";
     public static final String UNEXPECTED_VALUE = "Unexpected value: ";
     public static final String ERROR_UPLOADING_IMAGE = "Error uploading image: ";
+    public static final String QUEST_LIST_ERROR = "Quest list is incorrect";
     public static final String UNKNOWN_GAME_STATE = "Unknown Game State";
     public static final String INVALID_FILE_TYPE = "Invalid file type";
     public static final String INVALID_FILE_PATH_ACCESS_DENIED = "Invalid file path, access denied";

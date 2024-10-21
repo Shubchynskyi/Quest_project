@@ -41,7 +41,7 @@ public class ValidationService {
         }
         return hasFieldsErrors;
     }
-
+    // TODO - двойная проверка на NUll, проверить все вызовы!
     public boolean checkUserAccessDenied(HttpSession session, List<Role> validRoles, RedirectAttributes redirectAttributes) {
         UserDTO currentUser = (UserDTO) session.getAttribute(USER);
         if (currentUser == null || validRoles.stream().noneMatch(role -> role.equals(currentUser.getRole()))) {

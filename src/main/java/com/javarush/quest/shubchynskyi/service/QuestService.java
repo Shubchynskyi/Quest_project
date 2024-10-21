@@ -25,12 +25,13 @@ import static com.javarush.quest.shubchynskyi.localization.ExceptionErrorMessage
 public class QuestService {
     private final QuestionService questionService;
     private final QuestRepository questRepository;
-    private final AnswerRepository answerRepository;
     private final UserService userService;
     private final QuestParser questParser;
     private final QuestValidator questValidator;
     private final BlockTypeResolver blockTypeResolver;
     private final Lock lock;
+    private final ImageService imageService;
+    private final AnswerService answerService;
 
     @Transactional
     public Quest create(String name, String text, String description, String authorId) {
@@ -70,8 +71,20 @@ public class QuestService {
         questRepository.save(quest);
     }
 
-    @SuppressWarnings("unused") // todo add "delete" button for quest edit page
+    @Transactional
     public void delete(Quest quest) {
+        Collection<Question> questions = quest.getQuestions();
+        imageService.deleteOldFiles(quest.getImage());
+        for (Question question : questions) {
+            questionService.delete(question);
+        }
+
+        User author = quest.getAuthor();
+        List<Quest> quests = author.getQuests();
+        quests.remove(quest);
+        author.setQuests(quests);
+        userService.update(author);
+
         questRepository.delete(quest);
     }
 
@@ -157,7 +170,8 @@ public class QuestService {
             answersMapWithNullNextQuestionId.put(answer, blockNumber);
         }
 
-        answerRepository.save(answer);
+        answerService.create(answer);
+//   TODO заменил, проверить     answerRepository.save(answer);
         answers.add(answer);
     }
 

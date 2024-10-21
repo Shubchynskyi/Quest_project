@@ -9,7 +9,7 @@
         <insert tableName="users">
             <column name="id" valueNumeric="1"/>
             <column name="login" value="admin"/>
-            <column name="password" value="admin"/>
+            <column name="password" value="admin123"/>
             <column name="role" value="ADMIN"/>
         </insert>
         <insert tableName="users">
@@ -21,13 +21,13 @@
         <insert tableName="users">
             <column name="id" valueNumeric="3"/>
             <column name="login" value="moderator"/>
-            <column name="password" value="moderator"/>
+            <column name="password" value="moderator123"/>
             <column name="role" value="MODERATOR"/>
         </insert>
         <insert tableName="users">
             <column name="id" valueNumeric="4"/>
             <column name="login" value="user"/>
-            <column name="password" value="user"/>
+            <column name="password" value="user123"/>
             <column name="role" value="USER"/>
         </insert>
         <insert tableName="users">

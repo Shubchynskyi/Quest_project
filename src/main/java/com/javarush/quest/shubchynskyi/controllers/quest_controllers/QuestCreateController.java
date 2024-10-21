@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -95,7 +96,7 @@ public class QuestCreateController {
         try {
             UserDTO userDTO = (UserDTO) session.getAttribute(USER);
             Quest quest = questService.create(questDTO.getName(), questText, questDTO.getDescription(), String.valueOf(userDTO.getId()));
-            List<QuestDTO> quests = userDTO.getQuests();
+            List<QuestDTO> quests = new ArrayList<>(userDTO.getQuests());
             quests.add(questMapper.questToQuestDTOWithOutQuestions(quest));
             userDTO.setQuests(quests);
             session.setAttribute(USER, userDTO);

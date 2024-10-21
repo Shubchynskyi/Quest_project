@@ -20,6 +20,12 @@ class QuestionServiceTest {
     @Mock
     private QuestionRepository questionRepository;
 
+    @Mock
+    private ImageService imageService;
+
+    @Mock
+    private AnswerService answerService;
+
     @InjectMocks
     private QuestionService questionService;
 
@@ -67,5 +73,7 @@ class QuestionServiceTest {
         questionService.delete(testQuestion);
 
         verify(questionRepository, times(1)).delete(testQuestion);
+        verify(answerService, times(1)).deleteAll(anyCollection());
+        verify(imageService, times(1)).deleteOldFiles(testQuestion.getImage());
     }
 }

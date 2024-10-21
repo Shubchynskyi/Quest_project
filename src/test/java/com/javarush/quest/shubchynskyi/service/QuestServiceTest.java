@@ -40,6 +40,8 @@ public class QuestServiceTest {
     @Mock
     private QuestValidator questValidator;
     @Mock
+    private ImageService imageService;
+    @Mock
     private Lock lock;
     @InjectMocks
     private QuestService questService;
@@ -63,6 +65,10 @@ public class QuestServiceTest {
                 .name(QUEST_NAME)
                 .description(QUEST_DESCRIPTION)
                 .build();
+
+        ArrayList<Quest> quests = new ArrayList<>();
+        quests.add(testQuest);
+        testUser.setQuests(quests);
     }
 
     @Test
@@ -129,6 +135,8 @@ public class QuestServiceTest {
     public void should_DeleteQuest_When_QuestIsValid() {
         questService.delete(testQuest);
         verify(questRepository, times(1)).delete(testQuest);
+        verify(imageService, times(1)).deleteOldFiles(testQuest.getImage());
+        verify(userService,times(1)).update(any());
     }
 
     @Test

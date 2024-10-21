@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/appStyles.css}">
 </head>
 <body>
+<!-- Header -->
 <div th:replace="~{parts/header :: header}"></div>
 <div class="container">
     <form action="create-quest" th:object="${questDTO}" method="post">
@@ -36,16 +37,17 @@
                    th:field="*{description}">
         </div>
 
+        <!-- Quest Text Area -->
         <div th:replace="~{parts/quest-text-area :: quest-text-area}"></div>
 
         <div class="custom-form-group">
             <!-- Create quest button -->
-            <button id="submit" name="create" class="btn btn-success" th:text="#{create-quest.quest.create.button}">Create quest</button>
+            <button id="submit" name="create" class="btn btn-success fixed-width-button" th:text="#{create-quest.quest.create.button}">Create quest</button>
 
             <!-- Buttons to open modal windows -->
             <div class="btn-group-right">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal1" th:text="#{create-quest.modal1.title}">Quest Example</button>
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal2" th:text="#{create-quest.modal2.title}">Quest Example</button>
+                <button type="button" class="btn btn-primary fixed-width-button" data-bs-toggle="modal" data-bs-target="#modal1" th:text="#{create-quest.modal1.title}">Quest Example</button>
+                <button type="button" class="btn btn-secondary fixed-width-button" data-bs-toggle="modal" data-bs-target="#modal2" th:text="#{create-quest.modal2.title}">Quest Example</button>
             </div>
         </div>
     </form>
@@ -63,8 +65,8 @@
                 <pre th:utext="${@contentService.getText('quests_create_page', 'modal_example_1_text', #locale)}"></pre>
             </div>
             <div class="modal-footer custom-modal-footer">
-                <button id="copyBtn1" class="btn btn-primary" th:text="#{create-quest.modal.copy}">Copy</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{create-quest.modal.close}">Close</button>
+                <button id="copyBtn1" class="btn btn-primary fixed-width-button" th:text="#{create-quest.modal.copy}">Copy</button>
+                <button type="button" class="btn btn-secondary fixed-width-button" data-bs-dismiss="modal" th:text="#{create-quest.modal.close}">Close</button>
             </div>
         </div>
     </div>
@@ -82,22 +84,23 @@
                 <pre th:utext="${@contentService.getText('quests_create_page', 'modal_example_2_text', #locale)}"></pre>
             </div>
             <div class="modal-footer custom-modal-footer">
-                <button id="copyBtn2" class="btn btn-primary" th:text="#{create-quest.modal.copy}">Copy</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{create-quest.modal.close}">Close</button>
+                <button id="copyBtn2" class="btn btn-primary fixed-width-button" th:text="#{create-quest.modal.copy}">Copy</button>
+                <button type="button" class="btn btn-secondary fixed-width-button" data-bs-dismiss="modal" th:text="#{create-quest.modal.close}">Close</button>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Footer -->
 <div th:replace="~{parts/footer :: footer}"></div>
 
 <!-- Toast message element -->
 <div id="toast" class="toast-message">Text copied!</div>
 
-<!-- Bootstrap JS -->
+<!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Script for copying the entire modal content -->
+<!-- Script for copying the entire modal content and showing toast -->
 <script>
     function showToast(message) {
         const toast = document.getElementById('toast');
@@ -129,6 +132,5 @@
         copyTextAndClose('modal2');
     });
 </script>
-
 </body>
 </html>

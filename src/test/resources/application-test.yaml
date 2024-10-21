@@ -44,7 +44,7 @@ valid:
     session:
       id: "5"
       login: "moderator"
-      password: "moderator"
+      password: "moderator123"
       role: "MODERATOR"
     new_user:
       login: "newUser"

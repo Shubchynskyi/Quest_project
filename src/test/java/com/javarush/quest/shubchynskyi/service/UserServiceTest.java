@@ -32,6 +32,7 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
+    // TODO в настройки
     private static final Long TEST_USER_ID = 1L;
     private static final String TEST_LOGIN = "testLogin";
     private static final String TEST_PASSWORD = "testPassword";
