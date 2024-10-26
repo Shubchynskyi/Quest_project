@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-  <title th:text="#{profile.title}">My Profile</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
-        crossorigin="anonymous">
-  <link rel="stylesheet" th:href="@{/css/appStyles.css}">
+    <title th:text="#{profile.title}">My Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+          crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/appStyles.css}">
 </head>
 <body>
 <!-- Header -->
@@ -14,57 +14,60 @@
 
 <div class="container">
 
-  <!-- User Profile Section -->
-  <div class="profile-section">
-    <div class="profile-image-container">
-      <img th:src="@{/images/{image}(image=${user.image})}" class="profile-image" alt="" th:alt="${user.image}">
-    </div>
-    <div class="user-info">
-      <h5 th:text="#{profile.login.label} + ' ' + ${user.login}"></h5>
-      <h5 th:text="#{profile.role.label} + ' ' + ${user.role}"></h5>
-      <form class="form-horizontal" th:action="@{/profile}" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="id" th:value="${user.id}">
-        <button type="submit" name="user" class="btn btn-primary fixed-width-button">
-          <span th:text="#{profile.edit.button}">Edit</span>
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Quests List -->
-  <div class="quest-list">
-    <p class="mb-4 fs-4 text-center" th:text="#{profile.quests.list.title}">My Quests</p>
-    <div class="row">
-      <div th:each="quest : ${quests}" class="col-lg-4 mb-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-header d-flex justify-content-between align-items-start">
-            <img th:src="@{/images/{image}(image=${quest.image})}" class="quest-image" alt="...">
-            <div class="button-container">
-              <a th:href="@{/quest(id=${quest.id})}" class="btn btn-primary fixed-width-button mb-2" target="_blank">
-                <span th:text="#{quests-list.button.play}">PLAY &raquo;</span>
-              </a>
-              <a th:href="@{/quest-edit(id=${quest.id})}" class="btn btn-secondary fixed-width-button mb-2" target="_blank">
-                <span th:text="#{quests-list.button.edit}">Edit</span>
-              </a>
-              <form th:action="@{/quest-delete}" method="post" style="display:inline;">
-                <input type="hidden" name="id" th:value="${quest.id}">
-                <input type="hidden" name="source" th:value="@{/profile}">
-                <button type="submit" class="btn btn-danger fixed-width-button"
-                        th:text="#{quests-list.button.delete}"
-                        th:attr="data-confirm-message=#{quests-list.confirm.delete}">
-                  Delete
-                </button>
-              </form>
-            </div>
-          </div>
-          <div class="quest-info">
-            <h5 class="card-title" th:text="${quest.name}"></h5>
-            <p class="card-text" th:text="${quest.description}"></p>
-          </div>
+    <!-- User Profile Section -->
+    <div class="profile-section">
+        <div class="profile-image-container">
+            <img th:src="@{/images/{image}(image=${user.image})}" class="profile-image" alt="" th:alt="${user.image}">
         </div>
-      </div>
+        <div class="user-info">
+            <h5 th:text="#{profile.login.label} + ' ' + ${user.login}"></h5>
+            <h5 th:text="#{profile.role.label} + ' ' + ${user.role}"></h5>
+            <form class="form-horizontal" th:action="@{/profile}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="id" th:value="${user.id}">
+                <button type="submit" name="user" class="btn btn-primary fixed-width-button">
+                    <span th:text="#{profile.edit.button}">Edit</span>
+                </button>
+            </form>
+        </div>
     </div>
-  </div>
+
+    <!-- Quests List -->
+    <div class="quest-list">
+        <p class="mb-4 fs-4 text-center" th:text="#{profile.quests.list.title}">My Quests</p>
+        <div class="row">
+            <div th:each="quest : ${quests}" class="col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-start">
+                        <img th:src="@{/images/{image}(image=${quest.image})}" class="quest-image" alt="Quest Image">
+                        <div class="button-container">
+                            <a th:href="@{/quest(id=${quest.id})}" class="btn btn-primary fixed-width-button mb-2"
+                               target="_blank">
+                                <span th:text="#{quests-list.button.play}">PLAY &raquo;</span>
+                            </a>
+                            <a th:href="@{/quest-edit(id=${quest.id})}"
+                               class="btn btn-secondary fixed-width-button mb-2" target="_blank">
+                                <span th:text="#{quests-list.button.edit}">Edit</span>
+                            </a>
+                            <form th:action="@{/quest-delete}" method="post" style="display:inline;">
+                                <input type="hidden" name="id" th:value="${quest.id}">
+                                <input type="hidden" name="source" th:value="@{/profile}">
+                                <button type="submit" class="btn btn-danger fixed-width-button"
+                                        th:text="#{quests-list.button.delete}"
+                                        th:attr="data-confirm-message=#{quests-list.confirm.delete}">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title quest-name" th:text="${quest.name}"></h5>
+                        <p class="card-text quest-description" th:text="${quest.description}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </div>
 
@@ -77,17 +80,17 @@
 
 <!-- Confirmation Script -->
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const deleteButtons = document.querySelectorAll('button[data-confirm-message]');
-    deleteButtons.forEach(function (button) {
-      button.addEventListener('click', function (event) {
-        const confirmMessage = button.getAttribute('data-confirm-message');
-        if (!confirm(confirmMessage)) {
-          event.preventDefault();
-        }
-      });
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButtons = document.querySelectorAll('button[data-confirm-message]');
+        deleteButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                const confirmMessage = button.getAttribute('data-confirm-message');
+                if (!confirm(confirmMessage)) {
+                    event.preventDefault();
+                }
+            });
+        });
     });
-  });
 </script>
 </body>
 </html>

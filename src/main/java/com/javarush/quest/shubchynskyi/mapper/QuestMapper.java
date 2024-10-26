@@ -24,4 +24,5 @@ public interface QuestMapper {
             @Mapping(target = "players", ignore = true)
     })
     QuestDTO questToQuestDTO(Quest quest);
+
 }

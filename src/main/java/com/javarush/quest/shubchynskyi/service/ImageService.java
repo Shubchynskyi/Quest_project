@@ -17,10 +17,12 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.stream.Stream;
 
-
 @Slf4j
 @Service
 public class ImageService {
+
+    @Value("${images.resource.temp.prefix}")
+    private String imagesTempPrefix;
 
     private final Path imagesFolder;
     private final Path tempFilesDir;
@@ -167,9 +169,8 @@ public class ImageService {
         }
     }
 
-    //TODO prefix from settings
     private String generateTemporaryFileName(String imageId) {
-        return "temp_" + System.currentTimeMillis() +
+        return imagesTempPrefix + System.currentTimeMillis() +
                 "_" + UUID.randomUUID() +
                 "_" + imageId;
     }

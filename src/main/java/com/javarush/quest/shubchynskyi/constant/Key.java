@@ -28,7 +28,7 @@ public class Key {
     public static final String WIN_REGEX = "^\\d+\\+.*";
     public static final String LOSE_REGEX = "^\\d+-.*";
 
-    //**************  ImageService  **************//
+    //**************  ImageService  **************// //todo в настройки?
     public static final String NO_IMAGE_JPG = "no-image.jpg";
     public static final List<String> ALLOWED_EXTENSIONS = List.of(
             ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp"
@@ -57,6 +57,7 @@ public class Key {
     public static final String ORIGINAL_FILENAME_IS_NULL_OR_EMPTY = "Original filename is null or empty";
     public static final String FILE_DOES_NOT_EXIST = "File does not exist";
     public static final String FILE_NAME_IS_NULL_OR_EMPTY = "File name is null or empty";
+    public static final String USER_NOT_FOUND_WITH_ID = "User not found with id ";
 
     //**************  Quest parser settings  **************// //TODO move to properties
     public static final int MINIMUM_QUESTION_IN_QUEST = 1;
@@ -114,5 +115,6 @@ public class Key {
     public static final int MAX_LENGTH = 100;
     public static final Pattern TEMP_FILE_PATTERN = Pattern.compile("^temp_(\\d+)_.*$");
     public static final String PREFIX_FOR_TEMP_IMAGES = "temp";
+
 
 }

@@ -22,14 +22,14 @@ public class LocaleConfig implements WebMvcConfigurer {
     @Bean
     public AcceptHeaderLocaleResolver acceptHeaderLocaleResolver() {
         AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver();
-        resolver.setDefaultLocale(new Locale(defaultLocaleString));
+        resolver.setDefaultLocale(Locale.of(defaultLocaleString));
         return resolver;
     }
 
     @Bean
     public SessionLocaleResolver sessionLocaleResolver() {
         SessionLocaleResolver resolver = new SessionLocaleResolver();
-        resolver.setDefaultLocale(new Locale(defaultLocaleString));
+        resolver.setDefaultLocale(Locale.of(defaultLocaleString));
         return resolver;
     }
 

@@ -27,12 +27,12 @@ class GlobalExceptionAspectIT {
         } catch (Exception e) {
             // Ожидаемое исключение
         }
-
+        //TODO refactoring
         // Проверяем, что лог-сообщение было записано
         Assertions.assertFalse(testLogger.getAllLoggingEvents().isEmpty(), "Must be one log minimum");
 
         // Получаем записанное сообщение
-        String logMessage = testLogger.getLoggingEvents().get(0).getMessage();
+        String logMessage = testLogger.getLoggingEvents().getFirst().getMessage();
 
         // Проверяем содержимое сообщения
         Assertions.assertTrue(logMessage.contains("Exception caught in class"),

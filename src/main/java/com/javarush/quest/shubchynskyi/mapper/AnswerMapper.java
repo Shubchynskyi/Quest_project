@@ -10,4 +10,5 @@ public interface AnswerMapper {
 
     AnswerDTO answerToAnswerDTO(Answer answer);
     Answer answerDTOToAnswer(AnswerDTO answerDTO);
+
 }

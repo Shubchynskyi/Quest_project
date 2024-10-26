@@ -33,7 +33,7 @@ import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.QUE
 @Controller
 @RequiredArgsConstructor
 public class QuestDeleteController {
-
+    // todo tests + refactoring
     private final QuestService questService;
     private final UserService userService;
     private final ValidationService validationService;

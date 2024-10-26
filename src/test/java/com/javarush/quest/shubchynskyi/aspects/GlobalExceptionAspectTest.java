@@ -24,9 +24,9 @@ class GlobalExceptionAspectTest {
 
         // Проверяем, что лог-сообщение было записано
         Assertions.assertFalse(testLogger.getAllLoggingEvents().isEmpty(), "Должен быть хотя бы один лог");
-
+//TODO refactoring
         // Получаем записанное сообщение
-        String logMessage = testLogger.getLoggingEvents().get(0).getMessage();
+        String logMessage = testLogger.getLoggingEvents().getFirst().getMessage();
 
         // Проверяем содержимое сообщения
         Assertions.assertTrue(logMessage.contains("Exception caught in class"),

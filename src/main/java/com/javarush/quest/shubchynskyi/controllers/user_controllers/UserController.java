@@ -117,8 +117,6 @@ public class UserController {
             HttpServletRequest request
     ) {
         log.info("Entering editUser for user: {}", userDTOFromModel.getId());
-        // TODO редактировать может только админ или модератор, а пользователь обычный может это сделать только
-        // TODO если он редактирует сам себя
         if (userDTOFromSession == null) {
             log.warn("User session is null, redirecting to login.");
             return REDIRECT + Route.LOGIN;
@@ -177,7 +175,12 @@ public class UserController {
             return REDIRECT + Route.USER_ID + userDTOFromModel.getId();
         }
 
-        userAccountService.updateExistingUser(userFromModel, imageFile, tempImageId, updateResult.isTempImagePresent(), updateResult.imageIsValid());
+        Optional<User> updatedExistingUser = userAccountService.updateExistingUser(
+                userFromModel, imageFile, tempImageId, updateResult.isTempImagePresent(), updateResult.imageIsValid());
+
+        if (updatedExistingUser.isPresent()) {
+            userFromModel = updatedExistingUser.get();
+        }
         return userFlowAndRedirect(request, userDTOFromSession, userFromModel);
     }
 

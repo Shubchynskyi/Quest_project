@@ -13,5 +13,6 @@ public class ViewErrorMessages {
     public static final String YOU_ARE_ALREADY_LOGGED_IN = "view_error.you_are_already_logged_in";
     public static final String QUEST_NOT_FOUND_ERROR = "view_error.quest_not_found_error";
     public static final String QUEST_DELETE_QUEST_LIST_INCORRECT = "quest-delete.quest-list.incorrect";
+    public static final String DESCRIPTION_NOT_AVAILABLE = "view_error.description_not_available";
 
 }

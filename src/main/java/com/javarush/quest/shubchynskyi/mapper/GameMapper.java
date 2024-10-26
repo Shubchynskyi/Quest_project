@@ -10,4 +10,5 @@ public interface GameMapper {
 
     GameDTO gameToGameDTO(Game game);
     Game gameDTOToGame(GameDTO gameDTO);
+
 }

@@ -43,6 +43,7 @@ class ValidationServiceTest {
     @InjectMocks
     private ValidationService validationService;
 
+    //TODO
     private static final String USER_ATTR = "user";
     private static final String FIELD_ERRORS_ATTR = "fieldErrors";
     private static final String ERROR_ATTR = "error";
@@ -126,6 +127,7 @@ class ValidationServiceTest {
         assertAccessIsDeniedForRoles(Collections.singletonList(Role.USER));
     }
 
+    //TODO
     private void mockFieldErrors() {
         List<FieldError> fieldErrors = List.of(new FieldError("objectName", "field", "defaultMessage"));
         when(bindingResult.hasErrors()).thenReturn(true);

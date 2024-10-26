@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
@@ -44,7 +43,7 @@ public class QuestsListController {
 
         UserDTO currentUser = (UserDTO) session.getAttribute(USER);
 
-        model.addAttribute(QUESTS, questDTOS);
+        model.addAttribute(QUESTS, questDTOS); // TODO
         model.addAttribute("currentUserRole", currentUser != null ? currentUser.getRole().toString() : null);
         return Route.QUESTS_LIST;
     }

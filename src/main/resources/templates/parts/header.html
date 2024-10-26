@@ -57,7 +57,7 @@
 
     <script>
         function changeLanguage(lang) {
-            var url = new URL(window.location.href);
+            const url = new URL(window.location.href); // todo поменял с var на const, проверить!
             url.searchParams.set('lang', lang);
             window.location.href = url.toString();
         }

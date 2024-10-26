@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public class QuestServiceTest {
     @Mock
     private QuestParser questParser;
@@ -100,10 +100,10 @@ public class QuestServiceTest {
 
         assertThrows(AppException.class,
                 () -> questService.create(
-                QUEST_NAME,
-                TEXT,
-                QUEST_DESCRIPTION,
-                String.valueOf(USER_ID))
+                        QUEST_NAME,
+                        TEXT,
+                        QUEST_DESCRIPTION,
+                        String.valueOf(USER_ID))
         );
 
         verify(questValidator, times(1)).isQuestExist(any());
@@ -136,7 +136,7 @@ public class QuestServiceTest {
         questService.delete(testQuest);
         verify(questRepository, times(1)).delete(testQuest);
         verify(imageService, times(1)).deleteOldFiles(testQuest.getImage());
-        verify(userService,times(1)).update(any());
+        verify(userService, times(1)).update(any());
     }
 
     @Test

@@ -35,6 +35,7 @@ import static org.mockito.Mockito.times;
 @ExtendWith(MockitoExtension.class)
 public class ImageServiceTest {
 
+    // TODO убрать константы?
     private static final String TEST_IMAGES_DIRECTORY = "target/test-images";
     private static final String TEST_IMAGE_ID = "testImageId";
     private static final String VALID_FILE_NAME = TEST_IMAGE_ID + ".jpeg";
@@ -81,6 +82,7 @@ public class ImageServiceTest {
         mockedFiles.verify(() -> Files.exists(expectedFilePath), times(1));
     }
 
+    // TODO в файл
     @ParameterizedTest
     @ValueSource(strings = {"../outsidePath", "/root/forbidden", "invalid\0path", "", " "})
     public void should_ThrowException_When_ImagePathIsInvalid(String invalidPath) {
@@ -195,7 +197,7 @@ public class ImageServiceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
+    @ValueSource(strings = { // TODO в файл
             "../invalidPath",
             "invalid*path",
             "invalid?path",

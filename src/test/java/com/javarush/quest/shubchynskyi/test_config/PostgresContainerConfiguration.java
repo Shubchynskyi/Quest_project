@@ -4,6 +4,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 @TestConfiguration
@@ -13,8 +14,12 @@ public class PostgresContainerConfiguration {
 
     @Bean
     @ServiceConnection
-    public PostgreSQLContainer<?> postgreSQLContainer(DynamicPropertyRegistry registry) {
-        registry.add("postgresql.driver", postgreSQLContainer::getDriverClassName);
+    public PostgreSQLContainer<?> postgreSQLContainer() {
         return postgreSQLContainer;
+    }
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("postgresql.driver", postgreSQLContainer::getDriverClassName);
     }
 }

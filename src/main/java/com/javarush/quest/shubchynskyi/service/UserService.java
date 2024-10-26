@@ -1,7 +1,9 @@
 package com.javarush.quest.shubchynskyi.service;
 
+import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -34,7 +36,14 @@ public class UserService {
 
     @Transactional
     public Optional<User> update(User user) {
-        User updatedUser = userRepository.save(user);
+        User existingUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException(Key.USER_NOT_FOUND_WITH_ID + user.getId()));
+
+        existingUser.setLogin(user.getLogin());
+        existingUser.setPassword(user.getPassword());
+        existingUser.setRole(user.getRole());
+
+        User updatedUser = userRepository.save(existingUser);
         return Optional.of(updatedUser);
     }
 

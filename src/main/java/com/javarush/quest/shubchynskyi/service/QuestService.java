@@ -6,7 +6,6 @@ import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.quest_util.BlockTypeResolver;
 import com.javarush.quest.shubchynskyi.quest_util.QuestParser;
 import com.javarush.quest.shubchynskyi.quest_util.QuestValidator;
-import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 import com.javarush.quest.shubchynskyi.repository.QuestRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

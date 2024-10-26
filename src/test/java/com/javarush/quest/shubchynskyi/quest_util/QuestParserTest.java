@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.NoSuchElementException;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -54,8 +56,8 @@ class QuestParserTest {
         questParser.takeNextLine();
         questParser.takeNextLine();
         questParser.takeNextLine();
-        assertThrows(IndexOutOfBoundsException.class, () -> questParser.takeNextLine());
-    }
+        assertThrows(NoSuchElementException.class, () -> questParser.takeNextLine());
+    } // TODO was IndexOutOfBoundsException
 
     @Test
     void should_CallQuestStringExtractor_When_ExtractLogicBlockIsCalled() {

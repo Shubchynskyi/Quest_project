@@ -50,6 +50,8 @@ logging:
 app:
   default-locale: en
   images-directory: src/main/webapp/WEB-INF/images/
+  descriptions-directory: descriptions/
+  descriptions-extension: .txt
 
 images:
   resource:
@@ -58,6 +60,7 @@ images:
     temp:
       handler: /images/temp/**
       locations: classpath:/images/temp/
+      prefix: temp_
 ico:
   resource:
     handler: /images/icon/**

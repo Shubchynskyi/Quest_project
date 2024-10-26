@@ -19,7 +19,7 @@ public class QuestParser {
     private List<String> stringList;
 
     public String takeNextLine() {
-        return stringList.remove(0);
+        return stringList.removeFirst();
     }
 
     public boolean isStringPresent() {

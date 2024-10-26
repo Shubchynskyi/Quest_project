@@ -81,7 +81,7 @@ public class QuestGameController {
         QuestionDTO questionDTO = questionService.get(questionId)
                 .map(questionMapper::questionToQuestionDTO)
                 .orElseThrow(() -> {
-                    log.warn("Question not found with ID: {}", questionId);
+                    log.error("Question not found with ID: {}", questionId);
                     return new RuntimeException("Question not found"); // TODO AppEx ???
                 });
         request.setAttribute(QUESTION, questionDTO);

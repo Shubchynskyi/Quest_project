@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
@@ -58,14 +59,14 @@ public class UserAccountService {
     }
 
     @Transactional
-    public void updateExistingUser(User userFromModel,
+    public Optional<User> updateExistingUser(User userFromModel,
                                    MultipartFile imageFile,
                                    String tempImageId,
                                    boolean isTempImagePresent,
                                    boolean imageIsValid) {
         log.info("Updating user with ID: {}", userFromModel.getId());
-        userService.update(userFromModel);
-
+        Optional<User> updatedUser = userService.update(userFromModel);
+        // todo - может тут получать квест пользователя и записывать снова?.. ну и остальные поля?
         if (!isTempImagePresent || imageIsValid) {
             log.info("Uploading updated image for user ID: {}", userFromModel.getId());
             imageService.uploadFromMultipartFile(imageFile, userFromModel.getImage(), false);
@@ -73,6 +74,7 @@ public class UserAccountService {
             log.info("Using existing temporary image for user ID: {}", userFromModel.getId());
             imageService.uploadFromExistingFile(tempImageId, userFromModel.getImage());
         }
+        return updatedUser;
     }
 
     public UserDataProcessResult processUserData(
