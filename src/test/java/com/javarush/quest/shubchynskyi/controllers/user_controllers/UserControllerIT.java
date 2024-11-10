@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
+import java.util.EnumSet;
+import java.util.stream.Stream;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static org.hamcrest.Matchers.notNullValue;
@@ -93,13 +93,13 @@ public class UserControllerIT {
         return new MockMultipartFile(IMAGE, testImage, contentType, fileContent);
     }
 
-    // todo take from config
-    private List<Role> allowedRolesProvider() {
-        return Arrays.asList(Role.ADMIN, Role.MODERATOR, Role.USER);
+    private Stream<Role> allowedRolesProvider() {
+        return UserController.ALLOWED_ROLES_FOR_USER_EDIT.stream();
     }
 
-    private List<Role> deniedRolesProvider() {
-        return List.of(Role.GUEST);
+    private Stream<Role> notAllowedRolesProvider() {
+        return EnumSet.allOf(Role.class).stream()
+                .filter(role -> !UserController.ALLOWED_ROLES_FOR_USER_EDIT.contains(role));
     }
 
     private void performDeleteUserAction(MockHttpSession session, String userId, String expectedRedirectUrl) throws Exception {
@@ -143,9 +143,9 @@ public class UserControllerIT {
     }
 
     @ParameterizedTest
-    @MethodSource("deniedRolesProvider")
-    void whenUserGetsUserByIdWithDisallowedRoles_ThenRedirectToIndex(Role deniedRole) throws Exception {
-        MockHttpSession session = createSessionWithRole(deniedRole);
+    @MethodSource("notAllowedRolesProvider")
+    void whenUserGetsUserByIdWithDisallowedRoles_ThenRedirectToIndex(Role notAllowedRole) throws Exception {
+        MockHttpSession session = createSessionWithRole(notAllowedRole);
 
         mockMvc.perform(get(Route.USER)
                         .session(session)
@@ -172,10 +172,10 @@ public class UserControllerIT {
     }
 
     @ParameterizedTest
-    @MethodSource("deniedRolesProvider")
+    @MethodSource("notAllowedRolesProvider")
     @Transactional
-    void whenUserEditsCurrentUserWithDisallowedRoles_ThenRedirectToProfile(Role deniedRole) throws Exception {
-        MockHttpSession session = createSessionWithRole(deniedRole);
+    void whenUserEditsCurrentUserWithDisallowedRoles_ThenRedirectToProfile(Role notAllowedRole) throws Exception {
+        MockHttpSession session = createSessionWithRole(notAllowedRole);
 
         performUserEditAction(session, sessionUserDTO, Route.PROFILE, Route.PROFILE);
     }
@@ -191,10 +191,10 @@ public class UserControllerIT {
     }
 
     @ParameterizedTest
-    @MethodSource("deniedRolesProvider")
+    @MethodSource("notAllowedRolesProvider")
     @Transactional
-    void whenUserDeletesUserWithDisallowedRoles_ThenRedirectToProfile(Role deniedRole) throws Exception {
-        MockHttpSession session = createSessionWithRole(deniedRole);
+    void whenUserDeletesUserWithDisallowedRoles_ThenRedirectToProfile(Role notAllowedRole) throws Exception {
+        MockHttpSession session = createSessionWithRole(notAllowedRole);
 
         performDeleteUserAction(session, userIdForDelete, Route.PROFILE);
     }

@@ -42,9 +42,9 @@ public class UserController {
     private final ValidationService validationService;
     private final UserAccountService userAccountService;
 
-    // TODO to config
-    private final List<Role> acceptedRolesForSelfEditing = List.of(Role.ADMIN, Role.MODERATOR, Role.USER);
-    private final List<Role> acceptedRolesForAnotherEditing = List.of(Role.ADMIN, Role.MODERATOR);
+    // Todo move to constant or to yaml
+    protected static final List<Role> ALLOWED_ROLES_FOR_USER_EDIT =
+            List.of(Role.USER, Role.MODERATOR, Role.ADMIN);
 
     @GetMapping(USER)
     public String showUser(
@@ -58,7 +58,7 @@ public class UserController {
     ) {
         log.info("Entering showUser with id: {}", id);
 
-        if (validationService.checkUserAccessDenied(session, acceptedRolesForSelfEditing, redirectAttributes)) {
+        if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_USER_EDIT, redirectAttributes)) {
             log.warn("Access denied for user [{}] when attempting to view user [{}]", userFromSession.getId(), id);
             return REDIRECT + Route.INDEX;
         }
@@ -194,7 +194,7 @@ public class UserController {
 
         if (!userDTOFromSession.getId().equals(userDTOFromModel.getId())) {
             Role userRole = userDTOFromSession.getRole();
-            permitted = acceptedRolesForSelfEditing.contains(userRole);
+            permitted = ALLOWED_ROLES_FOR_USER_EDIT.contains(userRole);
         } else {
             permitted = true;
         }

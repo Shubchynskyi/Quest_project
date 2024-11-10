@@ -18,41 +18,48 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
-import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.QUEST_DELETE_QUEST_LIST_INCORRECT;
-import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.QUEST_NOT_FOUND_ERROR;
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.*;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class QuestDeleteController {
-    // todo tests + refactoring
+
     private final QuestService questService;
     private final UserService userService;
     private final ValidationService validationService;
     private final QuestMapper questMapper;
 
-    private final List<Role> acceptedRoles = List.of(Role.ADMIN, Role.MODERATOR);
+    //todo take from config ?
+    protected static final List<Role> ALLOWED_ROLES_FOR_QUEST_DELETE =
+            List.of(Role.MODERATOR, Role.ADMIN);
 
-    @PostMapping("quest-delete")
+    @PostMapping(QUEST_DELETE)
     public String deleteQuest(
-            String id,
+            @RequestParam Long id,
             HttpSession session,
             RedirectAttributes redirectAttributes,
-            String source   // источник, откуда пришел пользователь,
-            // скрытое поле, которое надо для понимания того куда вернуть пользователя после удаления
+            @RequestParam String source
     ) {
         UserDTO currentUserDTO = (UserDTO) session.getAttribute(USER);
+
+        if (currentUserDTO == null) {
+            log.warn("User is not logged in, redirecting to quests list page.");
+            return REDIRECT + Route.QUESTS_LIST;
+        }
+
         Optional<Quest> questOptional = questService.get(id);
 
-        // Если квест пустой
         if (questOptional.isEmpty()) {
             String localizedMessage = ErrorLocalizer.getLocalizedMessage(QUEST_NOT_FOUND_ERROR);
             redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
@@ -60,44 +67,37 @@ public class QuestDeleteController {
             return REDIRECT + source;
         }
 
-        // Проверяем пользователя и его права
-        if (Objects.nonNull(currentUserDTO)) { // todo проверяем что пользователь не null
-            Quest quest = questOptional.get();
-            Long authorId = quest.getAuthor().getId();
+        Quest quest = questOptional.get();
+        Long authorId = quest.getAuthor().getId();
 
-            // если пользователь не имеет прав, то вернем на source с ошибкой
-            // todo проверяем что пользователь не null еще раз???
-            if (validationService.checkUserAccessDenied(session, acceptedRoles, redirectAttributes)
-                    && !Objects.equals(currentUserDTO.getId(), authorId)) {
-                log.warn("Access denied to quest delete: insufficient permissions. Quest ID: {}. User ID: {}", id, currentUserDTO.getId());
-                return REDIRECT + source;
-            }
+        boolean accessDenied = validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_DELETE, redirectAttributes)
+                && !Objects.equals(currentUserDTO.getId(), authorId);
 
-            try {
-                questService.delete(quest);
-
-                List<QuestDTO> quests = userService.get(currentUserDTO.getId())
-                        .map(User::getQuests)
-                        .orElseThrow(() -> new AppException(QUEST_LIST_ERROR))
-                        .stream().map(questMapper::questToQuestDTOWithOutQuestions)
-                        .toList();
-
-                currentUserDTO.setQuests(quests);
-                session.setAttribute(USER, currentUserDTO);
-                log.info("Quest remove successful with ID: {}", id);
-            } catch (AppException e) {
-                String localizedMessage = ErrorLocalizer.getLocalizedMessage(QUEST_DELETE_QUEST_LIST_INCORRECT);
-                redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
-                log.warn("User or quests list not found, ID: {}", currentUserDTO.getId());
-            }
-
-            return "redirect:" + source;
-
-        } else {
-            log.warn("User is not logged in, redirecting to quests list page.");
-            return REDIRECT + Route.QUESTS_LIST;
+        if (accessDenied) {
+            log.warn("Access denied for quest deletion. Quest ID: {}. User ID: {}", id, currentUserDTO.getId());
+            redirectAttributes.addFlashAttribute(ERROR, YOU_DONT_HAVE_PERMISSIONS);
+            return REDIRECT + source;
         }
 
-    }
+        try {
+            questService.delete(quest);
 
+            List<QuestDTO> quests = userService.get(currentUserDTO.getId())
+                    .map(User::getQuests)
+                    .orElseThrow(() -> new AppException(QUEST_LIST_ERROR))
+                    .stream()
+                    .map(questMapper::questToQuestDTOWithOutQuestions)
+                    .collect(Collectors.toList());
+
+            currentUserDTO.setQuests(quests);
+            session.setAttribute(USER, currentUserDTO);
+            log.info("Quest successfully deleted. Quest ID: {}", id);
+        } catch (AppException e) {
+            String localizedMessage = ErrorLocalizer.getLocalizedMessage(QUEST_DELETE_QUEST_LIST_INCORRECT);
+            redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
+            log.warn("Failed to update user's quest list after quest deletion. User ID: {}", currentUserDTO.getId(), e);
+        }
+
+        return REDIRECT + source;
+    }
 }

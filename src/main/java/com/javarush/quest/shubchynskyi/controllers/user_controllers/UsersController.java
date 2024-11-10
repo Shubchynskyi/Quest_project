@@ -29,8 +29,9 @@ public class UsersController {
     private final UserMapper userMapper;
     private final ValidationService validationService;
 
-    // Todo move to constant or in yaml
-    private final List<Role> acceptedRoles = List.of(Role.ADMIN, Role.MODERATOR);
+    // Todo move to constant or to yaml
+    protected static final List<Role> ALLOWED_ROLES_FOR_USERS_LIST =
+            List.of(Role.MODERATOR, Role.ADMIN);
 
     @GetMapping(USERS)
     public String showUsers(
@@ -38,7 +39,7 @@ public class UsersController {
             HttpSession session,
             RedirectAttributes redirectAttributes
     ) {
-        if (validationService.checkUserAccessDenied(session, acceptedRoles, redirectAttributes)) {
+        if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_USERS_LIST, redirectAttributes)) {
             log.warn("Access denied to user list: insufficient permissions.");
             return REDIRECT + Route.INDEX;
         }

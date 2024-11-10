@@ -26,6 +26,7 @@ app:
 # Test data for quests and users
 valid:
   quest:
+    id: "1"
     text:
       path: "validQuestText.txt"
     name: "Quest name"
@@ -54,6 +55,8 @@ valid:
       password: "Password#123"
 invalid:
   quest:
+    incorrectId: "9SFG7"
+    id: "999999"
     text: "Invalid text"
   user:
     login: "invalid654User976479"

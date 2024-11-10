@@ -16,7 +16,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +27,12 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
+import static com.javarush.quest.shubchynskyi.constant.Route.INDEX;
+import static com.javarush.quest.shubchynskyi.constant.Route.QUEST_EDIT_ID;
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.YOU_DONT_HAVE_PERMISSIONS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ConfigIT
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Transactional
 public class QuestCreateControllerIT {
 
     @Autowired
@@ -78,20 +81,20 @@ public class QuestCreateControllerIT {
         }
     }
 
-    private static Stream<Role> allowedRolesProvider() {
+    private Stream<Role> allowedRolesProvider() {
         return QuestCreateController.ALLOWED_ROLES_FOR_QUEST_CREATE.stream();
     }
 
-    private static Stream<Role> notAllowedRolesProvider() {
+    private Stream<Role> notAllowedRolesProvider() {
         return EnumSet.allOf(Role.class).stream()
                 .filter(role -> !QuestCreateController.ALLOWED_ROLES_FOR_QUEST_CREATE.contains(role));
     }
 
     private static Stream<Arguments> provideParametersForMissingTest() {
         return Stream.of(
-                Arguments.of(QUEST_NAME, HttpStatus.FOUND),
-                Arguments.of(QUEST_TEXT, HttpStatus.BAD_REQUEST),
-                Arguments.of(QUEST_DESCRIPTION, HttpStatus.FOUND)
+                Arguments.of(QUEST_NAME, CREATE_QUEST),
+                Arguments.of(QUEST_TEXT, INDEX),
+                Arguments.of(QUEST_DESCRIPTION, CREATE_QUEST)
         );
     }
 
@@ -133,17 +136,17 @@ public class QuestCreateControllerIT {
                 .andExpect(view().name(CREATE_QUEST));
     }
 
-    @Test
-    @Transactional
-    public void createQuest_SuccessAndNameAlreadyExists_ShouldReturnError() throws Exception {
-        // Create the first quest and verify redirection
+    @ParameterizedTest
+    @MethodSource("allowedRolesProvider")
+    public void createQuest_SuccessAndNameAlreadyExists_ShouldReturnError(Role allowedRole) throws Exception {
+
+        userDTO.setRole(allowedRole);
+
         Long questId = createQuestAndAssertRedirect(validQuestName, validQuestDescription, validQuestText, userDTO);
 
-        // Verify the created quest details
         Quest createdQuest = questService.get(questId).orElseThrow();
         assertQuestDetails(createdQuest, validQuestName, validQuestDescription, validUserId);
 
-        // Attempt to create a second quest with the same name and expect an error
         mockMvc.perform(post(Route.CREATE_QUEST)
                         .param(TestConstants.NAME, validQuestName)
                         .param(TestConstants.DESCRIPTION, validQuestDescription)
@@ -154,41 +157,18 @@ public class QuestCreateControllerIT {
                 .andExpect(flash().attributeExists(ERROR));
     }
 
-    private Long createQuestAndAssertRedirect(String name, String description, String text, UserDTO userDTO) throws Exception {
-        MvcResult result = mockMvc.perform(post(Route.CREATE_QUEST)
-                        .param(TestConstants.NAME, name)
-                        .param(TestConstants.DESCRIPTION, description)
-                        .param(TestConstants.QUEST_TEXT, text)
-                        .sessionAttr(USER, userDTO))
-                .andExpect(status().is3xxRedirection())
-                .andReturn();
-
-        String redirectedUrl = result.getResponse().getRedirectedUrl();
-        assertNotNull(redirectedUrl, TestConstants.REDIRECTED_URL_DOES_NOT_MATCH_THE_EXPECTED_URL_PATTERN);
-
-        assertTrue(redirectedUrl.startsWith(Route.QUEST_EDIT), TestConstants.REDIRECTED_URL_DOES_NOT_MATCH_THE_EXPECTED_URL_PATTERN);
-
-        String questIdStr = redirectedUrl.substring(redirectedUrl.lastIndexOf('=') + 1);
-        return Long.parseLong(questIdStr);
-    }
-
-    private void assertQuestDetails(Quest quest, String expectedName, String expectedDescription, String expectedUserId) {
-        assertAll(
-                () -> assertNotNull(quest, TestConstants.QUEST_SHOULD_NOT_BE_NULL),
-                () -> assertEquals(expectedName, quest.getName(), TestConstants.QUEST_NAME_SHOULD_MATCH),
-                () -> assertEquals(expectedDescription, quest.getDescription(), TestConstants.QUEST_DESCRIPTION_SHOULD_MATCH),
-                () -> assertEquals(expectedUserId, String.valueOf(quest.getAuthor().getId()), TestConstants.AUTHOR_ID_SHOULD_MATCH)
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("provideParametersForMissingTest")
-    void createQuest_WhenMissingParameters_ShouldReturnExpectedStatus(String missingParam, HttpStatus expectedStatus) throws Exception {
+    void createQuest_WhenMissingParameters_ShouldReturnExpectedStatus(String missingParam, String expectedRedirect) throws Exception {
         MultiValueMap<String, String> params = buildValidParams();
         params.remove(missingParam);
 
-        mockMvc.perform(post(Route.CREATE_QUEST).params(params))
-                .andExpect(status().is(expectedStatus.value()));
+        userDTO.setRole(Role.USER);
+
+        mockMvc.perform(post(Route.CREATE_QUEST)
+                        .params(params)
+                        .sessionAttr(USER, userDTO))
+                .andExpect(redirectedUrl(expectedRedirect));
     }
 
     private MultiValueMap<String, String> buildValidParams() {
@@ -228,12 +208,65 @@ public class QuestCreateControllerIT {
 
     @ParameterizedTest
     @MethodSource("notAllowedRolesProvider")
-    void whenUserLacksRole_ThenRedirectToProfileWithErrorMessage(Role notAllowedRole) throws Exception {
+    void whenUserNotAllowedRole_ThenRedirectToProfileWithErrorMessage(Role notAllowedRole) throws Exception {
         userDTO.setRole(notAllowedRole);
 
         mockMvc.perform(get(Route.CREATE_QUEST).sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.PROFILE))
                 .andExpect(flash().attribute(ERROR, YOU_DONT_HAVE_PERMISSIONS));
+    }
+
+    @ParameterizedTest
+    @MethodSource("allowedRolesProvider")
+    void createQuest_ShouldAddQuestToUserAndSession(Role allowedRole) throws Exception {
+        userDTO.setRole(allowedRole);
+
+        Long createdQuestId = createQuestAndAssertRedirect(validQuestName, validQuestDescription, validQuestText, userDTO);
+
+        // Проверка: квест добавлен в список квестов пользователя
+        assertTrue(userDTO.getQuests().stream()
+                        .anyMatch(questDTO -> questDTO.getId().equals(createdQuestId)),
+                "Quest should be added to the user's quest list");
+
+        MvcResult result = mockMvc.perform(get(Route.QUEST_EDIT + "?id=" + createdQuestId)
+                        .sessionAttr(USER, userDTO))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        UserDTO updatedUser = (UserDTO) Objects.requireNonNull(result.getRequest().getSession()).getAttribute(USER);
+
+        assertNotNull(updatedUser, "Updated user should not be null");
+        assertTrue(updatedUser.getQuests().stream()
+                        .anyMatch(questDTO -> questDTO.getId().equals(createdQuestId)),
+                "Quest should be added to the user's quest list in the session");
+    }
+
+    private Long createQuestAndAssertRedirect(String name, String description, String text, UserDTO userDTO) throws Exception {
+        MvcResult result = mockMvc.perform(post(Route.CREATE_QUEST)
+                        .param(TestConstants.NAME, name)
+                        .param(TestConstants.DESCRIPTION, description)
+                        .param(TestConstants.QUEST_TEXT, text)
+                        .sessionAttr(USER, userDTO))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern(QUEST_EDIT_ID + "*"))
+                .andReturn();
+
+        String redirectedUrl = result.getResponse().getRedirectedUrl();
+        assertNotNull(redirectedUrl, TestConstants.REDIRECTED_URL_DOES_NOT_MATCH_THE_EXPECTED_URL_PATTERN);
+
+        assertTrue(redirectedUrl.startsWith(Route.QUEST_EDIT), TestConstants.REDIRECTED_URL_DOES_NOT_MATCH_THE_EXPECTED_URL_PATTERN);
+
+        String questIdStr = redirectedUrl.substring(redirectedUrl.lastIndexOf('=') + 1);
+        return Long.parseLong(questIdStr);
+    }
+
+    private void assertQuestDetails(Quest quest, String expectedName, String expectedDescription, String expectedUserId) {
+        assertAll(
+                () -> assertNotNull(quest, TestConstants.QUEST_SHOULD_NOT_BE_NULL),
+                () -> assertEquals(expectedName, quest.getName(), TestConstants.QUEST_NAME_SHOULD_MATCH),
+                () -> assertEquals(expectedDescription, quest.getDescription(), TestConstants.QUEST_DESCRIPTION_SHOULD_MATCH),
+                () -> assertEquals(expectedUserId, String.valueOf(quest.getAuthor().getId()), TestConstants.AUTHOR_ID_SHOULD_MATCH)
+        );
     }
 }

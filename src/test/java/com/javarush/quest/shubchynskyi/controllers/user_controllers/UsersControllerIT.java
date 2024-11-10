@@ -12,8 +12,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.EnumSet;
+import java.util.stream.Stream;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static org.hamcrest.Matchers.notNullValue;
@@ -34,15 +34,19 @@ public class UsersControllerIT {
         userDTO = new UserDTO();
     }
 
-    //todo take from config
-    private static List<Role> roleProvider() {
-        return Arrays.asList(Role.ADMIN, Role.MODERATOR);
+    private Stream<Role> allowedRolesProvider() {
+        return UsersController.ALLOWED_ROLES_FOR_USERS_LIST.stream();
+    }
+
+    private Stream<Role> notAllowedRolesProvider() {
+        return EnumSet.allOf(Role.class).stream()
+                .filter(role -> !UsersController.ALLOWED_ROLES_FOR_USERS_LIST.contains(role));
     }
 
     @ParameterizedTest
-    @MethodSource("roleProvider")
-    public void whenUserHasAccessRole_ThenShowUsers(Role accessRole) throws Exception {
-        userDTO.setRole(accessRole);
+    @MethodSource("allowedRolesProvider")
+    public void whenUserHasAccessRole_ThenShowUsers(Role allowedRole) throws Exception {
+        userDTO.setRole(allowedRole);
 
         mockMvc.perform(get(Route.USERS)
                         .sessionAttr(USER, userDTO))
@@ -50,13 +54,24 @@ public class UsersControllerIT {
                 .andExpect(view().name(Route.USERS))
                 .andExpect(model().attribute(USERS, notNullValue()));
     }
-    //todo ЧТО ЗА ТЕСТ?
-    @Test
-    public void whenUserHasAccessRole_ThenShowUsers() throws Exception {
-        mockMvc.perform(get(Route.USERS))
+
+    @ParameterizedTest
+    @MethodSource("notAllowedRolesProvider")
+    public void whenUserHasNoAccessRole_ThenRedirectToIndexWithError(Role notAllowedRole) throws Exception {
+        userDTO.setRole(notAllowedRole);
+
+        mockMvc.perform(get(Route.USERS)
+                        .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.INDEX))
                 .andExpect(flash().attribute(ERROR, notNullValue()));
     }
 
+    @Test
+    public void whenUserIsNotAuthenticated_ThenRedirectToIndexWithError() throws Exception {
+        mockMvc.perform(get(Route.USERS))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(Route.INDEX))
+                .andExpect(flash().attribute(ERROR, notNullValue()));
+    }
 }

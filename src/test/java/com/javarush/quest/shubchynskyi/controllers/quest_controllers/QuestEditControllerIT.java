@@ -29,6 +29,7 @@ import org.testcontainers.shaded.org.apache.commons.io.FilenameUtils;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
@@ -81,13 +82,14 @@ public class QuestEditControllerIT {
         return Arrays.stream(supportedLanguages);
     }
 
-    //todo take from config
-    private List<Role> allowedRolesProvider() {
-        return Arrays.asList(Role.ADMIN, Role.MODERATOR);
+    //todo take from config - взять из основного контроллера
+    private Stream<Role> allowedRolesProvider() {
+        return QuestEditController.ALLOWED_ROLES_FOR_QUEST_EDIT.stream();
     }
 
-    private List<Role> notAllowedRolesProvider() {
-        return Arrays.asList(Role.GUEST, Role.USER);
+    private Stream<Role> notAllowedRolesProvider() {
+        return EnumSet.allOf(Role.class).stream()
+                .filter(role -> !QuestEditController.ALLOWED_ROLES_FOR_QUEST_EDIT.contains(role));
     }
 
     @Test

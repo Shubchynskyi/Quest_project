@@ -2,6 +2,8 @@ package com.javarush.quest.shubchynskyi.constant;
 
 import lombok.experimental.UtilityClass;
 
+import java.net.URI;
+
 @UtilityClass
 public class Route {
 
@@ -24,5 +26,5 @@ public class Route {
     public static final String QUEST_EDIT = "/quest-edit";
     public static final String QUEST_EDIT_ID = "/quest-edit?id=";
     public static final String CREATE_QUEST = "/create-quest";
-
+    public static final String QUEST_DELETE = "/quest-delete";
 }

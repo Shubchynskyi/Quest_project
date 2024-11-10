@@ -90,6 +90,7 @@ public class Key {
     public static final String START_QUESTION_ID = "startQuestionId";
     public static final String CREATE_QUEST = "create-quest";
     public static final String QUEST_EDIT = "quest-edit";
+    public static final String QUEST_DELETE = "quest-delete";
     public static final String QUESTS_LIST = "quests-list";
     public static final String QUEST_DTO = "questDTO";
 
@@ -115,6 +116,5 @@ public class Key {
     public static final int MAX_LENGTH = 100;
     public static final Pattern TEMP_FILE_PATTERN = Pattern.compile("^temp_(\\d+)_.*$");
     public static final String PREFIX_FOR_TEMP_IMAGES = "temp";
-
 
 }

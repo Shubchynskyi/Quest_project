@@ -38,7 +38,10 @@ public class QuestEditController {
     // TODO настройки доступа, если ID пользователя = ID пользователя в квесте, то разрешить доступ.
     // TODO для списка (админ, модер) - разрешить доступ
 
-    private final List<Role> acceptedRoles = List.of(Role.ADMIN, Role.MODERATOR);
+//    protected final List<Role> acceptedRoles = List.of(Role.ADMIN, Role.MODERATOR);
+    //todo take from config ?
+    protected static final List<Role> ALLOWED_ROLES_FOR_QUEST_EDIT =
+            List.of(Role.MODERATOR, Role.ADMIN);
 
     private final QuestService questService;
     private final QuestionService questionService;
@@ -49,7 +52,7 @@ public class QuestEditController {
 
     @GetMapping(QUEST_EDIT)
     public String showQuestForEdit(
-            @RequestParam(ID) String id,
+            @RequestParam(ID) String id, // TODO проверить что id это число
             Model model,
             HttpSession session,
             RedirectAttributes redirectAttributes
@@ -69,7 +72,7 @@ public class QuestEditController {
             Long authorId = quest.getAuthor().getId();
 
             // todo проверяем что пользователь не null еще раз???
-            if (validationService.checkUserAccessDenied(session, acceptedRoles, redirectAttributes)
+            if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_EDIT, redirectAttributes)
                     && !Objects.equals(currentUser.getId(), authorId)) {
                 log.warn("Access denied to quest edit: insufficient permissions. Quest ID: {}. User ID: {}", id, currentUser.getId());
                 return REDIRECT + Route.QUESTS_LIST;

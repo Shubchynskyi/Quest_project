@@ -76,6 +76,7 @@ class UserServiceTest {
 
     @Test
     void should_UpdateUser_When_UserIsValidForUpdate() {
+        when(userRepository.findById(TEST_USER_ID)).thenReturn(Optional.of(testUser));
         when(userRepository.save(any())).thenReturn(testUser);
 
         assertEquals(Optional.of(testUser), userService.update(testUser));

@@ -27,7 +27,7 @@ public class ProfileControllerIT {
     private MockMvc mockMvc;
 
     @Value("${valid.user.role}")
-    private String validUserRoleString;
+    private String validUserRole;
     @Value("${valid.user.id}")
     private Long validUserId;
 
@@ -36,11 +36,9 @@ public class ProfileControllerIT {
 
     @BeforeAll
     public void setup() {
-        Role testUserRole = Role.valueOf(validUserRoleString.toUpperCase());
-
         validUserDTO = new UserDTO();
         validUserDTO.setId(validUserId);
-        validUserDTO.setRole(testUserRole);
+        validUserDTO.setRole(Role.valueOf(validUserRole));
 
         invalidUserDTOWithNoId = new UserDTO();
     }
