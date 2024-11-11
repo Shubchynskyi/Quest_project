@@ -20,6 +20,7 @@ app:
       content-type: "image/png"
   localization:
     supported-languages: en, ru, ua, de
+    default-locale: en
   tests:
     expectedQuestsSize: 4
 

@@ -2,8 +2,6 @@ package com.javarush.quest.shubchynskyi.constant;
 
 import lombok.experimental.UtilityClass;
 
-import java.net.URI;
-
 @UtilityClass
 public class Route {
 
