@@ -42,7 +42,6 @@ public class QuestCreateController {
     private final ValidationService validationService;
     private final QuestMapper questMapper;
 
-    // Todo move to constant or to yaml
     protected static final List<Role> ALLOWED_ROLES_FOR_QUEST_CREATE =
             List.of(Role.USER, Role.MODERATOR, Role.ADMIN);
 

@@ -31,7 +31,7 @@ public class SignupControllerIT {
     @Autowired
     private MockMvc mockMvc;
 
-    @Value("${app.images-directory}")
+    @Value("${app.directories.images}")
     private String imagesDirectory;
     @Value("${app.images.test-image.name}")
     private String testImage;

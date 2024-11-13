@@ -18,27 +18,21 @@ class GlobalExceptionAspectIT {
 
     @Test
     void testExceptionLoggingAspect() {
-        // Получаем TestLogger для класса GlobalExceptionAspect
         TestLogger testLogger = TestLoggerFactory.getTestLogger(GlobalExceptionAspect.class);
-
-        // Вызываем метод, который выбрасывает исключение
         try {
             testExceptionService.methodThatThrowsException();
-        } catch (Exception e) {
-            // Ожидаемое исключение
         }
-        //TODO refactoring
-        // Проверяем, что лог-сообщение было записано
+        catch (Exception e) {
+            // Exception is expected, verifying logs
+        }
+
         Assertions.assertFalse(testLogger.getAllLoggingEvents().isEmpty(), "Must be one log minimum");
 
-        // Получаем записанное сообщение
         String logMessage = testLogger.getLoggingEvents().getFirst().getMessage();
 
-        // Проверяем содержимое сообщения
         Assertions.assertTrue(logMessage.contains("Exception caught in class"),
                 "Must be 'Exception caught in class'");
 
-        // Очищаем логгер после теста
         TestLoggerFactory.clear();
     }
 }

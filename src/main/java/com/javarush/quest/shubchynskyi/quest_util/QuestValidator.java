@@ -3,6 +3,7 @@ package com.javarush.quest.shubchynskyi.quest_util;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.repository.QuestRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,15 @@ import static com.javarush.quest.shubchynskyi.constant.Key.*;
 @Component
 @RequiredArgsConstructor
 public class QuestValidator {
+
+    @Value("${app.quest.validator.minimum-question-in-quest}")
+    private int minimumQuestionInQuest;
+    @Value("${app.quest.validator.minimum-answer-in-quest}")
+    private int minimumAnswerInQuest;
+    @Value("${app.quest.validator.minimum-question-to-win-in-quest}")
+    private int minimumQuestionToWinInQuest;
+    @Value("${app.quest.validator.minimum-question-to-lose-in-quest}")
+    private int minimumQuestionToLoseInQuest;
 
     private final QuestRepository questRepository;
 
@@ -40,10 +50,10 @@ public class QuestValidator {
         int winCount = countMatches(lines, WIN_REGEX);
         int loseCount = countMatches(lines, LOSE_REGEX);
 
-        return questionCount >= MINIMUM_QUESTION_IN_QUEST
-               && answerCount >= MINIMUM_ANSWER_IN_QUEST
-               && winCount >= MINIMUM_QUESTION_TO_WIN_IN_QUEST
-               && loseCount >= MINIMUM_QUESTION_TO_LOSE_IN_QUEST;
+        return questionCount >= minimumQuestionInQuest
+                && answerCount >= minimumAnswerInQuest
+                && winCount >= minimumQuestionToWinInQuest
+                && loseCount >= minimumQuestionToLoseInQuest;
     }
 
     private int countMatches(String[] lines, String regex) {

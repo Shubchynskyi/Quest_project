@@ -29,7 +29,6 @@ public class UsersController {
     private final UserMapper userMapper;
     private final ValidationService validationService;
 
-    // Todo move to constant or to yaml
     protected static final List<Role> ALLOWED_ROLES_FOR_USERS_LIST =
             List.of(Role.MODERATOR, Role.ADMIN);
 

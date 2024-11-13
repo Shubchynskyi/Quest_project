@@ -40,7 +40,6 @@ public class QuestDeleteController {
     private final ValidationService validationService;
     private final QuestMapper questMapper;
 
-    //todo take from config ?
     protected static final List<Role> ALLOWED_ROLES_FOR_QUEST_DELETE =
             List.of(Role.MODERATOR, Role.ADMIN);
 

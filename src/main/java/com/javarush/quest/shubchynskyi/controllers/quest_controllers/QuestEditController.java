@@ -39,7 +39,7 @@ public class QuestEditController {
     // TODO для списка (админ, модер) - разрешить доступ
 
 //    protected final List<Role> acceptedRoles = List.of(Role.ADMIN, Role.MODERATOR);
-    //todo take from config ?
+    //todo проблемы с изображением! после неккоректного файла выкидывает с общей ошибкой
     protected static final List<Role> ALLOWED_ROLES_FOR_QUEST_EDIT =
             List.of(Role.MODERATOR, Role.ADMIN);
 
@@ -52,7 +52,7 @@ public class QuestEditController {
 
     @GetMapping(QUEST_EDIT)
     public String showQuestForEdit(
-            @RequestParam(ID) String id, // TODO проверить что id это число
+            @RequestParam(ID) String id,
             Model model,
             HttpSession session,
             RedirectAttributes redirectAttributes

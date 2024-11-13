@@ -1,13 +1,16 @@
 package com.javarush.quest.shubchynskyi.service;
 
+import com.javarush.quest.shubchynskyi.config.ImageProperties;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.result.UserDataProcessResult;
+import com.javarush.quest.shubchynskyi.test_config.TestImageProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,8 +40,13 @@ class UserAccountServiceTest {
     @Mock
     private ValidationService validationService;
 
+    @Mock
+    private ImageProperties imageProperties;
+
     @InjectMocks
     private UserAccountService userAccountService;
+
+    private final TestImageProperties testImageProperties = new TestImageProperties();
 
     private UserDTO userDTOFromModel;
     private User user;
@@ -58,15 +66,12 @@ class UserAccountServiceTest {
         originalLogin = "";
         bindingResult = mock(BindingResult.class);
         redirectAttributes = mock(RedirectAttributes.class);
+
+
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "true, true",
-            "false, false",
-            "true, false",
-            "false, true"
-    })
+    @CsvFileSource(resources = "/registerNewUserTestCases.csv")
     void registerNewUser_ShouldCallAppropriateServices(boolean isTempImagePresent, boolean isImageValid) {
         when(userMapper.userDTOToUser(userDTOFromModel)).thenReturn(user);
         when(userService.create(user)).thenReturn(Optional.of(user));
@@ -93,12 +98,7 @@ class UserAccountServiceTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "true, true",
-            "false, false",
-            "true, false",
-            "false, true"
-    })
+    @CsvFileSource(resources = "/updateExistingUserTestCases.csv")
     void updateExistingUser_ShouldCallAppropriateServices(boolean isTempImagePresent, boolean isImageValid) {
         userAccountService.updateExistingUser(user, imageFile, tempImageId, isTempImagePresent, isImageValid);
 
@@ -111,30 +111,18 @@ class UserAccountServiceTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "true, true, true, true, true",
-            "true, true, true, false, false",
-            "true, true, false, true, false",
-            "true, true, false, false, false",
-            "true, false, true, true, false",
-            "true, false, true, false, false",
-            "true, false, false, true, false",
-            "true, false, false, false, false",
-            "false, true, true, true, false",
-            "false, true, true, false, true",
-            "false, true, false, true, false",
-            "false, true, false, false, false",
-            "false, false, true, true, false",
-            "false, false, true, false, false",
-            "false, false, false, true, false",
-            "false, false, false, false, false"
-    })
+    @CsvFileSource(resources = "/processUserDataTestCases.csv")
     void processUserData_ShouldValidateAndProcessData(boolean hasFieldsErrors, boolean isImageValid, boolean isTempImagePresent, boolean loginExists, boolean fileSizeExceedsLimit) {
+
         when(validationService.processFieldErrors(bindingResult, redirectAttributes)).thenReturn(hasFieldsErrors);
         when(imageService.isValid(imageFile)).thenReturn(isImageValid);
         when(userService.isLoginExist(anyString())).thenReturn(loginExists);
-        long fileSize = fileSizeExceedsLimit ? MAX_FILE_SIZE + 1 : MAX_FILE_SIZE - 1;
-        lenient().when(imageFile.getSize()).thenReturn(fileSize);
+
+        if (isImageValid) {
+            when(imageProperties.getMaxFileSize()).thenReturn(testImageProperties.getMaxFileSize());
+            long fileSize = fileSizeExceedsLimit ? testImageProperties.getMaxFileSize() + 1 : testImageProperties.getMaxFileSize() - 1;
+            when(imageFile.getSize()).thenReturn(fileSize);
+        }
 
         UserDataProcessResult result = userAccountService.processUserData(
                 userDTOFromModel, bindingResult, imageFile, tempImageId,
@@ -142,7 +130,7 @@ class UserAccountServiceTest {
 
         verify(validationService).processFieldErrors(bindingResult, redirectAttributes);
 
-        if (isImageValid && imageFile.getSize() > MAX_FILE_SIZE) {
+        if (isImageValid && imageFile.getSize() > testImageProperties.getMaxFileSize()) {
             isImageValid = false;
             verify(redirectAttributes).addFlashAttribute(eq(IMAGING_ERROR), anyString());
             assertFalse(result.imageIsValid());
@@ -188,4 +176,3 @@ class UserAccountServiceTest {
     }
 
 }
-

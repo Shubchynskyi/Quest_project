@@ -51,7 +51,7 @@ public class UserControllerIT {
     @Value("${valid.user.id}")
     public String userIdForDelete;
 
-    @Value("${app.images-directory}")
+    @Value("${app.directories.images}")
     private String imagesDirectory;
     @Value("${app.images.test-image.name}")
     private String testImage;

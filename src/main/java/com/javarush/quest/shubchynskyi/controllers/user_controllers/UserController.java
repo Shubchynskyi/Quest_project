@@ -42,7 +42,6 @@ public class UserController {
     private final ValidationService validationService;
     private final UserAccountService userAccountService;
 
-    // Todo move to constant or to yaml
     protected static final List<Role> ALLOWED_ROLES_FOR_USER_EDIT =
             List.of(Role.USER, Role.MODERATOR, Role.ADMIN);
 

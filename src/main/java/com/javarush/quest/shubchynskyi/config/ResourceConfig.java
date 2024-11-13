@@ -8,22 +8,22 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class ResourceConfig implements WebMvcConfigurer {
 
-    @Value("${images.resource.handler}")
+    @Value("${app.resources.images.handler}")
     private String imagesResourceHandler;
 
-    @Value("${images.resource.locations}")
+    @Value("${app.resources.images.locations}")
     private String imagesResourceLocations;
 
-    @Value("${images.resource.temp.handler}")
+    @Value("${app.resources.images.temp.handler}")
     private String imagesTempResourceHandler;
 
-    @Value("${images.resource.temp.locations}")
+    @Value("${app.resources.images.temp.locations}")
     private String imagesTempResourceLocations;
 
-    @Value("${ico.resource.handler}")
+    @Value("${app.resources.icons.handler}")
     private String icoResourceHandler;
 
-    @Value("${ico.resource.locations}")
+    @Value("${app.resources.icons.locations}")
     private String icoResourceLocations;
 
     @Override

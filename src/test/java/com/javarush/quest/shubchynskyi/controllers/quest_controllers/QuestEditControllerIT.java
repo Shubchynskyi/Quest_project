@@ -59,7 +59,7 @@ public class QuestEditControllerIT {
 
     private UserDTO userDTO;
 
-    @Value("${app.images-directory}")
+    @Value("${app.directories.images}")
     private String imagesDirectory;
     @Value("${app.images.test-image.name}")
     private String testImageName;
@@ -81,7 +81,6 @@ public class QuestEditControllerIT {
         return Arrays.stream(supportedLanguages);
     }
 
-    //todo take from config - взять из основного контроллера
     private Stream<Role> allowedRolesProvider() {
         return QuestEditController.ALLOWED_ROLES_FOR_QUEST_EDIT.stream();
     }

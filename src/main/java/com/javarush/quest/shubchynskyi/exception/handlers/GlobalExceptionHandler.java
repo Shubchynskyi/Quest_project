@@ -13,9 +13,9 @@ import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.ID_
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.UNEXPECTED_ERROR;
 
 @ControllerAdvice
+@SuppressWarnings("unused")
 public class GlobalExceptionHandler {
 
-    @SuppressWarnings("unused")
     @ExceptionHandler({NumberFormatException.class, MethodArgumentTypeMismatchException.class})
     public String handleInvalidFormat(Exception ex, RedirectAttributes redirectAttributes) {
         String localizedMessage = ErrorLocalizer.getLocalizedMessage(ID_NOT_FOUND_ERROR);
@@ -23,7 +23,6 @@ public class GlobalExceptionHandler {
         return REDIRECT + INDEX;
     }
 
-    @SuppressWarnings("unused")
     @ExceptionHandler(Exception.class)
     public String handleGeneralException(Exception ex, RedirectAttributes redirectAttributes) {
         String localizedMessage = ErrorLocalizer.getLocalizedMessage(UNEXPECTED_ERROR);

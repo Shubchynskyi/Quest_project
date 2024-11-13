@@ -3,10 +3,8 @@ package com.javarush.quest.shubchynskyi.service;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.exception.AppException;
-import com.javarush.quest.shubchynskyi.quest_util.BlockTypeResolver;
 import com.javarush.quest.shubchynskyi.quest_util.QuestParser;
 import com.javarush.quest.shubchynskyi.quest_util.QuestValidator;
-import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 import com.javarush.quest.shubchynskyi.repository.QuestRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,18 +21,11 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-//@SuppressWarnings("unused")
 public class QuestServiceTest {
     @Mock
     private QuestParser questParser;
     @Mock
-    private BlockTypeResolver blockTypeResolver;
-    @Mock
-    private QuestionService questionService;
-    @Mock
     private UserService userService;
-    @Mock
-    private AnswerRepository answerRepository;
     @Mock
     private QuestRepository questRepository;
     @Mock
@@ -45,6 +36,7 @@ public class QuestServiceTest {
     private Lock lock;
     @InjectMocks
     private QuestService questService;
+    // TODO в настройки?
     private static final Long USER_ID = 2L;
     private static final Long QUEST_ID = 1L;
     private static final String NOT_EXIST_QUEST_ID = "5";

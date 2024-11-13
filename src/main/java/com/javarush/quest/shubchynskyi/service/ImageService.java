@@ -1,6 +1,7 @@
 package com.javarush.quest.shubchynskyi.service;
 
 
+import com.javarush.quest.shubchynskyi.config.ImageProperties;
 import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
@@ -21,16 +22,22 @@ import java.util.stream.Stream;
 @Service
 public class ImageService {
 
-    @Value("${images.resource.temp.prefix}")
+    @Value("${app.resources.images.temp.prefix}")
     private String imagesTempPrefix;
+
+    private final ImageProperties imageProperties;
 
     private final Path imagesFolder;
     private final Path tempFilesDir;
 
     @Autowired
-    public ImageService(@Value("${app.images-directory}") String imagesDirectory) throws IOException {
+    public ImageService(@Value("${app.directories.images}") String imagesDirectory,
+                        ImageProperties imageProperties
+
+    ) throws IOException {
+        this.imageProperties = imageProperties;
         this.imagesFolder = Paths.get(imagesDirectory);
-        this.tempFilesDir = this.imagesFolder.resolve(Key.PREFIX_FOR_TEMP_IMAGES);
+        this.tempFilesDir = this.imagesFolder.resolve(imageProperties.getPrefixForTempImages());
 
         Files.createDirectories(this.imagesFolder);
         Files.createDirectories(this.tempFilesDir);
@@ -49,7 +56,7 @@ public class ImageService {
                 throw new SecurityException(Key.INVALID_FILE_PATH_ACCESS_DENIED);
             }
 
-            boolean isTemporary = filename.startsWith(Key.PREFIX_FOR_TEMP_IMAGES);
+            boolean isTemporary = filename.startsWith(imageProperties.getPrefixForTempImages());
             Path rootDir = isTemporary ? tempFilesDir : imagesFolder;
             Path resolvedPath = rootDir.resolve(filename).normalize();
 
@@ -62,7 +69,7 @@ public class ImageService {
                 return resolvedPath;
             }
 
-            for (String ext : Key.ALLOWED_EXTENSIONS) {
+            for (String ext : imageProperties.getAllowedExtensions()) {
                 Path pathWithExtension = resolvedPath.getParent().resolve(resolvedPath.getFileName().toString() + ext);
                 if (Files.exists(pathWithExtension)) {
                     return pathWithExtension;
@@ -70,7 +77,7 @@ public class ImageService {
             }
 
             log.info("File not found, returning default image path.");
-            return rootDir.resolve(Key.NO_IMAGE_JPG);
+            return rootDir.resolve(imageProperties.getNoImageFilename());
         } catch (InvalidPathException e) {
             log.warn("Invalid path exception for filename: {}", filename, e);
             throw new SecurityException(Key.INVALID_FILE_PATH_ACCESS_DENIED, e);
@@ -184,7 +191,7 @@ public class ImageService {
         }
 
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-        if (!Key.ALLOWED_EXTENSIONS.contains(extension)) {
+        if (!imageProperties.getAllowedExtensions().contains(extension)) {
             log.warn("Invalid file extension: {}", extension);
             return false;
         }
@@ -199,7 +206,7 @@ public class ImageService {
             }
 
             String mimeType = Files.probeContentType(filePath);
-            if (mimeType == null || !Key.ALLOWED_MIME_TYPES.contains(mimeType)) {
+            if (mimeType == null || !imageProperties.getAllowedMimeTypes().contains(mimeType)) {
                 log.warn("Invalid MIME type: {}", mimeType);
                 return false;
             }
@@ -225,7 +232,7 @@ public class ImageService {
 
         try {
             String mimeType = Files.probeContentType(filePath);
-            if (mimeType == null || !Key.ALLOWED_MIME_TYPES.contains(mimeType)) {
+            if (mimeType == null || !imageProperties.getAllowedMimeTypes().contains(mimeType)) {
                 log.warn("Invalid MIME type for file: {}", mimeType);
                 return false;
             }
@@ -246,7 +253,7 @@ public class ImageService {
     }
 
     public void deleteOldFiles(String imageId) {
-        for (String ext : Key.ALLOWED_EXTENSIONS) {
+        for (String ext : imageProperties.getAllowedExtensions()) {
             Path path = imagesFolder.resolve(imageId + ext);
             if (Files.exists(path)) {
                 if (!tryDeleteFile(path)) {
@@ -284,7 +291,7 @@ public class ImageService {
                         if (matcher.matches()) {
                             try {
                                 long timestamp = Long.parseLong(matcher.group(1));
-                                if (currentTime - timestamp > Key.TIME_TO_DELETE_IN_MILLIS) {
+                                if (currentTime - timestamp > imageProperties.getTimeToDeleteInMillis()) {
                                     try {
                                         Files.delete(file);
                                         log.info("Expired temporary file deleted: {}", file);

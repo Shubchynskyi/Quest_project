@@ -18,7 +18,7 @@ import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.DES
 @Service
 public class ContentService {
 
-    @Value("${app.descriptions-directory}")
+    @Value("${app.directories.descriptions}")
     private String descriptionsDirectory;
 
     @Value("${app.descriptions-extension}")

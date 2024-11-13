@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.service;
 
+import com.javarush.quest.shubchynskyi.config.ImageProperties;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
@@ -20,13 +21,14 @@ import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.*;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class UserAccountService {
 
     private final UserService userService;
     private final ImageService imageService;
+    private final ImageProperties imageProperties;
     private final UserMapper userMapper;
     private final ValidationService validationService;
 
@@ -89,7 +91,7 @@ public class UserAccountService {
         boolean imageIsValid = imageService.isValid(imageFile);
         boolean isTempImagePresent = !tempImageId.isEmpty();
 
-        if (imageIsValid && imageFile.getSize() > MAX_FILE_SIZE) {
+        if (imageIsValid && imageFile.getSize() > imageProperties.getMaxFileSize()) {
             log.warn("Image file size is too large for user: {}", userDTOFromModel.getLogin());
             addLocalizedMaxSizeError(redirectAttributes);
             hasFieldsErrors = true;
@@ -126,7 +128,7 @@ public class UserAccountService {
     private void addLocalizedMaxSizeError(RedirectAttributes redirectAttributes) {
         String localizedMessage = ErrorLocalizer.getLocalizedMessage(FILE_IS_TOO_LARGE);
         redirectAttributes.addFlashAttribute(
-                IMAGING_ERROR, localizedMessage + " " + (MAX_FILE_SIZE / KB_TO_MB / KB_TO_MB) + " " + MB);
+                IMAGING_ERROR, localizedMessage + " " + (imageProperties.getMaxFileSize() / KB_TO_MB / KB_TO_MB) + " " + MB);
     }
 
     private boolean isLoginExist(UserDTO userDTOFromModel, RedirectAttributes redirectAttributes, boolean hasErrors) {

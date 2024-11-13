@@ -2,7 +2,6 @@ package com.javarush.quest.shubchynskyi.exception.handlers;
 
 import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -45,8 +44,7 @@ public class GlobalExceptionHandlerIT {
     }
 
     @Test
-    @DisplayName("Handle NumberFormatException and redirect to index with error message")
-    public void testHandleNumberFormatException() throws Exception {
+    void whenNumberFormatExceptionOccurs_thenRedirectToIndexWithErrorMessage() throws Exception {
         mockMvc.perform(get("/test/number-format-exception"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(INDEX))
@@ -54,8 +52,7 @@ public class GlobalExceptionHandlerIT {
     }
 
     @Test
-    @DisplayName("Handle MethodArgumentTypeMismatchException and redirect to index with error message")
-    public void testHandleMethodArgumentTypeMismatchException() throws Exception {
+    void whenMethodArgumentTypeMismatchOccurs_thenRedirectToIndexWithErrorMessage() throws Exception {
         mockMvc.perform(get("/test/method-argument-type-mismatch")
                         .param("number", "notANumber"))
                 .andExpect(status().is3xxRedirection())
@@ -64,8 +61,7 @@ public class GlobalExceptionHandlerIT {
     }
 
     @Test
-    @DisplayName("Handle general exception and redirect to index with error message")
-    public void testHandleGeneralException() throws Exception {
+    void whenGeneralExceptionOccurs_thenRedirectToIndexWithErrorMessage() throws Exception {
         mockMvc.perform(get("/test/general-exception"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(INDEX))

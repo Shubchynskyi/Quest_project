@@ -5,12 +5,13 @@ spring:
     username: postgres
     password: postgres
     hikari:
-      connectionTimeout: 20000
-      maximumPoolSize: 10
-      minimumIdle: 5
-      idleTimeout: 300000
-      maxLifetime: 600000
-      autoCommit: true
+      connection-timeout: 20000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      max-lifetime: 600000
+      auto-commit: true
+
   jpa:
     hibernate:
       ddl-auto: validate
@@ -18,50 +19,78 @@ spring:
       hibernate:
         default_schema: public
     open-in-view: true
+
   messages:
     encoding: UTF-8
     basename: messages
+
   liquibase:
     change-log: classpath:db/db.changelog-master.xml
     default-schema: public
+
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+
   thymeleaf:
-#    TODO для докера, надо как-то брать из настроек только для контейнера
-#    prefix: file:/app/templates/   # Здесь указаны пути, чтобы Thymeleaf искал шаблоны в папке /app/templates внутри контейнера
-#    spring:
-#      thymeleaf:
-#        prefix=classpath:/templates/:
     suffix: .html
     check-template-location: true
     cache: false
 
 logging:
   level:
-    org:
-      springframework:
-        web: DEBUG
-        orm:
-          jpa:
-            JpaTransactionManager: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.orm.jpa.JpaTransactionManager: DEBUG
 
 app:
   default-locale: en
-  images-directory: src/main/webapp/WEB-INF/images/
-  descriptions-directory: descriptions/
+  directories:
+    images: src/main/webapp/WEB-INF/images/
+    descriptions: descriptions/
   descriptions-extension: .txt
+  images:
+    max-file-size: 2097152  # 2MB
+    time-to-delete-in-millis: 1800000  # 30 minutes
+    prefix-for-temp-images: temp
+    no-image-filename: no-image.jpg
+    allowed-extensions:
+      - ".jpg"
+      - ".jpeg"
+      - ".png"
+      - ".bmp"
+      - ".gif"
+      - ".webp"
+    allowed-mime-types:
+      - "image/jpeg"
+      - "image/png"
+      - "image/bmp"
+      - "image/gif"
+      - "image/webp"
+    default-mime-type: "application/octet-stream"
+    extension-to-mime-type:
+      ".jpg": "image/jpeg"
+      ".jpeg": "image/jpeg"
+      ".png": "image/png"
+      ".bmp": "image/bmp"
+      ".gif": "image/gif"
+      ".webp": "image/webp"
 
-images:
-  resource:
-    handler: /images/**
-    locations: classpath:/images/
-    temp:
-      handler: /images/temp/**
-      locations: classpath:/images/temp/
-      prefix: temp_
-ico:
-  resource:
-    handler: /images/icon/**
-    locations: classpath:/static/images/icon/
+  resources:
+    images:
+      handler: /images/**
+      locations: classpath:/images/
+      temp:
+        handler: /images/temp/**
+        locations: classpath:/images/temp/
+        prefix: temp_
+    icons:
+      handler: /images/icon/**
+      locations: classpath:/static/images/icon/
+
+  quest:
+    validator:
+      minimum-question-in-quest: 1
+      minimum-answer-in-quest: 2
+      minimum-question-to-win-in-quest: 1
+      minimum-question-to-lose-in-quest: 1

@@ -8,7 +8,8 @@ spring:
 
 # Application settings overrides for tests
 app:
-  images-directory: "src/test/resources/images"
+  directories:
+    images: src/test/resources/images
   valid-quest-id: "1"
   invalid-quest-id: "999"
   images:
@@ -20,7 +21,6 @@ app:
       content-type: "image/png"
   localization:
     supported-languages: en, ru, ua, de
-    default-locale: en
   tests:
     expectedQuestsSize: 4
 

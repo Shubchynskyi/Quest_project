@@ -28,14 +28,6 @@ public class Key {
     public static final String WIN_REGEX = "^\\d+\\+.*";
     public static final String LOSE_REGEX = "^\\d+-.*";
 
-    //**************  ImageService  **************// //todo в настройки?
-    public static final String NO_IMAGE_JPG = "no-image.jpg";
-    public static final List<String> ALLOWED_EXTENSIONS = List.of(
-            ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp"
-    );
-    public static final List<String> ALLOWED_MIME_TYPES = List.of(
-            "image/jpeg", "image/png", "image/bmp", "image/gif", "image/webp");
-
     //**************  URI Patterns  **************//
     public static final String NEXT_QUESTION_URI_PATTERN = "%s?%s=%s&%s=%d";
     public static final String ID_URI_PATTERN = "%s?id=%s";
@@ -58,12 +50,6 @@ public class Key {
     public static final String FILE_DOES_NOT_EXIST = "File does not exist";
     public static final String FILE_NAME_IS_NULL_OR_EMPTY = "File name is null or empty";
     public static final String USER_NOT_FOUND_WITH_ID = "User not found with id ";
-
-    //**************  Quest parser settings  **************// //TODO move to properties
-    public static final int MINIMUM_QUESTION_IN_QUEST = 1;
-    public static final int MINIMUM_ANSWER_IN_QUEST = 2;
-    public static final int MINIMUM_QUESTION_TO_WIN_IN_QUEST = 1;
-    public static final int MINIMUM_QUESTION_TO_LOSE_IN_QUEST = 1;
 
     //**************  Users  **************//
     public static final String USER = "user";
@@ -111,10 +97,7 @@ public class Key {
     public static final int KB_TO_MB = 1024;
     public static final String USER_DTO_FROM_MODEL = "userDTOFromModel";
     public static final String TEMP_IMAGE_ID = "tempImageId";
-    public static final int MAX_FILE_SIZE = 2097152;
-    public static final long TIME_TO_DELETE_IN_MILLIS = 1800000L; // THIRTY_MINUTES_IN_MILLIS
     public static final int MAX_LENGTH = 100;
     public static final Pattern TEMP_FILE_PATTERN = Pattern.compile("^temp_(\\d+)_.*$");
-    public static final String PREFIX_FOR_TEMP_IMAGES = "temp";
 
 }

@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers;
 
+import com.javarush.quest.shubchynskyi.config.ImageProperties;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,17 +23,7 @@ import static com.javarush.quest.shubchynskyi.constant.Key.*;
 public class ImageController {
 
     private final ImageService imageService;
-
-    // Todo: move to a separate class
-    private static final Map<String, String> EXTENSION_TO_MIME_TYPE = new HashMap<>();
-    static {
-        EXTENSION_TO_MIME_TYPE.put(".jpg", "image/jpeg");
-        EXTENSION_TO_MIME_TYPE.put(".jpeg", "image/jpeg");
-        EXTENSION_TO_MIME_TYPE.put(".png", "image/png");
-        EXTENSION_TO_MIME_TYPE.put(".bmp", "image/bmp");
-        EXTENSION_TO_MIME_TYPE.put(".gif", "image/gif");
-        EXTENSION_TO_MIME_TYPE.put(".webp", "image/webp");
-    }
+    private final ImageProperties imageProperties;
 
     @GetMapping(value = PATH_IMAGE_NAME)
     public void getImage(@PathVariable(PARAM_IMAGE_NAME) String imageName, HttpServletResponse response) throws IOException {
@@ -45,16 +36,16 @@ public class ImageController {
             log.info("Image '{}' served successfully with MIME type '{}'.", imageName, mimeType);
         } catch (IOException e) {
             log.warn("Failed to serve image '{}': {}", imageName, e.getMessage());
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Image not found.");
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Image not found."); // TODO
         }
     }
 
     private String determineMimeType(Path path) {
         String fileName = path.getFileName().toString().toLowerCase();
-        return EXTENSION_TO_MIME_TYPE.entrySet().stream()
+        return imageProperties.getExtensionToMimeType().entrySet().stream()
                 .filter(entry -> fileName.endsWith(entry.getKey()))
                 .findFirst()
                 .map(Map.Entry::getValue)
-                .orElse("application/octet-stream");  // Default MIME type if no match // TODO: move to constant
+                .orElse(imageProperties.getDefaultMimeType());
     }
 }
