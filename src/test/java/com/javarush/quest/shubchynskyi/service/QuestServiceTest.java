@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.service;
 
-import com.javarush.quest.shubchynskyi.TestConstants;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.exception.AppException;
@@ -24,6 +23,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class QuestServiceTest {
+
     @Mock
     private QuestParser questParser;
     @Mock
@@ -44,13 +44,13 @@ public class QuestServiceTest {
 
     @BeforeEach
     public void setup() {
-        testUser = User.builder().id(USER_ID).build();
+        testUser = User.builder().id(TEST_USER_ID).build();
 
         testQuest = Quest.builder()
                 .author(testUser)
-                .id(QUEST_ID)
-                .name(QUEST_NAME_HOLDER)
-                .description(QUEST_DESCRIPTION_HOLDER)
+                .id(TEST_QUEST_ID)
+                .name(TEST_QUEST_NAME)
+                .description(TEST_QUEST_DESCRIPTION)
                 .build();
 
         ArrayList<Quest> quests = new ArrayList<>();
@@ -62,17 +62,17 @@ public class QuestServiceTest {
     void should_CreateQuest_When_ParametersAreValid() {
         when(questRepository.save(any())).thenReturn(testQuest);
         when(questValidator.isQuestTextValid(anyString())).thenReturn(true);
-        when(userService.get(USER_ID)).thenReturn(Optional.of(testUser));
+        when(userService.get(TEST_USER_ID)).thenReturn(Optional.of(testUser));
 
         Quest createdQuest = questService.create(
-                QUEST_NAME_HOLDER,
-                QUEST_TEXT_HOLDER,
-                QUEST_DESCRIPTION_HOLDER,
-                String.valueOf(USER_ID));
+                TEST_QUEST_NAME,
+                TEST_QUEST_TEXT,
+                TEST_QUEST_DESCRIPTION,
+                String.valueOf(TEST_USER_ID));
 
-        assertEquals(QUEST_NAME_HOLDER, createdQuest.getName());
-        assertEquals(QUEST_DESCRIPTION_HOLDER, createdQuest.getDescription());
-        assertEquals(USER_ID, createdQuest.getAuthor().getId());
+        assertEquals(TEST_QUEST_NAME, createdQuest.getName());
+        assertEquals(TEST_QUEST_DESCRIPTION, createdQuest.getDescription());
+        assertEquals(TEST_USER_ID, createdQuest.getAuthor().getId());
 
         verify(questRepository, times(2)).save(any());
         verify(lock, times(1)).lock();
@@ -84,14 +84,14 @@ public class QuestServiceTest {
     public void should_ThrowAppException_When_QuestTextIsInvalid() {
         when(questValidator.isQuestExist(anyString())).thenReturn(false);
         when(questValidator.isQuestTextValid(anyString())).thenReturn(false);
-        when(userService.get(USER_ID)).thenReturn(Optional.of(testUser));
+        when(userService.get(TEST_USER_ID)).thenReturn(Optional.of(testUser));
 
         assertThrows(AppException.class,
                 () -> questService.create(
-                        QUEST_NAME_HOLDER,
-                        QUEST_TEXT_HOLDER,
-                        QUEST_DESCRIPTION_HOLDER,
-                        String.valueOf(USER_ID))
+                        TEST_QUEST_NAME,
+                        TEST_QUEST_TEXT,
+                        TEST_QUEST_DESCRIPTION,
+                        String.valueOf(TEST_USER_ID))
         );
 
         verify(questValidator, times(1)).isQuestExist(any());
@@ -105,10 +105,10 @@ public class QuestServiceTest {
 
         assertThrows(AppException.class,
                 () -> questService.create(
-                        QUEST_NAME_HOLDER,
-                        QUEST_TEXT_HOLDER,
-                        QUEST_DESCRIPTION_HOLDER,
-                        String.valueOf(USER_ID))
+                        TEST_QUEST_NAME,
+                        TEST_QUEST_TEXT,
+                        TEST_QUEST_DESCRIPTION,
+                        String.valueOf(TEST_USER_ID))
         );
         verifyNoInteractions(questRepository);
     }
@@ -140,7 +140,7 @@ public class QuestServiceTest {
     public void should_ReturnQuestById_When_QuestExists() {
         when(questRepository.findById(anyLong())).thenReturn(Optional.of(testQuest));
 
-        Optional<Quest> result = questService.get(QUEST_ID);
+        Optional<Quest> result = questService.get(TEST_QUEST_ID);
         assertTrue(result.isPresent());
     }
 
@@ -148,7 +148,7 @@ public class QuestServiceTest {
     public void should_ReturnQuestByStringId_When_QuestExists() {
         when(questRepository.findById(anyLong())).thenReturn(Optional.of(testQuest));
 
-        Optional<Quest> result = questService.get(String.valueOf(QUEST_ID));
+        Optional<Quest> result = questService.get(String.valueOf(TEST_QUEST_ID));
         assertTrue(result.isPresent());
     }
 
@@ -156,14 +156,14 @@ public class QuestServiceTest {
     public void should_ReturnEmptyOptional_When_QuestDoesNotExist() {
         when(questRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Optional<Quest> result = questService.get(NOT_EXIST_QUEST_ID);
+        Optional<Quest> result = questService.get(NON_EXISTENT_QUEST_ID);
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void should_ThrowNumberFormatException_When_QuestIdIsInvalid() {
         assertThrows(NumberFormatException.class,
-                () -> questService.get(INVALID_QUEST_ID)
+                () -> questService.get(INCORRECT_QUEST_ID)
         );
     }
 

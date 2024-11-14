@@ -17,7 +17,6 @@ class QuestParserTest {
 
     @Mock
     private QuestStringExtractor questStringExtractor;
-
     @InjectMocks
     private QuestParser questParser;
 

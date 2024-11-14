@@ -30,7 +30,7 @@ public class LogoutControllerIT {
                 .andExpect(redirectedUrl(Route.INDEX))
                 .andExpect(result -> {
                     MockHttpSession returnedSession = (MockHttpSession) result.getRequest().getSession(false);
-                    assertTrue(returnedSession == null || returnedSession.isInvalid(), TestConstants.SESSION_SHOULD_BE_INVALIDATED_AFTER_LOGOUT);
+                    assertTrue(returnedSession == null || returnedSession.isInvalid(), TestConstants.ASSERT_SESSION_INVALID_AFTER_LOGOUT);
                 });
     }
 

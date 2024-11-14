@@ -11,8 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.javarush.quest.shubchynskyi.TestConstants.QUESTION_ID_HOLDER;
-import static com.javarush.quest.shubchynskyi.TestConstants.QUESTION_TEXT_HOLDER;
+import static com.javarush.quest.shubchynskyi.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -21,13 +20,10 @@ class QuestionServiceTest {
 
     @Mock
     private QuestionRepository questionRepository;
-
     @Mock
     private ImageService imageService;
-
     @Mock
     private AnswerService answerService;
-
     @InjectMocks
     private QuestionService questionService;
 
@@ -36,8 +32,8 @@ class QuestionServiceTest {
     @BeforeEach
     void setUp() {
         testQuestion = new Question();
-        testQuestion.setId(QUESTION_ID_HOLDER);
-        testQuestion.setText(QUESTION_TEXT_HOLDER);
+        testQuestion.setId(TEST_QUESTION_ID);
+        testQuestion.setText(TEST_QUESTION_TEXT);
     }
 
     @Test

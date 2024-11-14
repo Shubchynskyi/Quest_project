@@ -1,7 +1,6 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
 
-import com.javarush.quest.shubchynskyi.TestConstants;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Quest;
@@ -25,6 +24,7 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.javarush.quest.shubchynskyi.TestConstants.*;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.INDEX;
 import static org.junit.jupiter.api.Assertions.*;
@@ -76,7 +76,7 @@ public class QuestDeleteControllerIT {
             testQuest = optionalQuest.get();
             testQuest.setAuthor(userMapper.userDTOToUser(userDTO));
         } else {
-            throw new IllegalStateException(TestConstants.TEST_QUEST_NOT_FOUND_WITH_ID + validQuestId);
+            throw new IllegalStateException(ERROR_TEST_QUEST_NOT_FOUND_WITH_ID + validQuestId);
         }
     }
 
@@ -84,7 +84,7 @@ public class QuestDeleteControllerIT {
     void deleteQuest_WhenUserNotInSession_ShouldRedirectToQuestsList() throws Exception {
         mockMvc.perform(post(Route.QUEST_DELETE)
                         .param(ID, validQuestId)
-                        .param(SOURCE, TestConstants.SOURCE_URL_PLACEHOLDER))
+                        .param(SOURCE, SOURCE_URL))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.QUESTS_LIST));
     }
@@ -97,13 +97,13 @@ public class QuestDeleteControllerIT {
 
         mockMvc.perform(post(Route.QUEST_DELETE)
                         .param(ID, validQuestId)
-                        .param(SOURCE, TestConstants.SOURCE_URL_PLACEHOLDER)
+                        .param(SOURCE, SOURCE_URL)
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(TestConstants.SOURCE_URL_PLACEHOLDER));
+                .andExpect(redirectedUrl(SOURCE_URL));
 
         Optional<Quest> deletedQuest = questService.get(validQuestId);
-        assertTrue(deletedQuest.isEmpty(), TestConstants.QUEST_SHOULD_BE_DELETED);
+        assertTrue(deletedQuest.isEmpty(), ASSERT_QUEST_DELETE);
     }
 
     @ParameterizedTest
@@ -114,14 +114,14 @@ public class QuestDeleteControllerIT {
 
         mockMvc.perform(post(Route.QUEST_DELETE)
                         .param(ID, validQuestId)
-                        .param(SOURCE, TestConstants.SOURCE_URL_PLACEHOLDER)
+                        .param(SOURCE, SOURCE_URL)
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(TestConstants.SOURCE_URL_PLACEHOLDER))
+                .andExpect(redirectedUrl(SOURCE_URL))
                 .andExpect(flash().attributeExists(ERROR));
 
         Optional<Quest> deletedQuest = questService.get(validQuestId);
-        assertTrue(deletedQuest.isPresent(), TestConstants.QUEST_SHOULD_NOT_BE_DELETED);
+        assertTrue(deletedQuest.isPresent(), ASSERT_QUEST_NOT_DELETED);
     }
 
     @Test
@@ -130,23 +130,23 @@ public class QuestDeleteControllerIT {
 
         mockMvc.perform(post(Route.QUEST_DELETE)
                         .param(ID, validQuestId)
-                        .param(SOURCE, TestConstants.SOURCE_URL_PLACEHOLDER)
+                        .param(SOURCE, SOURCE_URL)
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(TestConstants.SOURCE_URL_PLACEHOLDER));
+                .andExpect(redirectedUrl(SOURCE_URL));
 
         Optional<Quest> deletedQuest = questService.get(validQuestId);
-        assertTrue(deletedQuest.isEmpty(), TestConstants.QUEST_SHOULD_BE_DELETED);
+        assertTrue(deletedQuest.isEmpty(), ASSERT_QUEST_DELETE);
     }
 
     @Test
     void deleteQuest_WithNonExistentId_ShouldRedirectWithError() throws Exception {
         mockMvc.perform(post(Route.QUEST_DELETE)
                         .param(ID, nonExistentId)
-                        .param(SOURCE, TestConstants.SOURCE_URL_PLACEHOLDER)
+                        .param(SOURCE, SOURCE_URL)
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(TestConstants.SOURCE_URL_PLACEHOLDER))
+                .andExpect(redirectedUrl(SOURCE_URL))
                 .andExpect(flash().attributeExists(ERROR));
     }
 
@@ -156,14 +156,14 @@ public class QuestDeleteControllerIT {
 
         mockMvc.perform(post(Route.QUEST_DELETE)
                         .param(ID, validQuestId)
-                        .param(SOURCE, TestConstants.SOURCE_URL_PLACEHOLDER)
+                        .param(SOURCE, SOURCE_URL)
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(TestConstants.SOURCE_URL_PLACEHOLDER))
+                .andExpect(redirectedUrl(SOURCE_URL))
                 .andExpect(flash().attributeExists(ERROR));
 
         Optional<Quest> deletedQuest = questService.get(validQuestId);
-        assertTrue(deletedQuest.isPresent(), TestConstants.QUEST_SHOULD_NOT_BE_DELETED);
+        assertTrue(deletedQuest.isPresent(), ASSERT_QUEST_NOT_DELETED);
     }
 
     @Test
@@ -173,27 +173,27 @@ public class QuestDeleteControllerIT {
 
         mockMvc.perform(post(Route.QUEST_DELETE)
                         .param(ID, validQuestId)
-                        .param(SOURCE, TestConstants.SOURCE_URL_PLACEHOLDER)
+                        .param(SOURCE, SOURCE_URL)
                         .session(session))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(TestConstants.SOURCE_URL_PLACEHOLDER));
+                .andExpect(redirectedUrl(SOURCE_URL));
 
         assertFalse(userDTO.getQuests().stream()
                         .anyMatch(questDTO -> questDTO.getId().equals(Long.valueOf(validQuestId))),
-                TestConstants.QUEST_SHOULD_BE_REMOVED_FROM_THE_USER_S_QUEST_LIST);
+                ASSERT_QUEST_REMOVED_FROM_USER_LIST);
 
         UserDTO updatedUser = (UserDTO) session.getAttribute(USER);
-        assertNotNull(updatedUser, TestConstants.UPDATED_USER_SHOULD_NOT_BE_NULL);
+        assertNotNull(updatedUser, ASSERT_UPDATED_USER_NOT_NULL);
         assertFalse(updatedUser.getQuests().stream()
                         .anyMatch(questDTO -> questDTO.getId().equals(Long.valueOf(validQuestId))),
-                TestConstants.QUEST_SHOULD_BE_REMOVED_FROM_THE_USER_S_QUEST_LIST_IN_THE_SESSION);
+                ASSERT_QUEST_REMOVED_FROM_USER_SESSION_LIST);
     }
 
     @Test
     void deleteQuest_WithIncorrectIdFormat_ShouldHandleError() throws Exception {
         mockMvc.perform(post(Route.QUEST_DELETE)
                         .param(ID, incorrectQuestId)
-                        .param(SOURCE, TestConstants.SOURCE_URL_PLACEHOLDER)
+                        .param(SOURCE, SOURCE_URL)
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(INDEX))

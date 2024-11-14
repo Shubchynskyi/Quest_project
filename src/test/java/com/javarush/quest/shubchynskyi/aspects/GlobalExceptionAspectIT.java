@@ -28,12 +28,12 @@ class GlobalExceptionAspectIT {
             // Exception is expected, verifying logs
         }
 
-        Assertions.assertFalse(testLogger.getAllLoggingEvents().isEmpty(), MUST_BE_ONE_LOG_MINIMUM);
+        Assertions.assertFalse(testLogger.getAllLoggingEvents().isEmpty(), ASSERT_MINIMUM_ONE_LOG);
 
         String logMessage = testLogger.getLoggingEvents().getFirst().getMessage();
 
-        Assertions.assertTrue(logMessage.contains(EXCEPTION_CAUGHT_IN_CLASS),
-                MUST_BE_EXCEPTION_CAUGHT_IN_CLASS);
+        Assertions.assertTrue(logMessage.contains(LOG_EXCEPTION_CAUGHT_IN_CLASS),
+                ASSERT_EXCEPTION_CAUGHT_IN_CLASS);
 
         TestLoggerFactory.clear();
     }

@@ -53,9 +53,9 @@ public class QuestEditControllerIT {
     private String testImageContentType;
     @Value("${app.localization.supported-languages}")
     private String[] supportedLanguages;
-    @Value("${app.valid-quest-id}")
+    @Value("${valid.quest.id}")
     private String validQuestId;
-    @Value("${app.invalid-quest-id}")
+    @Value("${invalid.quest.id}")
     private String invalidQuestId;
 
     @Autowired
@@ -162,7 +162,7 @@ public class QuestEditControllerIT {
 
         mockMvc.perform(get(Route.QUEST_EDIT)
                         .param(ID, invalidQuestId)
-                        .header(ACCEPT_LANGUAGE, localeTag)
+                        .header(ACCEPT_LANGUAGE_HEADER, localeTag)
                         .sessionAttr(USER, user))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.CREATE_QUEST))
@@ -190,7 +190,7 @@ public class QuestEditControllerIT {
                         .param(QUEST_NAME, questName)
                         .param(QUEST_DESCRIPTION, questDescription))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_PATH + validQuestId));
+                .andExpect(redirectedUrl(QUEST_EDIT_URL + validQuestId));
 
         Quest updatedQuest = getExistingQuest();
         assertEquals(questName, updatedQuest.getName());
@@ -210,7 +210,7 @@ public class QuestEditControllerIT {
                         .param(QUESTION_ID, question.getId().toString())
                         .param(QUESTION_TEXT, updatedQuestionText))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_PATH + validQuestId + LABEL_FRAGMENT + question.getId()));
+                .andExpect(redirectedUrl(QUEST_EDIT_URL + validQuestId + LABEL_URL_FRAGMENT + question.getId()));
 
         Question updatedQuestion = questionService.get(question.getId()).orElseThrow();
         assertEquals(updatedQuestionText, updatedQuestion.getText());
@@ -230,7 +230,7 @@ public class QuestEditControllerIT {
                         .param(QUESTION_ID, question.getId().toString())
                         .param(ANSWER + answer.getId(), updatedAnswerText))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_PATH + validQuestId + LABEL_FRAGMENT + question.getId()));
+                .andExpect(redirectedUrl(QUEST_EDIT_URL + validQuestId + LABEL_URL_FRAGMENT + question.getId()));
 
         Answer updatedAnswer = answerService.get(answer.getId()).orElseThrow();
         assertEquals(updatedAnswerText, updatedAnswer.getText());
@@ -250,14 +250,14 @@ public class QuestEditControllerIT {
                         .param(QUEST_NAME, existingQuest.getName())
                         .param(ID, validQuestId))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_PATH + validQuestId));
+                .andExpect(redirectedUrl(QUEST_EDIT_URL + validQuestId));
 
         mockMvc.perform(multipart(Route.QUEST_EDIT)
                         .file(imageFile)
                         .param(ID, validQuestId)
                         .param(QUESTION_ID, question.getId().toString()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_PATH + validQuestId + LABEL_FRAGMENT + question.getId()));
+                .andExpect(redirectedUrl(QUEST_EDIT_URL + validQuestId + LABEL_URL_FRAGMENT + question.getId()));
 
         validateImages(imageBytes, existingQuest.getImage(), question.getImage());
     }
@@ -285,8 +285,8 @@ public class QuestEditControllerIT {
         byte[] savedQuestImage = Files.readAllBytes(questImagePath);
         byte[] savedQuestionImage = Files.readAllBytes(questionImagePath);
 
-        assertArrayEquals(originalImageBytes, savedQuestImage, THE_QUEST_IMAGE_DOES_NOT_MATCH_THE_TEST_IMAGE);
-        assertArrayEquals(originalImageBytes, savedQuestionImage, THE_QUESTION_IMAGE_DOES_NOT_MATCH_THE_TEST_IMAGE);
+        assertArrayEquals(originalImageBytes, savedQuestImage, ERROR_QUEST_IMAGE_MISMATCH);
+        assertArrayEquals(originalImageBytes, savedQuestionImage, ERROR_QUESTION_IMAGE_MISMATCH);
 
         Files.deleteIfExists(questImagePath);
         Files.deleteIfExists(questionImagePath);
@@ -295,7 +295,7 @@ public class QuestEditControllerIT {
     private String generateUniqueString(String base, String existingValue) {
         StringBuilder stringBuilder = new StringBuilder(base);
         while (stringBuilder.toString().equals(existingValue)) {
-            stringBuilder.append(APPEND_LETTER);
+            stringBuilder.append("q");
         }
         return stringBuilder.toString();
     }

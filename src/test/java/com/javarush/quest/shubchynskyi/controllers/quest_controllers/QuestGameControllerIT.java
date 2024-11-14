@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import static com.javarush.quest.shubchynskyi.TestConstants.REDIRECT_PATTERN_NEXT_QUESTION;
+import static com.javarush.quest.shubchynskyi.TestConstants.REDIRECT_URL_PATTERN_NEXT_QUESTION;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,9 +32,9 @@ public class QuestGameControllerIT {
     @Value("${game.states.win}")
     private String gameStateWin;
 
-    @Value("${app.valid-quest-id}")
+    @Value("${valid.quest.id}")
     private String validQuestId;
-    @Value("${app.invalid-quest-id}")
+    @Value("${invalid.quest.id}")
     private String invalidQuestId;
     @Value("${valid.quest.question-id}")
     private String validQuestionId;
@@ -84,7 +84,7 @@ public class QuestGameControllerIT {
                         .param(GAME_STATE, gameStatePlay)
                         .param(QUESTION_ID, validQuestionId))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern(String.format(REDIRECT_PATTERN_NEXT_QUESTION, validQuestId)));
+                .andExpect(redirectedUrlPattern(String.format(REDIRECT_URL_PATTERN_NEXT_QUESTION, validQuestId)));
     }
 
     @Test

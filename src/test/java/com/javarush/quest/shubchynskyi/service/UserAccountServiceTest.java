@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.service;
 
-import com.javarush.quest.shubchynskyi.TestConstants;
 import com.javarush.quest.shubchynskyi.config.ImageProperties;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.User;
@@ -21,7 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
-import static com.javarush.quest.shubchynskyi.TestConstants.*;
+import static com.javarush.quest.shubchynskyi.TestConstants.TEST_USER_LOGIN;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,22 +28,16 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UserAccountServiceTest {
 
-//    public static final String TEST_LOGIN = "testLogin";
     @Mock
     private UserService userService;
-
     @Mock
     private ImageService imageService;
-
     @Mock
     private UserMapper userMapper;
-
     @Mock
     private ValidationService validationService;
-
     @Mock
     private ImageProperties imageProperties;
-
     @InjectMocks
     private UserAccountService userAccountService;
 
@@ -61,14 +54,14 @@ class UserAccountServiceTest {
     @BeforeEach
     void setUp() {
         userDTOFromModel = new UserDTO();
-        userDTOFromModel.setLogin(TEST_LOGIN);
+        userDTOFromModel.setLogin(TEST_USER_LOGIN);
         user = new User();
         imageFile = mock(MultipartFile.class);
-        tempImageId = TEMP_IMAGE_ID1;
+        tempImageId = TEMP_IMAGE_ID;
         originalLogin = EMPTY_STRING;
         bindingResult = mock(BindingResult.class);
         redirectAttributes = mock(RedirectAttributes.class);
-        
+
     }
 
     @ParameterizedTest

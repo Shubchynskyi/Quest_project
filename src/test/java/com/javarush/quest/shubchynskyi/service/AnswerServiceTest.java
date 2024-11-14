@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.service;
 
-import com.javarush.quest.shubchynskyi.TestConstants;
 import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,14 +9,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.Mockito.*;
+import static com.javarush.quest.shubchynskyi.TestConstants.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class AnswerServiceTest {
 
     @Mock
     private AnswerRepository answerRepository;
-
     @InjectMocks
     private AnswerService answerService;
 
@@ -26,8 +26,8 @@ class AnswerServiceTest {
     @BeforeEach
     void setUp() {
         testAnswer = new Answer();
-        testAnswer.setId(TestConstants.TEST_ANSWER_ID_HOLDER);
-        testAnswer.setText(TestConstants.TEST_ANSWER_TEST_HOLDER);
+        testAnswer.setId(TEST_ANSWER_ID);
+        testAnswer.setText(TEST_ANSWER_TEXT);
     }
 
     @Test

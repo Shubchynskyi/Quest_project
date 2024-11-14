@@ -25,7 +25,6 @@ class QuestValidatorTest {
 
     @Mock
     private QuestRepository questRepository;
-
     @InjectMocks
     private QuestValidator questValidator;
 

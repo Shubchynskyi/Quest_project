@@ -146,8 +146,8 @@ public class QuestCreateControllerIT {
         assertQuestDetails(createdQuest, validQuestName, validQuestDescription, validUserId);
 
         mockMvc.perform(post(Route.CREATE_QUEST)
-                        .param(NAME, validQuestName)
-                        .param(DESCRIPTION, validQuestDescription)
+                        .param(FIELD_NAME, validQuestName)
+                        .param(FIELD_DESCRIPTION, validQuestDescription)
                         .param(QUEST_TEXT, validQuestText)
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
@@ -226,35 +226,35 @@ public class QuestCreateControllerIT {
 
         assertTrue(userDTO.getQuests().stream()
                         .anyMatch(questDTO -> questDTO.getId().equals(createdQuestId)),
-                QUEST_SHOULD_BE_ADDED_TO_THE_USER_S_QUEST_LIST);
+                ASSERT_QUEST_ADDED_TO_USER_LIST);
 
-        MvcResult result = mockMvc.perform(get(Route.QUEST_EDIT + QUERY_PARAM_ID_PATTERN + createdQuestId)
+        MvcResult result = mockMvc.perform(get(Route.QUEST_EDIT + QUERY_PARAM_ID + createdQuestId)
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().isOk())
                 .andReturn();
 
         UserDTO updatedUser = (UserDTO) Objects.requireNonNull(result.getRequest().getSession()).getAttribute(USER);
 
-        assertNotNull(updatedUser, UPDATED_USER_SHOULD_NOT_BE_NULL);
+        assertNotNull(updatedUser, ASSERT_UPDATED_USER_NOT_NULL);
         assertTrue(updatedUser.getQuests().stream()
                         .anyMatch(questDTO -> questDTO.getId().equals(createdQuestId)),
-                QUEST_SHOULD_BE_ADDED_TO_THE_USER_S_QUEST_LIST_IN_THE_SESSION);
+                ASSERT_QUEST_ADDED_TO_USER_SESSION_LIST);
     }
 
     private Long createQuestAndAssertRedirect(String name, String description, String text, UserDTO userDTO) throws Exception {
         MvcResult result = mockMvc.perform(post(Route.CREATE_QUEST)
-                        .param(NAME, name)
-                        .param(DESCRIPTION, description)
+                        .param(FIELD_NAME, name)
+                        .param(FIELD_DESCRIPTION, description)
                         .param(QUEST_TEXT, text)
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern(QUEST_EDIT_ID + WILDCARD_PATTERN))
+                .andExpect(redirectedUrlPattern(QUEST_EDIT_ID + WILDCARD))
                 .andReturn();
 
         String redirectedUrl = result.getResponse().getRedirectedUrl();
-        assertNotNull(redirectedUrl, REDIRECTED_URL_DOES_NOT_MATCH_THE_EXPECTED_URL_PATTERN);
+        assertNotNull(redirectedUrl, ERROR_REDIRECT_URL_MISMATCH);
 
-        assertTrue(redirectedUrl.startsWith(Route.QUEST_EDIT), REDIRECTED_URL_DOES_NOT_MATCH_THE_EXPECTED_URL_PATTERN);
+        assertTrue(redirectedUrl.startsWith(Route.QUEST_EDIT), ERROR_REDIRECT_URL_MISMATCH);
 
         String questIdStr = redirectedUrl.substring(redirectedUrl.lastIndexOf('=') + 1);
         return Long.parseLong(questIdStr);
@@ -262,10 +262,10 @@ public class QuestCreateControllerIT {
 
     private void assertQuestDetails(Quest quest, String expectedName, String expectedDescription, String expectedUserId) {
         assertAll(
-                () -> assertNotNull(quest, QUEST_SHOULD_NOT_BE_NULL),
-                () -> assertEquals(expectedName, quest.getName(), QUEST_NAME_SHOULD_MATCH),
-                () -> assertEquals(expectedDescription, quest.getDescription(), QUEST_DESCRIPTION_SHOULD_MATCH),
-                () -> assertEquals(expectedUserId, String.valueOf(quest.getAuthor().getId()), AUTHOR_ID_SHOULD_MATCH)
+                () -> assertNotNull(quest, ASSERT_QUEST_NOT_NULL),
+                () -> assertEquals(expectedName, quest.getName(), ASSERT_QUEST_NAME_MATCH),
+                () -> assertEquals(expectedDescription, quest.getDescription(), ASSERT_QUEST_DESCRIPTION_MATCH),
+                () -> assertEquals(expectedUserId, String.valueOf(quest.getAuthor().getId()), ASSERT_AUTHOR_ID_MATCH)
         );
     }
 

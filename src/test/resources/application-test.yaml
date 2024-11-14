@@ -6,12 +6,10 @@ spring:
   liquibase:
     change-log: classpath:db/db.changelog-master.xml
 
-# TODO вынести ID Application settings overrides for tests
+# Application settings overrides for tests
 app:
   directories:
     images: src/test/resources/images
-  valid-quest-id: "1"
-  invalid-quest-id: "999"
   images:
     base-path: "/images/"
     test-image:

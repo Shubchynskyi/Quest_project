@@ -32,16 +32,12 @@ class ValidationServiceTest {
 
     @Mock
     private MessageSource messageSource;
-
     @Mock
     private HttpSession httpSession;
-
     @Mock
     private BindingResult bindingResult;
-
     @Mock
     private RedirectAttributes redirectAttributes;
-
     @InjectMocks
     private ValidationService validationService;
 
@@ -123,7 +119,7 @@ class ValidationServiceTest {
     }
 
     private void mockFieldErrors() {
-        List<FieldError> fieldErrors = List.of(new FieldError(OBJECT_NAME, FIELD, DEFAULT_MESSAGE));
+        List<FieldError> fieldErrors = List.of(new FieldError(OBJECT_NAME, FIELD, DEFAULT_ERROR_MESSAGE));
         when(bindingResult.hasErrors()).thenReturn(true);
         when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
         when(messageSource.getMessage(any(FieldError.class), any(Locale.class))).thenReturn(ERROR_MESSAGE);

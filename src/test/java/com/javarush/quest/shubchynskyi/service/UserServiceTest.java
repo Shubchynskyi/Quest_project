@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.service;
 
-import com.javarush.quest.shubchynskyi.TestConstants;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.repository.UserRepository;
@@ -30,7 +29,6 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
-
     @InjectMocks
     private UserService userService;
 
@@ -40,8 +38,8 @@ class UserServiceTest {
     void setUp() {
         testUser = User.builder()
                 .id(TEST_USER_ID)
-                .login(TEST_LOGIN)
-                .password(TEST_PASSWORD)
+                .login(TEST_USER_LOGIN)
+                .password(TEST_USER_PASSWORD)
                 .role(Role.USER)
                 .build();
     }
@@ -50,7 +48,7 @@ class UserServiceTest {
     void should_ReturnTrue_When_LoginExists() {
         when(userRepository.exists(any())).thenReturn(true);
 
-        assertTrue(userService.isLoginExist(TEST_LOGIN));
+        assertTrue(userService.isLoginExist(TEST_USER_LOGIN));
         verify(userRepository).exists(any());
     }
 
@@ -58,7 +56,7 @@ class UserServiceTest {
     void should_ReturnFalse_When_LoginDoesNotExist() {
         when(userRepository.exists(any())).thenReturn(false);
 
-        assertFalse(userService.isLoginExist(TEST_LOGIN));
+        assertFalse(userService.isLoginExist(TEST_USER_LOGIN));
         verify(userRepository).exists(any());
     }
 
@@ -135,7 +133,7 @@ class UserServiceTest {
         when(userRepository.findAll(ArgumentMatchers.<Example<User>>any()))
                 .thenReturn(List.of(testUser));
 
-        assertEquals(Optional.of(testUser), userService.get(TEST_LOGIN, TEST_PASSWORD));
+        assertEquals(Optional.of(testUser), userService.get(TEST_USER_LOGIN, TEST_USER_PASSWORD));
         verify(userRepository).findAll(ArgumentMatchers.<Example<User>>any());
     }
 
@@ -144,7 +142,7 @@ class UserServiceTest {
         when(userRepository.findAll(ArgumentMatchers.<Example<User>>any()))
                 .thenReturn(List.of());
 
-        assertEquals(Optional.empty(), userService.get(TEST_LOGIN, TEST_PASSWORD));
+        assertEquals(Optional.empty(), userService.get(TEST_USER_LOGIN, TEST_USER_PASSWORD));
         verify(userRepository).findAll(ArgumentMatchers.<Example<User>>any());
     }
 
@@ -153,7 +151,7 @@ class UserServiceTest {
         when(userRepository.findAll(ArgumentMatchers.<Example<User>>any()))
                 .thenReturn(List.of());
 
-        assertEquals(Optional.empty(), userService.get(TEST_LOGIN, INVALID_PASSWORD));
+        assertEquals(Optional.empty(), userService.get(TEST_USER_LOGIN, INVALID_USER_PASSWORD));
         verify(userRepository).findAll(ArgumentMatchers.<Example<User>>any());
     }
 
