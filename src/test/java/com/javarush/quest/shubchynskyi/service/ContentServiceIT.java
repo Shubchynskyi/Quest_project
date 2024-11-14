@@ -24,26 +24,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ContentServiceIT {
 
-    @Autowired
-    private ContentService contentService;
+    @Value("${content.index-page.content-file-name}")
+    private String indexPageDescriptionFileName;
+    @Value("${content.index-page.test-directory}")
+    private String indexPageTestContentDirectory;
+    @Value("${content.expected-data-directory}")
+    private String expectedTestContentDirectory;
+    @Value("${content.invalid-directory}")
+    private String invalidDirectory;
 
     @Value("${app.localization.supported-languages}")
     private String[] supportedLanguages;
-
     @Value("${app.default-locale}")
-    private String defaultLocaleString;
-
+    private String defaultLocale;
+    @Value("${app.non-existent-locale}")
+    private String nonExistentLocale;
     @Value("${app.descriptions-extension}")
     private String descriptionsExtension;
+
+    @Autowired
+    private ContentService contentService;
 
     private Stream<String> supportedLanguagesProvider() {
         return Arrays.stream(supportedLanguages);
     }
 
-    String subdirectory = "index_page";
-
-    private String readExpected(String subdirectory, String filename) throws IOException {
-        ClassPathResource resource = new ClassPathResource("expected/" + subdirectory + "/" + filename);
+    private String readExpected(String filename) throws IOException {
+        ClassPathResource resource = new ClassPathResource(expectedTestContentDirectory + indexPageTestContentDirectory + filename);
         try (InputStream inputStream = resource.getInputStream()) {
             return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         }
@@ -52,33 +59,31 @@ public class ContentServiceIT {
     @ParameterizedTest
     @MethodSource("supportedLanguagesProvider")
     public void testGetTextWithExistingLocaleAndKey(String localeTag) throws IOException {
-        String key = "description";
         Locale locale = Locale.forLanguageTag(localeTag);
-        String filename = "description_" + localeTag + descriptionsExtension;
+        String filename = indexPageDescriptionFileName + "_" + localeTag + descriptionsExtension;
 
-        String expected = readExpected(subdirectory, filename);
-        String actual = contentService.getText(subdirectory, key, locale);
+        String expected = readExpected(filename);
+        String actual = contentService.getText(indexPageTestContentDirectory, indexPageDescriptionFileName, locale);
 
         assertEquals(expected, actual);
     }
 
     @Test
     public void testGetTextWithNonExistingLocale() {
-        String key = "description";
-        Locale locale = Locale.forLanguageTag("zz");
+        Locale locale = Locale.forLanguageTag(nonExistentLocale);
 
-        String actual = contentService.getText(subdirectory, key, locale);
+        String actual = contentService.getText(indexPageTestContentDirectory, indexPageDescriptionFileName, locale);
 
         assertEquals(ErrorLocalizer.getLocalizedMessage(DESCRIPTION_NOT_AVAILABLE), actual);
     }
 
     @Test
     public void testGetTextWithNonExistingKey() {
-        String key = "nonexistent_key";
-        Locale locale = Locale.forLanguageTag(defaultLocaleString);
+        Locale locale = Locale.forLanguageTag(defaultLocale);
 
-        String actual = contentService.getText(subdirectory, key, locale);
+        String actual = contentService.getText(indexPageTestContentDirectory, invalidDirectory, locale);
 
         assertEquals(ErrorLocalizer.getLocalizedMessage(DESCRIPTION_NOT_AVAILABLE), actual);
     }
+
 }

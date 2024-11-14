@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
-import com.javarush.quest.shubchynskyi.TestConstants;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Answer;
@@ -46,19 +45,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QuestEditControllerIT {
 
-    @Autowired
-    private QuestService questService;
-    @Autowired
-    private QuestionService questionService;
-    @Autowired
-    private AnswerService answerService;
-    @Autowired
-    private MessageSource messageSource;
-    @Autowired
-    private MockMvc mockMvc;
-
-    private UserDTO userDTO;
-
     @Value("${app.directories.images}")
     private String imagesDirectory;
     @Value("${app.images.test-image.name}")
@@ -72,10 +58,18 @@ public class QuestEditControllerIT {
     @Value("${app.invalid-quest-id}")
     private String invalidQuestId;
 
-    @BeforeAll
-    public void setup() {
-        userDTO = new UserDTO();
-    }
+    @Autowired
+    private QuestService questService;
+    @Autowired
+    private QuestionService questionService;
+    @Autowired
+    private AnswerService answerService;
+    @Autowired
+    private MessageSource messageSource;
+    @Autowired
+    private MockMvc mockMvc;
+
+    private UserDTO userDTO;
 
     private Stream<String> supportedLanguagesProvider() {
         return Arrays.stream(supportedLanguages);
@@ -90,10 +84,15 @@ public class QuestEditControllerIT {
                 .filter(role -> !QuestEditController.ALLOWED_ROLES_FOR_QUEST_EDIT.contains(role));
     }
 
+    @BeforeAll
+    public void setup() {
+        userDTO = new UserDTO();
+    }
+
     @Test
     void whenGetRequestWithoutUser_ThenRedirectToLogin() throws Exception {
         mockMvc.perform(get(Route.QUEST_EDIT)
-                    .param(ID, validQuestId))
+                        .param(ID, validQuestId))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.QUESTS_LIST));
     }
@@ -121,7 +120,7 @@ public class QuestEditControllerIT {
     @ParameterizedTest
     @MethodSource("notAllowedRolesProvider")
     void whenQuestEditFormAccessedByOtherUser_ThenShouldRedirectToQuestsList(Role notAllowedRole) throws Exception {
-        userDTO.setId(Long.valueOf(validQuestId+1));
+        userDTO.setId(Long.valueOf(validQuestId + 1));
         userDTO.setRole(notAllowedRole);
 
         mockMvc.perform(get(Route.QUEST_EDIT)
@@ -163,7 +162,7 @@ public class QuestEditControllerIT {
 
         mockMvc.perform(get(Route.QUEST_EDIT)
                         .param(ID, invalidQuestId)
-                        .header(TestConstants.ACCEPT_LANGUAGE, localeTag)
+                        .header(ACCEPT_LANGUAGE, localeTag)
                         .sessionAttr(USER, user))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.CREATE_QUEST))
@@ -183,8 +182,8 @@ public class QuestEditControllerIT {
     void whenQuestUpdatedWithValidData_ThenShouldRedirectToQuestEdit() throws Exception {
         Quest existingQuest = getExistingQuest();
 
-        String questName = generateUniqueString(TestConstants.UPDATED_QUEST_NAME, existingQuest.getName());
-        String questDescription = generateUniqueString(TestConstants.UPDATED_QUEST_DESCRIPTION, existingQuest.getDescription());
+        String questName = generateUniqueString(UPDATED_QUEST_NAME, existingQuest.getName());
+        String questDescription = generateUniqueString(UPDATED_QUEST_DESCRIPTION, existingQuest.getDescription());
 
         mockMvc.perform(post(Route.QUEST_EDIT)
                         .param(ID, validQuestId)
@@ -204,7 +203,7 @@ public class QuestEditControllerIT {
         Quest existingQuest = getExistingQuest();
         Question question = getFirstQuestionFromQuest(existingQuest);
 
-        String updatedQuestionText = generateUniqueString(TestConstants.UPDATED_QUESTION_TEXT, question.getText());
+        String updatedQuestionText = generateUniqueString(UPDATED_QUESTION_TEXT, question.getText());
 
         mockMvc.perform(post(Route.QUEST_EDIT)
                         .param(ID, validQuestId)
@@ -224,7 +223,7 @@ public class QuestEditControllerIT {
         Question question = getFirstQuestionFromQuest(existingQuest);
         Answer answer = question.getAnswers().stream().findFirst().orElseThrow();
 
-        String updatedAnswerText = generateUniqueString(TestConstants.UPDATED_ANSWER_TEXT, answer.getText());
+        String updatedAnswerText = generateUniqueString(UPDATED_ANSWER_TEXT, answer.getText());
 
         mockMvc.perform(post(Route.QUEST_EDIT)
                         .param(ID, validQuestId)
@@ -286,8 +285,8 @@ public class QuestEditControllerIT {
         byte[] savedQuestImage = Files.readAllBytes(questImagePath);
         byte[] savedQuestionImage = Files.readAllBytes(questionImagePath);
 
-        assertArrayEquals(originalImageBytes, savedQuestImage, TestConstants.THE_QUEST_IMAGE_DOES_NOT_MATCH_THE_TEST_IMAGE);
-        assertArrayEquals(originalImageBytes, savedQuestionImage, TestConstants.THE_QUESTION_IMAGE_DOES_NOT_MATCH_THE_TEST_IMAGE);
+        assertArrayEquals(originalImageBytes, savedQuestImage, THE_QUEST_IMAGE_DOES_NOT_MATCH_THE_TEST_IMAGE);
+        assertArrayEquals(originalImageBytes, savedQuestionImage, THE_QUESTION_IMAGE_DOES_NOT_MATCH_THE_TEST_IMAGE);
 
         Files.deleteIfExists(questImagePath);
         Files.deleteIfExists(questionImagePath);
@@ -296,10 +295,9 @@ public class QuestEditControllerIT {
     private String generateUniqueString(String base, String existingValue) {
         StringBuilder stringBuilder = new StringBuilder(base);
         while (stringBuilder.toString().equals(existingValue)) {
-            stringBuilder.append(TestConstants.APPEND_LETTER);
+            stringBuilder.append(APPEND_LETTER);
         }
         return stringBuilder.toString();
     }
-
 
 }

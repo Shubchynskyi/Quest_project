@@ -23,13 +23,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ProfileControllerIT {
 
-    @Autowired
-    private MockMvc mockMvc;
-
     @Value("${valid.user.role}")
     private String validUserRole;
     @Value("${valid.user.id}")
     private Long validUserId;
+
+    @Autowired
+    private MockMvc mockMvc;
 
     private UserDTO validUserDTO;
     private UserDTO invalidUserDTOWithNoId;
@@ -98,5 +98,5 @@ public class ProfileControllerIT {
         session.setAttribute(USER, userDTO);
         return session;
     }
-}
 
+}

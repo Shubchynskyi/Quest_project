@@ -33,4 +33,5 @@ public class LogoutControllerIT {
                     assertTrue(returnedSession == null || returnedSession.isInvalid(), TestConstants.SESSION_SHOULD_BE_INVALIDATED_AFTER_LOGOUT);
                 });
     }
+
 }

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.javarush.quest.shubchynskyi.TestConstants.*;
+
 @ConfigIT
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GlobalExceptionAspectIT {
@@ -26,12 +28,12 @@ class GlobalExceptionAspectIT {
             // Exception is expected, verifying logs
         }
 
-        Assertions.assertFalse(testLogger.getAllLoggingEvents().isEmpty(), "Must be one log minimum");
+        Assertions.assertFalse(testLogger.getAllLoggingEvents().isEmpty(), MUST_BE_ONE_LOG_MINIMUM);
 
         String logMessage = testLogger.getLoggingEvents().getFirst().getMessage();
 
-        Assertions.assertTrue(logMessage.contains("Exception caught in class"),
-                "Must be 'Exception caught in class'");
+        Assertions.assertTrue(logMessage.contains(EXCEPTION_CAUGHT_IN_CLASS),
+                MUST_BE_EXCEPTION_CAUGHT_IN_CLASS);
 
         TestLoggerFactory.clear();
     }

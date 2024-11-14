@@ -159,6 +159,7 @@ public class UserControllerIT {
     @Transactional
     void whenUserEditsCurrentUserWithAllowedRoles_ThenRedirectToProfile(Role allowedRole) throws Exception {
         MockHttpSession session = createSessionWithRole(allowedRole);
+
         performUserEditAction(session, sessionUserDTO, Route.PROFILE, Route.PROFILE);
     }
 
@@ -198,4 +199,5 @@ public class UserControllerIT {
 
         performDeleteUserAction(session, userIdForDelete, Route.PROFILE);
     }
+
 }

@@ -57,7 +57,7 @@ class QuestParserTest {
         questParser.takeNextLine();
         questParser.takeNextLine();
         assertThrows(NoSuchElementException.class, () -> questParser.takeNextLine());
-    } // TODO was IndexOutOfBoundsException
+    }
 
     @Test
     void should_CallQuestStringExtractor_When_ExtractLogicBlockIsCalled() {

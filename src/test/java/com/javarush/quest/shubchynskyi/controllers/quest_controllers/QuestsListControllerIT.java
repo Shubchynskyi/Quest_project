@@ -17,11 +17,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QuestsListControllerIT {
 
-    @Autowired
-    private MockMvc mockMvc;
-
     @Value("${app.tests.expectedQuestsSize}")
     private int expectedQuestsSize;
+
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
     void whenShowQuests_ThenShouldReturnQuestsList() throws Exception {

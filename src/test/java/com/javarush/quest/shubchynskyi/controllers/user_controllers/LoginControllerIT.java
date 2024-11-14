@@ -26,9 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class LoginControllerIT {
 
-    @Autowired
-    private MockMvc mockMvc;
-
     @Value("${valid.user.model.login}")
     private String validLogin;
     @Value("${invalid.user.login}")
@@ -41,6 +38,9 @@ public class LoginControllerIT {
     public String specialValidLogin;
     @Value("${valid.user.special.password}")
     public String specialValidPassword;
+
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
     void whenUserLogsInWithValidCredentials_ThenUserIsAuthenticated_AndRedirectsToProfile() throws Exception {
@@ -127,4 +127,5 @@ public class LoginControllerIT {
                 .andExpect(redirectedUrl(Route.LOGIN))
                 .andExpect(flash().attribute(ERROR, notNullValue()));
     }
+
 }

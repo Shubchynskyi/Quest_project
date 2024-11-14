@@ -16,9 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ImageControllerIT {
 
-    @Autowired
-    private MockMvc mockMvc;
-
     @Value("${app.images.base-path}")
     private String basePath;
     @Value("${app.images.test-image.name}")
@@ -29,6 +26,9 @@ public class ImageControllerIT {
     private String testImageNonexistent;
     @Value("${app.images.test-image.content-type}")
     private String testImageContentType;
+
+    @Autowired
+    private MockMvc mockMvc;
 
     private void performGetRequestAndExpectStatusAndContentType(String imageName, String expectedContentType) throws Exception {
         mockMvc.perform(get(basePath + imageName))
@@ -50,4 +50,5 @@ public class ImageControllerIT {
     void whenGetImageNotFound_ThenShouldReturnDefault() throws Exception {
         performGetRequestAndExpectStatusAndContentType(testImageNonexistent, MediaType.IMAGE_JPEG_VALUE);
     }
+
 }

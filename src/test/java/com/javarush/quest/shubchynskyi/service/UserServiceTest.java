@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.service;
 
+import com.javarush.quest.shubchynskyi.TestConstants;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.repository.UserRepository;
@@ -20,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.javarush.quest.shubchynskyi.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -31,12 +33,6 @@ class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
-
-    // TODO в настройки
-    private static final Long TEST_USER_ID = 1L;
-    private static final String TEST_LOGIN = "testLogin";
-    private static final String TEST_PASSWORD = "testPassword";
-    private static final String INVALID_PASSWORD = "wrongPassword";
 
     private User testUser;
 

@@ -11,7 +11,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static com.javarush.quest.shubchynskyi.TestConstants.QUESTION_ID_HOLDER;
+import static com.javarush.quest.shubchynskyi.TestConstants.QUESTION_TEXT_HOLDER;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,8 +36,8 @@ class QuestionServiceTest {
     @BeforeEach
     void setUp() {
         testQuestion = new Question();
-        testQuestion.setId(1L);
-        testQuestion.setText("What is the capital of France?");
+        testQuestion.setId(QUESTION_ID_HOLDER);
+        testQuestion.setText(QUESTION_TEXT_HOLDER);
     }
 
     @Test

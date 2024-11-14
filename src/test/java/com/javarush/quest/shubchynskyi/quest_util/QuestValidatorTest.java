@@ -13,6 +13,9 @@ import org.springframework.data.domain.Example;
 import java.util.Collections;
 import java.util.List;
 
+import static com.javarush.quest.shubchynskyi.TestConstants.TEST_QUEST_NAME;
+import static com.javarush.quest.shubchynskyi.TestConstants.VALID_QUEST_TEXT;
+import static com.javarush.quest.shubchynskyi.constant.Key.EMPTY_STRING;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -20,14 +23,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class QuestValidatorTest {
 
-
     @Mock
     private QuestRepository questRepository;
 
     @InjectMocks
     private QuestValidator questValidator;
-
-    private static final String TEST_QUEST_NAME = "Test Quest";
 
     @Test
     void should_ReturnTrue_When_QuestExists() {
@@ -57,7 +57,7 @@ class QuestValidatorTest {
 
     @Test
     void should_ReturnFalse_When_TextIsEmpty() {
-        assertFalse(questValidator.isQuestTextValid(""));
+        assertFalse(questValidator.isQuestTextValid(EMPTY_STRING));
     }
 
     @Test
@@ -67,16 +67,6 @@ class QuestValidatorTest {
 
     @Test
     void should_ReturnTrue_When_TextIsValid() {
-        String validText = """
-                1: Test question
-                2< Answer to won
-                3< Answer to defeat
-
-                3- Defeat
-
-                2+ Won
-                """;
-
-        assertTrue(questValidator.isQuestTextValid(validText));
+        assertTrue(questValidator.isQuestTextValid(VALID_QUEST_TEXT));
     }
 }

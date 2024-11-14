@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
-import com.javarush.quest.shubchynskyi.TestConstants;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Quest;
@@ -30,6 +29,7 @@ import java.util.EnumSet;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static com.javarush.quest.shubchynskyi.TestConstants.*;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.INDEX;
 import static com.javarush.quest.shubchynskyi.constant.Route.QUEST_EDIT_ID;
@@ -44,12 +44,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class QuestCreateControllerIT {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private QuestService questService;
-
     @Value("${valid.quest.text.path}")
     private String validQuestTextPath;
     @Value("${valid.quest.name}")
@@ -62,6 +56,11 @@ public class QuestCreateControllerIT {
     private String invalidQuestText;
     @Value("${valid.user.role}")
     private String validUserRole;
+
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private QuestService questService;
 
     private String validQuestText;
     private UserDTO userDTO;
@@ -139,18 +138,17 @@ public class QuestCreateControllerIT {
     @ParameterizedTest
     @MethodSource("allowedRolesProvider")
     public void createQuest_SuccessAndNameAlreadyExists_ShouldReturnError(Role allowedRole) throws Exception {
-
         userDTO.setRole(allowedRole);
 
-        Long questId = createQuestAndAssertRedirect(validQuestName, validQuestDescription, validQuestText, userDTO);
+        Long createdQuestId = createQuestAndAssertRedirect(validQuestName, validQuestDescription, validQuestText, userDTO);
 
-        Quest createdQuest = questService.get(questId).orElseThrow();
+        Quest createdQuest = questService.get(createdQuestId).orElseThrow();
         assertQuestDetails(createdQuest, validQuestName, validQuestDescription, validUserId);
 
         mockMvc.perform(post(Route.CREATE_QUEST)
-                        .param(TestConstants.NAME, validQuestName)
-                        .param(TestConstants.DESCRIPTION, validQuestDescription)
-                        .param(TestConstants.QUEST_TEXT, validQuestText)
+                        .param(NAME, validQuestName)
+                        .param(DESCRIPTION, validQuestDescription)
+                        .param(QUEST_TEXT, validQuestText)
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(CREATE_QUEST))
@@ -179,9 +177,11 @@ public class QuestCreateControllerIT {
         return params;
     }
 
-    @Test
-    void createQuest_WhenQuestTextIsInvalid_ShouldRedirectToCreateQuestPageWithError() throws Exception {
-        userDTO.setRole(Role.valueOf(validUserRole));
+    @ParameterizedTest
+    @MethodSource("allowedRolesProvider")
+    void createQuest_WhenQuestTextIsInvalid_ShouldRedirectToCreateQuestPageWithError(Role allowedRole) throws Exception {
+        userDTO.setRole(allowedRole);
+
         mockMvc.perform(post(Route.CREATE_QUEST)
                         .param(QUEST_NAME, validQuestName)
                         .param(QUEST_DESCRIPTION, validQuestDescription)
@@ -224,38 +224,37 @@ public class QuestCreateControllerIT {
 
         Long createdQuestId = createQuestAndAssertRedirect(validQuestName, validQuestDescription, validQuestText, userDTO);
 
-        // Проверка: квест добавлен в список квестов пользователя
         assertTrue(userDTO.getQuests().stream()
                         .anyMatch(questDTO -> questDTO.getId().equals(createdQuestId)),
-                "Quest should be added to the user's quest list");
+                QUEST_SHOULD_BE_ADDED_TO_THE_USER_S_QUEST_LIST);
 
-        MvcResult result = mockMvc.perform(get(Route.QUEST_EDIT + "?id=" + createdQuestId)
+        MvcResult result = mockMvc.perform(get(Route.QUEST_EDIT + QUERY_PARAM_ID_PATTERN + createdQuestId)
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().isOk())
                 .andReturn();
 
         UserDTO updatedUser = (UserDTO) Objects.requireNonNull(result.getRequest().getSession()).getAttribute(USER);
 
-        assertNotNull(updatedUser, "Updated user should not be null");
+        assertNotNull(updatedUser, UPDATED_USER_SHOULD_NOT_BE_NULL);
         assertTrue(updatedUser.getQuests().stream()
                         .anyMatch(questDTO -> questDTO.getId().equals(createdQuestId)),
-                "Quest should be added to the user's quest list in the session");
+                QUEST_SHOULD_BE_ADDED_TO_THE_USER_S_QUEST_LIST_IN_THE_SESSION);
     }
 
     private Long createQuestAndAssertRedirect(String name, String description, String text, UserDTO userDTO) throws Exception {
         MvcResult result = mockMvc.perform(post(Route.CREATE_QUEST)
-                        .param(TestConstants.NAME, name)
-                        .param(TestConstants.DESCRIPTION, description)
-                        .param(TestConstants.QUEST_TEXT, text)
+                        .param(NAME, name)
+                        .param(DESCRIPTION, description)
+                        .param(QUEST_TEXT, text)
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern(QUEST_EDIT_ID + "*"))
+                .andExpect(redirectedUrlPattern(QUEST_EDIT_ID + WILDCARD_PATTERN))
                 .andReturn();
 
         String redirectedUrl = result.getResponse().getRedirectedUrl();
-        assertNotNull(redirectedUrl, TestConstants.REDIRECTED_URL_DOES_NOT_MATCH_THE_EXPECTED_URL_PATTERN);
+        assertNotNull(redirectedUrl, REDIRECTED_URL_DOES_NOT_MATCH_THE_EXPECTED_URL_PATTERN);
 
-        assertTrue(redirectedUrl.startsWith(Route.QUEST_EDIT), TestConstants.REDIRECTED_URL_DOES_NOT_MATCH_THE_EXPECTED_URL_PATTERN);
+        assertTrue(redirectedUrl.startsWith(Route.QUEST_EDIT), REDIRECTED_URL_DOES_NOT_MATCH_THE_EXPECTED_URL_PATTERN);
 
         String questIdStr = redirectedUrl.substring(redirectedUrl.lastIndexOf('=') + 1);
         return Long.parseLong(questIdStr);
@@ -263,10 +262,11 @@ public class QuestCreateControllerIT {
 
     private void assertQuestDetails(Quest quest, String expectedName, String expectedDescription, String expectedUserId) {
         assertAll(
-                () -> assertNotNull(quest, TestConstants.QUEST_SHOULD_NOT_BE_NULL),
-                () -> assertEquals(expectedName, quest.getName(), TestConstants.QUEST_NAME_SHOULD_MATCH),
-                () -> assertEquals(expectedDescription, quest.getDescription(), TestConstants.QUEST_DESCRIPTION_SHOULD_MATCH),
-                () -> assertEquals(expectedUserId, String.valueOf(quest.getAuthor().getId()), TestConstants.AUTHOR_ID_SHOULD_MATCH)
+                () -> assertNotNull(quest, QUEST_SHOULD_NOT_BE_NULL),
+                () -> assertEquals(expectedName, quest.getName(), QUEST_NAME_SHOULD_MATCH),
+                () -> assertEquals(expectedDescription, quest.getDescription(), QUEST_DESCRIPTION_SHOULD_MATCH),
+                () -> assertEquals(expectedUserId, String.valueOf(quest.getAuthor().getId()), AUTHOR_ID_SHOULD_MATCH)
         );
     }
+
 }

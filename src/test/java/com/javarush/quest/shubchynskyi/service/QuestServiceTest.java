@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.service;
 
+import com.javarush.quest.shubchynskyi.TestConstants;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.exception.AppException;
@@ -16,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 
+import static com.javarush.quest.shubchynskyi.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -36,14 +38,7 @@ public class QuestServiceTest {
     private Lock lock;
     @InjectMocks
     private QuestService questService;
-    // TODO в настройки?
-    private static final Long USER_ID = 2L;
-    private static final Long QUEST_ID = 1L;
-    private static final String NOT_EXIST_QUEST_ID = "5";
-    private static final String INVALID_QUEST_ID = "no id";
-    private static final String QUEST_NAME = "Quest Name";
-    private static final String QUEST_DESCRIPTION = "Quest Description";
-    private static final String TEXT = "Quest text";
+
     private Quest testQuest;
     private User testUser;
 
@@ -54,8 +49,8 @@ public class QuestServiceTest {
         testQuest = Quest.builder()
                 .author(testUser)
                 .id(QUEST_ID)
-                .name(QUEST_NAME)
-                .description(QUEST_DESCRIPTION)
+                .name(QUEST_NAME_HOLDER)
+                .description(QUEST_DESCRIPTION_HOLDER)
                 .build();
 
         ArrayList<Quest> quests = new ArrayList<>();
@@ -70,18 +65,19 @@ public class QuestServiceTest {
         when(userService.get(USER_ID)).thenReturn(Optional.of(testUser));
 
         Quest createdQuest = questService.create(
-                QUEST_NAME,
-                TEXT,
-                QUEST_DESCRIPTION,
+                QUEST_NAME_HOLDER,
+                QUEST_TEXT_HOLDER,
+                QUEST_DESCRIPTION_HOLDER,
                 String.valueOf(USER_ID));
 
-        assertEquals(QUEST_NAME, createdQuest.getName());
-        assertEquals(QUEST_DESCRIPTION, createdQuest.getDescription());
+        assertEquals(QUEST_NAME_HOLDER, createdQuest.getName());
+        assertEquals(QUEST_DESCRIPTION_HOLDER, createdQuest.getDescription());
         assertEquals(USER_ID, createdQuest.getAuthor().getId());
 
         verify(questRepository, times(2)).save(any());
         verify(lock, times(1)).lock();
         verify(lock, times(1)).unlock();
+        verify(questParser).splitQuestToStrings(anyString());
     }
 
     @Test
@@ -92,9 +88,9 @@ public class QuestServiceTest {
 
         assertThrows(AppException.class,
                 () -> questService.create(
-                        QUEST_NAME,
-                        TEXT,
-                        QUEST_DESCRIPTION,
+                        QUEST_NAME_HOLDER,
+                        QUEST_TEXT_HOLDER,
+                        QUEST_DESCRIPTION_HOLDER,
                         String.valueOf(USER_ID))
         );
 
@@ -109,9 +105,9 @@ public class QuestServiceTest {
 
         assertThrows(AppException.class,
                 () -> questService.create(
-                        QUEST_NAME,
-                        TEXT,
-                        QUEST_DESCRIPTION,
+                        QUEST_NAME_HOLDER,
+                        QUEST_TEXT_HOLDER,
+                        QUEST_DESCRIPTION_HOLDER,
                         String.valueOf(USER_ID))
         );
         verifyNoInteractions(questRepository);

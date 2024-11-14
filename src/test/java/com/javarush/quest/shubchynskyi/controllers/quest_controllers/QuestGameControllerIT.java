@@ -1,18 +1,20 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
-import com.javarush.quest.shubchynskyi.TestConstants;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.entity.GameState;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.javarush.quest.shubchynskyi.TestConstants.GAME_STATE_PLAY;
+import java.util.Arrays;
+import java.util.stream.Stream;
+
+import static com.javarush.quest.shubchynskyi.TestConstants.REDIRECT_PATTERN_NEXT_QUESTION;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -23,8 +25,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QuestGameControllerIT {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Value("${game.states.invalid}")
+    private String gameStateInvalid;
+    @Value("${game.states.play}")
+    private String gameStatePlay;
+    @Value("${game.states.win}")
+    private String gameStateWin;
 
     @Value("${app.valid-quest-id}")
     private String validQuestId;
@@ -36,6 +42,9 @@ public class QuestGameControllerIT {
     private String expectedQuestName;
     @Value("${valid.quest.start-question-id}")
     private long expectedStartQuestionId;
+
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
     void whenQuestExists_ThenPrepareAndShowQuest() throws Exception {
@@ -54,7 +63,7 @@ public class QuestGameControllerIT {
     }
 
     @ParameterizedTest
-    @EnumSource(value = GameState.class, mode = EnumSource.Mode.EXCLUDE, names = {GAME_STATE_PLAY})
+    @MethodSource("gameStateWithoutPlayProvider")
     void whenGameStateIsNotPlay_ThenRedirectToQuestList(GameState gameState) throws Exception {
         mockMvc.perform(post(Route.QUEST)
                         .param(GAME_STATE, gameState.toString())
@@ -63,21 +72,26 @@ public class QuestGameControllerIT {
                 .andExpect(redirectedUrl(Route.QUESTS_LIST));
     }
 
+    private Stream<GameState> gameStateWithoutPlayProvider() {
+        return Arrays.stream(GameState.values())
+                .filter(state -> !state.name().equals(gameStatePlay)); // Исключаем состояние
+    }
+
     @Test
     void whenGameStateIsPlayAndQuestionIdProvided_ThenRedirectToNextQuestion() throws Exception {
         mockMvc.perform(post(Route.QUEST)
                         .param(ID, validQuestId)
-                        .param(GAME_STATE, GAME_STATE_PLAY)
+                        .param(GAME_STATE, gameStatePlay)
                         .param(QUESTION_ID, validQuestionId))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern(String.format(TestConstants.REDIRECT_PATTERN_NEXT_QUESTION, validQuestId)));
+                .andExpect(redirectedUrlPattern(String.format(REDIRECT_PATTERN_NEXT_QUESTION, validQuestId)));
     }
 
     @Test
     void whenGameStateIsPlayAndQuestionIdNotProvided_ThenRedirectToQuestList() throws Exception {
         mockMvc.perform(post(Route.QUEST)
                         .param(ID, validQuestId)
-                        .param(GAME_STATE, GAME_STATE_PLAY))
+                        .param(GAME_STATE, gameStatePlay))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.QUESTS_LIST));
     }
@@ -96,7 +110,7 @@ public class QuestGameControllerIT {
     @Test
     void whenGameStateIsNotPlayAndQuestionIdProvided_ThenRedirectToQuestList() throws Exception {
         mockMvc.perform(post(Route.QUEST)
-                        .param(GAME_STATE, TestConstants.GAME_STATE_WIN)
+                        .param(GAME_STATE, gameStateWin)
                         .param(QUESTION_ID, validQuestionId))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.QUESTS_LIST));
@@ -105,7 +119,7 @@ public class QuestGameControllerIT {
     @Test
     void whenInvalidGameStateProvided_ThenRedirectToQuestList() throws Exception {
         mockMvc.perform(post(Route.QUEST)
-                        .param(GAME_STATE, TestConstants.INVALID_GAME_STATE))
+                        .param(GAME_STATE, gameStateInvalid))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.QUESTS_LIST));
     }
@@ -127,4 +141,5 @@ public class QuestGameControllerIT {
                 .andExpect(request().attribute(QUEST_IMAGE, notNullValue()))
                 .andExpect(request().attribute(START_QUESTION_ID, notNullValue()));
     }
+
 }

@@ -24,4 +24,5 @@ public class IndexControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(view().name(Route.INDEX_PAGE));
     }
+
 }

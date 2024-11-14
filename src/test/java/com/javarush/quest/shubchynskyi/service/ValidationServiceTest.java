@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import static com.javarush.quest.shubchynskyi.TestConstants.*;
+import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.YOU_DONT_HAVE_PERMISSIONS;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,12 +45,6 @@ class ValidationServiceTest {
     @InjectMocks
     private ValidationService validationService;
 
-    //TODO
-    private static final String USER_ATTR = "user";
-    private static final String FIELD_ERRORS_ATTR = "fieldErrors";
-    private static final String ERROR_ATTR = "error";
-    private static final String ERROR_MESSAGE = "error message";
-
     private UserDTO testUser;
     private Role testRole;
 
@@ -66,9 +62,8 @@ class ValidationServiceTest {
         boolean result = validationService.processFieldErrors(bindingResult, redirectAttributes);
 
         assertTrue(result);
-        verify(redirectAttributes, times(1)).addFlashAttribute(eq(ValidationServiceTest.FIELD_ERRORS_ATTR), any());
+        verify(redirectAttributes, times(1)).addFlashAttribute(eq(FIELD_ERRORS), any());
     }
-
 
     @Test
     void should_ReturnTrue_When_UserAccessIsDenied() {
@@ -100,7 +95,7 @@ class ValidationServiceTest {
         boolean result = validationService.processFieldErrors(bindingResult, redirectAttributes);
 
         assertFalse(result);
-        verify(redirectAttributes, never()).addFlashAttribute(eq(ValidationServiceTest.FIELD_ERRORS_ATTR), any());
+        verify(redirectAttributes, never()).addFlashAttribute(eq(FIELD_ERRORS), any());
     }
 
 
@@ -127,28 +122,27 @@ class ValidationServiceTest {
         assertAccessIsDeniedForRoles(Collections.singletonList(Role.USER));
     }
 
-    //TODO
     private void mockFieldErrors() {
-        List<FieldError> fieldErrors = List.of(new FieldError("objectName", "field", "defaultMessage"));
+        List<FieldError> fieldErrors = List.of(new FieldError(OBJECT_NAME, FIELD, DEFAULT_MESSAGE));
         when(bindingResult.hasErrors()).thenReturn(true);
         when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
         when(messageSource.getMessage(any(FieldError.class), any(Locale.class))).thenReturn(ERROR_MESSAGE);
     }
 
     private void mockSessionUser(UserDTO user) {
-        when(httpSession.getAttribute(USER_ATTR)).thenReturn(user);
+        when(httpSession.getAttribute(USER)).thenReturn(user);
     }
 
     private void assertAccessIsDeniedForRoles(List<Role> validRoles) {
         boolean accessDenied = validationService.checkUserAccessDenied(httpSession, validRoles, redirectAttributes);
         assertTrue(accessDenied);
         verify(messageSource).getMessage(eq(YOU_DONT_HAVE_PERMISSIONS), any(), any());
-        verify(redirectAttributes).addFlashAttribute(eq(ERROR_ATTR), any());
+        verify(redirectAttributes).addFlashAttribute(eq(ERROR), any());
     }
 
     private void assertAccessIsGrantedForRoles(List<Role> validRoles) {
         boolean accessDenied = validationService.checkUserAccessDenied(httpSession, validRoles, redirectAttributes);
         assertFalse(accessDenied);
-        verify(redirectAttributes, never()).addFlashAttribute(eq(ERROR_ATTR), any());
+        verify(redirectAttributes, never()).addFlashAttribute(eq(ERROR), any());
     }
 }

@@ -45,6 +45,7 @@ logging:
 
 app:
   default-locale: en
+  non-existent-locale: zz
   directories:
     images: src/main/webapp/WEB-INF/images/
     descriptions: descriptions/

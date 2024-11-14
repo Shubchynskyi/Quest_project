@@ -28,9 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SignupControllerIT {
 
-    @Autowired
-    private MockMvc mockMvc;
-
     @Value("${app.directories.images}")
     private String imagesDirectory;
     @Value("${app.images.test-image.name}")
@@ -48,6 +45,9 @@ public class SignupControllerIT {
     private String validUserRoleString;
     @Value("${valid.user.id}")
     private Long validUserId;
+
+    @Autowired
+    private MockMvc mockMvc;
 
     private UserDTO validUserDTO;
     private String testImagePath;
@@ -123,4 +123,5 @@ public class SignupControllerIT {
                 .andExpect(flash().attribute(FIELD_ERRORS, notNullValue()))
                 .andExpect(redirectedUrl(Route.SIGNUP));
     }
+
 }

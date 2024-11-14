@@ -4,6 +4,7 @@ import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Controller;
 import org.springframework.test.web.servlet.MockMvc;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.ERROR;
+import static com.javarush.quest.shubchynskyi.constant.Key.ID;
 import static com.javarush.quest.shubchynskyi.constant.Route.INDEX;
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.ID_NOT_FOUND_ERROR;
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.UNEXPECTED_ERROR;
@@ -20,6 +22,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ConfigIT
 @Import(GlobalExceptionHandlerIT.TestController.class)
 public class GlobalExceptionHandlerIT {
+
+    @Value("${invalid.quest.incorrectId}")
+    public String incorrectId;
 
     @Autowired
     private MockMvc mockMvc;
@@ -33,8 +38,8 @@ public class GlobalExceptionHandlerIT {
         }
 
         @GetMapping("/test/method-argument-type-mismatch")
-        public String triggerMethodArgumentTypeMismatch(@RequestParam("number") Integer number) {
-            return INDEX + number;
+        public String triggerMethodArgumentTypeMismatch(@RequestParam(ID) Long id) {
+            return INDEX + id;
         }
 
         @GetMapping("/test/general-exception")
@@ -54,7 +59,7 @@ public class GlobalExceptionHandlerIT {
     @Test
     void whenMethodArgumentTypeMismatchOccurs_thenRedirectToIndexWithErrorMessage() throws Exception {
         mockMvc.perform(get("/test/method-argument-type-mismatch")
-                        .param("number", "notANumber"))
+                        .param(ID, incorrectId))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(INDEX))
                 .andExpect(flash().attribute(ERROR, ErrorLocalizer.getLocalizedMessage(ID_NOT_FOUND_ERROR)));

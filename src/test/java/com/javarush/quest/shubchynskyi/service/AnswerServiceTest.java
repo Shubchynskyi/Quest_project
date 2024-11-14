@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.service;
 
+import com.javarush.quest.shubchynskyi.TestConstants;
 import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.repository.AnswerRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,8 +26,8 @@ class AnswerServiceTest {
     @BeforeEach
     void setUp() {
         testAnswer = new Answer();
-        testAnswer.setId(1L);
-        testAnswer.setText("Paris");
+        testAnswer.setId(TestConstants.TEST_ANSWER_ID_HOLDER);
+        testAnswer.setText(TestConstants.TEST_ANSWER_TEST_HOLDER);
     }
 
     @Test

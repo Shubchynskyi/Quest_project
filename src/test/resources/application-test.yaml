@@ -6,7 +6,7 @@ spring:
   liquibase:
     change-log: classpath:db/db.changelog-master.xml
 
-# Application settings overrides for tests
+# TODO вынести ID Application settings overrides for tests
 app:
   directories:
     images: src/test/resources/images
@@ -62,3 +62,18 @@ invalid:
   user:
     login: "invalid654User976479"
     password: "invalidPassword"
+
+# Test-content settings
+content:
+  index-page:
+    test-directory: "index_page/"
+    content-file-name: "description"
+  expected-data-directory: "expected/"
+  invalid-directory: "nonExistedDirectory"
+
+# Game state settings for tests
+game:
+  states:
+    invalid: "Invalid game state"
+    play: "PLAY"
+    win: "WIN"
