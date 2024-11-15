@@ -2,7 +2,6 @@ package com.javarush.quest.shubchynskyi.constant;
 
 import lombok.experimental.UtilityClass;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 @UtilityClass
@@ -50,6 +49,7 @@ public class Key {
     public static final String FILE_DOES_NOT_EXIST = "File does not exist";
     public static final String FILE_NAME_IS_NULL_OR_EMPTY = "File name is null or empty";
     public static final String USER_NOT_FOUND_WITH_ID = "User not found with id ";
+    public static final String QUESTION_NOT_FOUND = "Question not found";
 
     //**************  Users  **************//
     public static final String USER = "user";
@@ -100,4 +100,5 @@ public class Key {
     public static final int MAX_LENGTH = 100;
     public static final Pattern TEMP_FILE_PATTERN = Pattern.compile("^temp_(\\d+)_.*$");
 
+    public static final String CURRENT_USER_ROLE = "currentUserRole";
 }

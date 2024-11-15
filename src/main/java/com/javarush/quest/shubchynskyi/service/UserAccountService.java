@@ -68,7 +68,7 @@ public class UserAccountService {
                                    boolean imageIsValid) {
         log.info("Updating user with ID: {}", userFromModel.getId());
         Optional<User> updatedUser = userService.update(userFromModel);
-        // todo - может тут получать квест пользователя и записывать снова?.. ну и остальные поля?
+
         if (!isTempImagePresent || imageIsValid) {
             log.info("Uploading updated image for user ID: {}", userFromModel.getId());
             imageService.uploadFromMultipartFile(imageFile, userFromModel.getImage(), false);

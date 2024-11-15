@@ -16,6 +16,10 @@
     margin-bottom: 5px;
 }
 
+.userPage-button-fixed-width {
+    width: 135px;
+}
+
 #createUserModal {
     display: none;
     position: fixed;

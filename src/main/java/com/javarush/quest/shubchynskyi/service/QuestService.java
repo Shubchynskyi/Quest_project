@@ -170,7 +170,6 @@ public class QuestService {
         }
 
         answerService.create(answer);
-//   TODO заменил, проверить     answerRepository.save(answer);
         answers.add(answer);
     }
 

@@ -49,7 +49,7 @@ trap 'echo "Cleaning up intermediate data on error..."; \
       rm -f "$JAR_PATH" 2>/dev/null || true; \
       exit 1' ERR
 
-# Check the exit status of the container // todo добавил кавычки, было просто $APP_TEST_CONTAINER_NAME
+# Check the exit status of the container
 EXIT_CODE=$(docker inspect "$APP_TEST_CONTAINER_NAME" --format='{{.State.ExitCode}}')
 echo "Container has finished. Exit code: $EXIT_CODE"
 echo "Container logs after completion:"

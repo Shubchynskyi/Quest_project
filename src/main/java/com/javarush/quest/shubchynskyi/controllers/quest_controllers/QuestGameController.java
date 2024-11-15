@@ -6,6 +6,7 @@ import com.javarush.quest.shubchynskyi.dto.QuestionDTO;
 import com.javarush.quest.shubchynskyi.entity.GameState;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.Question;
+import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.mapper.QuestionMapper;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.service.QuestionService;
@@ -24,6 +25,7 @@ import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 @Controller
 @RequiredArgsConstructor
 public class QuestGameController {
+
 
     private final QuestService questService;
     private final QuestionService questionService;
@@ -82,7 +84,7 @@ public class QuestGameController {
                 .map(questionMapper::questionToQuestionDTO)
                 .orElseThrow(() -> {
                     log.error("Question not found with ID: {}", questionId);
-                    return new RuntimeException("Question not found"); // TODO AppEx ???
+                    return new AppException(QUESTION_NOT_FOUND);
                 });
         request.setAttribute(QUESTION, questionDTO);
     }

@@ -43,8 +43,9 @@ public class QuestsListController {
 
         UserDTO currentUser = (UserDTO) session.getAttribute(USER);
 
-        model.addAttribute(QUESTS, questDTOS); // TODO рефакторинг
-        model.addAttribute("currentUserRole", currentUser != null ? currentUser.getRole().toString() : null);
+        model.addAttribute(QUESTS, questDTOS);
+        model.addAttribute(CURRENT_USER_ROLE, currentUser != null ? currentUser.getRole().toString() : null);
         return Route.QUESTS_LIST;
     }
+
 }

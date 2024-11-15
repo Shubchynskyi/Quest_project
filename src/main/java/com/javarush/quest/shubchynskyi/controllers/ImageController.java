@@ -1,6 +1,7 @@
 package com.javarush.quest.shubchynskyi.controllers;
 
 import com.javarush.quest.shubchynskyi.config.ImageProperties;
+import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.service.ImageService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.FILE_IS_TOO_LARGE;
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.IMAGE_NOT_FOUND;
 
 @Slf4j
 @Controller
@@ -36,7 +39,8 @@ public class ImageController {
             log.info("Image '{}' served successfully with MIME type '{}'.", imageName, mimeType);
         } catch (IOException e) {
             log.warn("Failed to serve image '{}': {}", imageName, e.getMessage());
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Image not found."); // TODO
+            String localizedMessage = ErrorLocalizer.getLocalizedMessage(IMAGE_NOT_FOUND);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, localizedMessage);
         }
     }
 
