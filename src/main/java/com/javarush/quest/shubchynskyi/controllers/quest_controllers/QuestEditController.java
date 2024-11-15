@@ -35,20 +35,15 @@ import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.QUE
 @RequiredArgsConstructor
 public class QuestEditController {
 
-    // TODO настройки доступа, если ID пользователя = ID пользователя в квесте, то разрешить доступ.
-    // TODO для списка (админ, модер) - разрешить доступ
-
-//    protected final List<Role> acceptedRoles = List.of(Role.ADMIN, Role.MODERATOR);
-    //todo проблемы с изображением! после неккоректного файла выкидывает с общей ошибкой
-    protected static final List<Role> ALLOWED_ROLES_FOR_QUEST_EDIT =
-            List.of(Role.MODERATOR, Role.ADMIN);
-
     private final QuestService questService;
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final ImageService imageService;
     private final QuestMapper questMapper;
     private final ValidationService validationService;
+
+    protected static final List<Role> ALLOWED_ROLES_FOR_QUEST_EDIT =
+            List.of(Role.MODERATOR, Role.ADMIN);
 
     @GetMapping(QUEST_EDIT)
     public String showQuestForEdit(
@@ -67,11 +62,10 @@ public class QuestEditController {
             return REDIRECT + Route.CREATE_QUEST;
         }
 
-        if (Objects.nonNull(currentUser)) { // todo проверяем что пользователь не null
+        if (Objects.nonNull(currentUser)) {
             Quest quest = questOptional.get();
             Long authorId = quest.getAuthor().getId();
 
-            // todo проверяем что пользователь не null еще раз???
             if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_EDIT, redirectAttributes)
                     && !Objects.equals(currentUser.getId(), authorId)) {
                 log.warn("Access denied to quest edit: insufficient permissions. Quest ID: {}. User ID: {}", id, currentUser.getId());

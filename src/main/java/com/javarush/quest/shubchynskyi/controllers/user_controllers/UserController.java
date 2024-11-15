@@ -58,7 +58,8 @@ public class UserController {
         log.info("Entering showUser with id: {}", id);
 
         if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_USER_EDIT, redirectAttributes)) {
-            log.warn("Access denied for user [{}] when attempting to view user [{}]", userFromSession.getId(), id);
+            log.warn("Access denied for user [{}] when attempting to view user [{}]",
+                    userFromSession != null ? userFromSession.getId() : "unknown", id);
             return REDIRECT + Route.INDEX;
         }
 
