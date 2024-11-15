@@ -1,9 +1,11 @@
 package com.javarush.quest.shubchynskyi.quest_util;
 
 import com.javarush.quest.shubchynskyi.exception.AppException;
+import com.javarush.quest.shubchynskyi.result.LogicBlockResult;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class QuestStringExtractorTest {
 
@@ -12,11 +14,11 @@ class QuestStringExtractorTest {
     @Test
     void should_ReturnCorrectData_When_StringIsValid() {
         String input = "1+ Answer";
-        String[] extractedData = extractor.getExtractedData(input);
+        LogicBlockResult result = extractor.getExtractedData(input);
 
-        assertEquals("1", extractedData[0]);
-        assertEquals("Answer", extractedData[1]);
-        assertEquals("+", extractedData[2]);
+        assertEquals(1, result.blockNumber());
+        assertEquals("Answer", result.blockData());
+        assertEquals("+", result.blockType());
     }
 
     @Test

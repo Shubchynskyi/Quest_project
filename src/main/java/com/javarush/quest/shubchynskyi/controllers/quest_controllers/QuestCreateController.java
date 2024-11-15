@@ -120,4 +120,5 @@ public class QuestCreateController {
         redirectAttributes.addFlashAttribute(QUEST_TEXT, questText);
         redirectAttributes.addFlashAttribute(QUEST_DTO, questDTO);
     }
+
 }

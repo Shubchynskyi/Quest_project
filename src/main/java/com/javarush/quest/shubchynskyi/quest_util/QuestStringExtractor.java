@@ -1,25 +1,24 @@
 package com.javarush.quest.shubchynskyi.quest_util;
 
-import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.exception.AppException;
+import com.javarush.quest.shubchynskyi.result.LogicBlockResult;
 import org.springframework.stereotype.Component;
 
-import static com.javarush.quest.shubchynskyi.constant.Key.INCORRECT_STRING;
+import static com.javarush.quest.shubchynskyi.constant.Key.*;
 
 @Component
 public class QuestStringExtractor {
 
-    // TODO return Object with 3 fields
-    public String[] getExtractedData(String currentLine) {
-        String[] result = new String[3];
-        result[0] = extractNumber(currentLine);
-        result[1] = extractData(currentLine);
-        result[2] = extractMark(currentLine, result[0]);
-        return result;
+    public LogicBlockResult getExtractedData(String currentLine) {
+        String numberStr = extractNumber(currentLine);
+        String data = extractData(currentLine);
+        String mark = extractMark(currentLine, numberStr);
+        int number = Integer.parseInt(numberStr);
+        return new LogicBlockResult(number, data, mark);
     }
 
     private String extractMark(String currentLine, String number) {
-        String mark = currentLine.replaceFirst(number, Key.REGEX_EMPTY_STRING);
+        String mark = currentLine.replaceFirst(number, REGEX_EMPTY_STRING);
         if (mark.length() > 1) {
             mark = mark.substring(0, 2);
         }
@@ -30,7 +29,7 @@ public class QuestStringExtractor {
         int endIndex = findNumberEndIndex(string);
 
         if (endIndex <= 0) {
-            throw new AppException(Key.INCORRECT_STRING_NUMBER);
+            throw new AppException(INCORRECT_STRING_NUMBER);
         }
 
         return string.substring(0, endIndex);
@@ -57,4 +56,5 @@ public class QuestStringExtractor {
         }
         return -1;
     }
+
 }

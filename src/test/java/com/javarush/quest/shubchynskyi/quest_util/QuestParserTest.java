@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.quest_util;
 
+import com.javarush.quest.shubchynskyi.result.LogicBlockResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,9 +46,14 @@ class QuestParserTest {
 
     @Test
     void should_ExtractLogicBlock_When_ExtractLogicBlockIsCalled() {
-        when(questStringExtractor.getExtractedData(anyString())).thenReturn(new String[]{"1", "Line1", "<"});
-        String[] result = questParser.extractLogicBlock("1< Line1");
-        assertArrayEquals(new String[]{"1", "Line1", "<"}, result);
+        when(questStringExtractor.getExtractedData(anyString()))
+                .thenReturn(new LogicBlockResult(1, "Line1", "<"));
+
+        LogicBlockResult result = questParser.extractLogicBlock("1< Line1");
+
+        assertEquals(1, result.blockNumber());
+        assertEquals("Line1", result.blockData());
+        assertEquals("<", result.blockType());
     }
 
     @Test
@@ -63,4 +69,5 @@ class QuestParserTest {
         questParser.extractLogicBlock("1< Line1");
         verify(questStringExtractor, times(1)).getExtractedData(anyString());
     }
+
 }

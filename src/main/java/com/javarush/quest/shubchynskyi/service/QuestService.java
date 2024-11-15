@@ -7,6 +7,7 @@ import com.javarush.quest.shubchynskyi.quest_util.BlockTypeResolver;
 import com.javarush.quest.shubchynskyi.quest_util.QuestParser;
 import com.javarush.quest.shubchynskyi.quest_util.QuestValidator;
 import com.javarush.quest.shubchynskyi.repository.QuestRepository;
+import com.javarush.quest.shubchynskyi.result.LogicBlockResult;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -135,19 +136,14 @@ public class QuestService {
             Collection<Answer> answers
     ) {
         String currentLine = questParser.takeNextLine();
-        // TODO парсер может возвращать обьект, и из него потом извлекать поля (а не из массива)
-        String[] logicBlock = questParser.extractLogicBlock(currentLine);
-        Integer blockNumber = Integer.valueOf(logicBlock[0]);
-        String blockData = logicBlock[1];
-        String blockTypeStr = logicBlock[2];
-
-        BlockTypeResolver.BlockType blockType = blockTypeResolver.defineBlockType(blockTypeStr);
+        LogicBlockResult logicBlock = questParser.extractLogicBlock(currentLine);
+        BlockTypeResolver.BlockType blockType = blockTypeResolver.defineBlockType(logicBlock.blockType());
 
         switch (blockType) {
-            case PLAY, WIN, LOST ->
-                    buildNewQuestion(quest, questionsMapWithRawId, answers, blockNumber, blockData, blockTypeStr);
-            case ANSWER ->
-                    buildNewAnswer(questionsMapWithRawId, answersMapWithNullNextQuestionId, answers, blockNumber, blockData);
+            case PLAY, WIN, LOST -> buildNewQuestion(quest, questionsMapWithRawId, answers,
+                    logicBlock.blockNumber(), logicBlock.blockData(), logicBlock.blockType());
+            case ANSWER -> buildNewAnswer(questionsMapWithRawId, answersMapWithNullNextQuestionId, answers,
+                    logicBlock.blockNumber(), logicBlock.blockData());
             default -> throw new AppException(Key.INCORRECT_TYPE);
         }
     }
@@ -198,4 +194,5 @@ public class QuestService {
             quest.setStartQuestionId(question.getId());
         }
     }
+
 }

@@ -1,7 +1,7 @@
 package com.javarush.quest.shubchynskyi.quest_util;
 
 import com.javarush.quest.shubchynskyi.exception.AppException;
-import com.javarush.quest.shubchynskyi.constant.Key;
+import com.javarush.quest.shubchynskyi.result.LogicBlockResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static com.javarush.quest.shubchynskyi.constant.Key.INCORRECT_TEXT_BLOCK;
+import static com.javarush.quest.shubchynskyi.constant.Key.REGEX_NEW_LINE;
 
 @Component
 @RequiredArgsConstructor
@@ -30,19 +33,19 @@ public class QuestParser {
         StringBuilder currentLineBuilder = new StringBuilder(currentLine);
         do {
             String nextLine = takeNextLine();
-            currentLineBuilder.insert(0, nextLine + Key.REGEX_NEW_LINE);
-            if (!isStringWithOutMark(nextLine)) {
+            currentLineBuilder.insert(0, nextLine + REGEX_NEW_LINE);
+            if (!isStringWithoutMark(nextLine)) {
                 break;
             }
         } while (isStringPresent());
         String result = currentLineBuilder.toString();
-        if (isStringWithOutMark(result)) {
-            throw new AppException(Key.INCORRECT_TEXT_BLOCK);
+        if (isStringWithoutMark(result)) {
+            throw new AppException(INCORRECT_TEXT_BLOCK);
         }
         return result;
     }
 
-    private boolean isStringWithOutMark(String string) {
+    private boolean isStringWithoutMark(String string) {
         for (String mark : QuestMarksEnum.getAllMarks()) {
             int markIndex = string.indexOf(mark);
             if (markIndex > 0) {
@@ -68,7 +71,7 @@ public class QuestParser {
 
     public void splitQuestToStrings(String text) {
         List<String> result = new ArrayList<>(Arrays
-                .stream(text.split(Key.REGEX_NEW_LINE))
+                .stream(text.split(REGEX_NEW_LINE))
                 .filter(s -> !s.isBlank())
                 .map(String::trim)
                 .toList());
@@ -76,8 +79,8 @@ public class QuestParser {
         stringList = result;
     }
 
-    public String[] extractLogicBlock(String currentLine) {
-        if (isStringWithOutMark(currentLine)) {
+    public LogicBlockResult extractLogicBlock(String currentLine) {
+        if (isStringWithoutMark(currentLine)) {
             currentLine = fillData(currentLine);
         }
         return questStringExtractor.getExtractedData(currentLine);
