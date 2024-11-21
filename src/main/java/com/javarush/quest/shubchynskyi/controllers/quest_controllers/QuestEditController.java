@@ -2,6 +2,8 @@ package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
 
 import com.javarush.quest.shubchynskyi.constant.Route;
+import com.javarush.quest.shubchynskyi.dto.QuestDTO;
+import com.javarush.quest.shubchynskyi.dto.QuestionDTO;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.entity.Quest;
@@ -11,24 +13,25 @@ import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.QuestMapper;
 import com.javarush.quest.shubchynskyi.service.*;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
-import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.QUEST_NOT_FOUND_ERROR;
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.*;
 
 @Slf4j
 @Controller
@@ -50,7 +53,8 @@ public class QuestEditController {
             @RequestParam(ID) String id,
             Model model,
             HttpSession session,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            @RequestParam(required = false) String source
     ) {
         UserDTO currentUser = (UserDTO) session.getAttribute(USER);
         Optional<Quest> questOptional = questService.get(id);
@@ -59,7 +63,7 @@ public class QuestEditController {
             String localizedMessage = ErrorLocalizer.getLocalizedMessage(QUEST_NOT_FOUND_ERROR);
             redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
             log.warn("Quest not found with ID: {}", id);
-            return REDIRECT + Route.CREATE_QUEST;
+            return REDIRECT + (source != null ? source : Route.QUESTS_LIST);
         }
 
         if (Objects.nonNull(currentUser)) {
@@ -69,103 +73,158 @@ public class QuestEditController {
             if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_EDIT, redirectAttributes)
                     && !Objects.equals(currentUser.getId(), authorId)) {
                 log.warn("Access denied to quest edit: insufficient permissions. Quest ID: {}. User ID: {}", id, currentUser.getId());
-                return REDIRECT + Route.QUESTS_LIST;
+                return REDIRECT + (source != null ? source : Route.QUESTS_LIST);
             }
 
+            if (source != null) {
+                model.addAttribute(SOURCE, source);
+            }
             model.addAttribute(QUEST, questMapper.questToQuestDTO(quest));
             log.info("Displaying quest edit page for quest ID: {}", id);
             return QUEST_EDIT;
         } else {
             log.warn("User is not logged in, redirecting to quests list page.");
-            return REDIRECT + Route.QUESTS_LIST;
+            return REDIRECT + Route.LOGIN;
         }
     }
 
     @PostMapping(QUEST_EDIT)
     public String saveQuest(
+            @RequestParam(ACTION_TYPE) String actionType,
+            @Valid @ModelAttribute(QUEST) QuestDTO questDTO,
+            BindingResult questBindingResult,
+            @Valid @ModelAttribute(QUESTION_DTO) QuestionDTO questionDTO,
+            HttpSession session,
+            RedirectAttributes redirectAttributes,
             @RequestParam MultiValueMap<String, String> allParams,
-            @RequestParam(name = IMAGE, required = false) MultipartFile imageFile
+            @RequestParam(name = IMAGE, required = false) MultipartFile imageFile,
+            @RequestParam(required = false) String source
     ) {
-        // todo при загрузке некорректного фото ошибка сервера 500 вместе с AppException
-        String viewName;
+        UserDTO currentUser = (UserDTO) session.getAttribute(USER);
+        if (Objects.nonNull(currentUser)) {
 
-        if (allParams.containsKey(QUEST_NAME)) {
-            viewName = questEdit(allParams, imageFile);
-        } else if (allParams.containsKey(QUESTION_ID)) {
-            viewName = questionEdit(allParams, imageFile);
+            if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_EDIT, redirectAttributes)) {
+                log.warn("Access denied to quest edit: insufficient permissions. User ID: {}", currentUser.getId());
+                return REDIRECT + (source != null ? source : Route.QUESTS_LIST);
+            }
+
+            if (source != null) {
+                redirectAttributes.addAttribute(SOURCE, source);
+            }
+
+            String viewName = (source != null ? source : Route.QUESTS_LIST);
+
+            if (actionType.equals(QUEST)) {
+                viewName = questEdit(imageFile, redirectAttributes, questDTO, questBindingResult, currentUser, source);
+            } else if (actionType.equals(QUESTION)) {
+                viewName = questionEdit(allParams, imageFile, questionDTO, redirectAttributes, source);
+            }
+
+            log.info("Saving quest with parameters: {}", allParams);
+            return viewName;
         } else {
-            viewName = QUESTS_LIST;
+            log.warn("User is not logged in, redirecting to quests list page.");
+            return REDIRECT + Route.LOGIN;
         }
-
-        log.info("Saving quest with parameters: {}", allParams);
-        return viewName;
     }
 
     private String questEdit(
-            MultiValueMap<String, String> allParams,
-            MultipartFile imageFile
+            MultipartFile imageFile,
+            RedirectAttributes redirectAttributes,
+            QuestDTO questDTO,
+            BindingResult questBindingResult,
+            UserDTO currentUser,
+            String source
     ) {
-        String questId = allParams.getFirst(ID);
 
-        return questService.get(questId)
+        if (!imageFile.isEmpty()) {
+            if (imageService.isValid(imageFile)) {
+                if (imageFile.getSize() > imageService.getMaxFileSize()) {
+                    redirectAttributes.addFlashAttribute(QUEST_IMAGE_ERROR,
+                            FILE_IS_TOO_LARGE + imageService.getMaxFileSize());
+                } else {
+                    imageService.uploadFromMultipartFile(imageFile, questDTO.getImage(), false);
+                }
+            } else {
+                redirectAttributes.addFlashAttribute(QUEST_IMAGE_ERROR, IMAGE_FILE_IS_INCORRECT);
+            }
+        }
+
+        boolean fieldErrors = validationService.processFieldErrors(questBindingResult, redirectAttributes);
+        if (fieldErrors) {
+            redirectAttributes.addFlashAttribute(QUEST_DTO, questDTO);
+            return REDIRECT + ID_URI_PATTERN.formatted(Route.QUEST_EDIT, questDTO.getId());
+        }
+
+        return questService.get(questDTO.getId())
                 .map(quest -> {
-                    updateQuest(allParams, quest, imageFile);
-                    log.info("Quest updated successfully: {}", questId);
-                    return REDIRECT + ID_URI_PATTERN.formatted(Route.QUEST_EDIT, questId);
+                    quest.setName(questDTO.getName());
+                    quest.setDescription(questDTO.getDescription());
+                    questService.update(quest);
+
+                    currentUser.getQuests().stream()
+                            .filter(userQuest -> userQuest.getId().equals(questDTO.getId()))
+                            .findFirst()
+                            .ifPresent(userQuest -> {
+                                userQuest.setName(questDTO.getName());
+                                userQuest.setDescription(questDTO.getDescription());
+                            });
+                    redirectAttributes.addFlashAttribute(USER, currentUser);
+                    log.info("Quest updated successfully: {}", questDTO.getId());
+                    return REDIRECT + ID_URI_PATTERN.formatted(Route.QUEST_EDIT, questDTO.getId());
                 })
                 .orElseGet(() -> {
-                    log.warn("Quest not found for updating with ID: {}", questId);
-                    return Route.QUESTS_LIST;
+                    log.warn("Quest not found for updating with ID: {}", questDTO.getId());
+                    return REDIRECT + (source != null ? source : Route.QUESTS_LIST);
                 });
     }
 
-    private void updateQuest(
-            MultiValueMap<String, String> allParams,
-            Quest quest,
-            MultipartFile imageFile
-    ) {
-        String newName = allParams.getFirst(QUEST_NAME);
-        String newDescription = allParams.getFirst(QUEST_DESCRIPTION);
-
-        if (newName != null) {
-            quest.setName(newName);
-            log.info("Updated quest name to: {}", newName);
-        }
-        if (newDescription != null) {
-            quest.setDescription(newDescription);
-            log.info("Updated quest description. Quest name: {}", quest.getName());
-        }
-
-        imageService.uploadFromMultipartFile(imageFile, quest.getImage(), false);
-
-        questService.update(quest);
-    }
 
     private String questionEdit(
             MultiValueMap<String, String> allParams,
-            MultipartFile imageFile
+            MultipartFile imageFile,
+            QuestionDTO questionDTO,
+            RedirectAttributes redirectAttributes,
+            String source
     ) {
-        String questionId = allParams.getFirst(QUESTION_ID);
-        Optional<Question> optionalQuestion = questionService.get(questionId);
+        Optional<Question> optionalQuestion = questionService.get(questionDTO.getId());
 
         return optionalQuestion.map(question -> {
-            updateQuestion(allParams, question, imageFile);
+            updateQuestion(allParams, question, imageFile, redirectAttributes);
             updateAnswers(allParams, question);
-            log.info("Question updated successfully: {}", questionId);
-            return REDIRECT + ID_URI_PATTERN.formatted(Route.QUEST_EDIT, allParams.getFirst(ID))
+            log.info("Question updated successfully: {}", questionDTO.getId());
+            return REDIRECT + ID_URI_PATTERN.formatted(Route.QUEST_EDIT, questionDTO.getQuestId())
                     + LABEL_URI_PATTERN + question.getId();
         }).orElseGet(() -> {
-            log.warn("Question not found with ID: {}", questionId);
-            return Route.QUESTS_LIST;
+            log.warn("Question not found with ID: {}", questionDTO.getId());
+            return REDIRECT + (source != null ? source : Route.QUESTS_LIST);
         });
     }
 
     private void updateQuestion(
             MultiValueMap<String, String> allParams,
             Question question,
-            MultipartFile imageFile
+            MultipartFile imageFile,
+            RedirectAttributes redirectAttributes
     ) {
-        imageService.uploadFromMultipartFile(imageFile, question.getImage(), false);
+        if (!imageFile.isEmpty()) {
+            Map<Long, String> questionImageErrors = new HashMap<>();
+
+            if (imageService.isValid(imageFile)) {
+                if (imageFile.getSize() > imageService.getMaxFileSize()) {
+                    questionImageErrors.put(question.getId(),
+                            FILE_IS_TOO_LARGE + imageService.getMaxFileSize());
+                } else {
+                    imageService.uploadFromMultipartFile(imageFile, question.getImage(), false);
+                }
+            } else {
+                questionImageErrors.put(question.getId(), IMAGE_FILE_IS_INCORRECT);
+            }
+
+            if (!questionImageErrors.isEmpty()) {
+                redirectAttributes.addFlashAttribute(QUESTION_IMAGE_ERRORS, questionImageErrors);
+            }
+        }
 
         String newQuestionText = allParams.getFirst(QUESTION_TEXT);
         if (newQuestionText != null && !newQuestionText.equals(question.getText())) {

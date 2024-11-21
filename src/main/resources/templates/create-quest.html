@@ -10,7 +10,9 @@
 <!-- Header -->
 <div th:replace="~{parts/header :: header}"></div>
 <div class="container">
-    <form action="create-quest" th:object="${questDTO}" method="post">
+    <form action="create-quest"
+          th:object="${questDTO}"
+          method="post">
 
         <!-- Error Name Message -->
         <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>

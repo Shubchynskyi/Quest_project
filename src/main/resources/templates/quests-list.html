@@ -29,7 +29,8 @@
 
             <!-- Кнопка "Edit" для ADMIN и MODERATOR -->
             <a th:if="${currentUserRole == 'ADMIN' or currentUserRole == 'MODERATOR'}"
-               th:href="@{/quest-edit(id=${quest.id})}" class="btn btn-secondary fixed-width-button mb-2">
+               th:href="@{/quest-edit(id=${quest.id}, source='/quests-list')}"
+               class="btn btn-secondary fixed-width-button mb-2">
               <span th:text="#{quests-list.button.edit}">Edit</span>
             </a>
 

@@ -9,7 +9,7 @@ public class Key {
     public static final String ID = "id";
     public static final String GAME_STATE = "gameState";
     public static final String ERROR = "error";
-    public static final String IMAGING_ERROR = "imagingError";
+    public static final String IMAGE_ERROR = "imageError";
     public static final String FIELD_ERRORS = "fieldErrors";
     public static final String SLASH = "/";
     public static final String EMPTY_STRING = "";
@@ -85,6 +85,7 @@ public class Key {
     public static final String QUESTION_ID = "questionId";
     public static final String QUESTION_TEXT = "questionText";
     public static final String ANSWER = "answer";
+    public static final String QUESTION_DTO = "questionDTO";
 
     //**************  File Upload and Storage  **************//
     public static final String IMAGE_UPLOAD_IO_ERROR = "Image upload IO error";
@@ -101,4 +102,7 @@ public class Key {
     public static final Pattern TEMP_FILE_PATTERN = Pattern.compile("^temp_(\\d+)_.*$");
 
     public static final String CURRENT_USER_ROLE = "currentUserRole";
+    public static final String ACTION_TYPE = "actionType";
+    public static final String QUEST_IMAGE_ERROR = "questImageError";
+    public static final String QUESTION_IMAGE_ERRORS = "questionImageErrors";
 }

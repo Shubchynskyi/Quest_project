@@ -275,6 +275,10 @@ public class ImageService {
         }
     }
 
+    public int getMaxFileSize() {
+        return imageProperties.getMaxFileSize();
+    }
+
     @Scheduled(cron = "0 */10 * * * ?")  // Every 10 minutes
     public void scheduledDeleteExpiredFiles() {
         deleteExpiredTempFiles();

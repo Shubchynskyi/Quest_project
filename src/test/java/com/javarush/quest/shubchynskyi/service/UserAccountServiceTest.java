@@ -126,7 +126,7 @@ class UserAccountServiceTest {
 
         if (isImageValid && imageFile.getSize() > testImageProperties.getMaxFileSize()) {
             isImageValid = false;
-            verify(redirectAttributes).addFlashAttribute(eq(IMAGING_ERROR), anyString());
+            verify(redirectAttributes).addFlashAttribute(eq(IMAGE_ERROR), anyString());
             assertFalse(result.imageIsValid());
             assertTrue(result.hasFieldsErrors());
             assertEquals("", result.tempImageId());
@@ -136,7 +136,7 @@ class UserAccountServiceTest {
 
         verify(imageService).isValid(imageFile);
         if (!isImageValid && !imageFile.isEmpty()) {
-            verify(redirectAttributes).addFlashAttribute(eq(IMAGING_ERROR), anyString());
+            verify(redirectAttributes).addFlashAttribute(eq(IMAGE_ERROR), anyString());
         }
 
         if (isTempImagePresent && !imageFile.isEmpty()) {
@@ -151,7 +151,7 @@ class UserAccountServiceTest {
         }
 
         if (!hasFieldsErrors && isImageValid && !fileSizeExceedsLimit) {
-            verify(redirectAttributes, never()).addFlashAttribute(eq(IMAGING_ERROR), anyString());
+            verify(redirectAttributes, never()).addFlashAttribute(eq(IMAGE_ERROR), anyString());
         }
 
         if (hasFieldsErrors && isImageValid && !loginExists) {

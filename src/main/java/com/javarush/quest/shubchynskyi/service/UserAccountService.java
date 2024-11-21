@@ -122,13 +122,13 @@ public class UserAccountService {
 
     private void addLocalizedIncorrectImageError(RedirectAttributes redirectAttributes) {
         String localizedMessage = ErrorLocalizer.getLocalizedMessage(IMAGE_FILE_IS_INCORRECT);
-        redirectAttributes.addFlashAttribute(IMAGING_ERROR, localizedMessage);
+        redirectAttributes.addFlashAttribute(IMAGE_ERROR, localizedMessage);
     }
 
     private void addLocalizedMaxSizeError(RedirectAttributes redirectAttributes) {
         String localizedMessage = ErrorLocalizer.getLocalizedMessage(FILE_IS_TOO_LARGE);
         redirectAttributes.addFlashAttribute(
-                IMAGING_ERROR, localizedMessage + " " + (imageProperties.getMaxFileSize() / KB_TO_MB / KB_TO_MB) + " " + MB);
+                IMAGE_ERROR, localizedMessage + " " + (imageProperties.getMaxFileSize() / KB_TO_MB / KB_TO_MB) + " " + MB);
     }
 
     private boolean isLoginExist(UserDTO userDTOFromModel, RedirectAttributes redirectAttributes, boolean hasErrors) {

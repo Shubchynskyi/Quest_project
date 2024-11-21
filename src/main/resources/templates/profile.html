@@ -14,6 +14,9 @@
 
 <div class="container">
 
+    <!-- Error Message -->
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
     <!-- User Profile Section -->
     <div class="profile-section">
         <div class="profile-image-container">
@@ -44,7 +47,7 @@
                                target="_blank">
                                 <span th:text="#{quests-list.button.play}">PLAY &raquo;</span>
                             </a>
-                            <a th:href="@{/quest-edit(id=${quest.id})}"
+                            <a th:href="@{/quest-edit(id=${quest.id}, source='/profile')}"
                                class="btn btn-secondary fixed-width-button mb-2" target="_blank">
                                 <span th:text="#{quests-list.button.edit}">Edit</span>
                             </a>

@@ -14,7 +14,7 @@
 <div class="container">
     <!-- Duplicate "To the list of quests" button at the top -->
     <div class="d-flex justify-content-center mb-4">
-        <a href="quests-list">
+        <a th:href="${source != null ? source : '/quests-list'}">
             <button type="button" class="btn btn-info" style="width: 500px;">
                 <span th:text="#{quest-edit.toQuests.button}">To the list of quests</span>
             </button>
@@ -26,24 +26,28 @@
     </h4>
     <form class="row form-horizontal"
           action="quest-edit"
+          th:object="${quest}"
           method="post"
           enctype="multipart/form-data">
 
         <!-- Quest Name -->
         <div class="mb-3">
-            <label for="questName" th:text="#{quest-edit.quest.name.label}">Quest name:</label>
-            <input id="questName" name="questName" class="w-100" th:value="${quest.name}">
+            <label for="questName" th:text="#{quest-edit.quest.name.label}">Quest Name:</label>
+            <input id="questName" th:field="*{name}" class="form-control">
+            <div class="text-danger" th:if="${fieldErrors != null and fieldErrors.containsKey('name')}"
+                 th:text="${fieldErrors['name']}"></div>
         </div>
+
 
         <!-- Quest Description -->
         <div class="mb-3">
-            <label for="questDescription" th:text="#{quest-edit.quest.description.label}">Quest Description:</label>
-            <textarea id="questDescription"
-                      name="questDescription"
-                      class="w-100"
-                      style="resize: none"
-                      th:text="${quest.description}"></textarea>
+            <label for="questDescription" th:text="#{quest-edit.quest.description.label}">Description:</label>
+            <textarea id="questDescription" th:field="*{description}" class="form-control" rows="5"></textarea>
+            <div class="text-danger" th:if="${fieldErrors != null and fieldErrors.containsKey('description')}"
+                 th:text="${fieldErrors['description']}"></div>
         </div>
+
+        <div class="alert alert-danger" th:if="${questImageError}" th:text="${questImageError}"></div>
 
         <!-- Quest Image -->
         <div class="mb-3">
@@ -60,13 +64,21 @@
                    type="file">
         </div>
 
+        <!-- Скрытое поле для указания действия -->
+        <input type="hidden" name="actionType" value="quest">
+
+        <!-- Hidden Field for source -->
+        <input type="hidden" name="source" th:value="${source}">
+
+        <!-- Hidden Field for ID -->
+        <input type="hidden" th:field="*{id}">
+
         <!-- Save Button -->
         <div class="mb-3">
             <button type="submit" class="btn btn-success"
-                    style="width: 200px; margin-bottom: 50px">
+                    style="width: 200px; margin-bottom: 50px;">
                 <span th:text="#{quest-edit.save.button}">Save</span>
             </button>
-            <input name="id" type="hidden" th:value="${quest.id}">
         </div>
     </form>
 </div>
@@ -77,8 +89,12 @@
     <div th:each="question : ${quest.questions}">
         <form class="row form-horizontal"
               action="quest-edit"
+              th:object="${question}"
               method="post"
               enctype="multipart/form-data">
+
+            <!-- Поле для навигации по вопросам -->
+            <a th:id="'label-' + ${question.id}"></a>
 
             <!-- Question Text -->
             <div class="mb-3">
@@ -87,7 +103,9 @@
                           name="questionText"
                           class="w-100"
                           style="resize: none"
-                          th:text="${question.text}"></textarea>
+                          th:text="${question.text}"
+                          required="">
+                </textarea>
             </div>
 
             <!-- Answers Text -->
@@ -97,9 +115,16 @@
                     <textarea id="answerText" class="w-100"
                               th:name="'answer' + ${answer.id}"
                               style="resize: none"
-                              th:text="${answer.text}">
+                              th:text="${answer.text}"
+                              required="">
                     </textarea>
                 </div>
+            </div>
+
+            <!-- Error Message -->
+            <div class="alert alert-danger"
+                 th:if="${questionImageErrors != null and questionImageErrors[question.id] != null}"
+                 th:text="${questionImageErrors[question.id]}">
             </div>
 
             <!-- Image -->
@@ -119,20 +144,30 @@
                        type="file">
             </div>
 
+            <!-- Скрытое поле для действия -->
+            <input type="hidden" name="actionType" value="question">
+
+            <!-- Hidden Field for source -->
+            <input type="hidden" name="source" th:value="${source}">
+
+            <!-- Скрытые поля для ID -->
+            <input name="id" type="hidden" th:value="${question.id}">
+            <input name="questId" type="hidden" th:value="${quest.id}">
+
+            <!-- Save Button -->
             <div class="mb-3">
                 <button type="submit" class="btn btn-success" style="width: 200px;">
                     <span th:text="#{quest-edit.save.button}">Save</span>
                 </button>
-                <input name="questionId" type="hidden" th:value="${question.id}">
-                <input name="id" type="hidden" th:value="${quest.id}">
             </div>
-            <a th:id="'label-' + ${question.id}"></a>
+
+
         </form>
         <hr class="hr hr-blurry"/>
     </div>
     <!-- Save button -->
     <div class="d-flex justify-content-center mb-4">
-        <a href="quests-list">
+        <a th:href="${source != null ? source : '/quests-list'}">
             <button type="button" class="btn btn-info" style="width: 500px;">
                 <span th:text="#{quest-edit.toQuests.button}">To the list of quests</span>
             </button>
