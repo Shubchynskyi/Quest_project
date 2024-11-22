@@ -42,6 +42,22 @@ public class ValidationService {
         return hasFieldsErrors;
     }
 
+    // TODO отрефакторить
+    public boolean checkUserAccessDenied(HttpSession session, List<Role> validRoles, RedirectAttributes redirectAttributes, Long userPermitId) {
+        UserDTO currentUser = (UserDTO) session.getAttribute(USER);
+        if(userPermitId == null && currentUser != null && (validRoles.contains(currentUser.getRole()))) {
+            return false;
+        }
+        if (currentUser != null && (validRoles.contains(currentUser.getRole()) || currentUser.getId().equals(userPermitId))) {
+            return false;
+        } else {
+            String localizedMessage = messageSource.getMessage(YOU_DONT_HAVE_PERMISSIONS, null, LocaleContextHolder.getLocale());
+            redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
+            log.warn("Access denied for user: {}", currentUser != null ? currentUser.getLogin() : "unknown");
+            return true;
+        }
+    }
+
     public boolean checkUserAccessDenied(HttpSession session, List<Role> validRoles, RedirectAttributes redirectAttributes) {
         UserDTO currentUser = (UserDTO) session.getAttribute(USER);
         if (currentUser == null || validRoles.stream().noneMatch(role -> role.equals(currentUser.getRole()))) {

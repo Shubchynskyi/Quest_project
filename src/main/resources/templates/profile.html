@@ -43,12 +43,11 @@
                     <div class="card-header d-flex justify-content-between align-items-start">
                         <img th:src="@{/images/{image}(image=${quest.image})}" class="quest-image" alt="Quest Image">
                         <div class="button-container">
-                            <a th:href="@{/quest(id=${quest.id})}" class="btn btn-primary fixed-width-button mb-2"
-                               target="_blank">
+                            <a th:href="@{/quest(id=${quest.id})}" class="btn btn-primary fixed-width-button mb-2">
                                 <span th:text="#{quests-list.button.play}">PLAY &raquo;</span>
                             </a>
                             <a th:href="@{/quest-edit(id=${quest.id}, source='/profile')}"
-                               class="btn btn-secondary fixed-width-button mb-2" target="_blank">
+                               class="btn btn-secondary fixed-width-button mb-2">
                                 <span th:text="#{quests-list.button.edit}">Edit</span>
                             </a>
                             <form th:action="@{/quest-delete}" method="post" style="display:inline;">

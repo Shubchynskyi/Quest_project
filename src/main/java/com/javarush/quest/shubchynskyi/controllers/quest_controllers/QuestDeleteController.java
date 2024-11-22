@@ -69,12 +69,8 @@ public class QuestDeleteController {
         Quest quest = questOptional.get();
         Long authorId = quest.getAuthor().getId();
 
-        boolean accessDenied = validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_DELETE, redirectAttributes)
-                && !Objects.equals(currentUserDTO.getId(), authorId);
-
-        if (accessDenied) {
+        if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_DELETE, redirectAttributes, authorId)) {
             log.warn("Access denied for quest deletion. Quest ID: {}. User ID: {}", id, currentUserDTO.getId());
-            redirectAttributes.addFlashAttribute(ERROR, YOU_DONT_HAVE_PERMISSIONS);
             return REDIRECT + source;
         }
 

@@ -96,7 +96,7 @@ public class QuestCreateController {
         try {
             UserDTO userDTO = (UserDTO) session.getAttribute(USER);
             Quest quest = questService.create(questDTO.getName(), questText, questDTO.getDescription(), String.valueOf(userDTO.getId()));
-            List<QuestDTO> quests = new ArrayList<>(userDTO.getQuests());
+            List<QuestDTO> quests = userDTO.getQuests() == null ? new ArrayList<>() : new ArrayList<>(userDTO.getQuests());
             quests.add(questMapper.questToQuestDTOWithOutQuestions(quest));
             userDTO.setQuests(quests);
             session.setAttribute(USER, userDTO);

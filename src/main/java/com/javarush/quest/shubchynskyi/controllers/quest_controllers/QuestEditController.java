@@ -38,6 +38,7 @@ import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.*;
 @RequiredArgsConstructor
 public class QuestEditController {
 
+    public static final String AUTHOR_ID = "authorId";
     private final QuestService questService;
     private final QuestionService questionService;
     private final AnswerService answerService;
@@ -63,23 +64,23 @@ public class QuestEditController {
             String localizedMessage = ErrorLocalizer.getLocalizedMessage(QUEST_NOT_FOUND_ERROR);
             redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
             log.warn("Quest not found with ID: {}", id);
-            return REDIRECT + (source != null ? source : Route.QUESTS_LIST);
+            return REDIRECT + (source != null && !source.isBlank() ? source : Route.QUESTS_LIST);
         }
 
         if (Objects.nonNull(currentUser)) {
             Quest quest = questOptional.get();
             Long authorId = quest.getAuthor().getId();
 
-            if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_EDIT, redirectAttributes)
-                    && !Objects.equals(currentUser.getId(), authorId)) {
+            if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_EDIT, redirectAttributes, authorId)) {
                 log.warn("Access denied to quest edit: insufficient permissions. Quest ID: {}. User ID: {}", id, currentUser.getId());
-                return REDIRECT + (source != null ? source : Route.QUESTS_LIST);
+                return REDIRECT + (source != null && !source.isBlank() ? source : Route.QUESTS_LIST);
             }
 
-            if (source != null) {
+            if (source != null && !source.isBlank()) {
                 model.addAttribute(SOURCE, source);
             }
             model.addAttribute(QUEST, questMapper.questToQuestDTO(quest));
+            model.addAttribute(AUTHOR_ID, quest.getAuthor().getId());
             log.info("Displaying quest edit page for quest ID: {}", id);
             return QUEST_EDIT;
         } else {
@@ -91,6 +92,7 @@ public class QuestEditController {
     @PostMapping(QUEST_EDIT)
     public String saveQuest(
             @RequestParam(ACTION_TYPE) String actionType,
+            @RequestParam(name = AUTHOR_ID, required = false) Long authorId,
             @Valid @ModelAttribute(QUEST) QuestDTO questDTO,
             BindingResult questBindingResult,
             @Valid @ModelAttribute(QUESTION_DTO) QuestionDTO questionDTO,
@@ -98,21 +100,21 @@ public class QuestEditController {
             RedirectAttributes redirectAttributes,
             @RequestParam MultiValueMap<String, String> allParams,
             @RequestParam(name = IMAGE, required = false) MultipartFile imageFile,
-            @RequestParam(required = false) String source
+            @RequestParam(name = SOURCE, required = false) String source
     ) {
         UserDTO currentUser = (UserDTO) session.getAttribute(USER);
         if (Objects.nonNull(currentUser)) {
 
-            if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_EDIT, redirectAttributes)) {
+            if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_EDIT, redirectAttributes, authorId)) {
                 log.warn("Access denied to quest edit: insufficient permissions. User ID: {}", currentUser.getId());
-                return REDIRECT + (source != null ? source : Route.QUESTS_LIST);
+                return REDIRECT + (source != null && !source.isBlank() ? source : Route.QUESTS_LIST);
             }
 
-            if (source != null) {
+            if (source != null && !source.isBlank()) {
                 redirectAttributes.addAttribute(SOURCE, source);
             }
 
-            String viewName = (source != null ? source : Route.QUESTS_LIST);
+            String viewName = (source != null && !source.isBlank() ? source : Route.QUESTS_LIST);
 
             if (actionType.equals(QUEST)) {
                 viewName = questEdit(imageFile, redirectAttributes, questDTO, questBindingResult, currentUser, source);
@@ -175,7 +177,7 @@ public class QuestEditController {
                 })
                 .orElseGet(() -> {
                     log.warn("Quest not found for updating with ID: {}", questDTO.getId());
-                    return REDIRECT + (source != null ? source : Route.QUESTS_LIST);
+                    return REDIRECT + (source != null && !source.isBlank() ? source : Route.QUESTS_LIST);
                 });
     }
 
@@ -197,7 +199,7 @@ public class QuestEditController {
                     + LABEL_URI_PATTERN + question.getId();
         }).orElseGet(() -> {
             log.warn("Question not found with ID: {}", questionDTO.getId());
-            return REDIRECT + (source != null ? source : Route.QUESTS_LIST);
+            return REDIRECT + (source != null && !source.isBlank() ? source : Route.QUESTS_LIST);
         });
     }
 

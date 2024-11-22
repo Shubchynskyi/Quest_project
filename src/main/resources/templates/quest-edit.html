@@ -73,6 +73,9 @@
         <!-- Hidden Field for ID -->
         <input type="hidden" th:field="*{id}">
 
+        <!-- Hidden Field for author ID -->
+        <input type="hidden" name="authorId" th:value="${authorId}">
+
         <!-- Save Button -->
         <div class="mb-3">
             <button type="submit" class="btn btn-success"
@@ -149,6 +152,9 @@
 
             <!-- Hidden Field for source -->
             <input type="hidden" name="source" th:value="${source}">
+
+            <!-- Hidden Field for author ID -->
+            <input type="hidden" name="authorId" th:value="${authorId}">
 
             <!-- Скрытые поля для ID -->
             <input name="id" type="hidden" th:value="${question.id}">
