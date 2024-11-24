@@ -26,7 +26,6 @@ import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 @RequiredArgsConstructor
 public class QuestGameController {
 
-
     private final QuestService questService;
     private final QuestionService questionService;
     private final QuestionMapper questionMapper;

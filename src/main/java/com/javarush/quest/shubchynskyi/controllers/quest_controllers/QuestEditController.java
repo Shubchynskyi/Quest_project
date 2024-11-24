@@ -27,7 +27,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
@@ -38,7 +41,6 @@ import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.*;
 @RequiredArgsConstructor
 public class QuestEditController {
 
-    public static final String AUTHOR_ID = "authorId";
     private final QuestService questService;
     private final QuestionService questionService;
     private final AnswerService answerService;
@@ -52,82 +54,80 @@ public class QuestEditController {
     @GetMapping(QUEST_EDIT)
     public String showQuestForEdit(
             @RequestParam(ID) String id,
+            @RequestParam(required = false) String source,
             Model model,
             HttpSession session,
-            RedirectAttributes redirectAttributes,
-            @RequestParam(required = false) String source
+            RedirectAttributes redirectAttributes
     ) {
-        UserDTO currentUser = (UserDTO) session.getAttribute(USER);
+        UserDTO currentUser = getCurrentUser(session);
+        if (currentUser == null) {
+            return redirectToLogin();
+        }
+
         Optional<Quest> questOptional = questService.get(id);
 
         if (questOptional.isEmpty()) {
             String localizedMessage = ErrorLocalizer.getLocalizedMessage(QUEST_NOT_FOUND_ERROR);
             redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
             log.warn("Quest not found with ID: {}", id);
-            return REDIRECT + (source != null && !source.isBlank() ? source : Route.QUESTS_LIST);
+            return getRedirectUrl(source);
         }
 
-        if (Objects.nonNull(currentUser)) {
-            Quest quest = questOptional.get();
-            Long authorId = quest.getAuthor().getId();
+        Quest quest = questOptional.get();
+        Long authorId = questService.getAuthorId(quest);
 
-            if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_EDIT, redirectAttributes, authorId)) {
-                log.warn("Access denied to quest edit: insufficient permissions. Quest ID: {}. User ID: {}", id, currentUser.getId());
-                return REDIRECT + (source != null && !source.isBlank() ? source : Route.QUESTS_LIST);
-            }
-
-            if (source != null && !source.isBlank()) {
-                model.addAttribute(SOURCE, source);
-            }
-            model.addAttribute(QUEST, questMapper.questToQuestDTO(quest));
-            model.addAttribute(AUTHOR_ID, quest.getAuthor().getId());
-            log.info("Displaying quest edit page for quest ID: {}", id);
-            return QUEST_EDIT;
-        } else {
-            log.warn("User is not logged in, redirecting to quests list page.");
-            return REDIRECT + Route.LOGIN;
+        if (isAccessDenied(session, redirectAttributes, authorId)) {
+            log.warn("Access denied to quest edit: insufficient permissions. Quest ID: {}. User ID: {}", id, currentUser.getId());
+            return getRedirectUrl(source);
         }
+
+        if (source != null && !source.isBlank()) {
+            model.addAttribute(SOURCE, source);
+        }
+        model.addAttribute(QUEST, questMapper.questToQuestDTO(quest));
+        model.addAttribute(AUTHOR_ID, authorId);
+        log.info("Displaying quest edit page for quest ID: {}", id);
+        return QUEST_EDIT;
     }
 
     @PostMapping(QUEST_EDIT)
     public String saveQuest(
             @RequestParam(ACTION_TYPE) String actionType,
+            @RequestParam MultiValueMap<String, String> allParams,
+            @RequestParam(name = IMAGE, required = false) MultipartFile imageFile,
+            @RequestParam(name = SOURCE, required = false) String source,
             @RequestParam(name = AUTHOR_ID, required = false) Long authorId,
             @Valid @ModelAttribute(QUEST) QuestDTO questDTO,
             BindingResult questBindingResult,
             @Valid @ModelAttribute(QUESTION_DTO) QuestionDTO questionDTO,
             HttpSession session,
-            RedirectAttributes redirectAttributes,
-            @RequestParam MultiValueMap<String, String> allParams,
-            @RequestParam(name = IMAGE, required = false) MultipartFile imageFile,
-            @RequestParam(name = SOURCE, required = false) String source
+            RedirectAttributes redirectAttributes
     ) {
-        UserDTO currentUser = (UserDTO) session.getAttribute(USER);
-        if (Objects.nonNull(currentUser)) {
-
-            if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_EDIT, redirectAttributes, authorId)) {
-                log.warn("Access denied to quest edit: insufficient permissions. User ID: {}", currentUser.getId());
-                return REDIRECT + (source != null && !source.isBlank() ? source : Route.QUESTS_LIST);
-            }
-
-            if (source != null && !source.isBlank()) {
-                redirectAttributes.addAttribute(SOURCE, source);
-            }
-
-            String viewName = (source != null && !source.isBlank() ? source : Route.QUESTS_LIST);
-
-            if (actionType.equals(QUEST)) {
-                viewName = questEdit(imageFile, redirectAttributes, questDTO, questBindingResult, currentUser, source);
-            } else if (actionType.equals(QUESTION)) {
-                viewName = questionEdit(allParams, imageFile, questionDTO, redirectAttributes, source);
-            }
-
-            log.info("Saving quest with parameters: {}", allParams);
-            return viewName;
-        } else {
-            log.warn("User is not logged in, redirecting to quests list page.");
-            return REDIRECT + Route.LOGIN;
+        UserDTO currentUser = getCurrentUser(session);
+        if (currentUser == null) {
+            return redirectToLogin();
         }
+
+        if (isAccessDenied(session, redirectAttributes, authorId)) {
+            log.warn("Access denied to quest edit: insufficient permissions. User ID: {}", currentUser.getId());
+            return getRedirectUrl(source);
+        }
+
+        if (source != null && !source.isBlank()) {
+            redirectAttributes.addAttribute(SOURCE, source);
+        }
+
+        String viewName;
+        if (actionType.equals(QUEST)) {
+            viewName = questEdit(imageFile, redirectAttributes, questDTO, questBindingResult, currentUser, source);
+        } else if (actionType.equals(QUESTION)) {
+            viewName = questionEdit(allParams, imageFile, questionDTO, redirectAttributes, source);
+        } else {
+            viewName = getRedirectUrl(source);
+        }
+
+        log.info("Saving quest with parameters: {}", allParams);
+        return viewName;
     }
 
     private String questEdit(
@@ -138,19 +138,7 @@ public class QuestEditController {
             UserDTO currentUser,
             String source
     ) {
-
-        if (!imageFile.isEmpty()) {
-            if (imageService.isValid(imageFile)) {
-                if (imageFile.getSize() > imageService.getMaxFileSize()) {
-                    redirectAttributes.addFlashAttribute(QUEST_IMAGE_ERROR,
-                            FILE_IS_TOO_LARGE + imageService.getMaxFileSize());
-                } else {
-                    imageService.uploadFromMultipartFile(imageFile, questDTO.getImage(), false);
-                }
-            } else {
-                redirectAttributes.addFlashAttribute(QUEST_IMAGE_ERROR, IMAGE_FILE_IS_INCORRECT);
-            }
-        }
+        handleQuestImageUpload(imageFile, redirectAttributes, questDTO.getImage());
 
         boolean fieldErrors = validationService.processFieldErrors(questBindingResult, redirectAttributes);
         if (fieldErrors) {
@@ -177,10 +165,9 @@ public class QuestEditController {
                 })
                 .orElseGet(() -> {
                     log.warn("Quest not found for updating with ID: {}", questDTO.getId());
-                    return REDIRECT + (source != null && !source.isBlank() ? source : Route.QUESTS_LIST);
+                    return getRedirectUrl(source);
                 });
     }
-
 
     private String questionEdit(
             MultiValueMap<String, String> allParams,
@@ -199,7 +186,7 @@ public class QuestEditController {
                     + LABEL_URI_PATTERN + question.getId();
         }).orElseGet(() -> {
             log.warn("Question not found with ID: {}", questionDTO.getId());
-            return REDIRECT + (source != null && !source.isBlank() ? source : Route.QUESTS_LIST);
+            return getRedirectUrl(source);
         });
     }
 
@@ -209,24 +196,7 @@ public class QuestEditController {
             MultipartFile imageFile,
             RedirectAttributes redirectAttributes
     ) {
-        if (!imageFile.isEmpty()) {
-            Map<Long, String> questionImageErrors = new HashMap<>();
-
-            if (imageService.isValid(imageFile)) {
-                if (imageFile.getSize() > imageService.getMaxFileSize()) {
-                    questionImageErrors.put(question.getId(),
-                            FILE_IS_TOO_LARGE + imageService.getMaxFileSize());
-                } else {
-                    imageService.uploadFromMultipartFile(imageFile, question.getImage(), false);
-                }
-            } else {
-                questionImageErrors.put(question.getId(), IMAGE_FILE_IS_INCORRECT);
-            }
-
-            if (!questionImageErrors.isEmpty()) {
-                redirectAttributes.addFlashAttribute(QUESTION_IMAGE_ERRORS, questionImageErrors);
-            }
-        }
+        handleQuestionImageUpload(imageFile, redirectAttributes, question);
 
         String newQuestionText = allParams.getFirst(QUESTION_TEXT);
         if (newQuestionText != null && !newQuestionText.equals(question.getText())) {
@@ -243,6 +213,61 @@ public class QuestEditController {
                 answer.setText(answerNewText);
                 answerService.update(answer);
                 log.info("Updated answer text for answer ID: {}", answer.getId());
+            }
+        }
+    }
+
+    private UserDTO getCurrentUser(HttpSession session) {
+        return (UserDTO) session.getAttribute(USER);
+    }
+
+    private String redirectToLogin() {
+        log.warn("User is not logged in, redirecting to login page.");
+        return REDIRECT + Route.LOGIN;
+    }
+
+    private boolean isAccessDenied(HttpSession session, RedirectAttributes redirectAttributes, Long authorId) {
+        return validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_EDIT, redirectAttributes, authorId);
+    }
+
+    private String getRedirectUrl(String source) {
+        return REDIRECT + (source != null && !source.isBlank() ? source : Route.QUESTS_LIST);
+    }
+
+    private void handleQuestImageUpload(MultipartFile imageFile, RedirectAttributes redirectAttributes, String imageName) {
+        if (imageFile != null && !imageFile.isEmpty()) {
+            if (imageService.isValid(imageFile)) {
+                if (imageFile.getSize() > imageService.getMaxFileSize()) {
+                    String localizedMessage = ErrorLocalizer.getLocalizedMessage(FILE_IS_TOO_LARGE);
+                    redirectAttributes.addFlashAttribute(QUEST_IMAGE_ERROR, localizedMessage + imageService.getMaxFileSize());
+                } else {
+                    imageService.uploadFromMultipartFile(imageFile, imageName, false);
+                }
+            } else {
+                String localizedMessage = ErrorLocalizer.getLocalizedMessage(IMAGE_FILE_IS_INCORRECT);
+                redirectAttributes.addFlashAttribute(QUEST_IMAGE_ERROR, localizedMessage);
+            }
+        }
+    }
+
+    private void handleQuestionImageUpload(MultipartFile imageFile, RedirectAttributes redirectAttributes, Question question) {
+        if (imageFile != null && !imageFile.isEmpty()) {
+            Map<Long, String> questionImageErrors = new HashMap<>();
+
+            if (imageService.isValid(imageFile)) {
+                if (imageFile.getSize() > imageService.getMaxFileSize()) {
+                    String localizedMessage = ErrorLocalizer.getLocalizedMessage(FILE_IS_TOO_LARGE);
+                    questionImageErrors.put(question.getId(), localizedMessage + imageService.getMaxFileSize());
+                } else {
+                    imageService.uploadFromMultipartFile(imageFile, question.getImage(), false);
+                }
+            } else {
+                String localizedMessage = ErrorLocalizer.getLocalizedMessage(IMAGE_FILE_IS_INCORRECT);
+                questionImageErrors.put(question.getId(), localizedMessage);
+            }
+
+            if (!questionImageErrors.isEmpty()) {
+                redirectAttributes.addFlashAttribute(QUESTION_IMAGE_ERRORS, questionImageErrors);
             }
         }
     }

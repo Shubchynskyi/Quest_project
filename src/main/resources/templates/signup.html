@@ -58,7 +58,6 @@
             </label>
 
             <!-- Error Login Message -->
-            <!--suppress ThymeleafVariablesResolveInspection -->
             <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
             <div class="alert alert-danger" th:if="${fieldErrors != null && fieldErrors.containsKey('login')}"
                  th:text="${fieldErrors['login']}"></div>
@@ -75,7 +74,6 @@
             </div>
 
             <!-- Error Password Message -->
-            <!--suppress ThymeleafVariablesResolveInspection -->
             <br th:if="${fieldErrors != null && fieldErrors.containsKey('password')}">
             <div class="alert alert-danger" th:if="${fieldErrors != null && fieldErrors.containsKey('password')}"
                  th:text="${fieldErrors['password']}">

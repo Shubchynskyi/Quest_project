@@ -148,7 +148,7 @@ public class ImageService {
         }
     }
 
-    private String processFileUpload(InputStream data, String filename, String imageId, boolean isTemporary) throws IOException {
+    private String processFileUpload(InputStream data, String filename, String imageId, boolean isTemporary) {
         String ext = filename.substring(filename.lastIndexOf("."));
         String newFileName;
 

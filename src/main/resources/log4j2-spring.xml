@@ -2,34 +2,34 @@
 <Configuration status="WARN">
 
     <Appenders>
-        <!-- Консольный аппендер для логов Spring и Hibernate -->
+        <!-- Console appender for Spring and Hibernate logs -->
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"/>
         </Console>
 
-        <!-- Логгер для логики приложения -->
+        <!-- Logger for application logic -->
         <RollingFile name="AppLogAppender" fileName="logs/app.log"
                      filePattern="logs/app-%i.log.gz">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10MB"/>
+                <SizeBasedTriggeringPolicy size="2MB"/>
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
 
-        <!-- Логгер для активности пользователей -->
+        <!-- Logger for user activity -->
         <RollingFile name="UserActivityLogAppender" fileName="logs/user_activity.log"
                      filePattern="logs/user_activity-%i.log.gz">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10MB"/>
+                <SizeBasedTriggeringPolicy size="2MB"/>
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
     </Appenders>
 
     <Loggers>
-        <!-- Логгеры для пакетов с основной логикой -->
+        <!-- Loggers for packages with core logic -->
         <Logger name="com.javarush.quest.shubchynskyi.service" level="info" additivity="false">
             <AppenderRef ref="AppLogAppender"/>
         </Logger>
@@ -37,7 +37,7 @@
             <AppenderRef ref="AppLogAppender"/>
         </Logger>
 
-        <!-- Логгеры для активности пользователей -->
+        <!-- Loggers for user activity -->
         <Logger name="com.javarush.quest.shubchynskyi.controllers.user_controllers" level="info" additivity="false">
             <AppenderRef ref="UserActivityLogAppender"/>
         </Logger>
@@ -45,17 +45,17 @@
             <AppenderRef ref="UserActivityLogAppender"/>
         </Logger>
 
-        <!-- Логи Spring выводятся в консоль -->
+        <!-- Spring logs are output to the console -->
         <Logger name="org.springframework" level="INFO" additivity="false">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
 
-        <!-- Логи Hibernate выводятся в консоль -->
+        <!-- Hibernate logs are output to the console -->
         <Logger name="org.hibernate" level="INFO" additivity="false">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
 
-        <!-- Общий логгер для ошибок, выводит в файл и консоль -->
+        <!-- General error logger, outputs to both file and console -->
         <Root level="ERROR">
             <AppenderRef ref="AppLogAppender"/>
             <AppenderRef ref="ConsoleAppender"/>

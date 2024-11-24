@@ -13,6 +13,8 @@ public class Key {
     public static final String FIELD_ERRORS = "fieldErrors";
     public static final String SLASH = "/";
     public static final String EMPTY_STRING = "";
+    public static final String CURRENT_USER_ROLE = "currentUserRole";
+    public static final String ACTION_TYPE = "actionType";
 
     //**************  Localization  **************//
     public static final String LOCALIZATION_MESSAGES_BUNDLE = "messages";
@@ -65,6 +67,7 @@ public class Key {
     public static final String LOGOUT = "logout";
     public static final String SIGNUP = "signup";
     public static final String SOURCE = "source";
+    public static final String AUTHOR_ID = "authorId";
 
     //**************  Quests  **************//
     public static final String QUEST = "quest";
@@ -73,6 +76,7 @@ public class Key {
     public static final String QUEST_TEXT = "questText";
     public static final String QUEST_DESCRIPTION = "questDescription";
     public static final String QUEST_IMAGE = "questImage";
+    public static final String QUEST_IMAGE_ERROR = "questImageError";
     public static final String START_QUESTION_ID = "startQuestionId";
     public static final String CREATE_QUEST = "create-quest";
     public static final String QUEST_EDIT = "quest-edit";
@@ -86,6 +90,7 @@ public class Key {
     public static final String QUESTION_TEXT = "questionText";
     public static final String ANSWER = "answer";
     public static final String QUESTION_DTO = "questionDTO";
+    public static final String QUESTION_IMAGE_ERRORS = "questionImageErrors";
 
     //**************  File Upload and Storage  **************//
     public static final String IMAGE_UPLOAD_IO_ERROR = "Image upload IO error";
@@ -101,8 +106,4 @@ public class Key {
     public static final int MAX_LENGTH = 100;
     public static final Pattern TEMP_FILE_PATTERN = Pattern.compile("^temp_(\\d+)_.*$");
 
-    public static final String CURRENT_USER_ROLE = "currentUserRole";
-    public static final String ACTION_TYPE = "actionType";
-    public static final String QUEST_IMAGE_ERROR = "questImageError";
-    public static final String QUESTION_IMAGE_ERRORS = "questionImageErrors";
 }

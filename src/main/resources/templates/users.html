@@ -27,7 +27,8 @@
                     <p class="card-text">ID: <span th:text="${user.id}"></span></p>
                 </div>
                 <div class="card-footer d-flex justify-content-between align-items-center">
-                    <a th:href="@{/user(id=${user.id}, source='/users')}" class="btn btn-primary fixed-width-button" th:text="#{users.edit.button}">
+                    <a th:href="@{/user(id=${user.id}, source='/users')}" class="btn btn-primary fixed-width-button"
+                       th:text="#{users.edit.button}">
                         Edit
                     </a>
                     <form th:action="@{/user(id=${user.id})}" method="post">

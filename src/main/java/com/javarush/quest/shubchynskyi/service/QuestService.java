@@ -74,16 +74,21 @@ public class QuestService {
     @Transactional
     public void delete(Quest quest) {
         Collection<Question> questions = quest.getQuestions();
-        imageService.deleteOldFiles(quest.getImage());
         for (Question question : questions) {
             questionService.delete(question);
         }
 
+        imageService.deleteOldFiles(quest.getImage());
+
         User author = quest.getAuthor();
-        List<Quest> quests = author.getQuests();
-        quests.remove(quest);
-        author.setQuests(quests);
-        userService.update(author);
+        if (author != null) {
+            List<Quest> quests = author.getQuests();
+            if (quests != null) {
+                quests.remove(quest);
+                author.setQuests(quests);
+            }
+            userService.update(author);
+        }
 
         questRepository.delete(quest);
     }
@@ -100,6 +105,13 @@ public class QuestService {
 
     public Optional<Quest> get(String id) {
         return get(Long.parseLong(id));
+    }
+
+    public Long getAuthorId(Quest quest) {
+        return Optional.ofNullable(quest)
+                .map(Quest::getAuthor)
+                .map(User::getId)
+                .orElse(null);
     }
 
     private void parseQuestFromTextWall(Quest quest, String text) {
@@ -194,5 +206,4 @@ public class QuestService {
             quest.setStartQuestionId(question.getId());
         }
     }
-
 }

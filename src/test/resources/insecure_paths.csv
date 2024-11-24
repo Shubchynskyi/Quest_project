@@ -3,7 +3,7 @@
 "invalid?path"
 " "
 "invalid\0path"
-"\ninvalid"
+"\invalid"
 ".."
 "./"
 "/../"

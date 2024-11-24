@@ -14,17 +14,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static com.javarush.quest.shubchynskyi.TestConstants.*;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.YOU_DONT_HAVE_PERMISSIONS;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,113 +31,134 @@ class ValidationServiceTest {
 
     @Mock
     private MessageSource messageSource;
+
     @Mock
     private HttpSession httpSession;
+
     @Mock
     private BindingResult bindingResult;
+
     @Mock
     private RedirectAttributes redirectAttributes;
+
     @InjectMocks
     private ValidationService validationService;
 
     private UserDTO testUser;
-    private Role testRole;
+
+    private static final List<Role> ALLOWED_ROLES = List.of(Role.ADMIN, Role.MODERATOR);
+    private static final Role ALLOWED_ROLE = Role.ADMIN;
+    private static final Role NOT_ALLOWED_ROLE = Role.USER;
 
     @BeforeEach
     void setUp() {
-        testRole = Role.USER;
         testUser = new UserDTO();
-        testUser.setRole(testRole);
+        testUser.setId(TEST_USER_ID);
     }
 
     @Test
     void should_ProcessFieldErrors() {
-        mockFieldErrors();
+        FieldError fieldError = new FieldError(OBJECT_NAME, FIELD, DEFAULT_ERROR_MESSAGE);
+        when(bindingResult.hasErrors()).thenReturn(true);
+        when(bindingResult.getFieldErrors()).thenReturn(List.of(fieldError));
+        when(messageSource.getMessage(any(FieldError.class), any(Locale.class))).thenReturn(ERROR_MESSAGE);
 
-        boolean result = validationService.processFieldErrors(bindingResult, redirectAttributes);
+        boolean hasErrors = validationService.processFieldErrors(bindingResult, redirectAttributes);
 
-        assertTrue(result);
-        verify(redirectAttributes, times(1)).addFlashAttribute(eq(FIELD_ERRORS), any());
-    }
-
-    @Test
-    void should_ReturnTrue_When_UserAccessIsDenied() {
-        mockSessionUser(testUser);
-        List<Role> validRoles = Collections.singletonList(Role.ADMIN);
-
-        assertAccessIsDeniedForRoles(validRoles);
-    }
-
-    @Test
-    void should_ReturnFalse_When_UserAccessIsGranted() {
-        mockSessionUser(testUser);
-        List<Role> validRoles = Collections.singletonList(testRole);
-
-        assertAccessIsGrantedForRoles(validRoles);
-    }
-
-    @Test
-    void should_ReturnTrue_When_UserIsNotAuthenticated() {
-        mockSessionUser(null);
-
-        assertAccessIsDeniedForRoles(Collections.singletonList(testRole));
+        assertTrue(hasErrors);
+        verify(redirectAttributes).addFlashAttribute(eq(FIELD_ERRORS), any(Map.class));
     }
 
     @Test
     void should_HandleNoFieldErrors() {
         when(bindingResult.hasErrors()).thenReturn(false);
 
-        boolean result = validationService.processFieldErrors(bindingResult, redirectAttributes);
+        boolean hasErrors = validationService.processFieldErrors(bindingResult, redirectAttributes);
 
-        assertFalse(result);
+        assertFalse(hasErrors);
         verify(redirectAttributes, never()).addFlashAttribute(eq(FIELD_ERRORS), any());
     }
 
-
     @Test
-    void should_ReturnFalse_When_UserHasOneOfMultipleValidRoles() {
+    void should_GrantAccess_When_UserHasValidRole_And_QuestAuthorIdIsNull() {
+        testUser.setRole(ALLOWED_ROLE);
         mockSessionUser(testUser);
-        List<Role> validRoles = Arrays.asList(testRole, Role.ADMIN);
 
-        assertAccessIsGrantedForRoles(validRoles);
+        boolean accessDenied = validationService.checkUserAccessDenied(httpSession, ALLOWED_ROLES, redirectAttributes, null);
+
+        assertFalse(accessDenied);
+        verify(redirectAttributes, never()).addFlashAttribute(eq(ERROR), any());
     }
 
     @Test
-    void should_ReturnTrue_When_UserHasInvalidRole() {
+    void should_GrantAccess_When_UserHasValidRole_And_QuestAuthorIdIsPresent() {
+        testUser.setRole(ALLOWED_ROLE);
         mockSessionUser(testUser);
-        List<Role> validRoles = List.of(Role.ADMIN);
 
-        assertAccessIsDeniedForRoles(validRoles);
+        boolean accessDenied = validationService.checkUserAccessDenied(httpSession, ALLOWED_ROLES, redirectAttributes, TEST_USER_ID + 1);
+
+        assertFalse(accessDenied);
+        verify(redirectAttributes, never()).addFlashAttribute(eq(ERROR), any());
     }
 
     @Test
-    void should_HandleNullUserObject() {
-        mockSessionUser(null);
+    void should_GrantAccess_When_UserIsOwner_And_HasInvalidRole() {
+        testUser.setRole(NOT_ALLOWED_ROLE);
+        mockSessionUser(testUser);
 
-        assertAccessIsDeniedForRoles(Collections.singletonList(Role.USER));
+        boolean accessDenied = validationService.checkUserAccessDenied(httpSession, ALLOWED_ROLES, redirectAttributes, TEST_USER_ID);
+
+        assertFalse(accessDenied);
+        verify(redirectAttributes, never()).addFlashAttribute(eq(ERROR), any());
     }
 
-    private void mockFieldErrors() {
-        List<FieldError> fieldErrors = List.of(new FieldError(OBJECT_NAME, FIELD, DEFAULT_ERROR_MESSAGE));
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
-        when(messageSource.getMessage(any(FieldError.class), any(Locale.class))).thenReturn(ERROR_MESSAGE);
-    }
+    @Test
+    void should_DenyAccess_When_UserHasInvalidRole_And_IsNotOwner() {
+        testUser.setRole(NOT_ALLOWED_ROLE);
+        mockSessionUser(testUser);
 
-    private void mockSessionUser(UserDTO user) {
-        when(httpSession.getAttribute(USER)).thenReturn(user);
-    }
+        boolean accessDenied = validationService.checkUserAccessDenied(httpSession, ALLOWED_ROLES, redirectAttributes, TEST_USER_ID + 1);
 
-    private void assertAccessIsDeniedForRoles(List<Role> validRoles) {
-        boolean accessDenied = validationService.checkUserAccessDenied(httpSession, validRoles, redirectAttributes);
         assertTrue(accessDenied);
         verify(messageSource).getMessage(eq(YOU_DONT_HAVE_PERMISSIONS), any(), any());
         verify(redirectAttributes).addFlashAttribute(eq(ERROR), any());
     }
 
-    private void assertAccessIsGrantedForRoles(List<Role> validRoles) {
-        boolean accessDenied = validationService.checkUserAccessDenied(httpSession, validRoles, redirectAttributes);
+    @Test
+    void should_DenyAccess_When_UserIsNotAuthenticated() {
+        mockSessionUser(null);
+
+        boolean accessDenied = validationService.checkUserAccessDenied(httpSession, ALLOWED_ROLES, redirectAttributes, TEST_USER_ID);
+
+        assertTrue(accessDenied);
+        verify(messageSource).getMessage(eq(YOU_DONT_HAVE_PERMISSIONS), any(), any());
+        verify(redirectAttributes).addFlashAttribute(eq(ERROR), any());
+    }
+
+    @Test
+    void should_DenyAccess_When_ValidRolesIsEmpty_And_UserIsNotOwner() {
+        testUser.setRole(ALLOWED_ROLE);
+        mockSessionUser(testUser);
+
+        boolean accessDenied = validationService.checkUserAccessDenied(httpSession, Collections.emptyList(), redirectAttributes, TEST_USER_ID + 1);
+
+        assertTrue(accessDenied);
+        verify(messageSource).getMessage(eq(YOU_DONT_HAVE_PERMISSIONS), any(), any());
+        verify(redirectAttributes).addFlashAttribute(eq(ERROR), any());
+    }
+
+    @Test
+    void should_GrantAccess_When_UserIsOwner_And_ValidRolesIsEmpty() {
+        testUser.setRole(NOT_ALLOWED_ROLE);
+        mockSessionUser(testUser);
+
+        boolean accessDenied = validationService.checkUserAccessDenied(httpSession, Collections.emptyList(), redirectAttributes, TEST_USER_ID);
+
         assertFalse(accessDenied);
         verify(redirectAttributes, never()).addFlashAttribute(eq(ERROR), any());
+    }
+
+    private void mockSessionUser(UserDTO user) {
+        when(httpSession.getAttribute(USER)).thenReturn(user);
     }
 }

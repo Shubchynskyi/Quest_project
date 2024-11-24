@@ -42,30 +42,37 @@ public class ValidationService {
         return hasFieldsErrors;
     }
 
-    // TODO отрефакторить
-    public boolean checkUserAccessDenied(HttpSession session, List<Role> validRoles, RedirectAttributes redirectAttributes, Long userPermitId) {
+    public boolean checkUserAccessDenied(HttpSession session, List<Role> validRoles, RedirectAttributes redirectAttributes, Long questAuthorId) {
         UserDTO currentUser = (UserDTO) session.getAttribute(USER);
-        if(userPermitId == null && currentUser != null && (validRoles.contains(currentUser.getRole()))) {
+
+        if (isAccessAllowed(currentUser, validRoles, questAuthorId)) {
             return false;
         }
-        if (currentUser != null && (validRoles.contains(currentUser.getRole()) || currentUser.getId().equals(userPermitId))) {
-            return false;
-        } else {
-            String localizedMessage = messageSource.getMessage(YOU_DONT_HAVE_PERMISSIONS, null, LocaleContextHolder.getLocale());
-            redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
-            log.warn("Access denied for user: {}", currentUser != null ? currentUser.getLogin() : "unknown");
-            return true;
-        }
+
+        denyAccess(currentUser, redirectAttributes);
+        return true;
     }
 
     public boolean checkUserAccessDenied(HttpSession session, List<Role> validRoles, RedirectAttributes redirectAttributes) {
-        UserDTO currentUser = (UserDTO) session.getAttribute(USER);
-        if (currentUser == null || validRoles.stream().noneMatch(role -> role.equals(currentUser.getRole()))) {
-            String localizedMessage = messageSource.getMessage(YOU_DONT_HAVE_PERMISSIONS, null, LocaleContextHolder.getLocale());
-            redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
-            log.warn("Access denied for user: {}", currentUser != null ? currentUser.getLogin() : "unknown");
+        return checkUserAccessDenied(session, validRoles, redirectAttributes, null);
+    }
+
+    private boolean isAccessAllowed(UserDTO currentUser, List<Role> validRoles, Long questAuthorId) {
+        if (currentUser == null) {
+            return false;
+        }
+
+        if (questAuthorId == null && validRoles.contains(currentUser.getRole())) {
             return true;
         }
-        return false;
+
+        return validRoles.contains(currentUser.getRole()) || currentUser.getId().equals(questAuthorId);
     }
+
+    private void denyAccess(UserDTO currentUser, RedirectAttributes redirectAttributes) {
+        String localizedMessage = messageSource.getMessage(YOU_DONT_HAVE_PERMISSIONS, null, LocaleContextHolder.getLocale());
+        redirectAttributes.addFlashAttribute(ERROR, localizedMessage);
+        log.warn("Access denied for user: {}", currentUser != null ? currentUser.getLogin() : "unknown");
+    }
+
 }

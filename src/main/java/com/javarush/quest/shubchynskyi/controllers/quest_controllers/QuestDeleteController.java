@@ -22,13 +22,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
-import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.*;
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.QUEST_DELETE_QUEST_LIST_INCORRECT;
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.QUEST_NOT_FOUND_ERROR;
 
 @Slf4j
 @Controller
@@ -46,9 +46,9 @@ public class QuestDeleteController {
     @PostMapping(QUEST_DELETE)
     public String deleteQuest(
             @RequestParam Long id,
+            @RequestParam String source,
             HttpSession session,
-            RedirectAttributes redirectAttributes,
-            @RequestParam String source
+            RedirectAttributes redirectAttributes
     ) {
         UserDTO currentUserDTO = (UserDTO) session.getAttribute(USER);
 
@@ -67,7 +67,7 @@ public class QuestDeleteController {
         }
 
         Quest quest = questOptional.get();
-        Long authorId = quest.getAuthor().getId();
+        Long authorId = questService.getAuthorId(quest);
 
         if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_DELETE, redirectAttributes, authorId)) {
             log.warn("Access denied for quest deletion. Quest ID: {}. User ID: {}", id, currentUserDTO.getId());
@@ -95,4 +95,5 @@ public class QuestDeleteController {
 
         return REDIRECT + source;
     }
+
 }

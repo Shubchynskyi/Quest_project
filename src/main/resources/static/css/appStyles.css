@@ -20,17 +20,6 @@
     width: 135px;
 }
 
-#createUserModal {
-    display: none;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.5);
-}
-
 .custom-modal-content {
     background-color: #f4f4f4;
     padding: 20px;

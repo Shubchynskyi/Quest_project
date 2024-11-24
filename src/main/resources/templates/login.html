@@ -1,55 +1,61 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-  <title th:text="#{login.title}">Login Page</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
-        crossorigin="anonymous">
-  <link rel="stylesheet" th:href="@{/css/appStyles.css}">
+    <title th:text="#{login.title}">Login Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+          crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/appStyles.css}">
 </head>
 <body>
 <div th:replace="~{parts/header :: header}"></div>
 <div class="container">
-  <form class="form-horizontal" action="login" method="post">
-    <fieldset>
+    <form class="form-horizontal" action="login" method="post">
+        <fieldset>
 
-      <legend th:text="#{login.form.label}">Sign in to Account</legend>
+            <legend th:text="#{login.form.label}">Sign in to Account</legend>
 
-      <!-- Error Message -->
-      <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+            <!-- Error Message -->
+            <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
 
-      <!-- Text input-->
-      <div class="form-group">
-        <label class="col-md-4 control-label" for="userLogin" th:text="#{login.login.label}">Login</label>
-        <div class="col-md-4">
-          <input id="userLogin" name="login" type="text" th:placeholder="#{login.login.placeholder}"
-                 class="form-control input-md" required="" value="user"> <!-- TODO remove value="admin" when finish dev -->
-        </div>
-      </div>
+            <!-- Text input-->
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="userLogin" th:text="#{login.login.label}">Login</label>
+                <div class="col-md-4">
+                    <input id="userLogin" name="login" type="text" th:placeholder="#{login.login.placeholder}"
+                           class="form-control input-md" required="" value="user">
+                    <!-- TODO remove value="admin" when finish dev -->
+                </div>
+            </div>
 
-      <!-- Password input-->
-      <div class="form-group">
-        <label class="col-md-4 control-label" for="userPassword" th:text="#{login.password.label}">Password</label>
-        <div class="col-md-4">
-          <input id="userPassword" name="password" type="password" th:placeholder="#{login.password.placeholder}"
-                 class="form-control input-md" required="" value="user123"><!-- TODO remove value="admin" when finish dev -->
-        </div>
-      </div>
+            <!-- Password input-->
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="userPassword"
+                       th:text="#{login.password.label}">Password</label>
+                <div class="col-md-4">
+                    <input id="userPassword" name="password" type="password"
+                           th:placeholder="#{login.password.placeholder}"
+                           class="form-control input-md" required="" value="user123">
+                    <!-- TODO remove value="admin" when finish dev -->
+                </div>
+            </div>
 
-      <!-- Button -->
-      <div class="form-group">
-        <label class="col-md-4 control-label" for="submit"></label>
-        <div class="col-md-4">
-          <button id="submit" name="loginButton" class="btn btn-success" th:text="#{login.enter.button}">Enter</button>
-        </div>
-      </div>
+            <!-- Button -->
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="submit"></label>
+                <div class="col-md-4">
+                    <button id="submit" name="loginButton" class="btn btn-success" th:text="#{login.enter.button}">
+                        Enter
+                    </button>
+                </div>
+            </div>
 
-      <!-- Source -->
-      <input type="hidden" th:name="'source'" th:value="${source}" />
+            <!-- Source -->
+            <input type="hidden" th:name="'source'" th:value="${source}"/>
 
-    </fieldset>
-  </form>
+        </fieldset>
+    </form>
 </div>
 <div th:replace="~{parts/footer :: footer}"></div>
 </body>

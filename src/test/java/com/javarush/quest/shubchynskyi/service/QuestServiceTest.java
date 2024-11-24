@@ -18,7 +18,6 @@ import java.util.concurrent.locks.Lock;
 
 import static com.javarush.quest.shubchynskyi.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -165,6 +164,23 @@ public class QuestServiceTest {
         assertThrows(NumberFormatException.class,
                 () -> questService.get(INCORRECT_QUEST_ID)
         );
+    }
+
+    @Test
+    public void should_ReturnAuthorId_When_QuestHasAuthor() {
+        Long authorId = questService.getAuthorId(testQuest);
+
+        assertNotNull(authorId);
+        assertEquals(TEST_USER_ID, authorId);
+    }
+
+    @Test
+    public void should_ReturnNull_When_QuestHasNoAuthor() {
+        testQuest.setAuthor(null);
+
+        Long authorId = questService.getAuthorId(testQuest);
+
+        assertNull(authorId);
     }
 
 }

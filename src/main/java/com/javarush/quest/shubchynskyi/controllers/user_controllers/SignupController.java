@@ -37,10 +37,10 @@ public class SignupController {
 
     @GetMapping(SIGNUP)
     public String showSignup(Model model,
-                             HttpSession session,
-                             RedirectAttributes redirectAttributes,
                              @ModelAttribute(name = USER_DTO_FROM_MODEL) UserDTO userDTOFromModel,
-                             @ModelAttribute(name = TEMP_IMAGE_ID) String tempImageId
+                             @ModelAttribute(name = TEMP_IMAGE_ID) String tempImageId,
+                             HttpSession session,
+                             RedirectAttributes redirectAttributes
     ) {
         if (isUserNotLoggedIn(session)) {
             log.info("Displaying signup page.");

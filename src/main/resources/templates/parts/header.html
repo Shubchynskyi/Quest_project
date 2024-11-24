@@ -11,14 +11,15 @@
         <li><a href="#" th:href="@{/}" class="nav-link px-2 link-secondary"
                th:text="#{header.home.link}">Home</a></li>
         <!-- user -->
-        <li><a href="#" th:href="@{/quests-list}" class="nav-link px-2 link-dark"
+        <li><a href="#" th:href="@{/quests-list}" class="nav-link px-2 link-secondary"
                th:text="#{header.play.link}">Play</a></li>
         <!-- admin -->
         <li th:if="${session.user != null and (session.user.role.name() == 'ADMIN' || session.user.role.name() == 'MODERATOR')}">
-            <a href="#" th:href="@{/users}" class="nav-link px-2" th:text="#{header.users.link}">Users</a>
+            <a href="#" th:href="@{/users}" class="nav-link px-2 link-secondary" th:text="#{header.users.link}">Users</a>
         </li>
 
-        <li><a href="#" th:href="@{/create-quest}" class="nav-link px-2" th:text="#{header.create.quest.link}">Create Quest</a></li>
+        <li><a href="#" th:href="@{/create-quest}" class="nav-link px-2 link-secondary" th:text="#{header.create.quest.link}">Create
+            Quest</a></li>
     </ul>
 
     <span>

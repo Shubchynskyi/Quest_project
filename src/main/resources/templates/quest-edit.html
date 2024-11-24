@@ -38,7 +38,6 @@
                  th:text="${fieldErrors['name']}"></div>
         </div>
 
-
         <!-- Quest Description -->
         <div class="mb-3">
             <label for="questDescription" th:text="#{quest-edit.quest.description.label}">Description:</label>
@@ -64,16 +63,9 @@
                    type="file">
         </div>
 
-        <!-- Скрытое поле для указания действия -->
         <input type="hidden" name="actionType" value="quest">
-
-        <!-- Hidden Field for source -->
         <input type="hidden" name="source" th:value="${source}">
-
-        <!-- Hidden Field for ID -->
         <input type="hidden" th:field="*{id}">
-
-        <!-- Hidden Field for author ID -->
         <input type="hidden" name="authorId" th:value="${authorId}">
 
         <!-- Save Button -->
@@ -96,7 +88,7 @@
               method="post"
               enctype="multipart/form-data">
 
-            <!-- Поле для навигации по вопросам -->
+            <!-- Questions navigation -->
             <a th:id="'label-' + ${question.id}"></a>
 
             <!-- Question Text -->
@@ -147,18 +139,11 @@
                        type="file">
             </div>
 
-            <!-- Скрытое поле для действия -->
             <input type="hidden" name="actionType" value="question">
-
-            <!-- Hidden Field for source -->
             <input type="hidden" name="source" th:value="${source}">
-
-            <!-- Hidden Field for author ID -->
             <input type="hidden" name="authorId" th:value="${authorId}">
-
-            <!-- Скрытые поля для ID -->
-            <input name="id" type="hidden" th:value="${question.id}">
-            <input name="questId" type="hidden" th:value="${quest.id}">
+            <input type="hidden" name="id" th:value="${question.id}">
+            <input type="hidden" name="questId" th:value="${quest.id}">
 
             <!-- Save Button -->
             <div class="mb-3">
@@ -166,7 +151,6 @@
                     <span th:text="#{quest-edit.save.button}">Save</span>
                 </button>
             </div>
-
 
         </form>
         <hr class="hr hr-blurry"/>

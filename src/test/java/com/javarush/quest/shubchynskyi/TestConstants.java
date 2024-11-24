@@ -24,6 +24,7 @@ public class TestConstants {
     //**************  Test Data Constants  **************//
     public static final String FIELD_NAME = "name";
     public static final String FIELD_DESCRIPTION = "description";
+    public static final String QUEST_ID = "questId";
     public static final String TEST_QUEST_DESCRIPTION = "Quest Description";
     public static final String TEST_QUEST_TEXT = "Quest text";
     public static final String TEST_QUEST_NAME = "Test Quest";
@@ -70,7 +71,7 @@ public class TestConstants {
     public static final String OBJECT_NAME = "objectName";
     public static final String FIELD = "field";
     public static final String DEFAULT_ERROR_MESSAGE = "defaultMessage";
-    public static final String ERROR_MESSAGE = "error message";
+    public static final String ERROR_MESSAGE = "Localized error message";
 
     //**************  Identifiers and Numeric Constants  **************//
     public static final Long TEST_USER_ID = 1L;

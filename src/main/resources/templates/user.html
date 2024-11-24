@@ -21,7 +21,7 @@
             <!-- Form Name -->
             <legend th:text="#{user.form.label}">User Form</legend>
 
-            <!-- TODO rename Error Image Message -->
+            <!-- Error Image Message -->
             <div class="alert alert-danger" th:if="${imageError}" th:text="${imageError}"></div>
 
             <!-- File Button -->
@@ -111,11 +111,13 @@
                 <label class="col-md-4 control-label" for="updateOrCreate"></label>
                 <div class="col-md-8">
                     <button id="updateOrCreate" name="update" class="btn btn-success userPage-button-fixed-width"
-                            th:text="#{user.update.button}">Update</button>
+                            th:text="#{user.update.button}">Update
+                    </button>
                     <form th:action="@{/user/delete/{id}(id=${user.id})}" method="post">
                         <button id="delete" name="delete" class="btn btn-danger userPage-button-fixed-width"
                                 th:text="#{user.delete.button}"
-                                th:attr="data-confirm-message=#{user.confirm.delete}">Delete</button>
+                                th:attr="data-confirm-message=#{user.confirm.delete}">Delete
+                        </button>
                     </form>
                 </div>
             </div>

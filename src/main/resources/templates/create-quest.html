@@ -9,6 +9,7 @@
 <body>
 <!-- Header -->
 <div th:replace="~{parts/header :: header}"></div>
+
 <div class="container">
     <form action="create-quest"
           th:object="${questDTO}"
@@ -33,7 +34,8 @@
 
         <!-- Description input -->
         <div class="mb-3">
-            <label for="questDescription" class="form-label" th:text="#{create-quest.quest.description.label}">Quest description</label>
+            <label for="questDescription" class="form-label" th:text="#{create-quest.quest.description.label}">Quest
+                description</label>
             <input name="questDescription" type="text" class="form-control" id="questDescription"
                    th:placeholder="#{create-quest.quest.description.placeholder}" required=""
                    th:field="*{description}">
@@ -44,12 +46,18 @@
 
         <div class="custom-form-group">
             <!-- Create quest button -->
-            <button id="submit" name="create" class="btn btn-success fixed-width-button" th:text="#{create-quest.quest.create.button}">Create quest</button>
+            <button id="submit" name="create" class="btn btn-success fixed-width-button"
+                    th:text="#{create-quest.quest.create.button}">Create quest
+            </button>
 
             <!-- Buttons to open modal windows -->
             <div class="btn-group-right">
-                <button type="button" class="btn btn-primary fixed-width-button" data-bs-toggle="modal" data-bs-target="#modal1" th:text="#{create-quest.modal1.title}">Quest Example</button>
-                <button type="button" class="btn btn-secondary fixed-width-button" data-bs-toggle="modal" data-bs-target="#modal2" th:text="#{create-quest.modal2.title}">Quest Example</button>
+                <button type="button" class="btn btn-primary fixed-width-button" data-bs-toggle="modal"
+                        data-bs-target="#modal1" th:text="#{create-quest.modal1.title}">Quest Example
+                </button>
+                <button type="button" class="btn btn-secondary fixed-width-button" data-bs-toggle="modal"
+                        data-bs-target="#modal2" th:text="#{create-quest.modal2.title}">Quest Example
+                </button>
             </div>
         </div>
     </form>
@@ -67,8 +75,12 @@
                 <pre th:utext="${@contentService.getText('quests_create_page', 'modal_example_1_text', #locale)}"></pre>
             </div>
             <div class="modal-footer custom-modal-footer">
-                <button id="copyBtn1" class="btn btn-primary fixed-width-button" th:text="#{create-quest.modal.copy}">Copy</button>
-                <button type="button" class="btn btn-secondary fixed-width-button" data-bs-dismiss="modal" th:text="#{create-quest.modal.close}">Close</button>
+                <button id="copyBtn1" class="btn btn-primary fixed-width-button" th:text="#{create-quest.modal.copy}">
+                    Copy
+                </button>
+                <button type="button" class="btn btn-secondary fixed-width-button" data-bs-dismiss="modal"
+                        th:text="#{create-quest.modal.close}">Close
+                </button>
             </div>
         </div>
     </div>
@@ -86,8 +98,12 @@
                 <pre th:utext="${@contentService.getText('quests_create_page', 'modal_example_2_text', #locale)}"></pre>
             </div>
             <div class="modal-footer custom-modal-footer">
-                <button id="copyBtn2" class="btn btn-primary fixed-width-button" th:text="#{create-quest.modal.copy}">Copy</button>
-                <button type="button" class="btn btn-secondary fixed-width-button" data-bs-dismiss="modal" th:text="#{create-quest.modal.close}">Close</button>
+                <button id="copyBtn2" class="btn btn-primary fixed-width-button" th:text="#{create-quest.modal.copy}">
+                    Copy
+                </button>
+                <button type="button" class="btn btn-secondary fixed-width-button" data-bs-dismiss="modal"
+                        th:text="#{create-quest.modal.close}">Close
+                </button>
             </div>
         </div>
     </div>
@@ -109,14 +125,14 @@
         toast.textContent = message;
         toast.style.display = 'block';
 
-        setTimeout(function() {
+        setTimeout(function () {
             toast.style.display = 'none';
         }, 2000);
     }
 
     function copyTextAndClose(modalId) {
         const modalBody = document.querySelector(`#${modalId} .modal-body`).innerText;
-        navigator.clipboard.writeText(modalBody).then(function() {
+        navigator.clipboard.writeText(modalBody).then(function () {
             // Close the modal
             const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
             modal.hide();
@@ -126,11 +142,11 @@
         });
     }
 
-    document.getElementById('copyBtn1').addEventListener('click', function() {
+    document.getElementById('copyBtn1').addEventListener('click', function () {
         copyTextAndClose('modal1');
     });
 
-    document.getElementById('copyBtn2').addEventListener('click', function() {
+    document.getElementById('copyBtn2').addEventListener('click', function () {
         copyTextAndClose('modal2');
     });
 </script>
