@@ -34,4 +34,11 @@ if [[ -f "$JAR_PATH" ]]; then
   rm -f "$JAR_PATH" || true
 fi
 
+# Define and remove the volume
+VOLUME_NAME="quests-web-app_postgresql_quest_data"
+if docker volume ls | grep -q "$VOLUME_NAME"; then
+  echo "Removing volume $VOLUME_NAME..."
+  docker volume rm "$VOLUME_NAME" || true
+fi
+
 echo "Cleanup completed."
