@@ -2,6 +2,7 @@ package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
+import com.javarush.quest.shubchynskyi.test_config.TestPathResolver;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class QuestsListControllerIT {
 
     @Test
     void whenShowQuests_ThenShouldReturnQuestsList() throws Exception {
-        mockMvc.perform(get(Route.QUESTS_LIST))
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.QUESTS_LIST)))
                 .andExpect(status().isOk())
                 .andExpect(view().name(Route.QUESTS_LIST))
                 .andExpect(model().attributeExists(QUESTS))

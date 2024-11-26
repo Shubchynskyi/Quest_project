@@ -10,6 +10,9 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # Use variables from .env
 JAR_PATH="$SCRIPT_DIR/$JAR_NAME"
 
+# Use the first argument as the compose file, or default to COMPOSE_FILE from .env
+COMPOSE_FILE_ARG=${1:-$COMPOSE_FILE}
+
 # Build the final image with the new name
 echo "Building the final image..."
 docker build \
@@ -23,7 +26,7 @@ rm "$JAR_PATH"
 echo "Removed the temporary JAR file: $JAR_PATH"
 
 # Run Docker Compose to deploy the application and the database
-echo "Starting Docker Compose..."
-docker-compose -f "$COMPOSE_FILE" up -d
+echo "Starting Docker Compose with file: $COMPOSE_FILE_ARG"
+docker-compose -f "$COMPOSE_FILE_ARG" up -d
 
 echo "Script completed, application started via Docker Compose."

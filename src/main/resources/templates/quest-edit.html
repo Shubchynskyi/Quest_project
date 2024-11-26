@@ -14,7 +14,7 @@
 <div class="container">
     <!-- Duplicate "To the list of quests" button at the top -->
     <div class="d-flex justify-content-center mb-4">
-        <a th:href="${source != null ? source : '/quests-list'}">
+        <a th:href="${source != null ? source : '/profile'}">
             <button type="button" class="btn btn-info" style="width: 500px;">
                 <span th:text="#{quest-edit.toQuests.button}">To the list of quests</span>
             </button>
@@ -157,7 +157,7 @@
     </div>
     <!-- Save button -->
     <div class="d-flex justify-content-center mb-4">
-        <a th:href="${source != null ? source : '/quests-list'}">
+        <a th:href="${source != null ? source : '/profile'}">
             <button type="button" class="btn btn-info" style="width: 500px;">
                 <span th:text="#{quest-edit.toQuests.button}">To the list of quests</span>
             </button>

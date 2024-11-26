@@ -7,9 +7,9 @@ public class TestConstants {
 
     //**************  HTTP and URL Constants  **************//
     public static final String ACCEPT_LANGUAGE_HEADER = "Accept-Language";
-    public static final String QUEST_EDIT_URL = "/quest-edit?id=";
+    public static final String QUEST_EDIT_URL = "quest-edit?id=";
     public static final String LABEL_URL_FRAGMENT = "#label-";
-    public static final String REDIRECT_URL_PATTERN_NEXT_QUESTION = "/quest?id=%s&question=*";
+    public static final String REDIRECT_URL_PATTERN_NEXT_QUESTION = "quest?id=%s&question=*";
     public static final String QUERY_PARAM_ID = "?id=";
     public static final String WILDCARD = "*";
     public static final String SOURCE_URL = "source";

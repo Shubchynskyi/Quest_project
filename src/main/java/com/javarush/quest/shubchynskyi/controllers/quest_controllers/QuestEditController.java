@@ -231,7 +231,7 @@ public class QuestEditController {
     }
 
     private String getRedirectUrl(String source) {
-        return REDIRECT + (source != null && !source.isBlank() ? source : Route.QUESTS_LIST);
+        return REDIRECT + (source != null && !source.isBlank() ? source : Route.PROFILE);
     }
 
     private void handleQuestImageUpload(MultipartFile imageFile, RedirectAttributes redirectAttributes, String imageName) {

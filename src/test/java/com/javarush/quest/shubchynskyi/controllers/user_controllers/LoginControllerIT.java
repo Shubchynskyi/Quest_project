@@ -4,6 +4,7 @@ import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
+import com.javarush.quest.shubchynskyi.test_config.TestPathResolver;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,7 +45,7 @@ public class LoginControllerIT {
 
     @Test
     void whenUserLogsInWithValidCredentials_ThenUserIsAuthenticated_AndRedirectsToProfile() throws Exception {
-        mockMvc.perform(post(Route.LOGIN)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.LOGIN))
                         .param(LOGIN, validLogin)
                         .param(PASSWORD, validPassword))
                 .andExpect(status().is3xxRedirection())
@@ -55,7 +56,7 @@ public class LoginControllerIT {
     @ParameterizedTest
     @MethodSource("loginsProvider")
     void whenUserLogsInWithInvalidCredentials_ThenUserIsNotAuthenticated_AndRedirectsToLogin(String login) throws Exception {
-        mockMvc.perform(post(Route.LOGIN)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.LOGIN))
                         .param(LOGIN, login)
                         .param(PASSWORD, invalidPassword))
                 .andExpect(status().is3xxRedirection())
@@ -72,7 +73,7 @@ public class LoginControllerIT {
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(USER, new UserDTO());
 
-        mockMvc.perform(post(Route.LOGIN)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.LOGIN))
                         .param(LOGIN, validLogin)
                         .param(PASSWORD, validPassword)
                         .session(session))
@@ -86,7 +87,7 @@ public class LoginControllerIT {
         UserDTO userDTO = new UserDTO();
         userDTO.setRole(role);
 
-        mockMvc.perform(post(Route.LOGIN)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.LOGIN))
                         .param(LOGIN, validLogin)
                         .param(PASSWORD, validPassword)
                         .sessionAttr(USER, userDTO))
@@ -97,7 +98,7 @@ public class LoginControllerIT {
     @ParameterizedTest
     @CsvFileSource(resources = "/logins.csv")
     void whenUserLogsInWithDifferentCases_ThenUserIsAuthenticated(String login, String password) throws Exception {
-        mockMvc.perform(post(Route.LOGIN)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.LOGIN))
                         .param(LOGIN, login)
                         .param(PASSWORD, password))
                 .andExpect(status().is3xxRedirection())
@@ -107,7 +108,7 @@ public class LoginControllerIT {
 
     @Test
     void whenUserLogsInWithSpecialCharacters_ThenUserIsAuthenticated() throws Exception {
-        mockMvc.perform(post(Route.LOGIN)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.LOGIN))
                         .param(LOGIN, specialValidLogin)
                         .param(PASSWORD, specialValidPassword))
                 .andExpect(status().is3xxRedirection())
@@ -120,7 +121,7 @@ public class LoginControllerIT {
         String login = new String(new char[256]).replace("\0", "a");
         String password = new String(new char[256]).replace("\0", "a");
 
-        mockMvc.perform(post(Route.LOGIN)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.LOGIN))
                         .param(LOGIN, login)
                         .param(PASSWORD, password))
                 .andExpect(status().is3xxRedirection())

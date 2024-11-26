@@ -8,6 +8,7 @@ import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
+import com.javarush.quest.shubchynskyi.test_config.TestPathResolver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -82,7 +83,7 @@ public class QuestDeleteControllerIT {
 
     @Test
     void deleteQuest_WhenUserNotInSession_ShouldRedirectToQuestsList() throws Exception {
-        mockMvc.perform(post(Route.QUEST_DELETE)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_DELETE))
                         .param(ID, validQuestId)
                         .param(SOURCE, SOURCE_URL))
                 .andExpect(status().is3xxRedirection())
@@ -95,7 +96,7 @@ public class QuestDeleteControllerIT {
         userDTO.setRole(allowedRole);
         userDTO.setId(testQuest.getAuthor().getId() + 1);
 
-        mockMvc.perform(post(Route.QUEST_DELETE)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_DELETE))
                         .param(ID, validQuestId)
                         .param(SOURCE, SOURCE_URL)
                         .sessionAttr(USER, userDTO))
@@ -112,7 +113,7 @@ public class QuestDeleteControllerIT {
         userDTO.setRole(notAllowedRole);
         userDTO.setId(testQuest.getAuthor().getId() + 1);
 
-        mockMvc.perform(post(Route.QUEST_DELETE)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_DELETE))
                         .param(ID, validQuestId)
                         .param(SOURCE, SOURCE_URL)
                         .sessionAttr(USER, userDTO))
@@ -128,7 +129,7 @@ public class QuestDeleteControllerIT {
     void deleteQuest_WithUserRoleAndIsAuthor_ShouldDeleteSuccessfully() throws Exception {
         userDTO.setId(testQuest.getAuthor().getId());
 
-        mockMvc.perform(post(Route.QUEST_DELETE)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_DELETE))
                         .param(ID, validQuestId)
                         .param(SOURCE, SOURCE_URL)
                         .sessionAttr(USER, userDTO))
@@ -141,7 +142,7 @@ public class QuestDeleteControllerIT {
 
     @Test
     void deleteQuest_WithNonExistentId_ShouldRedirectWithError() throws Exception {
-        mockMvc.perform(post(Route.QUEST_DELETE)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_DELETE))
                         .param(ID, nonExistentId)
                         .param(SOURCE, SOURCE_URL)
                         .sessionAttr(USER, userDTO))
@@ -154,7 +155,7 @@ public class QuestDeleteControllerIT {
     void deleteQuest_WithUserRoleAndNotAuthor_ShouldRedirectWithError() throws Exception {
         userDTO.setId(testQuest.getAuthor().getId() + 1);
 
-        mockMvc.perform(post(Route.QUEST_DELETE)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_DELETE))
                         .param(ID, validQuestId)
                         .param(SOURCE, SOURCE_URL)
                         .sessionAttr(USER, userDTO))
@@ -171,7 +172,7 @@ public class QuestDeleteControllerIT {
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(USER, userDTO);
 
-        mockMvc.perform(post(Route.QUEST_DELETE)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_DELETE))
                         .param(ID, validQuestId)
                         .param(SOURCE, SOURCE_URL)
                         .session(session))
@@ -191,7 +192,7 @@ public class QuestDeleteControllerIT {
 
     @Test
     void deleteQuest_WithIncorrectIdFormat_ShouldHandleError() throws Exception {
-        mockMvc.perform(post(Route.QUEST_DELETE)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_DELETE))
                         .param(ID, incorrectQuestId)
                         .param(SOURCE, SOURCE_URL)
                         .sessionAttr(USER, userDTO))
@@ -203,7 +204,7 @@ public class QuestDeleteControllerIT {
     @ParameterizedTest
     @ValueSource(strings = {"login", "profile", "source"})
     void deleteQuest_WithDifferentSources_ShouldRedirectCorrectly(String source) throws Exception {
-        mockMvc.perform(post(Route.QUEST_DELETE)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_DELETE))
                         .param(ID, validQuestId)
                         .param(SOURCE, source)
                         .sessionAttr(USER, userDTO))

@@ -4,6 +4,7 @@ import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
+import com.javarush.quest.shubchynskyi.test_config.TestPathResolver;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ConfigIT
@@ -76,7 +77,7 @@ public class SignupControllerIT {
 
     @Test
     void whenGetSignupPageWithoutUser_ThenShowSignup() throws Exception {
-        mockMvc.perform(get(Route.SIGNUP))
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.SIGNUP)))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(USER_DTO_FROM_MODEL, ROLES, TEMP_IMAGE_ID))
                 .andExpect(view().name(Route.SIGNUP));
@@ -86,7 +87,8 @@ public class SignupControllerIT {
     void whenAuthenticatedUserTriesToSignup_ThenRedirectToProfileWithError() throws Exception {
         MockHttpSession session = createSessionWithUser(validUserDTO);
 
-        mockMvc.perform(get(Route.SIGNUP).session(session))
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.SIGNUP))
+                        .session(session))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.PROFILE))
                 .andExpect(flash().attribute(ERROR, notNullValue()));
@@ -98,7 +100,7 @@ public class SignupControllerIT {
         MockMultipartFile mockImage = createMockImage();
         String uniqueLogin = validUserLogin + System.currentTimeMillis();
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart(Route.SIGNUP)
+        mockMvc.perform(multipart(TestPathResolver.resolvePath(Route.SIGNUP))
                         .file(mockImage)
                         .param(LOGIN, uniqueLogin)
                         .param(PASSWORD, validUserPassword)
@@ -113,7 +115,7 @@ public class SignupControllerIT {
     void whenSignupWithInvalidData_ThenRedirectBackToSignupWithErrors() throws Exception {
         MockMultipartFile mockImage = createMockImage();
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart(Route.SIGNUP)
+        mockMvc.perform(multipart(TestPathResolver.resolvePath(Route.SIGNUP))
                         .file(mockImage)
                         .param(LOGIN, invalidUserLogin)
                         .param(PASSWORD, EMPTY_STRING)

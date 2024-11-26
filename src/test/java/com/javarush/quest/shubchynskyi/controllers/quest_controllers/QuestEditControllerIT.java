@@ -10,6 +10,7 @@ import com.javarush.quest.shubchynskyi.service.AnswerService;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.service.QuestionService;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
+import com.javarush.quest.shubchynskyi.test_config.TestPathResolver;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -87,7 +88,7 @@ public class QuestEditControllerIT {
 
     @Test
     void whenGetRequestWithoutUser_ThenRedirectToLogin() throws Exception {
-        mockMvc.perform(get(Route.QUEST_EDIT)
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .param(ID, validQuestId))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN));
@@ -99,7 +100,7 @@ public class QuestEditControllerIT {
         Quest existingQuest = getExistingQuest();
         UserDTO authorUser = createUserDTOFromQuestAuthor(existingQuest);
 
-        mockMvc.perform(get(Route.QUEST_EDIT)
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .param(ID, validQuestId)
                         .sessionAttr(USER, authorUser))
                 .andExpect(status().isOk())
@@ -116,7 +117,7 @@ public class QuestEditControllerIT {
                 .role(notAllowedRole)
                 .build();
 
-        mockMvc.perform(get(Route.QUEST_EDIT)
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .param(ID, validQuestId)
                         .sessionAttr(USER, otherUser))
                 .andExpect(status().is3xxRedirection())
@@ -132,7 +133,7 @@ public class QuestEditControllerIT {
                 .role(allowedRole)
                 .build();
 
-        mockMvc.perform(get(Route.QUEST_EDIT)
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .param(ID, validQuestId)
                         .sessionAttr(USER, userWithAllowedRole))
                 .andExpect(status().isOk())
@@ -152,7 +153,7 @@ public class QuestEditControllerIT {
         Quest existingQuest = getExistingQuest();
         UserDTO authorUser = createUserDTOFromQuestAuthor(existingQuest);
 
-        mockMvc.perform(get(Route.QUEST_EDIT)
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .param(ID, invalidQuestId)
                         .header(ACCEPT_LANGUAGE_HEADER, localeTag)
                         .sessionAttr(USER, authorUser))
@@ -163,7 +164,7 @@ public class QuestEditControllerIT {
 
     @Test
     void whenPostWithoutUser_ThenRedirectToLogin() throws Exception {
-        mockMvc.perform(post(Route.QUEST_EDIT)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .param(ACTION_TYPE, QUEST))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN));
@@ -178,7 +179,7 @@ public class QuestEditControllerIT {
         String questName = generateUniqueString(UPDATED_QUEST_NAME, existingQuest.getName());
         String questDescription = generateUniqueString(UPDATED_QUEST_DESCRIPTION, existingQuest.getDescription());
 
-        mockMvc.perform(post(Route.QUEST_EDIT)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .param(ACTION_TYPE, QUEST)
                         .param(ID, validQuestId)
                         .param(FIELD_NAME, questName)
@@ -202,7 +203,7 @@ public class QuestEditControllerIT {
 
         String updatedQuestionText = generateUniqueString(UPDATED_QUESTION_TEXT, question.getText());
 
-        mockMvc.perform(post(Route.QUEST_EDIT)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .param(ACTION_TYPE, QUESTION)
                         .param(ID, question.getId().toString())
                         .param(QUEST_ID, existingQuest.getId().toString())
@@ -226,7 +227,7 @@ public class QuestEditControllerIT {
 
         String updatedAnswerText = generateUniqueString(UPDATED_ANSWER_TEXT, answer.getText());
 
-        mockMvc.perform(post(Route.QUEST_EDIT)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .param(ACTION_TYPE, QUESTION)
                         .param(ID, question.getId().toString())
                         .param(QUEST_ID, existingQuest.getId().toString())
@@ -250,7 +251,7 @@ public class QuestEditControllerIT {
         Question question = getFirstQuestionFromQuest(existingQuest);
         UserDTO authorUser = createUserDTOFromQuestAuthor(existingQuest);
 
-        mockMvc.perform(multipart(Route.QUEST_EDIT)
+        mockMvc.perform(multipart(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .file(imageFile)
                         .param(ACTION_TYPE, QUEST)
                         .param(ID, validQuestId)
@@ -261,7 +262,7 @@ public class QuestEditControllerIT {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(QUEST_EDIT_URL + validQuestId));
 
-        mockMvc.perform(multipart(Route.QUEST_EDIT)
+        mockMvc.perform(multipart(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .file(imageFile)
                         .param(ACTION_TYPE, QUESTION)
                         .param(ID, question.getId().toString())
@@ -281,7 +282,7 @@ public class QuestEditControllerIT {
         Quest existingQuest = getExistingQuest();
         UserDTO authorUser = createUserDTOFromQuestAuthor(existingQuest);
 
-        mockMvc.perform(post(Route.QUEST_EDIT)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .param(ACTION_TYPE, QUEST)
                         .param(ID, validQuestId)
                         .param(FIELD_NAME, "")
@@ -301,7 +302,7 @@ public class QuestEditControllerIT {
                 .role(notAllowedRole)
                 .build();
 
-        mockMvc.perform(post(Route.QUEST_EDIT)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .param(ACTION_TYPE, QUEST)
                         .param(ID, validQuestId)
                         .param(FIELD_NAME, UPDATED_QUEST_NAME)
@@ -322,7 +323,7 @@ public class QuestEditControllerIT {
         Quest existingQuest = getExistingQuest();
         UserDTO authorUser = createUserDTOFromQuestAuthor(existingQuest);
 
-        mockMvc.perform(multipart(Route.QUEST_EDIT)
+        mockMvc.perform(multipart(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .file(invalidImageFile)
                         .param(ACTION_TYPE, QUEST)
                         .param(ID, validQuestId)
@@ -341,7 +342,7 @@ public class QuestEditControllerIT {
         Quest existingQuest = getExistingQuest();
         UserDTO authorUser = createUserDTOFromQuestAuthor(existingQuest);
 
-        mockMvc.perform(post(Route.QUEST_EDIT)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .param(ACTION_TYPE, QUEST)
                         .param(ID, validQuestId)
                         .param(AUTHOR_ID, existingQuest.getAuthor().getId().toString())
@@ -360,7 +361,7 @@ public class QuestEditControllerIT {
         session.setAttribute(USER, createUserDTOFromQuestAuthor(existingQuest));
         session.invalidate();
 
-        mockMvc.perform(post(Route.QUEST_EDIT)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .param(ACTION_TYPE, QUEST)
                         .param(ID, validQuestId)
                         .param(FIELD_NAME, UPDATED_QUEST_NAME)
@@ -419,4 +420,5 @@ public class QuestEditControllerIT {
         }
         return stringBuilder.toString();
     }
+
 }

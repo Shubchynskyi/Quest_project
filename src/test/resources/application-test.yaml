@@ -8,6 +8,7 @@ spring:
 
 # Application settings overrides for tests
 app:
+  non-existent-locale: zz
   directories:
     images: src/test/resources/images
   images:

@@ -6,12 +6,12 @@ import java.util.regex.Pattern;
 
 @UtilityClass
 public class Key {
+
     public static final String ID = "id";
     public static final String GAME_STATE = "gameState";
     public static final String ERROR = "error";
     public static final String IMAGE_ERROR = "imageError";
     public static final String FIELD_ERRORS = "fieldErrors";
-    public static final String SLASH = "/";
     public static final String EMPTY_STRING = "";
     public static final String CURRENT_USER_ROLE = "currentUserRole";
     public static final String ACTION_TYPE = "actionType";

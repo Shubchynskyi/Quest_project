@@ -30,13 +30,8 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
-
-  thymeleaf:
-    suffix: .html
-    check-template-location: true
-    cache: false
+      max-file-size: 3MB
+      max-request-size: 3MB
 
 logging:
   level:
@@ -45,7 +40,6 @@ logging:
 
 app:
   default-locale: en
-  non-existent-locale: zz
   directories:
     images: src/main/webapp/WEB-INF/images/
     descriptions: descriptions/

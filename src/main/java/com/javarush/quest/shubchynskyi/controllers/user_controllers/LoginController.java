@@ -54,7 +54,7 @@ public class LoginController {
             if (source.isEmpty()) {
                 return REDIRECT + Route.PROFILE;
             }
-            return REDIRECT + SLASH + source;
+            return REDIRECT + source;
         } else {
             log.warn("Failed login attempt for user: {}", login);
             String localizedMessage = ErrorLocalizer.getLocalizedMessage(DATA_IS_INCORRECT);

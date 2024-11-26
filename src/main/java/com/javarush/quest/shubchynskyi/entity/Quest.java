@@ -30,6 +30,7 @@ public class Quest implements AbstractEntity {
 
     @OneToMany()
     @JoinColumn(name = "quest_id")
+    @OrderBy("id DESC")
     @ToString.Exclude
     private final Collection<Question> questions = new ArrayList<>();
 

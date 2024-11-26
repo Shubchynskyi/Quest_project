@@ -3,6 +3,7 @@ package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.entity.GameState;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
+import com.javarush.quest.shubchynskyi.test_config.TestPathResolver;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -48,7 +49,7 @@ public class QuestGameControllerIT {
 
     @Test
     void whenQuestExists_ThenPrepareAndShowQuest() throws Exception {
-        mockMvc.perform(get(Route.QUEST)
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.QUEST))
                         .param(ID, validQuestId))
                 .andExpect(status().isOk())
                 .andExpect(view().name(Route.QUEST));
@@ -56,7 +57,7 @@ public class QuestGameControllerIT {
 
     @Test
     void whenQuestDoesNotExist_ThenRedirectToQuestList() throws Exception {
-        mockMvc.perform(get(Route.QUEST)
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.QUEST))
                         .param(ID, invalidQuestId))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.QUESTS_LIST));
@@ -65,7 +66,7 @@ public class QuestGameControllerIT {
     @ParameterizedTest
     @MethodSource("gameStateWithoutPlayProvider")
     void whenGameStateIsNotPlay_ThenRedirectToQuestList(GameState gameState) throws Exception {
-        mockMvc.perform(post(Route.QUEST)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST))
                         .param(GAME_STATE, gameState.toString())
                         .param(QUESTION_ID, validQuestionId))
                 .andExpect(status().is3xxRedirection())
@@ -79,7 +80,7 @@ public class QuestGameControllerIT {
 
     @Test
     void whenGameStateIsPlayAndQuestionIdProvided_ThenRedirectToNextQuestion() throws Exception {
-        mockMvc.perform(post(Route.QUEST)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST))
                         .param(ID, validQuestId)
                         .param(GAME_STATE, gameStatePlay)
                         .param(QUESTION_ID, validQuestionId))
@@ -89,7 +90,7 @@ public class QuestGameControllerIT {
 
     @Test
     void whenGameStateIsPlayAndQuestionIdNotProvided_ThenRedirectToQuestList() throws Exception {
-        mockMvc.perform(post(Route.QUEST)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST))
                         .param(ID, validQuestId)
                         .param(GAME_STATE, gameStatePlay))
                 .andExpect(status().is3xxRedirection())
@@ -98,7 +99,7 @@ public class QuestGameControllerIT {
 
     @Test
     void whenQuestExistsWithStartQuestion_ThenPrepareStartAndShowQuest() throws Exception {
-        mockMvc.perform(get(Route.QUEST)
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.QUEST))
                         .param(ID, validQuestId)
                         .param(QUESTION_ID, validQuestionId))
                 .andExpect(status().isOk())
@@ -109,7 +110,7 @@ public class QuestGameControllerIT {
 
     @Test
     void whenGameStateIsNotPlayAndQuestionIdProvided_ThenRedirectToQuestList() throws Exception {
-        mockMvc.perform(post(Route.QUEST)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST))
                         .param(GAME_STATE, gameStateWin)
                         .param(QUESTION_ID, validQuestionId))
                 .andExpect(status().is3xxRedirection())
@@ -118,7 +119,7 @@ public class QuestGameControllerIT {
 
     @Test
     void whenInvalidGameStateProvided_ThenRedirectToQuestList() throws Exception {
-        mockMvc.perform(post(Route.QUEST)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST))
                         .param(GAME_STATE, gameStateInvalid))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.QUESTS_LIST));
@@ -126,15 +127,15 @@ public class QuestGameControllerIT {
 
     @Test
     void whenEverythingIsInvalid_ThenStillRedirectToQuestList() throws Exception {
-        mockMvc.perform(post(Route.QUEST))
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.QUEST)))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.QUESTS_LIST));
     }
 
     @Test
     void whenQuestStarted_ThenSetCorrectAttributes() throws Exception {
-        mockMvc.perform(get(Route.QUEST)
-                        .param(ID, validQuestId))
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.QUEST))
+                .param(ID, validQuestId))
                 .andExpect(status().isOk())
                 .andExpect(request().attribute(QUEST_NAME, notNullValue()))
                 .andExpect(request().attribute(QUEST_DESCRIPTION, notNullValue()))

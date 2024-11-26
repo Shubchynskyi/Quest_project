@@ -28,7 +28,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sh './deploy.sh'
+                    sh './deploy.sh docker-compose-server.yaml'
                 }
             }
         }

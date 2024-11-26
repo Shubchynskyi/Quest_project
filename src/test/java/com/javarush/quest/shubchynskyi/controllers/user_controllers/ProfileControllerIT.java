@@ -5,6 +5,7 @@ import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
+import com.javarush.quest.shubchynskyi.test_config.TestPathResolver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -45,7 +46,7 @@ public class ProfileControllerIT {
 
     @Test
     void whenGetRequestWithoutUser_ThenRedirectToLogin() throws Exception {
-        mockMvc.perform(get(Route.PROFILE))
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.PROFILE)))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN));
     }
@@ -54,7 +55,8 @@ public class ProfileControllerIT {
     void whenGetRequestWithInvalidUser_ThenRedirectToLogin() throws Exception {
         MockHttpSession session = createSessionWithUser(invalidUserDTOWithNoId);
 
-        mockMvc.perform(get(Route.PROFILE).session(session))
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.PROFILE))
+                        .session(session))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN));
     }
@@ -63,14 +65,15 @@ public class ProfileControllerIT {
     void whenGetRequestWithValidUser_ThenReturnExpectedModel() throws Exception {
         MockHttpSession session = createSessionWithUser(validUserDTO);
 
-        mockMvc.perform(get(Route.PROFILE).session(session))
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.PROFILE))
+                        .session(session))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute(USER, validUserDTO));
     }
 
     @Test
     void whenPostRequestWithoutUser_ThenRedirectToLogin() throws Exception {
-        mockMvc.perform(post(Route.PROFILE))
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.PROFILE)))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN));
     }
@@ -79,7 +82,8 @@ public class ProfileControllerIT {
     void whenPostRequestWithInvalidUser_ThenRedirectToLogin() throws Exception {
         MockHttpSession session = createSessionWithUser(invalidUserDTOWithNoId);
 
-        mockMvc.perform(post(Route.PROFILE).session(session))
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.PROFILE))
+                        .session(session))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN));
     }
@@ -88,7 +92,8 @@ public class ProfileControllerIT {
     void whenPostRequestWithValidUser_ThenRedirectToExpectedUrl() throws Exception {
         MockHttpSession session = createSessionWithUser(validUserDTO);
 
-        mockMvc.perform(post(Route.PROFILE).session(session))
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.PROFILE))
+                        .session(session))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(ID_URI_PATTERN.formatted(Route.USER, validUserDTO.getId())));
     }

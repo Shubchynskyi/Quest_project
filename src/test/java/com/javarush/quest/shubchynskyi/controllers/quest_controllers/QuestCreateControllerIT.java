@@ -6,6 +6,7 @@ import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.service.QuestService;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
+import com.javarush.quest.shubchynskyi.test_config.TestPathResolver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -102,7 +103,7 @@ public class QuestCreateControllerIT {
     void showCreateQuestPage_WithAllowedRoles_ShouldReturnCreateQuestView(Role allowedRole) throws Exception {
         userDTO.setRole(allowedRole);
 
-        mockMvc.perform(get(Route.CREATE_QUEST)
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.CREATE_QUEST))
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().isOk())
                 .andExpect(view().name(CREATE_QUEST));
@@ -113,7 +114,8 @@ public class QuestCreateControllerIT {
     void showCreateQuestPage_WithForbiddenRoles_ShouldRedirectToProfile(Role notAllowedRole) throws Exception {
         userDTO.setRole(notAllowedRole);
 
-        mockMvc.perform(get(Route.CREATE_QUEST).sessionAttr(USER, userDTO))
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.CREATE_QUEST))
+                        .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.PROFILE))
                 .andExpect(flash().attribute(ERROR, YOU_DONT_HAVE_PERMISSIONS));
@@ -121,7 +123,7 @@ public class QuestCreateControllerIT {
 
     @Test
     void whenUserNotLoggedIn_ThenRedirectToLogin() throws Exception {
-        mockMvc.perform(get(Route.CREATE_QUEST))
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.CREATE_QUEST)))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.LOGIN))
                 .andExpect(flash().attribute(SOURCE, CREATE_QUEST));
@@ -129,7 +131,8 @@ public class QuestCreateControllerIT {
 
     @Test
     void showCreateQuestPage_WhenQuestDTOAbsent_AddsQuestDTOToModel() throws Exception {
-        mockMvc.perform(get(Route.CREATE_QUEST).sessionAttr(USER, userDTO))
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.CREATE_QUEST))
+                        .sessionAttr(USER, userDTO))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists(QUEST_DTO))
                 .andExpect(view().name(CREATE_QUEST));
@@ -145,7 +148,7 @@ public class QuestCreateControllerIT {
         Quest createdQuest = questService.get(createdQuestId).orElseThrow();
         assertQuestDetails(createdQuest, validQuestName, validQuestDescription, validUserId);
 
-        mockMvc.perform(post(Route.CREATE_QUEST)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.CREATE_QUEST))
                         .param(FIELD_NAME, validQuestName)
                         .param(FIELD_DESCRIPTION, validQuestDescription)
                         .param(QUEST_TEXT, validQuestText)
@@ -163,7 +166,7 @@ public class QuestCreateControllerIT {
 
         userDTO.setRole(Role.USER);
 
-        mockMvc.perform(post(Route.CREATE_QUEST)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.CREATE_QUEST))
                         .params(params)
                         .sessionAttr(USER, userDTO))
                 .andExpect(redirectedUrl(expectedRedirect));
@@ -182,7 +185,7 @@ public class QuestCreateControllerIT {
     void createQuest_WhenQuestTextIsInvalid_ShouldRedirectToCreateQuestPageWithError(Role allowedRole) throws Exception {
         userDTO.setRole(allowedRole);
 
-        mockMvc.perform(post(Route.CREATE_QUEST)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.CREATE_QUEST))
                         .param(QUEST_NAME, validQuestName)
                         .param(QUEST_DESCRIPTION, validQuestDescription)
                         .param(QUEST_TEXT, invalidQuestText)
@@ -196,7 +199,7 @@ public class QuestCreateControllerIT {
     @MethodSource("allowedRolesProvider")
     void whenCreateQuestWithInvalidData_ThenReturnValidationErrors(Role allowedRole) throws Exception {
         userDTO.setRole(allowedRole);
-        mockMvc.perform(post(Route.CREATE_QUEST)
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.CREATE_QUEST))
                         .param(QUEST_NAME, EMPTY_STRING)
                         .param(QUEST_DESCRIPTION, EMPTY_STRING)
                         .param(QUEST_TEXT, EMPTY_STRING)
@@ -211,7 +214,8 @@ public class QuestCreateControllerIT {
     void whenUserNotAllowedRole_ThenRedirectToProfileWithErrorMessage(Role notAllowedRole) throws Exception {
         userDTO.setRole(notAllowedRole);
 
-        mockMvc.perform(get(Route.CREATE_QUEST).sessionAttr(USER, userDTO))
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.CREATE_QUEST))
+                        .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.PROFILE))
                 .andExpect(flash().attribute(ERROR, YOU_DONT_HAVE_PERMISSIONS));
@@ -228,7 +232,8 @@ public class QuestCreateControllerIT {
                         .anyMatch(questDTO -> questDTO.getId().equals(createdQuestId)),
                 ASSERT_QUEST_ADDED_TO_USER_LIST);
 
-        MvcResult result = mockMvc.perform(get(Route.QUEST_EDIT + QUERY_PARAM_ID + createdQuestId)
+        MvcResult result = mockMvc.perform(get(
+                        TestPathResolver.resolvePath(Route.QUEST_EDIT + QUERY_PARAM_ID + createdQuestId))
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -242,7 +247,7 @@ public class QuestCreateControllerIT {
     }
 
     private Long createQuestAndAssertRedirect(String name, String description, String text, UserDTO userDTO) throws Exception {
-        MvcResult result = mockMvc.perform(post(Route.CREATE_QUEST)
+        MvcResult result = mockMvc.perform(post(TestPathResolver.resolvePath(Route.CREATE_QUEST))
                         .param(FIELD_NAME, name)
                         .param(FIELD_DESCRIPTION, description)
                         .param(QUEST_TEXT, text)

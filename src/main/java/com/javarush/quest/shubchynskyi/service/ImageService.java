@@ -2,7 +2,6 @@ package com.javarush.quest.shubchynskyi.service;
 
 
 import com.javarush.quest.shubchynskyi.config.ImageProperties;
-import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,8 @@ import java.nio.file.*;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.stream.Stream;
+
+import static com.javarush.quest.shubchynskyi.constant.Key.*;
 
 @Slf4j
 @Service
@@ -47,13 +48,13 @@ public class ImageService {
     public Path getImagePath(String filename) {
         if (filename == null) {
             log.warn("Filename is null or empty.");
-            throw new AppException(Key.FILE_NAME_IS_NULL_OR_EMPTY);
+            throw new AppException(FILE_NAME_IS_NULL_OR_EMPTY);
         }
 
         try {
             if (filename.trim().isEmpty()) {
                 log.warn("Attempted access with an empty filename.");
-                throw new SecurityException(Key.INVALID_FILE_PATH_ACCESS_DENIED);
+                throw new SecurityException(INVALID_FILE_PATH_ACCESS_DENIED);
             }
 
             boolean isTemporary = filename.startsWith(imageProperties.getPrefixForTempImages());
@@ -62,7 +63,7 @@ public class ImageService {
 
             if (!resolvedPath.startsWith(rootDir)) {
                 log.warn("Invalid file path access attempt: {}", filename);
-                throw new SecurityException(Key.INVALID_FILE_PATH_ACCESS_DENIED);
+                throw new SecurityException(INVALID_FILE_PATH_ACCESS_DENIED);
             }
 
             if (Files.exists(resolvedPath)) {
@@ -80,7 +81,7 @@ public class ImageService {
             return rootDir.resolve(imageProperties.getNoImageFilename());
         } catch (InvalidPathException e) {
             log.warn("Invalid path exception for filename: {}", filename, e);
-            throw new SecurityException(Key.INVALID_FILE_PATH_ACCESS_DENIED, e);
+            throw new SecurityException(INVALID_FILE_PATH_ACCESS_DENIED, e);
         }
     }
 
@@ -91,48 +92,48 @@ public class ImageService {
         }
 
         if (isPathUnsecure(imageId)) {
-            throw new AppException(Key.THE_FILE_PATH_IS_INSECURE);
+            throw new AppException(THE_FILE_PATH_IS_INSECURE);
         }
 
         String originalFilename = file.getOriginalFilename();
         if (originalFilename == null || originalFilename.isEmpty()) {
             log.warn("Original filename is null or empty.");
-            throw new AppException(Key.ORIGINAL_FILENAME_IS_NULL_OR_EMPTY);
+            throw new AppException(ORIGINAL_FILENAME_IS_NULL_OR_EMPTY);
         }
 
         try {
             if (!isValid(file)) {
                 log.warn("Invalid file: {}", originalFilename);
-                throw new AppException(Key.INVALID_FILE_TYPE);
+                throw new AppException(INVALID_FILE_TYPE);
             }
             log.info("Uploading file: {}", originalFilename);
             return processFileUpload(file.getInputStream(), originalFilename, imageId, isTemporary);
         } catch (IOException e) {
             log.warn("IO exception during file upload: {}", originalFilename, e);
-            throw new AppException(Key.IMAGE_UPLOAD_IO_ERROR);
+            throw new AppException(IMAGE_UPLOAD_IO_ERROR);
         }
     }
 
     public void uploadFromExistingFile(String fileName, String imageId) {
         if (fileName == null || fileName.isEmpty()) {
             log.warn("File name is null or empty.");
-            throw new AppException(Key.FILE_NAME_IS_NULL_OR_EMPTY);
+            throw new AppException(FILE_NAME_IS_NULL_OR_EMPTY);
         }
 
         if (isPathUnsecure(imageId)) {
-            throw new AppException(Key.THE_FILE_PATH_IS_INSECURE);
+            throw new AppException(THE_FILE_PATH_IS_INSECURE);
         }
 
         try {
             Path filePath = getImagePath(fileName);
             if (!Files.exists(filePath)) {
                 log.warn("File does not exist: {}", filePath);
-                throw new AppException(Key.FILE_DOES_NOT_EXIST);
+                throw new AppException(FILE_DOES_NOT_EXIST);
             }
 
             if (!isValid(filePath)) {
                 log.warn("Invalid filePath for file: {}", filePath);
-                throw new AppException(Key.INVALID_FILE_TYPE);
+                throw new AppException(INVALID_FILE_TYPE);
             }
 
             log.info("Uploading existing file: {}", filePath);
@@ -144,7 +145,7 @@ public class ImageService {
             );
         } catch (IOException e) {
             log.warn("IO exception during existing file upload: {}", fileName, e);
-            throw new AppException(Key.IMAGE_UPLOAD_IO_ERROR);
+            throw new AppException(IMAGE_UPLOAD_IO_ERROR);
         }
     }
 
@@ -172,7 +173,7 @@ public class ImageService {
             log.info("Image '{}' uploaded to '{}'", name, dirPath);
         } catch (IOException e) {
             log.warn("Error uploading image '{}'. Target directory: '{}'", name, dirPath, e);
-            throw new AppException(Key.ERROR_UPLOADING_IMAGE + name, e);
+            throw new AppException(ERROR_UPLOADING_IMAGE + name, e);
         }
     }
 
@@ -245,7 +246,7 @@ public class ImageService {
     }
 
     private boolean isPathUnsecure(String imageId) {
-        if (imageId == null || imageId.length() > Key.MAX_LENGTH || !imageId.matches("^[a-zA-Z0-9_.-]+$") || imageId.contains("..")) {
+        if (imageId == null || imageId.length() > MAX_LENGTH || !imageId.matches("^[a-zA-Z0-9_.-]+$") || imageId.contains("..")) {
             log.warn("Unsecure image ID: {}", imageId);
             return true;
         }
@@ -291,7 +292,7 @@ public class ImageService {
             paths.filter(Files::isRegularFile)
                     .forEach(file -> {
                         String fileName = file.getFileName().toString();
-                        Matcher matcher = Key.TEMP_FILE_PATTERN.matcher(fileName);
+                        Matcher matcher = TEMP_FILE_PATTERN.matcher(fileName);
                         if (matcher.matches()) {
                             try {
                                 long timestamp = Long.parseLong(matcher.group(1));

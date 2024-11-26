@@ -4,6 +4,7 @@ import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
+import com.javarush.quest.shubchynskyi.test_config.TestPathResolver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -48,7 +49,7 @@ public class UsersControllerIT {
     public void whenUserHasAccessRole_ThenShowUsers(Role allowedRole) throws Exception {
         userDTO.setRole(allowedRole);
 
-        mockMvc.perform(get(Route.USERS)
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.USERS))
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().isOk())
                 .andExpect(view().name(Route.USERS))
@@ -60,7 +61,7 @@ public class UsersControllerIT {
     public void whenUserHasNoAccessRole_ThenRedirectToIndexWithError(Role notAllowedRole) throws Exception {
         userDTO.setRole(notAllowedRole);
 
-        mockMvc.perform(get(Route.USERS)
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.USERS))
                         .sessionAttr(USER, userDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.INDEX))
@@ -69,9 +70,10 @@ public class UsersControllerIT {
 
     @Test
     public void whenUserIsNotAuthenticated_ThenRedirectToIndexWithError() throws Exception {
-        mockMvc.perform(get(Route.USERS))
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.USERS)))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(Route.INDEX))
                 .andExpect(flash().attribute(ERROR, notNullValue()));
     }
+
 }

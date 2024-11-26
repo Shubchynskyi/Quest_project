@@ -9,7 +9,6 @@ COPY pom.xml .
 COPY src ./src
 
 # Copy templates and images
-COPY src/main/resources/templates /app/templates
 COPY src/main/webapp/WEB-INF/images /app/images
 
 # Download Maven dependencies

@@ -5,7 +5,6 @@ FROM amazoncorretto:21-alpine-full
 WORKDIR /app
 
 # Copy templates and images
-COPY src/main/resources/templates /app/templates
 COPY src/main/webapp/WEB-INF/images /app/images
 
 # Install wget

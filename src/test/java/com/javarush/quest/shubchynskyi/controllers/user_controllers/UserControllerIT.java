@@ -4,6 +4,7 @@ import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.test_config.ConfigIT;
+import com.javarush.quest.shubchynskyi.test_config.TestPathResolver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Files;
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.*;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ConfigIT
@@ -72,69 +72,12 @@ public class UserControllerIT {
         testImagePath = Paths.get(imagesDirectory, testImage).toString();
     }
 
-    private UserDTO createUserDTO(long id, String login, String password, Role role) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(id);
-        userDTO.setLogin(login);
-        userDTO.setPassword(password);
-        userDTO.setRole(role);
-        return userDTO;
-    }
-
-    private MockHttpSession createSessionWithRole(Role role) {
-        MockHttpSession session = new MockHttpSession();
-        sessionUserDTO.setRole(role);
-        session.setAttribute(USER, sessionUserDTO);
-        return session;
-    }
-
-    private MockMultipartFile createMockImage() throws Exception {
-        byte[] fileContent = Files.readAllBytes(Paths.get(testImagePath));
-        return new MockMultipartFile(IMAGE, testImage, contentType, fileContent);
-    }
-
-    private Stream<Role> allowedRolesProvider() {
-        return UserController.ALLOWED_ROLES_FOR_USER_EDIT.stream();
-    }
-
-    private Stream<Role> notAllowedRolesProvider() {
-        return EnumSet.allOf(Role.class).stream()
-                .filter(role -> !UserController.ALLOWED_ROLES_FOR_USER_EDIT.contains(role));
-    }
-
-    private void performDeleteUserAction(MockHttpSession session, String userId, String expectedRedirectUrl) throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(Route.USER)
-                        .session(session)
-                        .param(ID, userId)
-                        .param(DELETE, EMPTY_STRING))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(expectedRedirectUrl));
-    }
-
-    private void performUserEditAction(MockHttpSession session, UserDTO userDTO, String source, String expectedRedirectUrl) throws Exception {
-        MockMultipartFile mockImage = createMockImage();
-        session.setAttribute(ORIGINAL_LOGIN, userDTO.getLogin());
-
-        mockMvc.perform(MockMvcRequestBuilders.multipart(Route.USER)
-                        .file(mockImage)
-                        .session(session)
-                        .param(ID, userDTO.getId().toString())
-                        .param(LOGIN, userDTO.getLogin())
-                        .param(PASSWORD, userDTO.getPassword())
-                        .param(ROLES, userDTO.getRole().name())
-                        .sessionAttr(SOURCE, source)
-                        .param(UPDATE, EMPTY_STRING)
-                        .param(TEMP_IMAGE_ID, EMPTY_STRING))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(expectedRedirectUrl));
-    }
-
     @ParameterizedTest
     @MethodSource("allowedRolesProvider")
     void whenUserGetsUserByIdWithAllowedRoles_ThenShowUserData(Role allowedRole) throws Exception {
         MockHttpSession session = createSessionWithRole(allowedRole);
 
-        mockMvc.perform(get(Route.USER)
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.USER))
                         .session(session)
                         .param(ID, sessionUserDTO.getId().toString()))
                 .andExpect(status().isOk())
@@ -147,7 +90,7 @@ public class UserControllerIT {
     void whenUserGetsUserByIdWithDisallowedRoles_ThenRedirectToIndex(Role notAllowedRole) throws Exception {
         MockHttpSession session = createSessionWithRole(notAllowedRole);
 
-        mockMvc.perform(get(Route.USER)
+        mockMvc.perform(get(TestPathResolver.resolvePath(Route.USER))
                         .session(session)
                         .param(ID, sessionUserDTO.getId().toString()))
                 .andExpect(status().is3xxRedirection())
@@ -198,6 +141,63 @@ public class UserControllerIT {
         MockHttpSession session = createSessionWithRole(notAllowedRole);
 
         performDeleteUserAction(session, userIdForDelete, Route.PROFILE);
+    }
+
+    private UserDTO createUserDTO(long id, String login, String password, Role role) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(id);
+        userDTO.setLogin(login);
+        userDTO.setPassword(password);
+        userDTO.setRole(role);
+        return userDTO;
+    }
+
+    private MockHttpSession createSessionWithRole(Role role) {
+        MockHttpSession session = new MockHttpSession();
+        sessionUserDTO.setRole(role);
+        session.setAttribute(USER, sessionUserDTO);
+        return session;
+    }
+
+    private MockMultipartFile createMockImage() throws Exception {
+        byte[] fileContent = Files.readAllBytes(Paths.get(testImagePath));
+        return new MockMultipartFile(IMAGE, testImage, contentType, fileContent);
+    }
+
+    private Stream<Role> allowedRolesProvider() {
+        return UserController.ALLOWED_ROLES_FOR_USER_EDIT.stream();
+    }
+
+    private Stream<Role> notAllowedRolesProvider() {
+        return EnumSet.allOf(Role.class).stream()
+                .filter(role -> !UserController.ALLOWED_ROLES_FOR_USER_EDIT.contains(role));
+    }
+
+    private void performDeleteUserAction(MockHttpSession session, String userId, String expectedRedirectUrl) throws Exception {
+        mockMvc.perform(post(TestPathResolver.resolvePath(Route.USER))
+                        .session(session)
+                        .param(ID, userId)
+                        .param(DELETE, EMPTY_STRING))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(expectedRedirectUrl));
+    }
+
+    private void performUserEditAction(MockHttpSession session, UserDTO userDTO, String source, String expectedRedirectUrl) throws Exception {
+        MockMultipartFile mockImage = createMockImage();
+        session.setAttribute(ORIGINAL_LOGIN, userDTO.getLogin());
+
+        mockMvc.perform(multipart(TestPathResolver.resolvePath(Route.USER))
+                        .file(mockImage)
+                        .session(session)
+                        .param(ID, userDTO.getId().toString())
+                        .param(LOGIN, userDTO.getLogin())
+                        .param(PASSWORD, userDTO.getPassword())
+                        .param(ROLES, userDTO.getRole().name())
+                        .sessionAttr(SOURCE, source)
+                        .param(UPDATE, EMPTY_STRING)
+                        .param(TEMP_IMAGE_ID, EMPTY_STRING))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(expectedRedirectUrl));
     }
 
 }

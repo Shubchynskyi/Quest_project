@@ -18,7 +18,6 @@ services:
     restart: unless-stopped
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_THYMELEAF_PREFIX: ${SPRING_THYMELEAF_PREFIX}
       APP_DIRECTORIES_IMAGES: ${APP_DIRECTORIES_IMAGES}
     networks:
       - quests-network

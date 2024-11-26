@@ -7,6 +7,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static com.javarush.quest.shubchynskyi.constant.Route.INDEX_PAGE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -22,7 +23,7 @@ public class IndexControllerIT {
     void whenGetIndexCalled_ThenShouldReturnIndexPage() throws Exception {
         mockMvc.perform(get(Route.INDEX))
                 .andExpect(status().isOk())
-                .andExpect(view().name(Route.INDEX_PAGE));
+                .andExpect(view().name(INDEX_PAGE));
     }
 
 }
