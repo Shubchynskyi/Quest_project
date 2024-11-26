@@ -111,7 +111,7 @@ public class QuestEditControllerIT {
 
     @ParameterizedTest
     @MethodSource("notAllowedRolesProvider")
-    void whenQuestEditFormAccessedByOtherUser_ThenShouldRedirectToQuestsList(Role notAllowedRole) throws Exception {
+    void whenQuestEditFormAccessedByOtherUser_ThenShouldRedirectToProfile(Role notAllowedRole) throws Exception {
         UserDTO otherUser = UserDTO.builder()
                 .id(Long.parseLong(validUserId) + 1)
                 .role(notAllowedRole)
@@ -121,7 +121,7 @@ public class QuestEditControllerIT {
                         .param(ID, validQuestId)
                         .sessionAttr(USER, otherUser))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(Route.QUESTS_LIST))
+                .andExpect(redirectedUrl(Route.PROFILE))
                 .andExpect(flash().attribute(ERROR, notNullValue()));
     }
 
@@ -145,7 +145,7 @@ public class QuestEditControllerIT {
     @ParameterizedTest
     @Transactional
     @MethodSource("supportedLanguagesProvider")
-    void whenRedirectedWithInvalidQuestId_ThenShouldShowQuestsListWithErrorMessage(String localeTag) throws Exception {
+    void whenRedirectedWithInvalidQuestId_ThenShouldShowProfileWithErrorMessage(String localeTag) throws Exception {
         Locale testLocale = Locale.forLanguageTag(localeTag);
         LocaleContextHolder.setLocale(testLocale);
         String expectedMessage = messageSource.getMessage(QUEST_NOT_FOUND_ERROR, null, testLocale);
@@ -158,7 +158,7 @@ public class QuestEditControllerIT {
                         .header(ACCEPT_LANGUAGE_HEADER, localeTag)
                         .sessionAttr(USER, authorUser))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(Route.QUESTS_LIST))
+                .andExpect(redirectedUrl(Route.PROFILE))
                 .andExpect(flash().attribute(ERROR, expectedMessage));
     }
 
@@ -310,7 +310,7 @@ public class QuestEditControllerIT {
                         .param(AUTHOR_ID, validUserId)
                         .sessionAttr(USER, unauthorizedUser))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(Route.QUESTS_LIST))
+                .andExpect(redirectedUrl(Route.PROFILE))
                 .andExpect(flash().attribute(ERROR, notNullValue()));
     }
 
