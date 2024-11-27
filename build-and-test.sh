@@ -16,6 +16,38 @@ if [ ! -d "$HOST_LOGS_DIR" ]; then
     mkdir -p "$HOST_LOGS_DIR" || true  # Ignore error if command fails
 fi
 
+# Function to clean up existing containers and images
+cleanup_existing_resources() {
+    echo "Checking for existing containers and images..."
+
+    # Check if the container exists and remove it
+    if docker ps -a --format '{{.Names}}' | grep -Eq "^${APP_TEST_CONTAINER_NAME}\$"; then
+        echo "Container $APP_TEST_CONTAINER_NAME found. Removing..."
+        if ! docker rm -f "$APP_TEST_CONTAINER_NAME"; then
+            echo "Failed to remove container $APP_TEST_CONTAINER_NAME. Skipping this step."
+            return 1  # Exit only the function with an error code
+        fi
+    else
+        echo "Container $APP_TEST_CONTAINER_NAME not found. Skipping..."
+    fi
+
+    # Check if the image exists and remove it
+    if docker images -q "$BUILDER_IMAGE_NAME" > /dev/null 2>&1; then
+        echo "Image $BUILDER_IMAGE_NAME found. Removing..."
+        if ! docker rmi "$BUILDER_IMAGE_NAME"; then
+            echo "Failed to remove image $BUILDER_IMAGE_NAME. Skipping this step."
+            return 1  # Exit only the function with an error code
+        fi
+    else
+        echo "Image $BUILDER_IMAGE_NAME not found. Skipping..."
+    fi
+
+    return 0  # Indicate successful execution of the function
+}
+
+# Perform cleanup before building
+cleanup_existing_resources
+
 # Clean the project before building
 echo "Cleaning the project..."
 mvn clean
@@ -35,19 +67,19 @@ else
     HOST_OVERRIDE="172.17.0.1" # Explicitly setting the IP address of the Docker network
 fi
 
+# Trap to remove resources on error
+trap 'echo "An error occurred. Cleaning up intermediate data..."; \
+      docker rm -f "$APP_TEST_CONTAINER_NAME" 2>/dev/null || true; \
+      docker rmi "$BUILDER_IMAGE_NAME" 2>/dev/null || true; \
+      rm -f "$JAR_PATH" 2>/dev/null || true; \
+      exit 1' ERR
+
 # Run the container for testing and building
 echo "Starting the test container with Testcontainers..."
 docker run --name "$APP_TEST_CONTAINER_NAME" \
     -v "$DOCKER_SOCKET:/var/run/docker.sock" \
     -e TESTCONTAINERS_HOST_OVERRIDE="$HOST_OVERRIDE" \
     "$BUILDER_IMAGE_NAME"
-
-# Trap to remove resources on error
-trap 'echo "Cleaning up intermediate data on error..."; \
-      docker rm -f $APP_TEST_CONTAINER_NAME 2>/dev/null || true; \
-      docker rmi $BUILDER_IMAGE_NAME 2>/dev/null || true; \
-      rm -f "$JAR_PATH" 2>/dev/null || true; \
-      exit 1' ERR
 
 # Check the exit status of the container
 EXIT_CODE=$(docker inspect "$APP_TEST_CONTAINER_NAME" --format='{{.State.ExitCode}}')
@@ -75,4 +107,4 @@ fi
 echo "Removing the container..."
 docker rm "$APP_TEST_CONTAINER_NAME"
 
-echo "Build and test process completed."
+echo "Build and test process completed successfully."
