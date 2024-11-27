@@ -21,7 +21,7 @@ create_directory_with_permissions() {
         return 0
     fi
 
-    # Attempt to create the directory
+    # If the directory does not exist, create it
     echo "Creating directory: $dir"
     if mkdir -p "$dir"; then
         echo "Directory $dir created successfully."
@@ -30,7 +30,7 @@ create_directory_with_permissions() {
         exit 1
     fi
 
-    # Attempt to set permissions
+    # Set permissions
     echo "Setting permissions for: $dir"
     if chmod -R 777 "$dir"; then
         echo "Permissions for $dir set successfully."
