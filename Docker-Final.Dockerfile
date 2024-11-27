@@ -4,9 +4,6 @@ FROM amazoncorretto:21-alpine-full
 # Set up the working directory
 WORKDIR /app
 
-# Copy templates and images
-COPY src/main/webapp/WEB-INF/images /app/images
-
 # Install wget
 RUN apk update && \
     apk add --no-cache wget && \

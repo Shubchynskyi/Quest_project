@@ -10,18 +10,40 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # Use variables from .env
 JAR_PATH="$SCRIPT_DIR/$JAR_NAME"
 
+# Function to create directories with proper permissions
+create_directory_with_permissions() {
+    local dir=$1
+    echo "Checking and creating directory: $dir"
+
+    # Attempt to create the directory without sudo
+    if mkdir -p "$dir" 2>/dev/null; then
+        echo "Directory $dir created without sudo."
+    else
+        # If the directory requires elevated privileges, use sudo
+        echo "Directory $dir requires sudo. Creating with sudo..."
+        sudo mkdir -p "$dir"
+    fi
+
+    # Attempt to set permissions without sudo
+    if chmod -R 777 "$dir" 2>/dev/null; then
+        echo "Permissions for $dir set without sudo."
+    else
+        # If setting permissions requires elevated privileges, use sudo
+        echo "Permissions for $dir require sudo. Setting with sudo..."
+        sudo chmod -R 777 "$dir"
+    fi
+}
+
 # Check and create log directory on the host
-if [ ! -d "$HOST_LOGS_DIR" ]; then
-    echo "Creating log directory on host: $HOST_LOGS_DIR"
-    mkdir -p "$HOST_LOGS_DIR"
-    chmod -R 777 "$HOST_LOGS_DIR"
-fi
+create_directory_with_permissions "$HOST_LOGS_DIR"
 
 # Check and create images directory on the host
-if [ ! -d "$HOST_IMAGES_DIR" ]; then
-    echo "Creating images directory on host: $HOST_IMAGES_DIR"
-    mkdir -p "$HOST_IMAGES_DIR"
-    chmod -R 777 "$HOST_IMAGES_DIR"
+create_directory_with_permissions "$HOST_IMAGES_DIR"
+
+# Copy default images from project to host images directory
+if [ -d "$SCRIPT_DIR/src/main/webapp/WEB-INF/images" ]; then
+    echo "Copying default images to host images directory..."
+    sudo cp -R "$SCRIPT_DIR/src/main/webapp/WEB-INF/images/"* "$HOST_IMAGES_DIR/"
 fi
 
 # Function to clean up existing containers and images
