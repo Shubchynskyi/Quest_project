@@ -1,38 +1,38 @@
-1: You are in front of a magical stone with inscriptions on it. What will you choose?
-2< Go left - enter a fairytale
-3< Go right - meet your death
-4< Go straight - become a developer
+1: You are standing in front of a magical stone with inscriptions. What will you choose?
+2< go left – enter a fairytale
+3< go right – meet your death
+4< go straight – find a job
 
-2: You see a locked chest, now what...
-1< Maybe I should turn back...
+2: You see a closed chest. What will you do?
+1< Who knows what's inside, I'll just go back...
 7< I'm not afraid of anything, I'll open it...
 
-3: You see a cave, what will you do?
-1< No way, I'm scared. I'll return for help.
-8< Hold my sword, I'm going in...
+3: You see a mysterious cave. What will you do?
+1< Forget it, it's too scary. I'll go back for reinforcements.
+8< Hold me back! I'm drawing my sword and stepping into the cave...
 
-4: You see Kikimora swamped over a laptop. What now?
-1< Kikimora? Laptop? What kind of mushrooms did I eat... Run away...
-5< Shout: Hey, back off from the laptop, let me show you some skills...
-6< Looks like you need a laptop to become a developer. Hit Kikimora with a club and secure your future.
+4: You see a Frost Witch, typing something passionately on a laptop. What will you do next?
+1< A witch? A laptop? What kind of mushrooms did I eat... Running away...
+5< Hey you! Step away from the laptop, let me show you how it’s done!
+6< Seems like you can't get a job without a laptop. I hit the Witch with a stick and secure my future.
 
-5: Kikimora jumped into the swamp, but to the right, you see a tunnel.
-3< Alright, I'll head that way...
+5: The Witch jumped into the swamp, taking the laptop with her, but to the right, you see a tunnel.
+3< I'll go there, there's nothing else to do...
 
-6: That's the real deed of a real programmer.
-9< Wait, I still need literature... there's a path marked 'library'.
-10< Yes, time to study Java and get coding. Games are evil.
+6: A true act of a real hero. Now I just need to find a job, and everything will be fine.
+9< Wait, I still need some books... I'll search for them; there's a path with a sign saying "to the library".
+10< Yes, exactly. Time to revise, learn, and look for a job. Games are evil.
 
-7: Wow, a big pile of gold.
-11< Hooray, let's fill our pockets...
-2< Something's wrong here, I'll close the chest.
+7: Wow. There it is, a huge pile of gold.
+11< Yay! Filling my pockets...
+2< Something feels off, I'm closing this chest...
 
-8: You enter the cave and see Koschei, Baba Yaga, and the Gorynych dragon watching YouTube.
-12< Attack!!!
+8: You step into the cave and see a Witch, a Troll, and a Dragon watching YouTube videos. What will you do?
+12< Obviously! To battle!!!
 
-9: Strange road, it seems to lead back...
-1< Nothing to do, keep going...
+9: A strange road lies ahead, leading backward. Or is it just me?
+1< Nothing else to do, I’ll move forward...
 
-10+ Victory! But now it's time to really code. Enough fooling around.
-11- Greed doesn't lead to good. The Pechenegs killed you.
-12- And that's the end of the tale. Horrible death in an unfair fight. Defeat.
+10+: Hooray! It's a victory! But it's time to find a job and stop wasting time.
+11- And then some vicious bandits came and killed you. Greed leads to no good. Defeat.
+12- And so the tale ends. A horrible death in an unfair fight. Defeat.

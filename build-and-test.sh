@@ -10,10 +10,18 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # Use variables from .env
 JAR_PATH="$SCRIPT_DIR/$JAR_NAME"
 
-# Check and create log directory on the host (only necessary for Linux)
+# Check and create log directory on the host
 if [ ! -d "$HOST_LOGS_DIR" ]; then
     echo "Creating log directory on host: $HOST_LOGS_DIR"
-    mkdir -p "$HOST_LOGS_DIR" || true  # Ignore error if command fails
+    mkdir -p "$HOST_LOGS_DIR"
+    chmod -R 777 "$HOST_LOGS_DIR"
+fi
+
+# Check and create images directory on the host
+if [ ! -d "$HOST_IMAGES_DIR" ]; then
+    echo "Creating images directory on host: $HOST_IMAGES_DIR"
+    mkdir -p "$HOST_IMAGES_DIR"
+    chmod -R 777 "$HOST_IMAGES_DIR"
 fi
 
 # Function to clean up existing containers and images
@@ -47,10 +55,6 @@ cleanup_existing_resources() {
 
 # Perform cleanup before building
 cleanup_existing_resources
-
-# Clean the project before building
-echo "Cleaning the project..."
-mvn clean
 
 # Build the image with the test environment
 echo "Building the image with the test environment..."

@@ -25,13 +25,13 @@
             <column name="id" valueNumeric="9"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="You see a Swamp Kikimora enthusiastically typing on a laptop."/>
+            <column name="text" value="You see a Frost Witch, typing something passionately on a laptop. What will you do next?"/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="8"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="The Kikimora jumped into the swamp, the laptop sank with her, but I see a tunnel to the right."/>
+            <column name="text" value="The Witch jumped into the swamp, taking the laptop with her, but to the right, you see a tunnel."/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="6"/>
@@ -61,7 +61,7 @@
             <column name="id" valueNumeric="7"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="A true act of a real programmer.&#13;&#10;Now just need to finish learning Java, and that's it, mission accomplished."/>
+            <column name="text" value="A true act of a real hero.&#13;&#10;Now I just need to find a job, and everything will be fine."/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="1"/>
@@ -73,19 +73,19 @@
             <column name="id" valueNumeric="2"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="LOST"/>
-            <column name="text" value="Then evil Pechenegs ran in and killed you.&#13;&#10;Greed leads to no good.&#13;&#10;This is a defeat!"/>
+            <column name="text" value="And then some vicious bandits came and killed you.&#13;&#10;Greed leads to no good.&#13;&#10;This is a defeat!"/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="5"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="You enter the cave, and there Koshchei, Baba Yaga, and Zmey Gorynych are watching videos on YouTube.&#13;&#10;What will you do?"/>
+            <column name="text" value="You step into the cave and see a Witch, a Troll, and a Dragon watching YouTube videos.&#13;&#10;What will you do?"/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="3"/>
             <column name="quest_id" valueNumeric="1"/>
             <column name="game_state" value="WIN"/>
-            <column name="text" value="Hooray! It's a victory!&#13;&#10;But it's really time for me to code, enough fooling around."/>
+            <column name="text" value="Hooray! It's a victory!&#13;&#10;But it's time to find a job and stop wasting time."/>
         </insert>
     </changeSet>
 
@@ -125,7 +125,7 @@
             <column name="id" valueNumeric="5"/>
             <column name="next_question_id" valueNumeric="3"/>
             <column name="question_id" valueNumeric="7"/>
-            <column name="text" value="Yes, exactly. I'm quickly going to review, learn, and code-code-code. Games are evil."/>
+            <column name="text" value="Yes, exactly. Time to revise, learn, and look for a job. Games are evil."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="6"/>
@@ -143,7 +143,7 @@
             <column name="id" valueNumeric="8"/>
             <column name="next_question_id" valueNumeric="7"/>
             <column name="question_id" valueNumeric="9"/>
-            <column name="text" value="Looks like I can't become a developer without a laptop. I hit the Kikimora on the head with a club, and now I have a great future."/>
+            <column name="text" value="Seems like you can't get a job without a laptop. I hit the Witch with a stick and secure my future."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="9"/>
@@ -155,7 +155,7 @@
             <column name="id" valueNumeric="10"/>
             <column name="next_question_id" valueNumeric="12"/>
             <column name="question_id" valueNumeric="9"/>
-            <column name="text" value="Kikimora? Laptop? I must have eaten some dangerous mushrooms... Run away..."/>
+            <column name="text" value="A witch? A laptop? What kind of mushrooms did I eat... Running away..."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="11"/>
@@ -185,7 +185,7 @@
             <column name="id" valueNumeric="15"/>
             <column name="next_question_id" valueNumeric="9"/>
             <column name="question_id" valueNumeric="12"/>
-            <column name="text" value="Go straight - you'll become a developer"/>
+            <column name="text" value="go straight – find a job"/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="16"/>

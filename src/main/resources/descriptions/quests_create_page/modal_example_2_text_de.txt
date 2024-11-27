@@ -1,38 +1,38 @@
-1: Du stehst vor einem magischen Stein mit Inschriften. Was wirst du wählen?
-2< Gehe nach links - betrete ein Märchen
-3< Gehe nach rechts - triff den Tod
-4< Gehe geradeaus - werde Entwickler
+1: Du stehst vor einem magischen Stein mit Inschriften. Was wählst du?
+2< Geh nach links – du landest in einem Märchen
+3< Geh nach rechts – du findest deinen Tod
+4< Geh geradeaus – du findest eine Arbeit
 
-2: Du siehst eine verschlossene Truhe, was nun...
-1< Vielleicht sollte ich umkehren...
-7< Ich habe keine Angst, ich werde es öffnen...
+2: Du siehst eine geschlossene Truhe. Was wirst du tun?
+1< Wer weiß, was da drin ist, ich gehe lieber zurück...
+7< Ich habe keine Angst, ich öffne sie...
 
-3: Du siehst eine Höhle, was wirst du tun?
-1< Nein, ich habe Angst. Ich werde zurückkehren, um Hilfe zu holen.
-8< Halt mein Schwert, ich gehe hinein...
+3: Du siehst eine geheimnisvolle Höhle. Was wirst du tun?
+1< Ach nein, das ist mir zu gruselig. Ich hole lieber Verstärkung.
+8< Haltet mich zurück! Ich ziehe mein Schwert und betrete die Höhle...
 
-4: Du siehst Kikimora, die über einem Laptop sitzt. Was nun?
-1< Kikimora? Laptop? Welche Pilze habe ich gegessen... Wegrennen...
-5< Rufe: Hey, geh vom Laptop weg, lass mich dir was zeigen...
-6< Anscheinend braucht man einen Laptop, um Entwickler zu werden. Schlag Kikimora mit einer Keule und sichere deine Zukunft.
+4: Du siehst die Frosthexe, die eifrig auf einem Laptop tippt. Was wirst du tun?
+1< Eine Hexe? Ein Laptop? Welche Pilze habe ich gegessen... Nichts wie weg!
+5< Hey du! Weg vom Laptop, ich zeige dir, wie es richtig geht!
+6< Ohne Laptop werde ich keine Arbeit finden. Ich schlage die Hexe mit einem Stock und sichere meine Zukunft.
 
-5: Kikimora sprang ins Moor, aber rechts siehst du einen Tunnel.
-3< Okay, ich werde dorthin gehen...
+5: Die Hexe sprang in den Sumpf, der Laptop ging mit ihr unter, aber rechts siehst du einen Tunnel.
+3< Ich gehe dorthin, es gibt nichts anderes zu tun...
 
-6: Das ist die Tat eines echten Programmierers.
-9< Warte, ich brauche noch Literatur... dort ist ein Weg mit einem Schild 'Bibliothek'.
-10< Ja, es ist Zeit, Java zu lernen und zu codieren. Spiele sind böse.
+6: Eine wahre Tat eines echten Helden. Jetzt muss ich nur noch eine Arbeit finden, und alles wird gut.
+9< Moment, ich brauche noch Bücher... Ich suche sie, dort ist ein Wegweiser mit „zur Bibliothek“.
+10< Genau! Zeit zu lernen und eine Arbeit zu suchen. Spiele sind schlecht.
 
-7: Wow, ein großer Haufen Gold.
-11< Hurra, füllen wir unsere Taschen...
-2< Irgendwas stimmt hier nicht, ich werde die Truhe schließen.
+7: Wow. Da ist ein riesiger Haufen Gold.
+11< Juhu! Ich fülle meine Taschen...
+2< Irgendwas stimmt hier nicht, ich schließe die Truhe...
 
-8: Du betrittst die Höhle und siehst Koschei, Baba Yaga und den Gorynych-Drache YouTube schauen.
-12< Angriff!!!
+8: Du betrittst die Höhle und siehst eine Hexe, einen Troll und einen Drachen, die YouTube schauen. Was wirst du tun?
+12< Natürlich! In den Kampf!!!
 
-9: Seltsamer Weg, er scheint zurück zu führen...
-1< Nichts zu tun, weitergehen...
+9: Ein seltsamer Weg führt zurück. Oder bilde ich mir das ein?
+1< Es gibt nichts anderes zu tun, ich gehe weiter...
 
-10+ Sieg! Aber jetzt ist es wirklich Zeit zu programmieren. Genug Unsinn.
-11- Gier führt zu nichts Gutem. Die Petschenegen haben dich getötet.
-12- Und das war das Ende der Geschichte. Schrecklicher Tod in einem unfairen Kampf. Niederlage.
+10+: Hurra! Ein Sieg! Aber es ist Zeit, Arbeit zu finden und keine Zeit mehr zu verschwenden.
+11- Und dann kamen böse Räuber und haben dich getötet. Gier führt zu nichts Gutem. Niederlage.
+12- Und so endet das Märchen. Ein schrecklicher Tod in einem unfairen Kampf. Niederlage.

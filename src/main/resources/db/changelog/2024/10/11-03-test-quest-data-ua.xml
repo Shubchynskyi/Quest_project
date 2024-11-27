@@ -25,13 +25,13 @@
             <column name="id" valueNumeric="45"/>
             <column name="quest_id" valueNumeric="4"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Ти бачиш Кікімору Болотяну, яка щось захоплено друкує на ноутбуці."/>
+            <column name="text" value="Ти бачиш Морозну Відьму, яка щось захоплено друкує на ноутбуці. Що далі?"/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="44"/>
             <column name="quest_id" valueNumeric="4"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Кікімора стрибнула в болото, ноут потонув разом з нею, але справа я бачу якийсь тунель."/>
+            <column name="text" value="Відьма стрибнула в болото, ноутбук потонув разом із нею, але праворуч я бачу якийсь тунель."/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="42"/>
@@ -61,7 +61,7 @@
             <column name="id" valueNumeric="43"/>
             <column name="quest_id" valueNumeric="4"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Справжній вчинок справжнього програміста.&#13;&#10;Тепер залишилося лише Java довчити, і все, справу зроблено."/>
+            <column name="text" value="Справжній вчинок справжнього борця зі злом.&#13;&#10;Тепер залишилося тільки знайти роботу, і все, справа в капелюсі."/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="37"/>
@@ -85,7 +85,7 @@
             <column name="id" valueNumeric="39"/>
             <column name="quest_id" valueNumeric="4"/>
             <column name="game_state" value="WIN"/>
-            <column name="text" value="Ура! Це перемога!&#13;&#10;Але мені пора дійсно кодити, досить вже займатися дурницями."/>
+            <column name="text" value="Ура! Це перемога!&#13;&#10;Але вже час шукати роботу, вистачить займатися дурницями."/>
         </insert>
     </changeSet>
 
@@ -125,7 +125,7 @@
             <column name="id" valueNumeric="56"/>
             <column name="next_question_id" valueNumeric="39"/>
             <column name="question_id" valueNumeric="43"/>
-            <column name="text" value="Так, точно. Все, я швидко-швидко йду все повторювати, вчити, і кодити-кодити-кодити. Ігри - це зло."/>
+            <column name="text" value="Так, точно. Усе, я швидко-швидко йду все повторювати, вчити й шукати роботу. Ігри – це зло."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="57"/>
@@ -143,7 +143,7 @@
             <column name="id" valueNumeric="59"/>
             <column name="next_question_id" valueNumeric="43"/>
             <column name="question_id" valueNumeric="45"/>
-            <column name="text" value="Схоже без ноута ніяк розробником не стати. Б'ю Кікімору дубиною по голові, і тепер у мене велике майбутнє."/>
+            <column name="text" value="Схоже, без ноутбука роботу не знайти. Б’ю Відьму палицею, і тепер у мене велике майбутнє."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="60"/>
@@ -155,7 +155,7 @@
             <column name="id" valueNumeric="61"/>
             <column name="next_question_id" valueNumeric="48"/>
             <column name="question_id" valueNumeric="45"/>
-            <column name="text" value="Кікімора? Ноутбук? Якісь небезпечні гриби я з'їв... Бігом звідси..."/>
+            <column name="text" value="Відьма? Ноутбук? Що за гриби я з’їв... Тікаю звідси..."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="62"/>
@@ -185,7 +185,7 @@
             <column name="id" valueNumeric="66"/>
             <column name="next_question_id" valueNumeric="45"/>
             <column name="question_id" valueNumeric="48"/>
-            <column name="text" value="прямо підеш - в розробники підеш"/>
+            <column name="text" value="прямо підеш – роботу знайдеш"/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="67"/>

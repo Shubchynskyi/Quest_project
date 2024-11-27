@@ -61,7 +61,7 @@
             <column name="id" valueNumeric="19"/>
             <column name="quest_id" valueNumeric="2"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Настоящий поступок, настоящего программиста.&#13;&#10;Теперь осталось только Java доучить, и все, дело в шляпе."/>
+            <column name="text" value="Настоящий поступок, настоящего борца со злом.&#13;&#10;Теперь осталось только работу найти, и все, дело в шляпе."/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="13"/>
@@ -85,7 +85,7 @@
             <column name="id" valueNumeric="15"/>
             <column name="quest_id" valueNumeric="2"/>
             <column name="game_state" value="WIN"/>
-            <column name="text" value="Ура! Это победа!&#13;&#10;Но мне пора действительно кодить, хватит уже ерундой заниматься."/>
+            <column name="text" value="Ура! Это победа!&#13;&#10;Но мне уже пора искать работу, хватит уже ерундой заниматься."/>
         </insert>
     </changeSet>
 
@@ -125,7 +125,7 @@
             <column name="id" valueNumeric="22"/>
             <column name="next_question_id" valueNumeric="15"/>
             <column name="question_id" valueNumeric="19"/>
-            <column name="text" value="Да, точно. Все, я быстро-быстро иду все повторять, учить, и кодить-кодить-кодить. Игры - это зло."/>
+            <column name="text" value="Да, точно. Все, я быстро-быстро иду все повторять, учить, и искать работу. Игры - это зло."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="23"/>
@@ -143,7 +143,7 @@
             <column name="id" valueNumeric="25"/>
             <column name="next_question_id" valueNumeric="19"/>
             <column name="question_id" valueNumeric="21"/>
-            <column name="text" value="Похоже без ноута никак разработчиком не стать. Бью Кикимору дубиной по башке, и теперь у меня большое будущее."/>
+            <column name="text" value="Похоже без ноута никак работу не найти. Бью Кикимору дубиной по башке, и теперь у меня большое будущее."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="26"/>
@@ -185,7 +185,7 @@
             <column name="id" valueNumeric="32"/>
             <column name="next_question_id" valueNumeric="21"/>
             <column name="question_id" valueNumeric="24"/>
-            <column name="text" value="прямо пойдешь - в разработчики пойдешь"/>
+            <column name="text" value="прямо пойдешь - работу найдёшь"/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="33"/>

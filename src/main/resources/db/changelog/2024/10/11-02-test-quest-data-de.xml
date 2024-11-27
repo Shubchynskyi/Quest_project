@@ -25,13 +25,13 @@
             <column name="id" valueNumeric="33"/>
             <column name="quest_id" valueNumeric="3"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Du siehst eine Sumpf-Kikimora, die begeistert auf einem Laptop tippt."/>
+            <column name="text" value="Du siehst die Frosthexe, die eifrig auf einem Laptop tippt. Was wirst du tun?"/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="32"/>
             <column name="quest_id" valueNumeric="3"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Die Kikimora sprang ins Moor, der Laptop sank mit ihr, aber rechts sehe ich einen Tunnel."/>
+            <column name="text" value="Die Hexe sprang in den Sumpf, der Laptop ging mit ihr unter, aber rechts siehst du einen Tunnel."/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="30"/>
@@ -61,7 +61,7 @@
             <column name="id" valueNumeric="31"/>
             <column name="quest_id" valueNumeric="3"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Eine echte Tat eines wahren Programmierers.&#13;&#10;Jetzt muss ich nur noch Java fertiglernen, und das war's."/>
+            <column name="text" value="Eine wahre Tat eines echten Helden.&#13;&#10;Jetzt muss ich nur noch eine Arbeit finden, und alles wird gut."/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="25"/>
@@ -73,19 +73,19 @@
             <column name="id" valueNumeric="26"/>
             <column name="quest_id" valueNumeric="3"/>
             <column name="game_state" value="LOST"/>
-            <column name="text" value="Da kamen böse Petschenegen und töteten dich.&#13;&#10;Gier führt zu nichts Gutem.&#13;&#10;Das ist eine Niederlage!"/>
+            <column name="text" value="Und dann kamen böse Räuber und haben dich getötet.&#13;&#10;Gier führt zu nichts Gutem.&#13;&#10;Das ist eine Niederlage!"/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="29"/>
             <column name="quest_id" valueNumeric="3"/>
             <column name="game_state" value="PLAY"/>
-            <column name="text" value="Du betrittst die Höhle, und dort schauen Koshchei, Baba Yaga und der Drache Gorynych Videos auf YouTube.&#13;&#10;Was wirst du tun?"/>
+            <column name="text" value="Du betrittst die Höhle und siehst eine Hexe, einen Troll und einen Drachen, die YouTube schauen.&#13;&#10;Was wirst du tun?"/>
         </insert>
         <insert tableName="question">
             <column name="id" valueNumeric="27"/>
             <column name="quest_id" valueNumeric="3"/>
             <column name="game_state" value="WIN"/>
-            <column name="text" value="Hurra! Es ist ein Sieg!&#13;&#10;Aber jetzt ist es wirklich Zeit für mich zu programmieren, genug herumgealbert."/>
+            <column name="text" value="Hurra! Es ist ein Sieg!&#13;&#10;Aber es ist Zeit, Arbeit zu finden und keine Zeit mehr zu verschwenden."/>
         </insert>
     </changeSet>
 
@@ -125,7 +125,7 @@
             <column name="id" valueNumeric="39"/>
             <column name="next_question_id" valueNumeric="27"/>
             <column name="question_id" valueNumeric="31"/>
-            <column name="text" value="Ja, genau. Ich gehe schnell alles wiederholen, lernen und programmieren-programmieren-programmieren. Spiele sind böse."/>
+            <column name="text" value="Genau! Zeit zu lernen und eine Arbeit zu suchen. Spiele sind schlecht."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="40"/>
@@ -143,7 +143,7 @@
             <column name="id" valueNumeric="42"/>
             <column name="next_question_id" valueNumeric="31"/>
             <column name="question_id" valueNumeric="33"/>
-            <column name="text" value="Anscheinend kann ich ohne Laptop kein Entwickler werden. Ich schlage die Kikimora mit einer Keule auf den Kopf, und jetzt habe ich eine große Zukunft."/>
+            <column name="text" value="Ohne Laptop werde ich keine Arbeit finden. Ich schlage die Hexe mit einem Stock und sichere meine Zukunft."/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="43"/>
@@ -155,7 +155,7 @@
             <column name="id" valueNumeric="44"/>
             <column name="next_question_id" valueNumeric="36"/>
             <column name="question_id" valueNumeric="33"/>
-            <column name="text" value="Kikimora? Laptop? Ich muss gefährliche Pilze gegessen haben... Nichts wie weg..."/>
+            <column name="text" value="Eine Hexe? Ein Laptop? Welche Pilze habe ich gegessen... Nichts wie weg!"/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="45"/>
@@ -185,7 +185,7 @@
             <column name="id" valueNumeric="49"/>
             <column name="next_question_id" valueNumeric="33"/>
             <column name="question_id" valueNumeric="36"/>
-            <column name="text" value="Gehst du geradeaus - wirst du Entwickler"/>
+            <column name="text" value="geh geradeaus – du findest eine Arbeit"/>
         </insert>
         <insert tableName="answer">
             <column name="id" valueNumeric="50"/>

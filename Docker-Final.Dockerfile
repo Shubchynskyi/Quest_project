@@ -18,6 +18,9 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
+# Ensure the images directory has write permissions
+RUN chmod -R 777 /app/images
+
 # Define build arguments
 ARG JAR_NAME
 ARG DATABASE_CONTAINER_NAME
