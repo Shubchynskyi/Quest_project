@@ -10,42 +10,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # Use variables from .env
 JAR_PATH="$SCRIPT_DIR/$JAR_NAME"
 
-# Function to create directories with proper permissions
-create_directory_with_permissions() {
-    local dir=$1
-    echo "Checking directory: $dir"
-
-    # Check if the directory already exists
-    if [ -d "$dir" ]; then
-        echo "Directory $dir already exists. Skipping creation."
-        return 0
-    fi
-
-    # If the directory does not exist, create it
-    echo "Creating directory: $dir"
-    if mkdir -p "$dir"; then
-        echo "Directory $dir created successfully."
-    else
-        echo "Error: Unable to create directory $dir. Please check permissions."
-        exit 1
-    fi
-
-    # Set permissions
-    echo "Setting permissions for: $dir"
-    if chmod -R 777 "$dir"; then
-        echo "Permissions for $dir set successfully."
-    else
-        echo "Error: Unable to set permissions for $dir. Please check permissions."
-        exit 1
-    fi
-}
-
-# Check and create log directory on the host
-create_directory_with_permissions "$HOST_LOGS_DIR"
-
-# Check and create images directory on the host
-create_directory_with_permissions "$HOST_IMAGES_DIR"
-
 # Copy default images from project to host images directory
 echo "Copying default images to host images directory..."
 cp -R "$SCRIPT_DIR/src/main/webapp/WEB-INF/images/"* "$HOST_IMAGES_DIR/"
