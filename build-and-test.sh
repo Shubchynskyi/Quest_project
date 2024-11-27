@@ -13,17 +13,25 @@ JAR_PATH="$SCRIPT_DIR/$JAR_NAME"
 # Function to create directories with proper permissions
 create_directory_with_permissions() {
     local dir=$1
-    echo "Checking and creating directory: $dir"
+    echo "Checking directory: $dir"
+
+    # Check if the directory already exists
+    if [ -d "$dir" ]; then
+        echo "Directory $dir already exists. Skipping creation."
+        return 0
+    fi
 
     # Attempt to create the directory
+    echo "Creating directory: $dir"
     if mkdir -p "$dir"; then
-        echo "Directory $dir created."
+        echo "Directory $dir created successfully."
     else
         echo "Error: Unable to create directory $dir. Please check permissions."
         exit 1
     fi
 
     # Attempt to set permissions
+    echo "Setting permissions for: $dir"
     if chmod -R 777 "$dir"; then
         echo "Permissions for $dir set successfully."
     else
