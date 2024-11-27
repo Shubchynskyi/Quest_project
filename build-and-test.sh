@@ -15,22 +15,20 @@ create_directory_with_permissions() {
     local dir=$1
     echo "Checking and creating directory: $dir"
 
-    # Attempt to create the directory without sudo
-    if mkdir -p "$dir" 2>/dev/null; then
-        echo "Directory $dir created without sudo."
+    # Attempt to create the directory
+    if mkdir -p "$dir"; then
+        echo "Directory $dir created."
     else
-        # If the directory requires elevated privileges, use sudo
-        echo "Directory $dir requires sudo. Creating with sudo..."
-        sudo mkdir -p "$dir"
+        echo "Error: Unable to create directory $dir. Please check permissions."
+        exit 1
     fi
 
-    # Attempt to set permissions without sudo
-    if chmod -R 777 "$dir" 2>/dev/null; then
-        echo "Permissions for $dir set without sudo."
+    # Attempt to set permissions
+    if chmod -R 777 "$dir"; then
+        echo "Permissions for $dir set successfully."
     else
-        # If setting permissions requires elevated privileges, use sudo
-        echo "Permissions for $dir require sudo. Setting with sudo..."
-        sudo chmod -R 777 "$dir"
+        echo "Error: Unable to set permissions for $dir. Please check permissions."
+        exit 1
     fi
 }
 
@@ -41,10 +39,8 @@ create_directory_with_permissions "$HOST_LOGS_DIR"
 create_directory_with_permissions "$HOST_IMAGES_DIR"
 
 # Copy default images from project to host images directory
-if [ -d "$SCRIPT_DIR/src/main/webapp/WEB-INF/images" ]; then
-    echo "Copying default images to host images directory..."
-    sudo cp -R "$SCRIPT_DIR/src/main/webapp/WEB-INF/images/"* "$HOST_IMAGES_DIR/"
-fi
+echo "Copying default images to host images directory..."
+cp -R "$SCRIPT_DIR/src/main/webapp/WEB-INF/images/"* "$HOST_IMAGES_DIR/"
 
 # Function to clean up existing containers and images
 cleanup_existing_resources() {
