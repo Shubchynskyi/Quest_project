@@ -10,10 +10,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # Use variables from .env
 JAR_PATH="$SCRIPT_DIR/$JAR_NAME"
 
-# Copy default images from project to host images directory
-echo "Copying default images to host images directory..."
-cp -R "$SCRIPT_DIR/src/main/webapp/WEB-INF/images/"* "$HOST_IMAGES_DIR/"
-
 # Function to clean up existing containers and images
 cleanup_existing_resources() {
     echo "Checking for existing containers and images..."

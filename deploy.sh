@@ -29,4 +29,8 @@ echo "Removed the temporary JAR file: $JAR_PATH"
 echo "Starting Docker Compose with file: $COMPOSE_FILE_ARG"
 docker-compose -f "$COMPOSE_FILE_ARG" up -d
 
+# Copy images from project to the volume
+echo "Copying default images from project to host directory..."
+cp -R "$SCRIPT_DIR/src/main/webapp/WEB-INF/images/"* "$HOST_IMAGES_DIR/"
+
 echo "Script completed, application started via Docker Compose."
