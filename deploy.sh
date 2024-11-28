@@ -29,7 +29,15 @@ echo "Removed the temporary JAR file: $JAR_PATH"
 echo "Starting Docker Compose with file: $COMPOSE_FILE_ARG"
 docker-compose -f "$COMPOSE_FILE_ARG" up -d
 
-# Copy default images from project to the mounted volume
+# Wait for the application container to be ready
+echo "Waiting for the application container to be ready..."
+until [ "$(docker inspect -f '{{.State.Running}}' "$FINAL_APP_CONTAINER_NAME")" == "true" ]; do
+    sleep 1
+    echo "Waiting for $FINAL_APP_CONTAINER_NAME..."
+done
+echo "$FINAL_APP_CONTAINER_NAME is ready!"
+
+# Copy images from project to the volume
 echo "Copying default images from project to host directory..."
 cp -nR "$SCRIPT_DIR/src/main/webapp/WEB-INF/images/"* "$HOST_IMAGES_DIR/"
 
