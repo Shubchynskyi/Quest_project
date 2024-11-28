@@ -37,8 +37,8 @@ until [ "$(docker inspect -f '{{.State.Running}}' "$FINAL_APP_CONTAINER_NAME")" 
 done
 echo "$FINAL_APP_CONTAINER_NAME is ready!"
 
-# Copy images from project to the volume
-echo "Copying default images from project to host directory..."
-cp -nR "$SCRIPT_DIR/src/main/webapp/WEB-INF/images/"* "$HOST_IMAGES_DIR/"
+# Copy default images from project to container's /app/images directory
+echo "Copying default images to container's images directory..."
+docker cp "$SCRIPT_DIR/src/main/webapp/WEB-INF/images/." "$FINAL_APP_CONTAINER_NAME:/app/images/"
 
 echo "Script completed, application started via Docker Compose."
