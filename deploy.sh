@@ -39,6 +39,6 @@ echo "$FINAL_APP_CONTAINER_NAME is ready!"
 
 # Copy images from project to the volume
 echo "Copying default images from project to host directory..."
-cp -nR "$SCRIPT_DIR/src/main/webapp/WEB-INF/images/"* "$APP_DIRECTORIES_IMAGES/"
+cp -nR "$SCRIPT_DIR/src/main/webapp/WEB-INF/images/"* "$HOST_IMAGES_DIR/"
 
 echo "Script completed, application started via Docker Compose."

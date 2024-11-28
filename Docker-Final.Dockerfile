@@ -26,6 +26,10 @@ ENV DATABASE_CONTAINER_NAME=${DATABASE_CONTAINER_NAME}
 # Copy the built JAR file from the local machine
 COPY ${JAR_NAME} /app/${JAR_NAME}
 
+# Ensure the images directory exists
+RUN mkdir -p /app/images
+RUN chmod -R 777 /app/images
+
 # Run the application using Dockerize to wait for the database
 # Use sh -c to ensure variable substitution works correctly
 ENTRYPOINT sh -c "dockerize -wait tcp://\$DATABASE_CONTAINER_NAME:5432 -timeout 60s java -jar /app/\$JAR_NAME"
