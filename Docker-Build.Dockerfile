@@ -8,7 +8,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
-# Copy templates and images
+# Copyimages
 COPY src/main/webapp/WEB-INF/images /app/images
 
 # Download Maven dependencies
