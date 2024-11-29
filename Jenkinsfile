@@ -21,8 +21,8 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'db-quests-app', usernameVariable: 'DB_USERNAME', passwordVariable: 'DB_PASSWORD')]) {
                     script {
                         sh '''
-                            echo "DB_USERNAME=$DB_USERNAME" > .env
-                            echo "DB_PASSWORD=$DB_PASSWORD" >> .env
+                            sed -i "s|^DB_USERNAME=.*|DB_USERNAME=$DB_USERNAME|" .env
+                            sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=$DB_PASSWORD|" .env
                         '''
                     }
                 }
