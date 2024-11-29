@@ -1,19 +1,19 @@
 pipeline {
     agent any
-    environment {
-            DB_USERNAME = credentials('db-quests-app_USR')
-            DB_PASSWORD = credentials('db-quests-app_PSW')
-        }
+//     environment {
+//             DB_USERNAME = credentials('db-quests-app_USR')
+//             DB_PASSWORD = credentials('db-quests-app_PSW')
+//         }
     stages {
 
-        stage('Debug Environment') {
-            steps {
-                script {
-                    sh 'echo "DB_USERNAME=$DB_USERNAME"'
-                    sh 'echo "DB_PASSWORD=$DB_PASSWORD"'
-                }
-            }
-        }
+//         stage('Debug Environment') {
+//             steps {
+//                 script {
+//                     sh 'echo "DB_USERNAME=$DB_USERNAME"'
+//                     sh 'echo "DB_PASSWORD=$DB_PASSWORD"'
+//                 }
+//             }
+//         }
 
 
         stage('Checkout') {
