@@ -20,16 +20,16 @@ pipeline {
             }
         }
 
-        stage('Update .env') {
-            steps {
-                script {
-                    sh '''
-                        sed -i "s|\\${DB_USERNAME}|$DB_USERNAME|g" .env
-                        sed -i "s|\\${DB_PASSWORD}|$DB_PASSWORD|g" .env
-                        '''
-                }
-            }
-        }
+//         stage('Update .env') {
+//             steps {
+//                 script {
+//                     sh '''
+//                         sed -i "s|\\${DB_USERNAME}|$DB_USERNAME|g" .env
+//                         sed -i "s|\\${DB_PASSWORD}|$DB_PASSWORD|g" .env
+//                         '''
+//                 }
+//             }
+//         }
 
         stage('Test and Build') {
             steps {
