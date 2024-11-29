@@ -1,24 +1,6 @@
 pipeline {
     agent any
-//     environment {
-//             DB_USERNAME = credentials('db-quests-app_USR')
-//             DB_PASSWORD = credentials('db-quests-app_PSW')
-//         }
     stages {
-
-stage('Debug Credentials') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'db-quests-app', usernameVariable: 'DB_USERNAME', passwordVariable: 'DB_PASSWORD')]) {
-                    script {
-
-                        sh 'echo "DB_USERNAME=$DB_USERNAME"'
-                        sh 'echo "DB_PASSWORD=$DB_PASSWORD"'
-                    }
-                }
-            }
-        }
-
-
         stage('Checkout') {
             steps {
                 checkout scm
@@ -34,16 +16,18 @@ stage('Debug Credentials') {
             }
         }
 
-//         stage('Update .env') {
-//             steps {
-//                 script {
-//                     sh '''
-//                         sed -i "s|\\${DB_USERNAME}|$DB_USERNAME|g" .env
-//                         sed -i "s|\\${DB_PASSWORD}|$DB_PASSWORD|g" .env
-//                         '''
-//                 }
-//             }
-//         }
+        stage('Update .env') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'db-quests-app', usernameVariable: 'DB_USERNAME', passwordVariable: 'DB_PASSWORD')]) {
+                    script {
+                        sh '''
+                            echo "DB_USERNAME=$DB_USERNAME" > .env
+                            echo "DB_PASSWORD=$DB_PASSWORD" >> .env
+                        '''
+                    }
+                }
+            }
+        }
 
         stage('Test and Build') {
             steps {
