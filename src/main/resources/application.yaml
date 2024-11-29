@@ -2,8 +2,8 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:2345/postgres
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: postgres
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     hikari:
       connection-timeout: 20000
       maximum-pool-size: 10
