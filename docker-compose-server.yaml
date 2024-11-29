@@ -18,6 +18,8 @@ services:
     restart: unless-stopped
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       APP_DIRECTORIES_IMAGES: ${APP_DIRECTORIES_IMAGES}
     networks:
       - quests-network
