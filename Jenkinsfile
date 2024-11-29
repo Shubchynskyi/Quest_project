@@ -6,14 +6,17 @@ pipeline {
 //         }
     stages {
 
-//         stage('Debug Environment') {
-//             steps {
-//                 script {
-//                     sh 'echo "DB_USERNAME=$DB_USERNAME"'
-//                     sh 'echo "DB_PASSWORD=$DB_PASSWORD"'
-//                 }
-//             }
-//         }
+stage('Debug Credentials') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'db-quests-app', usernameVariable: 'DB_USERNAME', passwordVariable: 'DB_PASSWORD')]) {
+                    script {
+
+                        sh 'echo "DB_USERNAME=$DB_USERNAME"'
+                        sh 'echo "DB_PASSWORD=$DB_PASSWORD"'
+                    }
+                }
+            }
+        }
 
 
         stage('Checkout') {
