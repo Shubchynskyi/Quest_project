@@ -19,17 +19,11 @@ public interface UserMapper {
     })
     UserDTO userToUserDTOWithoutPasswordAndCollections(User user);
 
-    @Named("userToUserDTOWithoutCollections")
-    @Mappings({
-            @Mapping(target = "quests", qualifiedByName = "questToQuestDTOWithOutQuestions"),
-            @Mapping(target = "games", ignore = true),
-            @Mapping(target = "questsInGame", ignore = true)
-    })
-    UserDTO userToUserDTOWithoutCollections(User user);
-
     @Named("userToUserDTOWithoutPassword")
     @Mappings({
             @Mapping(target = "password", ignore = true),
+            @Mapping(target = "games", ignore = true),
+            @Mapping(target = "questsInGame", ignore = true),
             @Mapping(target = "quests", qualifiedByName = "questToQuestDTOWithOutQuestions"),
     })
     UserDTO userToUserDTOWithoutPassword(User user);

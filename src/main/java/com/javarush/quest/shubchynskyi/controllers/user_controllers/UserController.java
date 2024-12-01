@@ -8,17 +8,20 @@ import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.result.UserDataProcessResult;
+import com.javarush.quest.shubchynskyi.service.OnUpdate;
 import com.javarush.quest.shubchynskyi.service.UserAccountService;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.service.ValidationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -79,7 +82,7 @@ public class UserController {
 
             if (userFromSession != null && userFromSession.getId().equals(id)) {
                 userDTO = userService.get(userFromSession.getId())
-                        .map(userMapper::userToUserDTOWithoutCollections)
+                        .map(userMapper::userToUserDTOWithoutPassword)
                         .orElseThrow();
                 model.addAttribute(USER, userDTO);
                 session.setAttribute(ORIGINAL_LOGIN, userDTO.getLogin());
@@ -99,15 +102,20 @@ public class UserController {
 
     private UserDTO addUserDtoToModel(Model model, Long id) {
         Optional<UserDTO> userDTO = userService.get(id)
-                .map(userMapper::userToUserDTOWithoutCollections);
+                .map(userMapper::userToUserDTOWithoutPassword);
 
         userDTO.ifPresent(dto -> model.addAttribute(USER, dto));
         return userDTO.orElse(null);
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(String.class, PASSWORD, new StringTrimmerEditor(true)); // true = "" → null
+    }
+
     @PostMapping(USER)
     public String editUser(
-            @Valid @ModelAttribute UserDTO userDTOFromModel,
+            @Validated(OnUpdate.class) @ModelAttribute UserDTO userDTOFromModel,
             BindingResult bindingResult,
             @RequestParam(name = IMAGE, required = false) MultipartFile imageFile,
             @RequestParam(name = TEMP_IMAGE_ID, required = false) String tempImageId,
@@ -117,6 +125,7 @@ public class UserController {
             HttpServletRequest request
     ) {
         log.info("Entering editUser for user: {}", userDTOFromModel.getId());
+
         if (userDTOFromSession == null) {
             log.warn("User session is null, redirecting to login.");
             return REDIRECT + Route.LOGIN;

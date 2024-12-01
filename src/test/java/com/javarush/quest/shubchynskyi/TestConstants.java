@@ -84,4 +84,14 @@ public class TestConstants {
     public static final Long TEST_QUESTION_ID = 1L;
     public static final Long TEST_ANSWER_ID = 1L;
 
+
+//    public static final Long TEST_USER_ID = 1L;
+//    public static final String TEST_USER_LOGIN = "testUser";
+//    public static final String TEST_USER_PASSWORD = "testPass";
+    public static final String UPDATED_USER_LOGIN = "updatedUser";
+    public static final String UPDATED_USER_PASSWORD = "updatedPass";
+//    public static final String INVALID_USER_PASSWORD = "invalidPass";
+//    public static final String USER_NOT_FOUND_WITH_ID = "USER_NOT_FOUND_WITH_ID ";
+
+
 }

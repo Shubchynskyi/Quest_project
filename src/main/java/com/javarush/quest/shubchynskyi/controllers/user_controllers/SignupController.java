@@ -6,15 +6,16 @@ import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.result.UserDataProcessResult;
+import com.javarush.quest.shubchynskyi.service.OnCreate;
 import com.javarush.quest.shubchynskyi.service.UserAccountService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -76,7 +77,7 @@ public class SignupController {
     }
 
     @PostMapping(SIGNUP)
-    public String signup(@Valid @ModelAttribute UserDTO userDTOFromModel,
+    public String signup(@ModelAttribute @Validated(OnCreate.class) UserDTO userDTOFromModel,
                          BindingResult bindingResult,
                          @RequestParam(name = IMAGE, required = false) MultipartFile imageFile,
                          @RequestParam(name = TEMP_IMAGE_ID, required = false) String tempImageId,
