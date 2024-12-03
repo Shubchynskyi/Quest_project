@@ -1,8 +1,6 @@
 package com.javarush.quest.shubchynskyi.dto;
 
 import com.javarush.quest.shubchynskyi.entity.Role;
-import com.javarush.quest.shubchynskyi.service.OnCreate;
-import com.javarush.quest.shubchynskyi.service.OnUpdate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;

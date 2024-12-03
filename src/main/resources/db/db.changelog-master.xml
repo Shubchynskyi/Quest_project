@@ -11,6 +11,6 @@
     <include file="classpath:db/changelog/2024/10/11-02-test-quest-data-de.xml"/>
     <include file="classpath:db/changelog/2024/10/11-01-test-quest-data-ru.xml"/>
     <include file="classpath:db/changelog/2024/10/11-03-test-quest-data-ua.xml"/>
-
+    <include file="classpath:db/changelog/2024/12/03-01-migration-audit-table.xml"/>
 
 </databaseChangeLog>

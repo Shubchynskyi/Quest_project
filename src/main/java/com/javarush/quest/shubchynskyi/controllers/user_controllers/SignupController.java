@@ -6,7 +6,7 @@ import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.result.UserDataProcessResult;
-import com.javarush.quest.shubchynskyi.service.OnCreate;
+import com.javarush.quest.shubchynskyi.dto.OnCreate;
 import com.javarush.quest.shubchynskyi.service.UserAccountService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

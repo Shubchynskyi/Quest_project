@@ -8,7 +8,7 @@ import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.result.UserDataProcessResult;
-import com.javarush.quest.shubchynskyi.service.OnUpdate;
+import com.javarush.quest.shubchynskyi.dto.OnUpdate;
 import com.javarush.quest.shubchynskyi.service.UserAccountService;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.service.ValidationService;

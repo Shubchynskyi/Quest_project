@@ -71,6 +71,8 @@ app:
       ".gif": "image/gif"
       ".webp": "image/webp"
 
+  hash-passwords-migration-name: hash-passwords
+
   resources:
     images:
       handler: /images/**
