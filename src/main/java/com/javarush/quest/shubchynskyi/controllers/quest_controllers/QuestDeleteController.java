@@ -1,11 +1,11 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
 
+import com.javarush.quest.shubchynskyi.config.RoleConfig;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.QuestDTO;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Quest;
-import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
@@ -40,9 +40,6 @@ public class QuestDeleteController {
     private final ValidationService validationService;
     private final QuestMapper questMapper;
 
-    protected static final List<Role> ALLOWED_ROLES_FOR_QUEST_DELETE =
-            List.of(Role.MODERATOR, Role.ADMIN);
-
     @PostMapping(QUEST_DELETE)
     public String deleteQuest(
             @RequestParam Long id,
@@ -69,7 +66,7 @@ public class QuestDeleteController {
         Quest quest = questOptional.get();
         Long authorId = questService.getAuthorId(quest);
 
-        if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_DELETE, redirectAttributes, authorId)) {
+        if (validationService.checkUserAccessDenied(session, RoleConfig.ALLOWED_ROLES_FOR_QUEST_DELETE, redirectAttributes, authorId)) {
             log.warn("Access denied for quest deletion. Quest ID: {}. User ID: {}", id, currentUserDTO.getId());
             return REDIRECT + source;
         }

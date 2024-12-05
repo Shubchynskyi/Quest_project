@@ -1,11 +1,11 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
+import com.javarush.quest.shubchynskyi.config.RoleConfig;
 import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.QuestDTO;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Quest;
-import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.QuestMapper;
@@ -42,9 +42,6 @@ public class QuestCreateController {
     private final ValidationService validationService;
     private final QuestMapper questMapper;
 
-    protected static final List<Role> ALLOWED_ROLES_FOR_QUEST_CREATE =
-            List.of(Role.USER, Role.MODERATOR, Role.ADMIN);
-
     @GetMapping(CREATE_QUEST)
     public String showCreateQuestPage(
             Model model,
@@ -54,7 +51,7 @@ public class QuestCreateController {
         UserDTO userDTO = (UserDTO) session.getAttribute(Key.USER);
 
         if (Objects.nonNull(userDTO)) {
-            if (ALLOWED_ROLES_FOR_QUEST_CREATE.contains(userDTO.getRole())) {
+            if (RoleConfig.ALLOWED_ROLES_FOR_QUEST_CREATE.contains(userDTO.getRole())) {
                 log.info("User {} with role {} is accessing the create quest page.", userDTO.getLogin(), userDTO.getRole());
                 if (!model.containsAttribute(QUEST_DTO)) {
                     model.addAttribute(QUEST_DTO, QuestDTO.builder().build());
@@ -81,7 +78,7 @@ public class QuestCreateController {
             RedirectAttributes redirectAttributes
     ) {
 
-        if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_CREATE, redirectAttributes)) {
+        if (validationService.checkUserAccessDenied(session, RoleConfig.ALLOWED_ROLES_FOR_QUEST_CREATE, redirectAttributes)) {
             log.warn("Access denied to quest create controller: insufficient permissions.");
             return REDIRECT + Route.LOGIN;
         }

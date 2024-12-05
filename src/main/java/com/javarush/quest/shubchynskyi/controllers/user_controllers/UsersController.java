@@ -1,10 +1,10 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
+import com.javarush.quest.shubchynskyi.config.RoleConfig;
+import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
-import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.service.UserService;
-import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.service.ValidationService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Optional;
 
-import static com.javarush.quest.shubchynskyi.constant.Key.*;
+import static com.javarush.quest.shubchynskyi.constant.Key.USERS;
 import static com.javarush.quest.shubchynskyi.constant.Route.REDIRECT;
 
 @Slf4j
@@ -29,16 +29,13 @@ public class UsersController {
     private final UserMapper userMapper;
     private final ValidationService validationService;
 
-    protected static final List<Role> ALLOWED_ROLES_FOR_USERS_LIST =
-            List.of(Role.MODERATOR, Role.ADMIN);
-
     @GetMapping(USERS)
     public String showUsers(
             Model model,
             HttpSession session,
             RedirectAttributes redirectAttributes
     ) {
-        if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_USERS_LIST, redirectAttributes)) {
+        if (validationService.checkUserAccessDenied(session, RoleConfig.ALLOWED_ROLES_FOR_USERS_LIST, redirectAttributes)) {
             log.warn("Access denied to user list: insufficient permissions.");
             return REDIRECT + Route.INDEX;
         }

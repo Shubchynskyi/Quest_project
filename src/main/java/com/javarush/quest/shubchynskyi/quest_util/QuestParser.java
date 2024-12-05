@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.javarush.quest.shubchynskyi.constant.Key.INCORRECT_TEXT_BLOCK;
 import static com.javarush.quest.shubchynskyi.constant.Key.REGEX_NEW_LINE;
@@ -46,7 +47,11 @@ public class QuestParser {
     }
 
     private boolean isStringWithoutMark(String string) {
-        for (String mark : QuestMarksEnum.getAllMarks()) {
+        List<String> allMarks = Stream.of(QuestMarksEnum.values())
+                .map(QuestMarksEnum::getMark)
+                .toList();
+
+        for (String mark : allMarks) {
             int markIndex = string.indexOf(mark);
             if (markIndex > 0) {
                 String charBeforeMark = String.valueOf(string.charAt(markIndex - 1));

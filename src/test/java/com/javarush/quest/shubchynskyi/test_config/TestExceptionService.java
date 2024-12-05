@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.test_config;
 
-import com.javarush.quest.shubchynskyi.TestConstants;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,6 +1,8 @@
 package com.javarush.quest.shubchynskyi.controllers.user_controllers;
 
+import com.javarush.quest.shubchynskyi.config.RoleConfig;
 import com.javarush.quest.shubchynskyi.constant.Route;
+import com.javarush.quest.shubchynskyi.dto.OnUpdate;
 import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.entity.User;
@@ -8,7 +10,6 @@ import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.UserMapper;
 import com.javarush.quest.shubchynskyi.result.UserDataProcessResult;
-import com.javarush.quest.shubchynskyi.dto.OnUpdate;
 import com.javarush.quest.shubchynskyi.service.UserAccountService;
 import com.javarush.quest.shubchynskyi.service.UserService;
 import com.javarush.quest.shubchynskyi.service.ValidationService;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -45,9 +45,6 @@ public class UserController {
     private final ValidationService validationService;
     private final UserAccountService userAccountService;
 
-    protected static final List<Role> ALLOWED_ROLES_FOR_USER_EDIT =
-            List.of(Role.USER, Role.MODERATOR, Role.ADMIN);
-
     @GetMapping(USER)
     public String showUser(
             Model model,
@@ -60,7 +57,7 @@ public class UserController {
     ) {
         log.info("Entering showUser with id: {}", id);
 
-        if (validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_USER_EDIT, redirectAttributes)) {
+        if (validationService.checkUserAccessDenied(session, RoleConfig.ALLOWED_ROLES_FOR_USER_EDIT, redirectAttributes)) {
             log.warn("Access denied for user [{}] when attempting to view user [{}]",
                     userFromSession != null ? userFromSession.getId() : "unknown", id);
             return REDIRECT + Route.INDEX;
@@ -203,7 +200,7 @@ public class UserController {
 
         if (!userDTOFromSession.getId().equals(userDTOFromModel.getId())) {
             Role userRole = userDTOFromSession.getRole();
-            permitted = ALLOWED_ROLES_FOR_USER_EDIT.contains(userRole);
+            permitted = RoleConfig.ALLOWED_ROLES_FOR_USER_EDIT.contains(userRole);
         } else {
             permitted = true;
         }

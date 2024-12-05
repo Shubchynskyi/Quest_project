@@ -1,6 +1,7 @@
 package com.javarush.quest.shubchynskyi.controllers.quest_controllers;
 
 
+import com.javarush.quest.shubchynskyi.config.RoleConfig;
 import com.javarush.quest.shubchynskyi.constant.Route;
 import com.javarush.quest.shubchynskyi.dto.QuestDTO;
 import com.javarush.quest.shubchynskyi.dto.QuestionDTO;
@@ -8,7 +9,6 @@ import com.javarush.quest.shubchynskyi.dto.UserDTO;
 import com.javarush.quest.shubchynskyi.entity.Answer;
 import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.Question;
-import com.javarush.quest.shubchynskyi.entity.Role;
 import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import com.javarush.quest.shubchynskyi.mapper.QuestMapper;
 import com.javarush.quest.shubchynskyi.service.*;
@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -47,9 +46,6 @@ public class QuestEditController {
     private final ImageService imageService;
     private final QuestMapper questMapper;
     private final ValidationService validationService;
-
-    protected static final List<Role> ALLOWED_ROLES_FOR_QUEST_EDIT =
-            List.of(Role.MODERATOR, Role.ADMIN);
 
     @GetMapping(QUEST_EDIT)
     public String showQuestForEdit(
@@ -227,7 +223,7 @@ public class QuestEditController {
     }
 
     private boolean isAccessDenied(HttpSession session, RedirectAttributes redirectAttributes, Long authorId) {
-        return validationService.checkUserAccessDenied(session, ALLOWED_ROLES_FOR_QUEST_EDIT, redirectAttributes, authorId);
+        return validationService.checkUserAccessDenied(session, RoleConfig.ALLOWED_ROLES_FOR_QUEST_EDIT, redirectAttributes, authorId);
     }
 
     private String getRedirectUrl(String source) {
