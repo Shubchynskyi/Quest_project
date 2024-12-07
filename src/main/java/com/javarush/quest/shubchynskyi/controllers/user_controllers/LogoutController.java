@@ -26,5 +26,5 @@ public class LogoutController {
         session.invalidate();
         return REDIRECT + Route.INDEX;
     }
-}
 
+}

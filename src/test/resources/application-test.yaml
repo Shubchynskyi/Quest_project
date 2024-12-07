@@ -76,3 +76,9 @@ game:
     invalid: "Invalid game state"
     play: "PLAY"
     win: "WIN"
+
+# e2e tests data
+e2e:
+  admin:
+    login: "admin"
+    password: "admin123"

@@ -148,6 +148,15 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Webdriver Manager for Selenium -->
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>5.9.2</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- ********************* Logging Configuration ********************* -->
@@ -208,11 +217,32 @@
                 </configuration>
             </plugin>
 
-            <!-- Failsafe Plugin for Integration and E2E Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-<!--                <version>3.0.0-M7</version>-->
+                <executions>
+                    <!-- Integration tests -->
+                    <execution>
+                        <id>integration-tests</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*IT.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                    <!-- e2e tests -->
+                    <execution>
+                        <id>e2e-tests</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <!-- JVM arguments for dynamic agent loading -->
                     <argLine>-XX:+EnableDynamicAgentLoading</argLine>
@@ -220,60 +250,11 @@
                     <classpathDependencyExcludes>
                         <classpathDependencyExclude>org.apache.logging.log4j:log4j-slf4j2-impl</classpathDependencyExclude>
                     </classpathDependencyExcludes>
-                    <!-- System properties for Selenium WebDriver -->
-                    <systemPropertyVariables>
-                        <webdriver.chrome.driver>/path/to/chromedriver</webdriver.chrome.driver>
-                    </systemPropertyVariables>
+                    <includes>
+                        <include>**/*E2ETest.java</include>
+                    </includes>
                 </configuration>
             </plugin>
-
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-failsafe-plugin</artifactId>-->
-<!--                <executions>-->
-<!--                    &lt;!&ndash; Execution for Integration Tests &ndash;&gt;-->
-<!--                    <execution>-->
-<!--                        <id>integration-tests</id>-->
-<!--                        <phase>integration-test</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>integration-test</goal>-->
-<!--                            <goal>verify</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <includes>-->
-<!--                                <include>**/integration/**/*.java</include>-->
-<!--                            </includes>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                    &lt;!&ndash;Execution for End-to-End Tests &ndash;&gt;-->
-<!--                    <execution>-->
-<!--                        <id>e2e-tests</id>-->
-<!--                        <phase>verify</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>integration-test</goal>-->
-<!--                            <goal>verify</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            &lt;!&ndash; Include e2e tests located in the 'e2e' directory &ndash;&gt;-->
-<!--                            <includes>-->
-<!--                                <include>**/e2e/**/*.java</include>-->
-<!--                            </includes>-->
-<!--                            &lt;!&ndash; System properties for Selenium WebDriver &ndash;&gt;-->
-<!--                            <systemPropertyVariables>-->
-<!--                                <webdriver.chrome.driver>/path/to/chromedriver</webdriver.chrome.driver>-->
-<!--                            </systemPropertyVariables>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    &lt;!&ndash; JVM arguments for dynamic agent loading &ndash;&gt;-->
-<!--                    <argLine>-XX:+EnableDynamicAgentLoading</argLine>-->
-<!--                    &lt;!&ndash; Exclude standard logging implementation from integration tests &ndash;&gt;-->
-<!--                    <classpathDependencyExcludes>-->
-<!--                        <classpathDependencyExclude>org.apache.logging.log4j:log4j-slf4j2-impl</classpathDependencyExclude>-->
-<!--                    </classpathDependencyExcludes>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
 
 
             <!-- Maven Compiler Plugin -->
