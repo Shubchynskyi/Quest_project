@@ -190,7 +190,7 @@
         <insert tableName="answer">
             <column name="id" valueNumeric="16"/>
             <column name="next_question_id" valueNumeric="10"/>
-            <column name="question_id" valueNumeric="10"/>
+            <column name="question_id" valueNumeric="12"/>
             <column name="text" value="Go right - you'll find your death"/>
         </insert>
         <insert tableName="answer">

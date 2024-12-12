@@ -82,3 +82,9 @@ e2e:
   admin:
     login: "admin"
     password: "admin123"
+  moderator:
+    login: "moderator"
+    password: "moderator123"
+  user:
+    login: "user"
+    password: "user123"
