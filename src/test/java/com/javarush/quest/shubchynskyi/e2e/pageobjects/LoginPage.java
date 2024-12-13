@@ -5,6 +5,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.LOGIN_URL;
+
 public class LoginPage extends BasePage {
 
     @FindBy(id = "userLogin")
@@ -24,7 +26,7 @@ public class LoginPage extends BasePage {
     }
 
     public void open() {
-        driver.get(getBaseUrl() + "/login");
+        driver.get(getBaseUrl() + LOGIN_URL);
         wait.until(ExpectedConditions.visibilityOf(loginField));
     }
 
@@ -43,7 +45,7 @@ public class LoginPage extends BasePage {
     }
 
     public boolean isOnLoginPage() {
-        return getCurrentUrl().contains("/login");
+        return getCurrentUrl().contains(LOGIN_URL);
     }
 
     public boolean isErrorDisplayed() {

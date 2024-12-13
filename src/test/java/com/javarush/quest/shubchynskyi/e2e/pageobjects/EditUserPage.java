@@ -5,16 +5,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.USER_URL;
+
 public class EditUserPage extends BasePage {
-
-    @FindBy(id = "editUserForm")
-    private WebElement editUserForm;
-
-    @FindBy(id = "saveButton")
-    private WebElement saveButton;
-
-    @FindBy(id = "cancelButton")
-    private WebElement cancelButton;
 
     @FindBy(id = "login")
     private WebElement loginField;
@@ -22,27 +15,19 @@ public class EditUserPage extends BasePage {
     @FindBy(id = "password")
     private WebElement passwordField;
 
-//    @FindBy(id = "updateOrCreate")
-//    private WebElement saveButton;
+    @FindBy(id = "updateOrCreate")
+    private WebElement saveButton;
 
-    @FindBy(css = "button.btn-danger")
+    @FindBy(id = "delete")
     private WebElement deleteButton;
 
     public EditUserPage(WebDriver driver, int port) {
         super(driver, port);
-        wait.until(ExpectedConditions.visibilityOf(editUserForm));
+        wait.until(ExpectedConditions.visibilityOf(loginField));
     }
 
     public boolean isOnEditUserPage() {
-        return getCurrentUrl().contains("/user");
-    }
-
-    public void clickSaveButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(saveButton)).click();
-    }
-
-    public void clickCancelButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(cancelButton)).click();
+        return getCurrentUrl().contains(USER_URL);
     }
 
     public void fillLogin(String login) {
@@ -56,10 +41,10 @@ public class EditUserPage extends BasePage {
     }
 
     public void clickSave() {
-        saveButton.click();
+        wait.until(ExpectedConditions.elementToBeClickable(saveButton)).click();
     }
 
     public void clickDelete() {
-        deleteButton.click();
+        wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
     }
 }

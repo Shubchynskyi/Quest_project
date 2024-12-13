@@ -7,12 +7,24 @@ public class TestConstants {
 
     //**************  HTTP and URL Constants  **************//
     public static final String ACCEPT_LANGUAGE_HEADER = "Accept-Language";
-    public static final String QUEST_EDIT_URL = "quest-edit?id=";
+    public static final String QUEST_EDIT_ID_URL = "quest-edit?id=";
     public static final String LABEL_URL_FRAGMENT = "#label-";
     public static final String REDIRECT_URL_PATTERN_NEXT_QUESTION = "quest?id=%s&question=*";
     public static final String QUERY_PARAM_ID = "?id=";
     public static final String WILDCARD = "*";
     public static final String SOURCE_URL = "source";
+    public static final String INDEX_URL = "/";
+    public static final String USER_URL = "/user";
+    public static final String PROFILE_URL = "/profile";
+    public static final String USERS_URL = "/users";
+    public static final String LOGIN_URL = "/login";
+    public static final String LOGOUT_URL = "/logout";
+    public static final String SIGNUP_URL = "/signup";
+    public static final String QUEST_URL = "/quest";
+    public static final String QUESTS_LIST_URL = "/quests-list";
+    public static final String QUEST_EDIT_URL = "/quest-edit";
+    public static final String CREATE_QUEST_URL = "/create-quest";
+    public static final String QUEST_DELETE_URL = "/quest-delete";
 
     //**************  File and Directory Constants  **************//
     public static final String TEST_IMAGES_DIR = "target/test-images";
@@ -34,6 +46,8 @@ public class TestConstants {
     public static final String UPDATED_QUEST_DESCRIPTION = "Updated Quest Description";
     public static final String UPDATED_QUESTION_TEXT = "Updated Question Text";
     public static final String UPDATED_ANSWER_TEXT = "Updated Answer Text";
+    public static final String UPDATED_USER_LOGIN = "updatedUser";
+    public static final String UPDATED_USER_PASSWORD = "updatedPass";
     public static final String VALID_QUEST_TEXT = """
             1: Test question
             2< Answer to won
@@ -83,15 +97,5 @@ public class TestConstants {
     public static final String INCORRECT_QUEST_ID = "no id";
     public static final Long TEST_QUESTION_ID = 1L;
     public static final Long TEST_ANSWER_ID = 1L;
-
-
-//    public static final Long TEST_USER_ID = 1L;
-//    public static final String TEST_USER_LOGIN = "testUser";
-//    public static final String TEST_USER_PASSWORD = "testPass";
-    public static final String UPDATED_USER_LOGIN = "updatedUser";
-    public static final String UPDATED_USER_PASSWORD = "updatedPass";
-//    public static final String INVALID_USER_PASSWORD = "invalidPass";
-//    public static final String USER_NOT_FOUND_WITH_ID = "USER_NOT_FOUND_WITH_ID ";
-
 
 }

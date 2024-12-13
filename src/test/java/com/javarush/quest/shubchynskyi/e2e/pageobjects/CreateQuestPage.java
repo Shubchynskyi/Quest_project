@@ -4,6 +4,8 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.CREATE_QUEST_URL;
+
 public class CreateQuestPage extends BasePage {
 
     @FindBy(id = "questName")
@@ -32,7 +34,7 @@ public class CreateQuestPage extends BasePage {
     }
 
     public void open() {
-        driver.get(getBaseUrl() + "/create-quest");
+        driver.get(getBaseUrl() + CREATE_QUEST_URL);
         wait.until(ExpectedConditions.visibilityOf(questNameField));
     }
 

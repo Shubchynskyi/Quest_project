@@ -188,7 +188,7 @@ public class QuestEditControllerIT {
                         .param(AUTHOR_ID, existingQuest.getAuthor().getId().toString())
                         .sessionAttr(USER, authorUser))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_URL + validQuestId));
+                .andExpect(redirectedUrl(QUEST_EDIT_ID_URL + validQuestId));
 
         Quest updatedQuest = getExistingQuest();
         assertEquals(questName, updatedQuest.getName());
@@ -212,7 +212,7 @@ public class QuestEditControllerIT {
                         .param(AUTHOR_ID, existingQuest.getAuthor().getId().toString())
                         .sessionAttr(USER, authorUser))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_URL + validQuestId + LABEL_URL_FRAGMENT + question.getId()));
+                .andExpect(redirectedUrl(QUEST_EDIT_ID_URL + validQuestId + LABEL_URL_FRAGMENT + question.getId()));
 
         Question updatedQuestion = questionService.get(question.getId()).orElseThrow();
         assertEquals(updatedQuestionText, updatedQuestion.getText());
@@ -236,7 +236,7 @@ public class QuestEditControllerIT {
                         .param(AUTHOR_ID, existingQuest.getAuthor().getId().toString())
                         .sessionAttr(USER, authorUser))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_URL + existingQuest.getId() + LABEL_URL_FRAGMENT + question.getId()));
+                .andExpect(redirectedUrl(QUEST_EDIT_ID_URL + existingQuest.getId() + LABEL_URL_FRAGMENT + question.getId()));
 
         Answer updatedAnswer = answerService.get(answer.getId()).orElseThrow();
         assertEquals(updatedAnswerText, updatedAnswer.getText());
@@ -261,7 +261,7 @@ public class QuestEditControllerIT {
                         .param(AUTHOR_ID, existingQuest.getAuthor().getId().toString())
                         .sessionAttr(USER, authorUser))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_URL + validQuestId));
+                .andExpect(redirectedUrl(QUEST_EDIT_ID_URL + validQuestId));
 
         mockMvc.perform(multipart(TestPathResolver.resolvePath(Route.QUEST_EDIT))
                         .file(imageFile)
@@ -272,7 +272,7 @@ public class QuestEditControllerIT {
                         .param(AUTHOR_ID, existingQuest.getAuthor().getId().toString())
                         .sessionAttr(USER, authorUser))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_URL + validQuestId + LABEL_URL_FRAGMENT + question.getId()));
+                .andExpect(redirectedUrl(QUEST_EDIT_ID_URL + validQuestId + LABEL_URL_FRAGMENT + question.getId()));
 
         validateImages(imageBytes, existingQuest.getImage(), question.getImage());
     }
@@ -291,7 +291,7 @@ public class QuestEditControllerIT {
                         .param(AUTHOR_ID, existingQuest.getAuthor().getId().toString())
                         .sessionAttr(USER, authorUser))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_URL + validQuestId))
+                .andExpect(redirectedUrl(QUEST_EDIT_ID_URL + validQuestId))
                 .andExpect(flash().attributeExists(FIELD_ERRORS));
     }
 
@@ -333,7 +333,7 @@ public class QuestEditControllerIT {
                         .param(AUTHOR_ID, existingQuest.getAuthor().getId().toString())
                         .sessionAttr(USER, authorUser))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_URL + validQuestId))
+                .andExpect(redirectedUrl(QUEST_EDIT_ID_URL + validQuestId))
                 .andExpect(flash().attributeExists(QUEST_IMAGE_ERROR));
     }
 
@@ -349,7 +349,7 @@ public class QuestEditControllerIT {
                         .param(AUTHOR_ID, existingQuest.getAuthor().getId().toString())
                         .sessionAttr(USER, authorUser))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(QUEST_EDIT_URL + validQuestId))
+                .andExpect(redirectedUrl(QUEST_EDIT_ID_URL + validQuestId))
                 .andExpect(flash().attributeExists(FIELD_ERRORS));
     }
 

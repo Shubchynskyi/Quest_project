@@ -17,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.LOGIN_URL;
+
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
         classes = {App.class, PostgresContainerConfiguration.class, TestLocaleConfiguration.class}
@@ -48,6 +50,9 @@ public abstract class BaseE2ETest {
     @Value("${e2e.user.password}")
     protected String userPassword;
 
+    @Value("${e2e.headlessIsOn}")
+    private Boolean headlessIsOn;
+
     @BeforeAll
     public static void setUpClass() {
         WebDriverManager.chromedriver().setup();
@@ -60,7 +65,9 @@ public abstract class BaseE2ETest {
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--lang=en-US");
-        options.addArguments("--headless=new"); //todo
+        if (headlessIsOn) {
+            options.addArguments("--headless");
+        }
         driver = new ChromeDriver(options);
     }
 
@@ -76,7 +83,7 @@ public abstract class BaseE2ETest {
     }
 
     protected void loginAs(String login, String password) {
-        driver.get(getBaseUrl() + "/login");
+        driver.get(getBaseUrl() + LOGIN_URL);
         WebElement loginField = driver.findElement(By.id("userLogin"));
         WebElement passwordField = driver.findElement(By.id("userPassword"));
         WebElement submitButton = driver.findElement(By.id("submit"));

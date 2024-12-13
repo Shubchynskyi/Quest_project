@@ -1,32 +1,33 @@
 package com.javarush.quest.shubchynskyi.e2e;
 
 import com.javarush.quest.shubchynskyi.e2e.pageobjects.CreateQuestPage;
-import com.javarush.quest.shubchynskyi.e2e.pageobjects.QuestEditPage;
 import com.javarush.quest.shubchynskyi.e2e.pageobjects.ProfilePage;
-import org.junit.jupiter.api.*;
-import org.openqa.selenium.*;
+import com.javarush.quest.shubchynskyi.e2e.pageobjects.QuestEditPage;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
 
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class QuestManagementE2ETest extends BaseE2ETest {
 
     @Test
-//    @Order(1)
     @DisplayName("Should redirect to login when accessing create quest without authentication")
     void shouldRedirectToLoginWhenAccessingCreateQuestWithoutAuthentication() {
-        driver.get(getBaseUrl() + "/create-quest");
+        driver.get(getBaseUrl() + CREATE_QUEST_URL);
         String currentUrl = driver.getCurrentUrl();
-        assertTrue(currentUrl.contains("/login"));
+        assertTrue(currentUrl.contains(LOGIN_URL));
     }
 
     @Test
-//    @Order(2)
     @DisplayName("Should show validation errors for empty fields")
     void shouldShowValidationErrorsForEmptyFields() {
         loginAsUser();
@@ -38,7 +39,6 @@ public class QuestManagementE2ETest extends BaseE2ETest {
     }
 
     @Test
-//    @Order(3)
     @DisplayName("Quest management CRUD test")
     void questManagementCRUDTest() {
         loginAsUser();
@@ -52,19 +52,19 @@ public class QuestManagementE2ETest extends BaseE2ETest {
         createQuestPage.setQuestText(modalText);
         createQuestPage.clickCreateButton();
         String currentUrl = driver.getCurrentUrl();
-        assertTrue(currentUrl.contains("/quest-edit"));
+        assertTrue(currentUrl.contains(QUEST_EDIT_URL));
 
         QuestEditPage questEditPage = new QuestEditPage(driver, port);
         questEditPage.setQuestName("Edited Quest Name");
         questEditPage.setQuestDescription("Edited Quest Description");
         questEditPage.clickSaveQuestButton();
         currentUrl = driver.getCurrentUrl();
-        assertTrue(currentUrl.contains("/quest-edit"));
+        assertTrue(currentUrl.contains(QUEST_EDIT_URL));
         assertEquals("Edited Quest Name", questEditPage.getQuestName());
         assertEquals("Edited Quest Description", questEditPage.getQuestDescription());
         questEditPage.clickToQuestsListButton();
         currentUrl = driver.getCurrentUrl();
-        assertTrue(currentUrl.contains("/profile"));
+        assertTrue(currentUrl.contains(PROFILE_URL));
 
         ProfilePage profilePage = new ProfilePage(driver, port);
         List<WebElement> questCards = profilePage.getQuestCards();
@@ -78,7 +78,6 @@ public class QuestManagementE2ETest extends BaseE2ETest {
     }
 
     @Test
-//    @Order(4)
     @DisplayName("Should show errors for duplicate and invalid quest data")
     void shouldShowErrorsForDuplicateAndInvalidQuestData() {
         loginAsAdmin();

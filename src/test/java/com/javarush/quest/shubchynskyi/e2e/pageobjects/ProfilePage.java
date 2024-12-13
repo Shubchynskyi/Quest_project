@@ -9,6 +9,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.PROFILE_URL;
+
 public class ProfilePage extends BasePage {
 
     @FindBy(xpath = "//h5[contains(text(), 'Login:')]")
@@ -29,7 +31,7 @@ public class ProfilePage extends BasePage {
     }
 
     public void open() {
-        driver.get(getBaseUrl() + "/profile");
+        driver.get(getBaseUrl() + PROFILE_URL);
         wait.until(ExpectedConditions.visibilityOf(loginTextElement));
     }
 
@@ -56,7 +58,7 @@ public class ProfilePage extends BasePage {
     }
 
     public boolean isOnProfilePage() {
-        return getCurrentUrl().contains("/profile");
+        return getCurrentUrl().contains(PROFILE_URL);
     }
 
     public void clickDeleteQuestButtonForFirstQuest() {

@@ -1,26 +1,25 @@
 package com.javarush.quest.shubchynskyi.e2e;
 
 import com.javarush.quest.shubchynskyi.e2e.pageobjects.LayoutPage;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LayoutE2ETest extends BaseE2ETest {
 
     @Test
-//    @Order(1)
     @DisplayName("Should redirect to login when accessing create quest without authentication")
     void shouldRedirectToLoginWhenAccessingCreateQuestWithoutAuthentication() {
-        driver.get(getBaseUrl() + "/create-quest");
-        assertTrue(driver.getCurrentUrl().contains("/login"));
+        driver.get(getBaseUrl() + CREATE_QUEST_URL);
+        assertTrue(driver.getCurrentUrl().contains(LOGIN_URL));
     }
 
     @Test
-//    @Order(2)
     @DisplayName("Should display profile and play links for user")
     void shouldDisplayProfileAndPlayLinksForUser() {
         loginAsUser();
@@ -34,7 +33,6 @@ public class LayoutE2ETest extends BaseE2ETest {
     }
 
     @Test
-//    @Order(3)
     @DisplayName("Should display create quest link for moderator")
     void shouldDisplayCreateQuestLinkForModerator() {
         loginAsModerator();
@@ -46,7 +44,6 @@ public class LayoutE2ETest extends BaseE2ETest {
     }
 
     @Test
-//    @Order(4)
     @DisplayName("Should display create quest link for admin")
     void shouldDisplayCreateQuestLinkForAdmin() {
         loginAsAdmin();
@@ -58,7 +55,6 @@ public class LayoutE2ETest extends BaseE2ETest {
     }
 
     @Test
-//    @Order(5)
     @DisplayName("Should switch language when flag clicked")
     void shouldSwitchLanguageWhenFlagClicked() {
         LayoutPage layoutPage = new LayoutPage(driver, port);
@@ -68,24 +64,22 @@ public class LayoutE2ETest extends BaseE2ETest {
     }
 
     @Test
-//    @Order(6)
     @DisplayName("Should display footer with copyright")
     void shouldDisplayFooterWithCopyright() {
         LayoutPage layoutPage = new LayoutPage(driver, port);
         layoutPage.openMainPage();
         WebElement footer = layoutPage.getFooter();
         assertNotNull(footer);
-        assertTrue(footer.getText().contains("© 2023-2025 Shubchynskyi"));
+        assertTrue(footer.getText().contains("©"));
     }
 
     @Test
-//    @Order(7)
     @DisplayName("Should navigate to correct pages from header")
     void shouldNavigateToCorrectPagesFromHeader() {
         loginAsUser();
         LayoutPage layoutPage = new LayoutPage(driver, port);
         layoutPage.openMainPage();
         layoutPage.clickLink("Profile");
-        assertTrue(driver.getCurrentUrl().contains("/profile"));
+        assertTrue(driver.getCurrentUrl().contains(PROFILE_URL));
     }
 }

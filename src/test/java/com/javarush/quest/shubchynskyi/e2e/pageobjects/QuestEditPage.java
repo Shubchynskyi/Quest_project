@@ -1,8 +1,13 @@
 package com.javarush.quest.shubchynskyi.e2e.pageobjects;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.*;
 
 public class QuestEditPage extends BasePage {
 
@@ -21,10 +26,6 @@ public class QuestEditPage extends BasePage {
     public QuestEditPage(WebDriver driver, int port) {
         super(driver, port);
         wait.until(ExpectedConditions.visibilityOf(questNameField));
-    }
-
-    public boolean isOnQuestEditPage() {
-        return getCurrentUrl().contains("/quest-edit");
     }
 
     public void setQuestName(String name) {
@@ -52,13 +53,13 @@ public class QuestEditPage extends BasePage {
         } catch (ElementClickInterceptedException e) {
             ((JavascriptExecutor) driver).executeScript("arguments[0].click();", saveQuestButton);
         }
-        wait.until(driver -> getCurrentUrl().contains("/quest-edit"));
+        wait.until(driver -> getCurrentUrl().contains(QUEST_EDIT_URL));
     }
 
     public void clickToQuestsListButton() {
         wait.until(ExpectedConditions.elementToBeClickable(toQuestsListButton));
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", toQuestsListButton);
         toQuestsListButton.click();
-        wait.until(driver -> getCurrentUrl().contains("/profile") || getCurrentUrl().contains("/quests-list"));
+        wait.until(driver -> getCurrentUrl().contains(PROFILE_URL) || getCurrentUrl().contains(QUESTS_LIST_URL));
     }
 }

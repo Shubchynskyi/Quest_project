@@ -1,20 +1,15 @@
 package com.javarush.quest.shubchynskyi.e2e;
 
 import com.javarush.quest.shubchynskyi.e2e.pageobjects.ProfilePage;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ProfileE2ETest extends BaseE2ETest {
 
     private ProfilePage profilePage;
@@ -25,15 +20,13 @@ public class ProfileE2ETest extends BaseE2ETest {
     }
 
     @Test
-//    @Order(1)
     @DisplayName("Should redirect to login when accessing profile without authentication")
     public void shouldRedirectToLoginWhenAccessingProfileWithoutAuthentication() {
-        driver.get(getBaseUrl() + "/profile");
-        assertTrue(driver.getCurrentUrl().contains("/login"));
+        driver.get(getBaseUrl() + PROFILE_URL);
+        assertTrue(driver.getCurrentUrl().contains(LOGIN_URL));
     }
 
     @Test
-//    @Order(2)
     @DisplayName("Should display profile for admin")
     public void shouldDisplayProfileForAdmin() {
         loginAsAdmin();
@@ -44,17 +37,15 @@ public class ProfileE2ETest extends BaseE2ETest {
     }
 
     @Test
-//    @Order(3)
     @DisplayName("Should redirect to edit user page")
     public void shouldRedirectToEditUserPage() {
         loginAsAdmin();
         profilePage.open();
         profilePage.clickEditUserButton();
-        assertTrue(driver.getCurrentUrl().contains("/user"));
+        assertTrue(driver.getCurrentUrl().contains(USER_URL));
     }
 
     @Test
-//    @Order(4)
     @DisplayName("Should display quests for admin")
     public void shouldDisplayQuestsForAdmin() {
         loginAsAdmin();
@@ -70,7 +61,6 @@ public class ProfileE2ETest extends BaseE2ETest {
     }
 
     @Test
-//    @Order(5)
     @DisplayName("Should redirect to edit quest page")
     public void shouldRedirectToEditQuestPage() {
         loginAsAdmin();
@@ -78,11 +68,10 @@ public class ProfileE2ETest extends BaseE2ETest {
         List<WebElement> questCards = profilePage.getQuestCards();
         if (questCards.isEmpty()) fail("No quests available to edit.");
         profilePage.clickEditQuestButtonForFirstQuest();
-        assertTrue(driver.getCurrentUrl().contains("/quest-edit"));
+        assertTrue(driver.getCurrentUrl().contains(QUEST_EDIT_URL));
     }
 
     @Test
-//    @Order(6)
     @DisplayName("Should show delete confirmation for quest")
     public void shouldShowDeleteConfirmationForQuest() {
         loginAsAdmin();

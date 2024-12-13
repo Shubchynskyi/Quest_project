@@ -6,6 +6,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.USERS_URL;
+
 public class UsersPage extends BasePage {
 
     @FindBy(css = "div.card")
@@ -16,17 +18,13 @@ public class UsersPage extends BasePage {
     }
 
     public void open() {
-        driver.get(getBaseUrl() + "/users");
+        driver.get(getBaseUrl() + USERS_URL);
         waitForPageToLoad();
     }
 
     public List<WebElement> getUserCards() {
         wait.until(ExpectedConditions.visibilityOfAllElements(userCards));
         return driver.findElements(By.cssSelector("div.card"));
-    }
-
-    public String getUserLogin(WebElement userCard) {
-        return userCard.findElement(By.cssSelector(".card-title")).getText();
     }
 
     public void clickEditButton(WebElement userCard) {

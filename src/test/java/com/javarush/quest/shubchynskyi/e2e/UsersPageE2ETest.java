@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
 
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -30,48 +31,45 @@ public class UsersPageE2ETest extends BaseE2ETest {
         UsersPage usersPage = new UsersPage(driver, port);
         usersPage.open();
 
+        usersPage.waitForPageToLoad();
         List<WebElement> userCards = usersPage.getUserCards();
         assertFalse(userCards.isEmpty(), "No user cards found on the page.");
 
-        for (int i = 0; i < userCards.size(); i++) {
-            // Refresh user cards before accessing each one
-            userCards = usersPage.getUserCards();
-            WebElement userCard = userCards.get(i);
-
-            String userLogin = usersPage.getUserLogin(userCard);
-
-//            // Skip admin user
-//            if ("admin".equalsIgnoreCase(userLogin)) {
-//                continue;
-//            }
-
-            // Test the "Edit" button
+        for (WebElement userCard : userCards) {
+            // Click edit button
             usersPage.clickEditButton(userCard);
-            assertTrue(driver.getCurrentUrl().contains("/user"), "Edit button did not redirect to /user.");
+            assertTrue(driver.getCurrentUrl().contains(USER_URL), "Edit button did not redirect to /user.");
+
+            // Navigate back and wait for reload
             driver.navigate().back();
             usersPage.waitForPageToLoad();
 
-            // Refresh user cards again to avoid stale elements
-            userCards = usersPage.getUserCards();
-            userCard = userCards.get(i);
-
-            // Test the "Delete" button
+            // Click delete button
             usersPage.clickDeleteButton(userCard);
 
+            // Confirm alert
             Alert alert = new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.alertIsPresent());
             assertNotNull(alert, "Delete confirmation alert not displayed.");
-            alert.dismiss(); // Cancel the deletion
+            alert.dismiss();
+
+            // Динамическое ожидание исчезновения алерта
+            new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.not(ExpectedConditions.alertIsPresent()));
+
+            // Дополнительное ожидание стабилизации DOM (если требуется)
+            usersPage.waitForPageToLoad(); // Дождаться, что DOM вернулся в стабильное состояние
         }
     }
 
+
+
     @Test
-    @Order(2)
+//    @Order(2)
     @DisplayName("Unauthorized user should not have access to users page")
     void unauthorizedUserShouldNotHaveAccessToUsersPage() {
         loginAsUser();
-        driver.get(getBaseUrl() + "/users");
+        driver.get(getBaseUrl() + USERS_URL);
         String currentUrl = driver.getCurrentUrl();
-        assertTrue(currentUrl.contains("/"));
+        assertTrue(currentUrl.contains(INDEX_URL));
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(

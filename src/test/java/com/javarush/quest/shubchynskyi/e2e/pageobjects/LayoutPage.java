@@ -1,9 +1,13 @@
 package com.javarush.quest.shubchynskyi.e2e.pageobjects;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
+
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.INDEX_URL;
 
 public class LayoutPage extends BasePage {
 
@@ -12,7 +16,7 @@ public class LayoutPage extends BasePage {
     }
 
     public void openMainPage() {
-        driver.get(getBaseUrl() + "/");
+        driver.get(getBaseUrl() + INDEX_URL);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("header")));
     }
 
@@ -24,13 +28,8 @@ public class LayoutPage extends BasePage {
         return getHeader().findElements(By.tagName("a"));
     }
 
-    public boolean hasLink(String text) {
-        return getHeaderLinks().stream().anyMatch(link -> link.getText().contains(text));
-    }
-
     public void clickLink(String text) {
-        WebElement link = getHeaderLinks().stream().filter(l -> l.getText().contains(text)).findFirst().orElse(null);
-        if (link != null) link.click();
+        getHeaderLinks().stream().filter(l -> l.getText().contains(text)).findFirst().ifPresent(WebElement::click);
     }
 
     public void changeLanguage(String lang) {

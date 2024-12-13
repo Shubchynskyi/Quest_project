@@ -6,27 +6,29 @@ import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.PROFILE_URL;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SignupPageE2ETest extends BaseE2ETest {
 
     @Test
-    @Order(1)
+//    @Order(1)
     @DisplayName("Should register a user successfully")
     public void shouldRegisterUserSuccessfully() {
         SignupPage signupPage = new SignupPage(driver, port);
         signupPage.open();
 
-        signupPage.fillLogin("newuser");
+        signupPage.fillLogin("newuser156");
         signupPage.fillPassword("password123");
         signupPage.selectRole("USER");
         signupPage.clickSignUp();
 
-        // Проверка редиректа
-        assertTrue(driver.getCurrentUrl().contains("/profile"), "User was not redirected to /profile.");
+        String currentUrl = driver.getCurrentUrl();
+        System.err.println(currentUrl);
 
-        // Проверка отображения данных на странице профиля
+        assertTrue(currentUrl.contains(PROFILE_URL), "User was not redirected to /profile.");
+
         WebElement loginInfo = driver.findElement(By.xpath("//h5[contains(text(), 'Login:')]"));
         WebElement roleInfo = driver.findElement(By.xpath("//h5[contains(text(), 'Role:')]"));
         assertNotNull(loginInfo, "Login info is not displayed.");
@@ -36,13 +38,13 @@ public class SignupPageE2ETest extends BaseE2ETest {
     }
 
     @Test
-    @Order(2)
+//    @Order(2)
     @DisplayName("Should show error for duplicate login")
     public void shouldShowErrorForDuplicateLogin() {
         SignupPage signupPage = new SignupPage(driver, port);
         signupPage.open();
 
-        signupPage.fillLogin("admin"); // Используем существующий логин
+        signupPage.fillLogin("admin");
         signupPage.fillPassword("password123");
         signupPage.selectRole("USER");
         signupPage.clickSignUp();
@@ -52,13 +54,13 @@ public class SignupPageE2ETest extends BaseE2ETest {
     }
 
     @Test
-    @Order(3)
+//    @Order(3)
     @DisplayName("Should show error for invalid login format")
     public void shouldShowErrorForInvalidLogin() {
         SignupPage signupPage = new SignupPage(driver, port);
         signupPage.open();
 
-        signupPage.fillLogin("%%"); // Некорректный формат
+        signupPage.fillLogin("%%");
         signupPage.fillPassword("password123");
         signupPage.selectRole("USER");
         signupPage.clickSignUp();
@@ -68,7 +70,7 @@ public class SignupPageE2ETest extends BaseE2ETest {
     }
 
     @Test
-    @Order(4)
+//    @Order(4)
     @DisplayName("Should validate empty fields")
     public void shouldValidateEmptyFields() {
         SignupPage signupPage = new SignupPage(driver, port);

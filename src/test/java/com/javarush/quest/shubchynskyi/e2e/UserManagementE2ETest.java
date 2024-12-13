@@ -1,172 +1,119 @@
-
-
 package com.javarush.quest.shubchynskyi.e2e;
 
-
-
-
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import com.javarush.quest.shubchynskyi.e2e.pageobjects.EditUserPage;
+import com.javarush.quest.shubchynskyi.e2e.pageobjects.ProfilePage;
+import com.javarush.quest.shubchynskyi.e2e.pageobjects.SignupPage;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.INDEX_URL;
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.SIGNUP_URL;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserManagementE2ETest extends BaseE2ETest {
 
-    private void registerUser(String login, String password, String role) {
-        driver.get("http://localhost:" + port + "/signup");
-        WebElement loginField = driver.findElement(By.id("login"));
-        WebElement passwordField = driver.findElement(By.id("password"));
-        WebElement roleSelect = driver.findElement(By.id("role"));
-        WebElement signupButton = driver.findElement(By.id("updateOrCreate"));
+    private WebDriverWait wait;
 
-        loginField.clear();
-        loginField.sendKeys(login);
-        passwordField.clear();
-        passwordField.sendKeys(password);
-        new Select(roleSelect).selectByVisibleText(role);
-        signupButton.click();
+    @BeforeEach
+    public void setUpWait() {
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    }
+
+    private void registerUser(String login, String password, String role) {
+        SignupPage signupPage = new SignupPage(driver, port);
+        signupPage.open();
+        signupPage.fillLogin(login);
+        signupPage.fillPassword(password);
+        signupPage.selectRole(role);
+        signupPage.clickSignUp();
     }
 
     @Test
-    @Order(1)
+//    @Order(1)
     public void shouldRegisterUserSuccessfully() {
         registerUser("newuser", "newuser123", "USER");
 
-        String currentUrl = driver.getCurrentUrl();
-        assertTrue(currentUrl.contains("/profile"), "Registration failed. Expected redirect to /profile.");
+        ProfilePage profilePage = new ProfilePage(driver, port);
+        assertTrue(profilePage.isOnProfilePage(), "Registration failed. Expected redirect to /profile.");
 
-        WebElement loginInfo = driver.findElement(By.xpath("//h5[contains(text(), 'Login:')]"));
-        WebElement roleInfo = driver.findElement(By.xpath("//h5[contains(text(), 'Role:')]"));
-        assertTrue(loginInfo.getText().contains("newuser"), "Incorrect login displayed on profile.");
-        assertTrue(roleInfo.getText().contains("USER"), "Incorrect role displayed on profile.");
+        assertTrue(profilePage.getLoginText().contains("newuser"), "Incorrect login displayed on profile.");
+        assertTrue(profilePage.getRoleText().contains("USER"), "Incorrect role displayed on profile.");
     }
 
     @Test
-    @Order(2)
+//    @Order(2)
     public void shouldEditAndDeleteUserProfileSuccessfully() {
         registerUser("edituser", "edituser123", "USER");
 
-        // Проверяем, что мы на странице профиля
-        String currentUrl = driver.getCurrentUrl();
-        assertTrue(currentUrl.contains("/profile"), "User was not redirected to profile page.");
+        ProfilePage profilePage = new ProfilePage(driver, port);
+        assertTrue(profilePage.isOnProfilePage(), "User was not redirected to profile page.");
 
-        // Нажимаем на кнопку "Edit"
-        WebElement editButton = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//form[@action='/profile']//button[contains(@class, 'btn-primary')]")
-                ));
-        editButton.click();
+        profilePage.clickEditUserButton();
+        EditUserPage editUserPage = new EditUserPage(driver, port);
+        assertTrue(editUserPage.isOnEditUserPage(), "Not on edit user page.");
 
-        // Проверяем, что мы на странице редактирования
-        WebElement loginField = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.presenceOfElementLocated(By.id("login")));
-        loginField.clear();
-        loginField.sendKeys("editeduser");
+        editUserPage.fillLogin("editeduser");
+        editUserPage.fillPassword("newpassword123");
+        editUserPage.clickSave();
 
-        WebElement passwordField = driver.findElement(By.id("password"));
-        passwordField.clear();
-        passwordField.sendKeys("newpassword123");
+        profilePage.open();
+        assertTrue(profilePage.getLoginText().contains("editeduser"), "Updated login is not displayed on profile.");
 
-        // Нажимаем кнопку "Save"
-        WebElement saveButton = driver.findElement(By.id("updateOrCreate"));
-        saveButton.click();
+        profilePage.clickEditUserButton();
+        editUserPage = new EditUserPage(driver, port);
+        editUserPage.clickDelete();
 
-        // Проверяем, что изменения сохранены
-        WebElement loginInfo = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfElementLocated(
-                        By.xpath("//h5[contains(text(), 'Login:')]")));
-        assertTrue(loginInfo.getText().contains("editeduser"), "Updated login is not displayed on profile.");
-
-        // Снова нажимаем "Edit" для проверки кнопки "Delete"
-        editButton = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.elementToBeClickable(
-                        By.xpath("//form[@action='/profile']//button[contains(@class, 'btn-primary')]")
-                ));
-        editButton.click();
-
-        // Проверяем наличие кнопки "Delete"
-        WebElement deleteButton = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.btn-danger")));
-        assertNotNull(deleteButton, "Delete button is not present.");
-
-        // Нажимаем "Delete" и подтверждаем удаление
-        deleteButton.click();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.alertIsPresent());
         driver.switchTo().alert().accept();
 
-        // Проверяем, что редирект произошёл на "/"
-        boolean isRedirectedToRoot = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.urlToBe("http://localhost:" + port + "/"));
-        assertTrue(isRedirectedToRoot, "User was not redirected to '/' after deletion.");
+        wait.until(ExpectedConditions.urlToBe(getBaseUrl() + INDEX_URL));
+        assertEquals(getBaseUrl() + INDEX_URL, driver.getCurrentUrl(),
+                "User was not redirected to '/' after deletion.");
 
-
-        // Проверяем, что пользователь больше не в сессии (проверяем доступность ссылки на логин)
-        WebElement loginLink = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Login")));
+        WebElement loginLink = wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Login")));
         assertNotNull(loginLink, "Login link is not displayed after user deletion.");
     }
 
-
     @Test
-    @Order(4)
+//    @Order(4)
     public void shouldShowErrorForExistingLogin() {
         registerUser("admin", "admin123", "USER");
 
-        String currentUrl = driver.getCurrentUrl();
-        assertTrue(currentUrl.contains("/signup"), "Expected to remain on /signup after error.");
+        assertTrue(driver.getCurrentUrl().contains(SIGNUP_URL), "Expected to remain on /signup after error.");
 
-        // Проверяем отображение ошибки
         WebElement errorAlert = driver.findElement(By.className("alert-danger"));
         assertNotNull(errorAlert, "Error message is not displayed.");
         assertEquals("Login already exists", errorAlert.getText());
     }
 
     @Test
-    @Order(5)
+//    @Order(5)
     public void shouldShowErrorForEmptyFields() {
-        driver.get("http://localhost:" + port + "/signup");
-        WebElement signupButton = driver.findElement(By.id("updateOrCreate"));
+        SignupPage signupPage = new SignupPage(driver, port);
+        signupPage.open();
+        signupPage.clickSignUp();
 
-        WebElement loginField = driver.findElement(By.id("login"));
-        WebElement passwordField = driver.findElement(By.id("password"));
-
-        loginField.clear();
-        passwordField.clear();
-        signupButton.click();
-
-        // Проверяем браузерную валидацию через атрибуты "required"
-        assertTrue(loginField.getAttribute("required").equals("true"), "Login field should be required.");
-        assertTrue(passwordField.getAttribute("required").equals("true"), "Password field should be required.");
+        assertTrue(signupPage.isFieldRequired("login"), "Login field should be required.");
+        assertTrue(signupPage.isFieldRequired("password"), "Password field should be required.");
     }
 
     @Test
-    @Order(6)
+//    @Order(6)
     public void shouldShowErrorForInvalidLoginFormat() {
-        driver.get("http://localhost:" + port + "/signup");
-        WebElement loginField = driver.findElement(By.id("login"));
-        WebElement passwordField = driver.findElement(By.id("password"));
-        WebElement roleSelect = driver.findElement(By.id("role"));
-        WebElement signupButton = driver.findElement(By.id("updateOrCreate"));
+        SignupPage signupPage = new SignupPage(driver, port);
+        signupPage.open();
 
-        loginField.clear();
-        loginField.sendKeys("%%"); // Неверный формат логина
-        passwordField.clear();
-        passwordField.sendKeys("validpassword123");
-        new Select(roleSelect).selectByVisibleText("USER");
-        signupButton.click();
+        signupPage.fillLogin("%%");
+        signupPage.fillPassword("validpassword123");
+        signupPage.selectRole("USER");
+        signupPage.clickSignUp();
 
-        // Проверяем сообщение об ошибке
         WebElement errorAlert = driver.findElement(By.className("alert-danger"));
         assertNotNull(errorAlert, "Error message is not displayed.");
         assertEquals("Login must be between 3 and 20 characters", errorAlert.getText());

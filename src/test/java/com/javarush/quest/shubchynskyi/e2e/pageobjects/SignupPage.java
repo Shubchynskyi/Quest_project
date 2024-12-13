@@ -5,6 +5,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.SIGNUP_URL;
+
 public class SignupPage extends BasePage {
 
     @FindBy(id = "login")
@@ -27,25 +29,22 @@ public class SignupPage extends BasePage {
     }
 
     public void open() {
-        driver.get(getBaseUrl() + "/signup");
+        driver.get(getBaseUrl() + SIGNUP_URL);
         wait.until(ExpectedConditions.visibilityOf(loginField));
     }
 
-    public SignupPage fillLogin(String login) {
+    public void fillLogin(String login) {
         loginField.clear();
         loginField.sendKeys(login);
-        return this;
     }
 
-    public SignupPage fillPassword(String password) {
+    public void fillPassword(String password) {
         passwordField.clear();
         passwordField.sendKeys(password);
-        return this;
     }
 
-    public SignupPage selectRole(String role) {
+    public void selectRole(String role) {
         new org.openqa.selenium.support.ui.Select(roleSelect).selectByVisibleText(role);
-        return this;
     }
 
     public void clickSignUp() {

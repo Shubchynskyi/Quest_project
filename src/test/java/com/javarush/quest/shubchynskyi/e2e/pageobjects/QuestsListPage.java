@@ -1,9 +1,13 @@
 package com.javarush.quest.shubchynskyi.e2e.pageobjects;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
+
+import static com.javarush.quest.shubchynskyi.test_config.TestConstants.QUESTS_LIST_URL;
 
 public class QuestsListPage extends BasePage {
 
@@ -12,7 +16,7 @@ public class QuestsListPage extends BasePage {
     }
 
     public void open() {
-        driver.get(getBaseUrl() + "/quests-list");
+        driver.get(getBaseUrl() + QUESTS_LIST_URL);
         wait.until(ExpectedConditions.visibilityOfElementLocated(org.openqa.selenium.By.className("card")));
     }
 
