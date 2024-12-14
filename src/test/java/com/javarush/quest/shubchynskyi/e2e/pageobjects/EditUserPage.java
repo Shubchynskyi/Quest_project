@@ -47,4 +47,5 @@ public class EditUserPage extends BasePage {
     public void clickDelete() {
         wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
     }
+
 }

@@ -4,6 +4,7 @@ import com.javarush.quest.shubchynskyi.e2e.pageobjects.LayoutPage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebElement;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -11,6 +12,9 @@ import static com.javarush.quest.shubchynskyi.test_config.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LayoutE2ETest extends BaseE2ETest {
+
+    @Value("${e2e.languageToChange}")
+    private String languageToChange;
 
     @Test
     @DisplayName("Should redirect to login when accessing create quest without authentication")
@@ -59,8 +63,8 @@ public class LayoutE2ETest extends BaseE2ETest {
     void shouldSwitchLanguageWhenFlagClicked() {
         LayoutPage layoutPage = new LayoutPage(driver, port);
         layoutPage.openMainPage();
-        layoutPage.changeLanguage("ru");
-        assertTrue(driver.getCurrentUrl().contains("lang=ru"));
+        layoutPage.changeLanguage(languageToChange);
+        assertTrue(driver.getCurrentUrl().contains("lang=" + languageToChange));
     }
 
     @Test

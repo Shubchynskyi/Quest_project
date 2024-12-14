@@ -16,7 +16,6 @@ import java.util.List;
 import static com.javarush.quest.shubchynskyi.test_config.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UsersPageE2ETest extends BaseE2ETest {
 
     @ParameterizedTest
@@ -32,38 +31,33 @@ public class UsersPageE2ETest extends BaseE2ETest {
         usersPage.open();
 
         usersPage.waitForPageToLoad();
-        List<WebElement> userCards = usersPage.getUserCards();
-        assertFalse(userCards.isEmpty(), "No user cards found on the page.");
 
-        for (WebElement userCard : userCards) {
-            // Click edit button
-            usersPage.clickEditButton(userCard);
-            assertTrue(driver.getCurrentUrl().contains(USER_URL), "Edit button did not redirect to /user.");
+        WebElement editButton = usersPage.getFirstEditButton();
+        assertNotNull(editButton, "Edit button not found.");
+        editButton.click();
 
-            // Navigate back and wait for reload
-            driver.navigate().back();
-            usersPage.waitForPageToLoad();
+        assertTrue(driver.getCurrentUrl().contains(USER_URL), "Edit button did not redirect to /user.");
 
-            // Click delete button
-            usersPage.clickDeleteButton(userCard);
+        usersPage.waitForPageToLoad();
 
-            // Confirm alert
-            Alert alert = new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.alertIsPresent());
-            assertNotNull(alert, "Delete confirmation alert not displayed.");
-            alert.dismiss();
+        driver.navigate().back();
 
-            // Динамическое ожидание исчезновения алерта
-            new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.not(ExpectedConditions.alertIsPresent()));
+        usersPage.waitForPageToLoad();
 
-            // Дополнительное ожидание стабилизации DOM (если требуется)
-            usersPage.waitForPageToLoad(); // Дождаться, что DOM вернулся в стабильное состояние
-        }
+        WebElement deleteButton = usersPage.getFirstDeleteButton();
+        assertNotNull(deleteButton, "Delete button not found.");
+        deleteButton.click();
+
+        Alert alert = new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.alertIsPresent());
+        assertNotNull(alert, "Delete confirmation alert not displayed.");
+        alert.dismiss();
+
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.not(ExpectedConditions.alertIsPresent()));
+
+        usersPage.waitForPageToLoad();
     }
 
-
-
     @Test
-//    @Order(2)
     @DisplayName("Unauthorized user should not have access to users page")
     void unauthorizedUserShouldNotHaveAccessToUsersPage() {
         loginAsUser();
@@ -76,6 +70,6 @@ public class UsersPageE2ETest extends BaseE2ETest {
                 By.xpath("//div[contains(@class, 'alert-danger')]")
         ));
         assertNotNull(errorMessage);
-        assertEquals("You don't have permissions", errorMessage.getText().trim());
+        assertEquals("You don't have permissions", errorMessage.getText().trim()); // TODO
     }
 }

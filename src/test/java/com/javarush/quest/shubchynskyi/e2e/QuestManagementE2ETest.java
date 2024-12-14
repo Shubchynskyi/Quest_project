@@ -10,6 +10,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Duration;
 import java.util.List;
@@ -18,6 +19,15 @@ import static com.javarush.quest.shubchynskyi.test_config.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class QuestManagementE2ETest extends BaseE2ETest {
+
+    @Value("${e2e.validQuestData.uniqueQuestName}")
+    private String uniqueQuestName;
+    @Value("${e2e.validQuestData.uniqueQuestNameDescription}")
+    private String uniqueQuestNameDescription;
+    @Value("${e2e.invalidQuestData.questText}")
+    private String invalidQuestText;
+
+    public static final String randomChar = "Q";
 
     @Test
     @DisplayName("Should redirect to login when accessing create quest without authentication")
@@ -44,8 +54,8 @@ public class QuestManagementE2ETest extends BaseE2ETest {
         loginAsUser();
         CreateQuestPage createQuestPage = new CreateQuestPage(driver, port);
         createQuestPage.open();
-        createQuestPage.setQuestName("Unique Quest");
-        createQuestPage.setQuestDescription("Unique Quest Description");
+        createQuestPage.setQuestName(uniqueQuestName);
+        createQuestPage.setQuestDescription(uniqueQuestNameDescription);
         createQuestPage.openModal1();
         String modalText = createQuestPage.getModal1Text();
         createQuestPage.closeModal1();
@@ -55,26 +65,35 @@ public class QuestManagementE2ETest extends BaseE2ETest {
         assertTrue(currentUrl.contains(QUEST_EDIT_URL));
 
         QuestEditPage questEditPage = new QuestEditPage(driver, port);
-        questEditPage.setQuestName("Edited Quest Name");
-        questEditPage.setQuestDescription("Edited Quest Description");
+        String editedQuestName = uniqueQuestName + randomChar;
+        String editedQuestDescription = uniqueQuestNameDescription + randomChar;
+        questEditPage.setQuestName(editedQuestName);
+        questEditPage.setQuestDescription(editedQuestDescription);
         questEditPage.clickSaveQuestButton();
         currentUrl = driver.getCurrentUrl();
         assertTrue(currentUrl.contains(QUEST_EDIT_URL));
-        assertEquals("Edited Quest Name", questEditPage.getQuestName());
-        assertEquals("Edited Quest Description", questEditPage.getQuestDescription());
+        assertEquals(editedQuestName, questEditPage.getQuestName());
+        assertEquals(editedQuestDescription, questEditPage.getQuestDescription());
         questEditPage.clickToQuestsListButton();
         currentUrl = driver.getCurrentUrl();
         assertTrue(currentUrl.contains(PROFILE_URL));
 
         ProfilePage profilePage = new ProfilePage(driver, port);
         List<WebElement> questCards = profilePage.getQuestCards();
-        WebElement questCard = questCards.stream().filter(c -> c.findElement(By.className("quest-name")).getText().equals("Edited Quest Name")).findFirst().orElse(null);
+        WebElement questCard = questCards.stream()
+                .filter(c -> c.findElement(By.className("quest-name")).getText().equals(editedQuestName))
+                .findFirst()
+                .orElse(null);
         assertNotNull(questCard);
+
         WebElement deleteButton = questCard.findElement(By.cssSelector(".btn-danger"));
         deleteButton.click();
         driver.switchTo().alert().accept();
-        List<WebElement> remainingQuests = driver.findElements(By.xpath("//div[@class='card']//h5[contains(text(), 'Edited Quest Name')]"));
-        assertTrue(remainingQuests.isEmpty());
+
+        List<WebElement> remainingQuests = driver.findElements(By.xpath(
+                String.format("//div[@class='card']//h5[contains(text(), '%s')]", editedQuestName)));
+        assertTrue(remainingQuests.isEmpty(), "Quest with the edited name was not deleted.");
+
     }
 
     @Test
@@ -91,9 +110,9 @@ public class QuestManagementE2ETest extends BaseE2ETest {
         WebElement createButton = driver.findElement(By.id("submit"));
 
         questNameField.clear();
-        questNameField.sendKeys("Q");
+        questNameField.sendKeys(randomChar);
         questDescriptionField.clear();
-        questDescriptionField.sendKeys("Valid Description");
+        questDescriptionField.sendKeys(uniqueQuestNameDescription);
         WebElement modalButton = driver.findElement(By.cssSelector("button[data-bs-target='#modal1']"));
         modalButton.click();
         WebElement modalWindow = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("modal1")));
@@ -106,34 +125,34 @@ public class QuestManagementE2ETest extends BaseE2ETest {
         questTextArea.sendKeys(modalText);
         createButton.click();
         WebElement errorAlert = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("alert-danger")));
-        assertEquals("Quest name must be between 3 and 100 characters", errorAlert.getText());
+        assertEquals("Quest name must be between 3 and 100 characters", errorAlert.getText()); //TODO
 
         questNameField = driver.findElement(By.id("questName"));
         questDescriptionField = driver.findElement(By.id("questDescription"));
         questTextArea = driver.findElement(By.id("exampleFormControlTextarea1"));
         createButton = driver.findElement(By.id("submit"));
         questNameField.clear();
-        questNameField.sendKeys("Valid Quest Name");
+        questNameField.sendKeys(uniqueQuestName);
         questDescriptionField.clear();
-        questDescriptionField.sendKeys("D");
+        questDescriptionField.sendKeys(randomChar);
         questTextArea.clear();
         questTextArea.sendKeys(modalText);
         createButton.click();
         errorAlert = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("alert-danger")));
-        assertEquals("Quest description must be between 10 and 200 characters", errorAlert.getText());
+        assertEquals("Quest description must be between 10 and 200 characters", errorAlert.getText()); //TODO
 
         questNameField = driver.findElement(By.id("questName"));
         questDescriptionField = driver.findElement(By.id("questDescription"));
         questTextArea = driver.findElement(By.id("exampleFormControlTextarea1"));
         createButton = driver.findElement(By.id("submit"));
         questNameField.clear();
-        questNameField.sendKeys("Valid Quest Name");
+        questNameField.sendKeys(uniqueQuestName);
         questDescriptionField.clear();
-        questDescriptionField.sendKeys("Valid Quest Description");
+        questDescriptionField.sendKeys(uniqueQuestNameDescription);
         questTextArea.clear();
-        questTextArea.sendKeys("Invalid Content");
+        questTextArea.sendKeys(invalidQuestText);
         createButton.click();
         errorAlert = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("alert-danger")));
-        assertEquals("The quest text is not valid.", errorAlert.getText());
+        assertEquals("The quest text is not valid.", errorAlert.getText()); //TODO
     }
 }

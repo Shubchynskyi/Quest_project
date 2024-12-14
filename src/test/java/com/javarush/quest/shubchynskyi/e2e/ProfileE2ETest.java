@@ -1,7 +1,9 @@
 package com.javarush.quest.shubchynskyi.e2e;
 
 import com.javarush.quest.shubchynskyi.e2e.pageobjects.ProfilePage;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebElement;
 
@@ -32,8 +34,8 @@ public class ProfileE2ETest extends BaseE2ETest {
         loginAsAdmin();
         profilePage.open();
         assertTrue(profilePage.isOnProfilePage());
-        assertTrue(profilePage.getLoginText().contains("admin"));
-        assertTrue(profilePage.getRoleText().contains("ADMIN"));
+        assertTrue(profilePage.getLoginText().contains(adminLogin));
+        assertTrue(profilePage.getRoleText().contains(adminRole));
     }
 
     @Test

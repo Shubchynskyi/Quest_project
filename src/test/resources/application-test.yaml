@@ -79,13 +79,32 @@ game:
 
 # e2e tests data
 e2e:
-  admin:
-    login: "admin"
-    password: "admin123"
-  moderator:
-    login: "moderator"
-    password: "moderator123"
-  user:
-    login: "user"
-    password: "user123"
+  validUserData:
+    admin:
+      login: "admin"
+      password: "admin123"
+      role: "ADMIN"
+    moderator:
+      login: "moderator"
+      password: "moderator123"
+    user:
+      login: "user"
+      password: "user123"
+      role: "USER"
+    newUser:
+      login: "newuser156"
+      password: "password123"
+    incorrect:
+      login: "%%"
+
   headlessIsOn: true
+  languageToChange: "de"
+  invalidUserData:
+    userLogin: "invalidUser"
+    userPassword: "invalidPassword"
+
+  validQuestData:
+    uniqueQuestName: "Unique Quest"
+    uniqueQuestNameDescription: "Unique Quest Description"
+  invalidQuestData:
+    questText: "Invalid quest text"

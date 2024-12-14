@@ -32,23 +32,29 @@ public abstract class BaseE2ETest {
     @Value("${local.server.port}")
     protected int port;
 
-    @Value("${e2e.admin.login}")
+    @Value("${e2e.validUserData.admin.login}")
     protected String adminLogin;
 
-    @Value("${e2e.admin.password}")
+    @Value("${e2e.validUserData.admin.password}")
     protected String adminPassword;
 
-    @Value("${e2e.moderator.login}")
+    @Value("${e2e.validUserData.admin.role}")
+    protected String adminRole;
+
+    @Value("${e2e.validUserData.moderator.login}")
     protected String moderatorLogin;
 
-    @Value("${e2e.moderator.password}")
+    @Value("${e2e.validUserData.moderator.password}")
     protected String moderatorPassword;
 
-    @Value("${e2e.user.login}")
+    @Value("${e2e.validUserData.user.login}")
     protected String userLogin;
 
-    @Value("${e2e.user.password}")
+    @Value("${e2e.validUserData.user.password}")
     protected String userPassword;
+
+    @Value("${e2e.validUserData.user.role}")
+    protected String userRole;
 
     @Value("${e2e.headlessIsOn}")
     private Boolean headlessIsOn;

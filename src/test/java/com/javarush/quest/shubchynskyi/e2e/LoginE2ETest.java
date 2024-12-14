@@ -5,11 +5,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebElement;
+import org.springframework.beans.factory.annotation.Value;
 
 import static com.javarush.quest.shubchynskyi.test_config.TestConstants.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LoginE2ETest extends BaseE2ETest {
+
+    @Value("${e2e.invalidUserData.userLogin}")
+    private String invalidUserLogin;
+    @Value("${e2e.invalidUserData.userPassword}")
+    private String invalidUserPassword;
 
     private LoginPage loginPage;
 
@@ -43,11 +50,12 @@ public class LoginE2ETest extends BaseE2ETest {
     @DisplayName("Should show error for invalid login")
     void shouldShowErrorForInvalidLogin() {
         loginPage.open();
-        loginPage.enterLogin("invalidUser");
-        loginPage.enterPassword("invalidPassword");
+        loginPage.enterLogin(invalidUserLogin);
+        loginPage.enterPassword(invalidUserPassword);
         loginPage.clickLoginButton();
         assertTrue(loginPage.isOnLoginPage());
         assertTrue(loginPage.isErrorDisplayed());
+        //TODO
         assertEquals("Data is incorrect, please check your username and password", loginPage.getErrorMessage());
     }
 
