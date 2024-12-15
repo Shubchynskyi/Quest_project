@@ -28,7 +28,7 @@ public class IndexE2ETest extends BaseE2ETest {
     void shouldDisplayProfileAndPlayLinksForUser() {
         loginAsUser();
         IndexPage indexPage = new IndexPage(driver, port);
-        indexPage.openMainPage();
+        indexPage.openIndexPage();
         List<WebElement> links = indexPage.getHeaderLinks();
         assertTrue(links.stream().anyMatch(link -> link.getText().contains("Profile")));
         assertTrue(links.stream().anyMatch(link -> link.getText().contains("Play")));
@@ -41,7 +41,7 @@ public class IndexE2ETest extends BaseE2ETest {
     void shouldDisplayCreateQuestLinkForModerator() {
         loginAsModerator();
         IndexPage indexPage = new IndexPage(driver, port);
-        indexPage.openMainPage();
+        indexPage.openIndexPage();
         List<WebElement> links = indexPage.getHeaderLinks();
         assertTrue(links.stream().anyMatch(link -> link.getText().contains("Users")));
     }
@@ -51,7 +51,7 @@ public class IndexE2ETest extends BaseE2ETest {
     void shouldDisplayCreateQuestLinkForAdmin() {
         loginAsAdmin();
         IndexPage indexPage = new IndexPage(driver, port);
-        indexPage.openMainPage();
+        indexPage.openIndexPage();
         List<WebElement> links = indexPage.getHeaderLinks();
         assertTrue(links.stream().anyMatch(link -> link.getText().contains("Users")));
     }
@@ -60,7 +60,7 @@ public class IndexE2ETest extends BaseE2ETest {
     @DisplayName("Should switch language when flag clicked")
     void shouldSwitchLanguageWhenFlagClicked() {
         IndexPage indexPage = new IndexPage(driver, port);
-        indexPage.openMainPage();
+        indexPage.openIndexPage();
         indexPage.changeLanguage(languageToChange);
         assertTrue(driver.getCurrentUrl().contains("lang=" + languageToChange));
     }
@@ -69,7 +69,7 @@ public class IndexE2ETest extends BaseE2ETest {
     @DisplayName("Should display footer with copyright")
     void shouldDisplayFooterWithCopyright() {
         IndexPage indexPage = new IndexPage(driver, port);
-        indexPage.openMainPage();
+        indexPage.openIndexPage();
         WebElement footer = indexPage.getFooter();
         assertNotNull(footer);
         assertTrue(footer.getText().contains("©"));
@@ -80,7 +80,7 @@ public class IndexE2ETest extends BaseE2ETest {
     void shouldNavigateToCorrectPagesFromHeader() {
         loginAsUser();
         IndexPage indexPage = new IndexPage(driver, port);
-        indexPage.openMainPage();
+        indexPage.openIndexPage();
         indexPage.clickLink("Profile");
         assertTrue(driver.getCurrentUrl().contains(PROFILE_URL));
     }

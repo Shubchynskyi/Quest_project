@@ -10,7 +10,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import java.util.List;
 
 import static com.javarush.quest.shubchynskyi.test_config.TestConstants.PROFILE_URL;
-import static com.javarush.quest.shubchynskyi.test_config.TestConstants.USER_URL;
 
 public class ProfilePage extends BasePage {
 

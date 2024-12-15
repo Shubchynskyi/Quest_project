@@ -31,32 +31,33 @@ public class UsersPageE2ETest extends BaseE2ETest {
 
         UsersPage usersPage = new UsersPage(driver, port);
         usersPage.open();
-
         usersPage.waitForPageToLoad();
 
+        testEditFunctionality(usersPage);
+        testDeleteFunctionality(usersPage);
+    }
+
+    public void testEditFunctionality(UsersPage usersPage) {
         WebElement editButton = usersPage.getFirstEditButton();
         assertNotNull(editButton, "Edit button not found.");
         editButton.click();
-
         assertTrue(driver.getCurrentUrl().contains(USER_URL), "Edit button did not redirect to /user.");
-
-        usersPage.waitForPageToLoad();
-
         driver.navigate().back();
-
         usersPage.waitForPageToLoad();
+        assertTrue(usersPage.isOnUsersPage(), "Failed to navigate back to the Users page.");
+    }
 
+    public void testDeleteFunctionality(UsersPage usersPage) {
         WebElement deleteButton = usersPage.getFirstDeleteButton();
         assertNotNull(deleteButton, "Delete button not found.");
         deleteButton.click();
-
         Alert alert = new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.alertIsPresent());
         assertNotNull(alert, "Delete confirmation alert not displayed.");
         alert.dismiss();
-
-        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.not(ExpectedConditions.alertIsPresent()));
-
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.not(ExpectedConditions.alertIsPresent()));
         usersPage.waitForPageToLoad();
+        assertTrue(usersPage.isOnUsersPage(), "Users page did not stabilize after dismissing delete alert.");
     }
 
     @Test

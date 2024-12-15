@@ -15,7 +15,7 @@ public class IndexPage extends BasePage {
         super(driver, port);
     }
 
-    public void openMainPage() {
+    public void openIndexPage() {
         driver.get(getBaseUrl() + INDEX_URL);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("header")));
     }

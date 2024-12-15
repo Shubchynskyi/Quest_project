@@ -9,7 +9,6 @@ import com.javarush.quest.shubchynskyi.test_config.ValidationMessageLocalizer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -19,7 +18,6 @@ import java.time.Duration;
 
 import static com.javarush.quest.shubchynskyi.localization.DtoValidationMessages.VALIDATION_SIZE_USER_DTO_LOGIN;
 import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.LOGIN_ALREADY_EXIST;
-import static com.javarush.quest.shubchynskyi.test_config.TestConstants.INDEX_URL;
 import static com.javarush.quest.shubchynskyi.test_config.TestConstants.SIGNUP_URL;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -107,6 +105,7 @@ public class UserManagementE2ETest extends BaseE2ETest {
         assertTrue(layoutPage.isOnIndexPage(), "User was not redirected to '/' after deletion.");
 
         WebElement loginLink = layoutPage.getLoginLink();
+
         assertNotNull(loginLink, "Login link is not displayed after user deletion.");
     }
 

@@ -107,7 +107,7 @@ public class UserController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(String.class, PASSWORD, new StringTrimmerEditor(true)); // true = "" → null
+        binder.registerCustomEditor(String.class, PASSWORD, new StringTrimmerEditor(true));
     }
 
     @PostMapping(USER)

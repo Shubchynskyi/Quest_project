@@ -67,6 +67,7 @@ public class QuestManagementE2ETest extends BaseE2ETest {
         createQuestPage.setQuestText(modalText);
         createQuestPage.clickCreateButton();
         String currentUrl = driver.getCurrentUrl();
+
         assertTrue(currentUrl.contains(QUEST_EDIT_URL));
 
         QuestEditPage questEditPage = new QuestEditPage(driver, port);
@@ -76,6 +77,7 @@ public class QuestManagementE2ETest extends BaseE2ETest {
         questEditPage.setQuestDescription(editedQuestDescription);
         questEditPage.clickSaveQuestButton();
         currentUrl = driver.getCurrentUrl();
+
         assertTrue(currentUrl.contains(QUEST_EDIT_URL));
         assertEquals(editedQuestName, questEditPage.getQuestName());
         assertEquals(editedQuestDescription, questEditPage.getQuestDescription());
@@ -89,6 +91,7 @@ public class QuestManagementE2ETest extends BaseE2ETest {
                 .filter(c -> c.findElement(By.className("quest-name")).getText().equals(editedQuestName))
                 .findFirst()
                 .orElse(null);
+
         assertNotNull(questCard);
 
         WebElement deleteButton = questCard.findElement(By.cssSelector(".btn-danger"));
