@@ -1,12 +1,14 @@
 package com.javarush.quest.shubchynskyi.e2e;
 
 import com.javarush.quest.shubchynskyi.e2e.pageobjects.LoginPage;
+import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Value;
 
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.DATA_IS_INCORRECT;
 import static com.javarush.quest.shubchynskyi.test_config.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -55,8 +57,7 @@ public class LoginE2ETest extends BaseE2ETest {
         loginPage.clickLoginButton();
         assertTrue(loginPage.isOnLoginPage());
         assertTrue(loginPage.isErrorDisplayed());
-        //TODO
-        assertEquals("Data is incorrect, please check your username and password", loginPage.getErrorMessage());
+        assertEquals(ErrorLocalizer.getLocalizedMessage(DATA_IS_INCORRECT), loginPage.getErrorMessage());
     }
 
     @Test

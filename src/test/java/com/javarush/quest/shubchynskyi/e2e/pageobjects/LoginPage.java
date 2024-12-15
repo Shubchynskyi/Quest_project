@@ -45,6 +45,7 @@ public class LoginPage extends BasePage {
     }
 
     public boolean isOnLoginPage() {
+        wait.until(ExpectedConditions.urlContains(LOGIN_URL));
         return getCurrentUrl().contains(LOGIN_URL);
     }
 

@@ -9,9 +9,9 @@ import java.util.List;
 
 import static com.javarush.quest.shubchynskyi.test_config.TestConstants.INDEX_URL;
 
-public class LayoutPage extends BasePage {
+public class IndexPage extends BasePage {
 
-    public LayoutPage(WebDriver driver, int port) {
+    public IndexPage(WebDriver driver, int port) {
         super(driver, port);
     }
 
@@ -40,4 +40,17 @@ public class LayoutPage extends BasePage {
     public WebElement getFooter() {
         return driver.findElement(By.tagName("footer"));
     }
+
+    public boolean isOnIndexPage() {
+        wait.until(ExpectedConditions.urlContains(INDEX_URL));
+        return getCurrentUrl().contains(INDEX_URL);
+    }
+
+    public WebElement getLoginLink() {
+        return getHeaderLinks().stream()
+                .filter(link -> link.getText().equalsIgnoreCase("Login"))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Login link not found in header"));
+    }
+
 }

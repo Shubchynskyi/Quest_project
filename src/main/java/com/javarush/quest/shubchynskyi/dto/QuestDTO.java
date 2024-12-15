@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.dto;
 
+import com.javarush.quest.shubchynskyi.localization.DtoValidationMessages;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -14,11 +15,11 @@ import java.util.List;
 @ToString
 public class QuestDTO {
     private Long id;
-    @NotBlank(message = "{validation.quest.name.notBlank}")
-    @Size(min = 3, max = 100, message = "{validation.quest.name.size}")
+    @NotBlank(message = DtoValidationMessages.VALIDATION_QUEST_NAME_NOT_BLANK)
+    @Size(min = 3, max = 100, message = DtoValidationMessages.VALIDATION_QUEST_NAME_SIZE)
     private String name;
-    @NotBlank(message = "{validation.quest.description.notBlank}")
-    @Size(min = 10, max = 200, message = "{validation.quest.description.size}")
+    @NotBlank(message = DtoValidationMessages.VALIDATION_QUEST_DESCRIPTION_NOT_BLANK)
+    @Size(min = 10, max = 200, message = DtoValidationMessages.VALIDATION_QUEST_DESCRIPTION_SIZE)
     private String description;
     private Long startQuestionId;
     private UserDTO author;

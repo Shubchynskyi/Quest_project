@@ -1,7 +1,9 @@
 package com.javarush.quest.shubchynskyi.e2e;
 
 import com.javarush.quest.shubchynskyi.e2e.pageobjects.UsersPage;
-import org.junit.jupiter.api.*;
+import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.Alert;
@@ -11,8 +13,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.List;
 
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.YOU_DONT_HAVE_PERMISSIONS;
 import static com.javarush.quest.shubchynskyi.test_config.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -69,7 +71,9 @@ public class UsersPageE2ETest extends BaseE2ETest {
         WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//div[contains(@class, 'alert-danger')]")
         ));
+
         assertNotNull(errorMessage);
-        assertEquals("You don't have permissions", errorMessage.getText().trim()); // TODO
+        assertEquals(ErrorLocalizer.getLocalizedMessage(YOU_DONT_HAVE_PERMISSIONS),
+                errorMessage.getText().trim());
     }
 }

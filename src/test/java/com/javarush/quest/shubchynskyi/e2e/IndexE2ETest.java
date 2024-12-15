@@ -1,6 +1,6 @@
 package com.javarush.quest.shubchynskyi.e2e;
 
-import com.javarush.quest.shubchynskyi.e2e.pageobjects.LayoutPage;
+import com.javarush.quest.shubchynskyi.e2e.pageobjects.IndexPage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebElement;
@@ -11,7 +11,7 @@ import java.util.List;
 import static com.javarush.quest.shubchynskyi.test_config.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class LayoutE2ETest extends BaseE2ETest {
+public class IndexE2ETest extends BaseE2ETest {
 
     @Value("${e2e.languageToChange}")
     private String languageToChange;
@@ -27,9 +27,9 @@ public class LayoutE2ETest extends BaseE2ETest {
     @DisplayName("Should display profile and play links for user")
     void shouldDisplayProfileAndPlayLinksForUser() {
         loginAsUser();
-        LayoutPage layoutPage = new LayoutPage(driver, port);
-        layoutPage.openMainPage();
-        List<WebElement> links = layoutPage.getHeaderLinks();
+        IndexPage indexPage = new IndexPage(driver, port);
+        indexPage.openMainPage();
+        List<WebElement> links = indexPage.getHeaderLinks();
         assertTrue(links.stream().anyMatch(link -> link.getText().contains("Profile")));
         assertTrue(links.stream().anyMatch(link -> link.getText().contains("Play")));
         assertTrue(links.stream().anyMatch(link -> link.getText().contains("Create Quest")));
@@ -37,42 +37,40 @@ public class LayoutE2ETest extends BaseE2ETest {
     }
 
     @Test
-    @DisplayName("Should display create quest link for moderator")
+    @DisplayName("Should display users link for moderator")
     void shouldDisplayCreateQuestLinkForModerator() {
         loginAsModerator();
-        LayoutPage layoutPage = new LayoutPage(driver, port);
-        layoutPage.openMainPage();
-        List<WebElement> links = layoutPage.getHeaderLinks();
-        assertTrue(links.stream().anyMatch(link -> link.getText().contains("Create Quest")));
+        IndexPage indexPage = new IndexPage(driver, port);
+        indexPage.openMainPage();
+        List<WebElement> links = indexPage.getHeaderLinks();
         assertTrue(links.stream().anyMatch(link -> link.getText().contains("Users")));
     }
 
     @Test
-    @DisplayName("Should display create quest link for admin")
+    @DisplayName("Should display users link for admin")
     void shouldDisplayCreateQuestLinkForAdmin() {
         loginAsAdmin();
-        LayoutPage layoutPage = new LayoutPage(driver, port);
-        layoutPage.openMainPage();
-        List<WebElement> links = layoutPage.getHeaderLinks();
-        assertTrue(links.stream().anyMatch(link -> link.getText().contains("Create Quest")));
+        IndexPage indexPage = new IndexPage(driver, port);
+        indexPage.openMainPage();
+        List<WebElement> links = indexPage.getHeaderLinks();
         assertTrue(links.stream().anyMatch(link -> link.getText().contains("Users")));
     }
 
     @Test
     @DisplayName("Should switch language when flag clicked")
     void shouldSwitchLanguageWhenFlagClicked() {
-        LayoutPage layoutPage = new LayoutPage(driver, port);
-        layoutPage.openMainPage();
-        layoutPage.changeLanguage(languageToChange);
+        IndexPage indexPage = new IndexPage(driver, port);
+        indexPage.openMainPage();
+        indexPage.changeLanguage(languageToChange);
         assertTrue(driver.getCurrentUrl().contains("lang=" + languageToChange));
     }
 
     @Test
     @DisplayName("Should display footer with copyright")
     void shouldDisplayFooterWithCopyright() {
-        LayoutPage layoutPage = new LayoutPage(driver, port);
-        layoutPage.openMainPage();
-        WebElement footer = layoutPage.getFooter();
+        IndexPage indexPage = new IndexPage(driver, port);
+        indexPage.openMainPage();
+        WebElement footer = indexPage.getFooter();
         assertNotNull(footer);
         assertTrue(footer.getText().contains("©"));
     }
@@ -81,9 +79,9 @@ public class LayoutE2ETest extends BaseE2ETest {
     @DisplayName("Should navigate to correct pages from header")
     void shouldNavigateToCorrectPagesFromHeader() {
         loginAsUser();
-        LayoutPage layoutPage = new LayoutPage(driver, port);
-        layoutPage.openMainPage();
-        layoutPage.clickLink("Profile");
+        IndexPage indexPage = new IndexPage(driver, port);
+        indexPage.openMainPage();
+        indexPage.clickLink("Profile");
         assertTrue(driver.getCurrentUrl().contains(PROFILE_URL));
     }
 }

@@ -3,6 +3,8 @@ package com.javarush.quest.shubchynskyi.e2e;
 import com.javarush.quest.shubchynskyi.e2e.pageobjects.CreateQuestPage;
 import com.javarush.quest.shubchynskyi.e2e.pageobjects.ProfilePage;
 import com.javarush.quest.shubchynskyi.e2e.pageobjects.QuestEditPage;
+import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
+import com.javarush.quest.shubchynskyi.test_config.ValidationMessageLocalizer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
@@ -15,6 +17,9 @@ import org.springframework.beans.factory.annotation.Value;
 import java.time.Duration;
 import java.util.List;
 
+import static com.javarush.quest.shubchynskyi.localization.DtoValidationMessages.VALIDATION_QUEST_DESCRIPTION_SIZE;
+import static com.javarush.quest.shubchynskyi.localization.DtoValidationMessages.VALIDATION_QUEST_NAME_SIZE;
+import static com.javarush.quest.shubchynskyi.localization.ExceptionErrorMessages.QUEST_TEXT_NOT_VALID;
 import static com.javarush.quest.shubchynskyi.test_config.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -125,7 +130,8 @@ public class QuestManagementE2ETest extends BaseE2ETest {
         questTextArea.sendKeys(modalText);
         createButton.click();
         WebElement errorAlert = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("alert-danger")));
-        assertEquals("Quest name must be between 3 and 100 characters", errorAlert.getText()); //TODO
+
+        assertEquals(ValidationMessageLocalizer.getValidationFieldMessage(VALIDATION_QUEST_NAME_SIZE), errorAlert.getText());
 
         questNameField = driver.findElement(By.id("questName"));
         questDescriptionField = driver.findElement(By.id("questDescription"));
@@ -139,7 +145,8 @@ public class QuestManagementE2ETest extends BaseE2ETest {
         questTextArea.sendKeys(modalText);
         createButton.click();
         errorAlert = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("alert-danger")));
-        assertEquals("Quest description must be between 10 and 200 characters", errorAlert.getText()); //TODO
+
+        assertEquals(ValidationMessageLocalizer.getValidationFieldMessage(VALIDATION_QUEST_DESCRIPTION_SIZE), errorAlert.getText());
 
         questNameField = driver.findElement(By.id("questName"));
         questDescriptionField = driver.findElement(By.id("questDescription"));
@@ -153,6 +160,6 @@ public class QuestManagementE2ETest extends BaseE2ETest {
         questTextArea.sendKeys(invalidQuestText);
         createButton.click();
         errorAlert = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("alert-danger")));
-        assertEquals("The quest text is not valid.", errorAlert.getText()); //TODO
+        assertEquals(ErrorLocalizer.getLocalizedMessage(QUEST_TEXT_NOT_VALID), errorAlert.getText());
     }
 }

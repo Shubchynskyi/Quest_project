@@ -27,6 +27,7 @@ public class EditUserPage extends BasePage {
     }
 
     public boolean isOnEditUserPage() {
+        wait.until(ExpectedConditions.urlContains(USER_URL));
         return getCurrentUrl().contains(USER_URL);
     }
 

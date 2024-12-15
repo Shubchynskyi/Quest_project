@@ -1,8 +1,11 @@
 package com.javarush.quest.shubchynskyi.e2e;
 
 import com.javarush.quest.shubchynskyi.e2e.pageobjects.EditUserPage;
+import com.javarush.quest.shubchynskyi.e2e.pageobjects.IndexPage;
 import com.javarush.quest.shubchynskyi.e2e.pageobjects.ProfilePage;
 import com.javarush.quest.shubchynskyi.e2e.pageobjects.SignupPage;
+import com.javarush.quest.shubchynskyi.localization.ErrorLocalizer;
+import com.javarush.quest.shubchynskyi.test_config.ValidationMessageLocalizer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Duration;
 
+import static com.javarush.quest.shubchynskyi.localization.DtoValidationMessages.VALIDATION_SIZE_USER_DTO_LOGIN;
+import static com.javarush.quest.shubchynskyi.localization.ViewErrorMessages.LOGIN_ALREADY_EXIST;
 import static com.javarush.quest.shubchynskyi.test_config.TestConstants.INDEX_URL;
 import static com.javarush.quest.shubchynskyi.test_config.TestConstants.SIGNUP_URL;
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,7 +47,7 @@ public class UserManagementE2ETest extends BaseE2ETest {
         assertTrue(driver.getCurrentUrl().contains(SIGNUP_URL), "Expected to remain on /signup after error.");
 
         assertTrue(signupPage.isErrorDisplayed(), "Error message was not displayed.");
-        assertEquals("Login already exists", signupPage.getErrorMessage());//TODO
+        assertEquals(ErrorLocalizer.getLocalizedMessage(LOGIN_ALREADY_EXIST), signupPage.getErrorMessage());
     }
 
     @Test
@@ -51,7 +56,7 @@ public class UserManagementE2ETest extends BaseE2ETest {
         SignupPage signupPage = registerUser(incorrectLogin, newUserPassword, userRole);
 
         assertTrue(signupPage.isErrorDisplayed(), "Error message was not displayed.");
-        assertEquals("Login must be between 3 and 20 characters", signupPage.getErrorMessage());//TODO
+        assertEquals(ValidationMessageLocalizer.getValidationFieldMessage(VALIDATION_SIZE_USER_DTO_LOGIN), signupPage.getErrorMessage());
     }
 
     @Test
@@ -72,7 +77,6 @@ public class UserManagementE2ETest extends BaseE2ETest {
 
         ProfilePage profilePage = new ProfilePage(driver, port);
 
-
         assertTrue(profilePage.isOnProfilePage(), "User was not redirected to /profile.");
         assertEquals(newUserLogin, profilePage.getLoginText().replace("Login: ", ""), "Displayed login is incorrect.");
         assertEquals(userRole, profilePage.getRoleText().replace("Role: ", ""), "Displayed role is incorrect.");
@@ -82,24 +86,27 @@ public class UserManagementE2ETest extends BaseE2ETest {
         EditUserPage editUserPage = new EditUserPage(driver, port);
         assertTrue(editUserPage.isOnEditUserPage(), "Not on edit user page.");
 
-        editUserPage.fillLogin(newUserLogin + "q");
-        editUserPage.fillPassword(newUserPassword + "q");
+        String editedLogin = newUserLogin + "q";
+        String editedPassword = newUserPassword + "q";
+
+        editUserPage.fillLogin(editedLogin);
+        editUserPage.fillPassword(editedPassword);
         editUserPage.clickSave();
 
         assertTrue(profilePage.isOnProfilePage(), "User was not redirected to /profile.");
-        assertTrue(profilePage.getLoginText().contains(newUserLogin + "q"), "Updated login is not displayed on profile.");
+        assertTrue(profilePage.getLoginText().contains(editedLogin), "Updated login is not displayed on profile.");
 
         profilePage.clickEditUserButton();
         editUserPage = new EditUserPage(driver, port);
         editUserPage.clickDelete();
         wait.until(ExpectedConditions.alertIsPresent());
         driver.switchTo().alert().accept();
-        wait.until(ExpectedConditions.urlToBe(getBaseUrl() + INDEX_URL));
 
-        assertEquals(getBaseUrl() + INDEX_URL, driver.getCurrentUrl(),
-                "User was not redirected to '/' after deletion.");
+        IndexPage layoutPage = new IndexPage(driver, port);
 
-        WebElement loginLink = wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Login")));
+        assertTrue(layoutPage.isOnIndexPage(), "User was not redirected to '/' after deletion.");
+
+        WebElement loginLink = layoutPage.getLoginLink();
         assertNotNull(loginLink, "Login link is not displayed after user deletion.");
     }
 

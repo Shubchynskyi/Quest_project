@@ -1,14 +1,20 @@
 package com.javarush.quest.shubchynskyi.e2e;
 
-import com.javarush.quest.shubchynskyi.e2e.pageobjects.QuestsListPage;
 import com.javarush.quest.shubchynskyi.e2e.pageobjects.QuestPlayPage;
-import org.junit.jupiter.api.*;
+import com.javarush.quest.shubchynskyi.e2e.pageobjects.QuestsListPage;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebElement;
+import org.springframework.beans.factory.annotation.Value;
 
 import static com.javarush.quest.shubchynskyi.test_config.TestConstants.QUESTS_LIST_URL;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QuestPlayE2ETest extends BaseE2ETest {
+
+    @Value("${valid.quest.expected-name}")
+    public String questExpectedName;
 
     @Test
     @DisplayName("Should play quest successfully")
@@ -17,8 +23,8 @@ public class QuestPlayE2ETest extends BaseE2ETest {
         QuestsListPage questsListPage = new QuestsListPage(driver, port);
         questsListPage.open();
 
-        WebElement playButton = questsListPage.findQuestPlayButton("Before the magic stone"); //TODO
-        assertNotNull(playButton, "Play button not found for the quest 'Before the magic stone'."); //TODO
+        WebElement playButton = questsListPage.findQuestPlayButton(questExpectedName);
+        assertNotNull(playButton, String.format("Play button not found for the quest %s .", questExpectedName));
 
         playButton.click();
 
