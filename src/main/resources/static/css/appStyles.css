@@ -121,3 +121,32 @@
     text-overflow: ellipsis;
     max-height: 70px;
 }
+
+.btn-wide {
+    width: 500px;
+}
+
+.quest-title {
+    margin: auto;
+    padding-bottom: 50px;
+    color: #565756;
+}
+
+.btn-save-quest {
+    width: 200px;
+    margin-bottom: 50px;
+}
+
+.no-resize {
+    resize: none;
+}
+
+.padding-bottom-10 {
+    padding-bottom: 10px;
+}
+
+.user-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}

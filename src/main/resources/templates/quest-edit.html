@@ -12,13 +12,13 @@
     <!-- Duplicate "To the list of quests" button at the top -->
     <div class="d-flex justify-content-center mb-4">
         <a th:href="${source != null ? source : '/profile'}">
-            <button type="button" class="btn btn-info" style="width: 500px;">
+            <button type="button" class="btn btn-info btn-wide">
                 <span th:text="#{quest-edit.toQuests.button}">To the list of quests</span>
             </button>
         </a>
     </div>
 
-    <h4 style="margin: auto; padding-bottom: 50px; color: #565756">
+    <h4 class="quest-title">
         <span th:text="#{quest-edit.head.label}">Quest editing</span> <b th:text="${quest.name}"></b>
     </h4>
     <form class="row form-horizontal"
@@ -67,8 +67,7 @@
 
         <!-- Save Button -->
         <div class="mb-3">
-            <button type="submit" class="btn btn-success"
-                    style="width: 200px; margin-bottom: 50px;">
+            <button type="submit" class="btn btn-success btn-save-quest">
                 <span th:text="#{quest-edit.save.button}">Save</span>
             </button>
         </div>
@@ -91,22 +90,19 @@
             <!-- Question Text -->
             <div class="mb-3">
                 <label for="questionText" th:text="#{quest-edit.question.label}">Question:</label>
-                <textarea id="questionText"
+                <textarea id="questionText" class="w-100 no-resize"
                           name="questionText"
-                          class="w-100"
-                          style="resize: none"
                           th:text="${question.text}"
                           required="">
                 </textarea>
             </div>
 
             <!-- Answers Text -->
-            <div class="mb-3" style="padding-bottom: 10px">
+            <div class="mb-3 padding-bottom-10">
                 <div th:each="answer : ${question.answers}">
                     <label for="answerText" th:text="#{quest-edit.answer.label}">Answer:</label>
-                    <textarea id="answerText" class="w-100"
+                    <textarea id="answerText" class="w-100 no-resize"
                               th:name="'answer' + ${answer.id}"
-                              style="resize: none"
                               th:text="${answer.text}"
                               required="">
                     </textarea>
@@ -162,8 +158,6 @@
     </div>
 </div>
 
-<div th:replace="~{parts/footer :: footer}"></div>
-
 <script type="text/javascript">
     function PreviewImage(inputElement) {
         const previewImageId = inputElement.getAttribute('data-preview-id');
@@ -175,5 +169,7 @@
         };
     }
 </script>
+
+<div th:replace="~{parts/footer :: footer}"></div>
 </body>
 </html>
