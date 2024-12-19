@@ -97,4 +97,14 @@ fi
 echo "Removing the container..."
 docker rm "$APP_TEST_CONTAINER_NAME"
 
+# Remove the intermediate builder image
+if docker images -q "$BUILDER_IMAGE_NAME" > /dev/null 2>&1; then
+    echo "Removing intermediate image: $BUILDER_IMAGE_NAME"
+    docker rmi "$BUILDER_IMAGE_NAME" || {
+        echo "Failed to remove intermediate image $BUILDER_IMAGE_NAME. Skipping..."
+    }
+else
+    echo "Intermediate image $BUILDER_IMAGE_NAME not found. Skipping removal."
+fi
+
 echo "Build and test process completed successfully."

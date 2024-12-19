@@ -64,9 +64,6 @@ pipeline {
                         docker rmi $image || true
                     done
                 '''
-
-                // Clean up unused Docker images
-                sh 'docker image prune -f'
             }
         }
     }

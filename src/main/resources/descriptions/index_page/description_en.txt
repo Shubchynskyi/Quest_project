@@ -4,4 +4,4 @@
 <p>Implemented user creation and demonstrated user role management (administrators have access to editing quests and other users, regular users can edit only themselves and their own quests).</p>
 <p>Application deployment is carried out via CI/CD (GitHub Webhook + Jenkins + Docker).</p>
 <p>The application code is available at: <a href="https://github.com/Shubchynskyi/Quest_project/tree/master" target="_blank">GitHub Repository</a></p>
-<p>A detailed technical description is available in the repository's <strong>Readme.MD</strong> file.</p>
+<p>A detailed technical description is available in the repository's <a href="https://github.com/Shubchynskyi/Quest_project/tree/master?tab=readme-ov-file#readme" target="_blank">Readme.MD</a> file.</p>

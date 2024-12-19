@@ -1,7 +1,0 @@
-
-<p>Diese Anwendung wurde mit <strong>Java/Spring</strong> + <strong>Thymeleaf</strong> erstellt und dient zur Demonstration von Fähigkeiten in Java und Datenbanken (PostgreSQL).</p>
-<p>Die Anwendung ermöglicht es Benutzern, Textabenteuer mit Bildern zu erstellen und diese zu spielen, indem ein komplexer Textparser in Java verwendet wird.</p>
-<p>Es wurde die Möglichkeit der Benutzererstellung implementiert und die Verwaltung von Benutzerrollen (Administratoren haben Zugriff auf die Bearbeitung von Quests und anderen Benutzern, normale Benutzer können nur sich selbst und ihre eigenen Quests bearbeiten).</p>
-<p>Die Bereitstellung der Anwendung erfolgt über CI/CD (GitHub Webhook + Jenkins + Docker).</p>
-<p>Der Anwendungscode ist verfügbar unter: <a href="https://github.com/Shubchynskyi/Quest_project/tree/master" target="_blank">GitHub Repository</a></p>
-<p>Eine ausführliche technische Beschreibung ist in der <strong>Readme.MD</strong>-Datei des Repositories verfügbar.</p>

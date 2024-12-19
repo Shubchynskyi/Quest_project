@@ -67,7 +67,7 @@ content:
   index-page:
     test-directory: "index_page/"
     content-file-name: "description"
-  expected-data-directory: "expected/"
+  expected-data-directory: "descriptions/"
   invalid-directory: "nonExistedDirectory"
 
 # Game state settings for tests
