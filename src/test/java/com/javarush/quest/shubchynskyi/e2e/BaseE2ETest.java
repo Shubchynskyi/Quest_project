@@ -1,15 +1,14 @@
 package com.javarush.quest.shubchynskyi.e2e;
 
 import com.javarush.quest.shubchynskyi.App;
+import com.javarush.quest.shubchynskyi.e2e.pageobjects.LoginPage;
 import com.javarush.quest.shubchynskyi.test_config.PostgresContainerConfiguration;
 import com.javarush.quest.shubchynskyi.test_config.TestLocaleConfiguration;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,8 +25,6 @@ import static com.javarush.quest.shubchynskyi.test_config.TestConstants.LOGIN_UR
 @ActiveProfiles("test")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public abstract class BaseE2ETest {
-
-    protected WebDriver driver;
 
     @Value("${local.server.port}")
     protected int port;
@@ -59,6 +56,8 @@ public abstract class BaseE2ETest {
     @Value("${e2e.headlessIsOn}")
     private Boolean headlessIsOn;
 
+    protected WebDriver driver;
+
     @BeforeAll
     public static void setUpClass() {
         WebDriverManager.chromedriver().setup();
@@ -72,7 +71,10 @@ public abstract class BaseE2ETest {
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--lang=en-US");
         if (headlessIsOn) {
-            options.addArguments("--headless");
+            options.addArguments("--headless=new");
+            options.addArguments("--disable-gpu");
+            options.addArguments("--disable-features=SameSiteByDefaultCookies");
+
         }
         driver = new ChromeDriver(options);
     }
@@ -90,14 +92,11 @@ public abstract class BaseE2ETest {
 
     protected void loginAs(String login, String password) {
         driver.get(getBaseUrl() + LOGIN_URL);
-        WebElement loginField = driver.findElement(By.id("userLogin"));
-        WebElement passwordField = driver.findElement(By.id("userPassword"));
-        WebElement submitButton = driver.findElement(By.id("submit"));
-        loginField.clear();
-        loginField.sendKeys(login);
-        passwordField.clear();
-        passwordField.sendKeys(password);
-        submitButton.click();
+        LoginPage loginPage = new LoginPage(driver, port);
+        loginPage.open();
+        loginPage.enterLogin(login);
+        loginPage.enterPassword(password);
+        loginPage.clickLoginButton();
     }
 
     protected void loginAsAdmin() {
@@ -106,6 +105,7 @@ public abstract class BaseE2ETest {
 
     protected void loginAsModerator() {
         loginAs(moderatorLogin, moderatorPassword);
+
     }
 
     protected void loginAsUser() {

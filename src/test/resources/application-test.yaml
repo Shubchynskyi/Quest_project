@@ -92,7 +92,7 @@ e2e:
       password: "user123"
       role: "USER"
     newUser:
-      login: "newuser156"
+      login: "NewUser156"
       password: "password123"
     incorrect:
       login: "%%"

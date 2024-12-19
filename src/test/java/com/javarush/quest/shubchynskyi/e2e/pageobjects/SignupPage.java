@@ -1,9 +1,14 @@
 package com.javarush.quest.shubchynskyi.e2e.pageobjects;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 import static com.javarush.quest.shubchynskyi.test_config.TestConstants.SIGNUP_URL;
 
@@ -53,8 +58,9 @@ public class SignupPage extends BasePage {
 
     public boolean isErrorDisplayed() {
         try {
-            return errorAlert.isDisplayed();
-        } catch (Exception e) {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            return wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("alert-danger"))) != null;
+        } catch (TimeoutException e) {
             return false;
         }
     }

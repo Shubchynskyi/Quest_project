@@ -20,11 +20,9 @@ public class TestConstants {
     public static final String LOGIN_URL = "/login";
     public static final String LOGOUT_URL = "/logout";
     public static final String SIGNUP_URL = "/signup";
-    public static final String QUEST_URL = "/quest";
     public static final String QUESTS_LIST_URL = "/quests-list";
     public static final String QUEST_EDIT_URL = "/quest-edit";
     public static final String CREATE_QUEST_URL = "/create-quest";
-    public static final String QUEST_DELETE_URL = "/quest-delete";
 
     //**************  File and Directory Constants  **************//
     public static final String TEST_IMAGES_DIR = "target/test-images";

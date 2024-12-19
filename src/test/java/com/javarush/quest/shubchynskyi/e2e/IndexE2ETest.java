@@ -30,6 +30,7 @@ public class IndexE2ETest extends BaseE2ETest {
         IndexPage indexPage = new IndexPage(driver, port);
         indexPage.openIndexPage();
         List<WebElement> links = indexPage.getHeaderLinks();
+
         assertTrue(links.stream().anyMatch(link -> link.getText().contains("Profile")));
         assertTrue(links.stream().anyMatch(link -> link.getText().contains("Play")));
         assertTrue(links.stream().anyMatch(link -> link.getText().contains("Create Quest")));

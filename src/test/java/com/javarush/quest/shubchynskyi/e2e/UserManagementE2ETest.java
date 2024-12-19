@@ -54,8 +54,12 @@ public class UserManagementE2ETest extends BaseE2ETest {
         SignupPage signupPage = registerUser(incorrectLogin, newUserPassword, userRole);
 
         assertTrue(signupPage.isErrorDisplayed(), "Error message was not displayed.");
-        assertEquals(ValidationMessageLocalizer.getValidationFieldMessage(VALIDATION_SIZE_USER_DTO_LOGIN), signupPage.getErrorMessage());
+        String actualMessage = signupPage.getErrorMessage();
+        String expectedMessage = ValidationMessageLocalizer.getValidationFieldMessage(VALIDATION_SIZE_USER_DTO_LOGIN);
+
+        assertEquals(expectedMessage, actualMessage, "Error message text does not match.");
     }
+
 
     @Test
     @DisplayName("Should validate empty fields")

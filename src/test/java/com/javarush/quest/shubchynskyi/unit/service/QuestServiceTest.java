@@ -126,7 +126,7 @@ public class QuestServiceTest {
         questService.delete(testQuest);
         verify(questRepository, times(1)).delete(testQuest);
         verify(imageService, times(1)).deleteOldFiles(testQuest.getImage());
-        verify(userService, times(1)).update(any());
+        verify(userService, times(1)).updateQuests(any(), any());
     }
 
     @Test

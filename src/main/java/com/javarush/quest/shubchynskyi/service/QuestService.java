@@ -82,12 +82,9 @@ public class QuestService {
 
         User author = quest.getAuthor();
         if (author != null) {
-            List<Quest> quests = author.getQuests();
-            if (quests != null) {
-                quests.remove(quest);
-                author.setQuests(quests);
-            }
-            userService.update(author);
+            List<Quest> quests = new ArrayList<>(author.getQuests());
+            quests.remove(quest);
+            userService.updateQuests(author.getId(), quests);
         }
 
         questRepository.delete(quest);

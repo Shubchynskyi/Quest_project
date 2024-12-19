@@ -7,9 +7,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class BasePage {
-    protected WebDriver driver;
-    protected WebDriverWait wait;
-    protected int port;
+    protected final WebDriver driver;
+    protected final WebDriverWait wait;
+    protected final int port;
 
     public BasePage(WebDriver driver, int port) {
         this.driver = driver;

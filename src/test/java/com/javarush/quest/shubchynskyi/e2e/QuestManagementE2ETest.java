@@ -93,7 +93,6 @@ public class QuestManagementE2ETest extends BaseE2ETest {
                 .orElse(null);
 
         assertNotNull(questCard);
-
         WebElement deleteButton = questCard.findElement(By.cssSelector(".btn-danger"));
         deleteButton.click();
         driver.switchTo().alert().accept();

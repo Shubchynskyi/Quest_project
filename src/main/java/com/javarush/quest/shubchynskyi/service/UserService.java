@@ -1,5 +1,6 @@
 package com.javarush.quest.shubchynskyi.service;
 
+import com.javarush.quest.shubchynskyi.entity.Quest;
 import com.javarush.quest.shubchynskyi.entity.User;
 import com.javarush.quest.shubchynskyi.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -82,4 +84,13 @@ public class UserService {
         }
         return Optional.empty();
     }
+
+    @Transactional
+    public void updateQuests(Long userId, List<Quest> quests) {
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND_WITH_ID + userId));
+        existingUser.setQuests(quests);
+        userRepository.save(existingUser);
+    }
+
 }

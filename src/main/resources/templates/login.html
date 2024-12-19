@@ -2,10 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title th:text="#{login.title}">Login Page</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
-          crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/appStyles.css}">
 </head>
 <body>
@@ -24,8 +21,7 @@
                 <label class="col-md-4 control-label" for="userLogin" th:text="#{login.login.label}">Login</label>
                 <div class="col-md-4">
                     <input id="userLogin" name="login" type="text" th:placeholder="#{login.login.placeholder}"
-                           class="form-control input-md" required="" value="user">
-                    <!-- TODO remove value="admin" when finish dev -->
+                           class="form-control input-md" required="">
                 </div>
             </div>
 
@@ -36,8 +32,7 @@
                 <div class="col-md-4">
                     <input id="userPassword" name="password" type="password"
                            th:placeholder="#{login.password.placeholder}"
-                           class="form-control input-md" required="" value="user123">
-                    <!-- TODO remove value="admin" when finish dev -->
+                           class="form-control input-md" required="">
                 </div>
             </div>
 

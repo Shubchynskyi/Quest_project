@@ -17,7 +17,7 @@ public class IndexPage extends BasePage {
 
     public void openIndexPage() {
         driver.get(getBaseUrl() + INDEX_URL);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("header")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("header")));
     }
 
     public WebElement getHeader() {
