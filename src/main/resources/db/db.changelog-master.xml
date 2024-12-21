@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <include file="classpath:db/changelog/2023/07/22-01-table.xml"/>
+    <include file="classpath:db/changelog/2023/07/22-02-users-data.xml"/>
+    <include file="classpath:db/changelog/2023/07/22-03-test-quest-data-en.xml"/>
+    <include file="classpath:db/changelog/2024/10/11-02-test-quest-data-de.xml"/>
+    <include file="classpath:db/changelog/2024/10/11-01-test-quest-data-ru.xml"/>
+    <include file="classpath:db/changelog/2024/10/11-03-test-quest-data-ua.xml"/>
+    <include file="classpath:db/changelog/2024/12/03-01-migration-audit-table.xml"/>
+
+</databaseChangeLog>

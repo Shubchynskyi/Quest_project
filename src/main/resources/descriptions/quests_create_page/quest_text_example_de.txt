@@ -1,0 +1,22 @@
+Hier können Sie die Struktur Ihres Quests im folgenden Format eingeben:
+
+[Bezeichnung]: Frage, wobei [Bezeichnung] eine eindeutige Nummer für die Frage ist
+[Bezeichnung]< Antwort, wobei [Bezeichnung] die Nummer ist, zu der gewechselt wird, wenn diese Antwort gewählt wird
+[Bezeichnung]+ Siegesnachricht, wobei [Bezeichnung] eine eindeutige Nummer für die Nachricht ist
+[Bezeichnung]- Niederlagennachricht, wobei [Bezeichnung] eine eindeutige Nummer für die Nachricht ist
+
+Beispiel:
+
+1: Kennen Sie Arithmetik?
+2< Ja, natürlich
+99< Was ist das?
+
+2: Wie viel ist zwei plus zwei?
+99< Eins
+99< Zwei
+99< Drei
+100< Vier
+
+99- Du hast verloren
+
+100+ Du hast gewonnen

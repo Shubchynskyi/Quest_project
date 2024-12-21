@@ -1,0 +1,17 @@
+1: Du hast dein Gedächtnis verloren. "Die Herausforderung des UFOs annehmen?"
+2< Herausforderung annehmen
+91< Herausforderung ablehnen
+
+2: Du hast die Herausforderung angenommen. Auf die Kommandobrücke gehen?
+92< Weigere dich, hochzugehen
+3< Auf die Brücke gehen
+
+3: Du bist auf der Brücke. Wer bist du?
+93< Über dich lügen
+99< Die Wahrheit sagen
+
+91- Du hast die Herausforderung abgelehnt. Niederlage.
+92- Du bist nicht zu den Verhandlungen gegangen. Niederlage.
+93- Deine Lüge wurde aufgedeckt. Niederlage.
+
+99+ Du hast gewonnen

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="d.shubchynskyi@gmail.com" id="Create Quest without start id for quest 2">
+        <insert tableName="quest">
+            <column name="id" valueNumeric="1"/>
+            <column name="users_id" valueNumeric="1"/>
+            <column name="description" value="Explore mystical lands, encounter ancient creatures, and make choices that will determine your fate before the magic stone."/>
+            <column name="name" value="Before the magic stone"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add questions for quest 2">
+        <insert tableName="question">
+            <column name="id" valueNumeric="10"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="You see a cave, what will you do?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="9"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="You see a Frost Witch, typing something passionately on a laptop. What will you do next?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="8"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="The Witch jumped into the swamp, taking the laptop with her, but to the right, you see a tunnel."/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="6"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Wow. There it is, a big pile of gold."/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="4"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="Some strange road, does it lead back or is it just me?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="12"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="You are before a magic stone with inscriptions.&#13;&#10;What will you choose?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="11"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="You see a closed chest, well...&#13;&#10;What shall we do?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="7"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="A true act of a real hero.&#13;&#10;Now I just need to find a job, and everything will be fine."/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="1"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="LOST"/>
+            <column name="text" value="And that's the end of the story.&#13;&#10;A terrible death in an unequal battle.&#13;&#10;This is a defeat!"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="2"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="LOST"/>
+            <column name="text" value="And then some vicious bandits came and killed you.&#13;&#10;Greed leads to no good.&#13;&#10;This is a defeat!"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="5"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="PLAY"/>
+            <column name="text" value="You step into the cave and see a Witch, a Troll, and a Dragon watching YouTube videos.&#13;&#10;What will you do?"/>
+        </insert>
+        <insert tableName="question">
+            <column name="id" valueNumeric="3"/>
+            <column name="quest_id" valueNumeric="1"/>
+            <column name="game_state" value="WIN"/>
+            <column name="text" value="Hooray! It's a victory!&#13;&#10;But it's time to find a job and stop wasting time."/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add start id into quest 2">
+        <update tableName="quest">
+            <column name="start_question_id" valueNumeric="12"/>
+            <where>id = 1</where>
+        </update>
+    </changeSet>
+
+    <changeSet author="d.shubchynskyi@gmail.com" id="Add answers for quest 2">
+        <insert tableName="answer">
+            <column name="id" valueNumeric="1"/>
+            <column name="next_question_id" valueNumeric="12"/>
+            <column name="question_id" valueNumeric="4"/>
+            <column name="text" value="Nothing else to do, I move on..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="2"/>
+            <column name="next_question_id" valueNumeric="1"/>
+            <column name="question_id" valueNumeric="5"/>
+            <column name="text" value="Of course! Into battle!!!"/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="3"/>
+            <column name="next_question_id" valueNumeric="11"/>
+            <column name="question_id" valueNumeric="6"/>
+            <column name="text" value="Something's not right, I'll close this chest..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="4"/>
+            <column name="next_question_id" valueNumeric="2"/>
+            <column name="question_id" valueNumeric="6"/>
+            <column name="text" value="Hooray. Filling my pockets..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="5"/>
+            <column name="next_question_id" valueNumeric="3"/>
+            <column name="question_id" valueNumeric="7"/>
+            <column name="text" value="Yes, exactly. Time to revise, learn, and look for a job. Games are evil."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="6"/>
+            <column name="next_question_id" valueNumeric="4"/>
+            <column name="question_id" valueNumeric="7"/>
+            <column name="text" value="Wait, I still need literature... I'll look for it, there's a path with a sign 'to the library'."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="7"/>
+            <column name="next_question_id" valueNumeric="10"/>
+            <column name="question_id" valueNumeric="8"/>
+            <column name="text" value="Okay, I'll go there, nothing else to do."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="8"/>
+            <column name="next_question_id" valueNumeric="7"/>
+            <column name="question_id" valueNumeric="9"/>
+            <column name="text" value="Seems like you can't get a job without a laptop. I hit the Witch with a stick and secure my future."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="9"/>
+            <column name="next_question_id" valueNumeric="8"/>
+            <column name="question_id" valueNumeric="9"/>
+            <column name="text" value="I'll say loudly, 'Hey you, step away from the laptop, I'll show you something...'"/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="10"/>
+            <column name="next_question_id" valueNumeric="12"/>
+            <column name="question_id" valueNumeric="9"/>
+            <column name="text" value="A witch? A laptop? What kind of mushrooms did I eat... Running away..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="11"/>
+            <column name="next_question_id" valueNumeric="5"/>
+            <column name="question_id" valueNumeric="10"/>
+            <column name="text" value="Hold me back! I draw my sword and quickly enter the cave..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="12"/>
+            <column name="next_question_id" valueNumeric="12"/>
+            <column name="question_id" valueNumeric="10"/>
+            <column name="text" value="Forget it. I'm scared. I'll go back for help."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="13"/>
+            <column name="next_question_id" valueNumeric="6"/>
+            <column name="question_id" valueNumeric="11"/>
+            <column name="text" value="I'm not afraid, I'll open it..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="14"/>
+            <column name="next_question_id" valueNumeric="12"/>
+            <column name="question_id" valueNumeric="11"/>
+            <column name="text" value="Who knows what's in there, I'll go back..."/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="15"/>
+            <column name="next_question_id" valueNumeric="9"/>
+            <column name="question_id" valueNumeric="12"/>
+            <column name="text" value="go straight – find a job"/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="16"/>
+            <column name="next_question_id" valueNumeric="10"/>
+            <column name="question_id" valueNumeric="12"/>
+            <column name="text" value="Go right - you'll find your death"/>
+        </insert>
+        <insert tableName="answer">
+            <column name="id" valueNumeric="17"/>
+            <column name="next_question_id" valueNumeric="11"/>
+            <column name="question_id" valueNumeric="12"/>
+            <column name="text" value="Go left - you'll enter a fairy tale"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

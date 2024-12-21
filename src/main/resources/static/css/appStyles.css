@@ -1,0 +1,152 @@
+.img-icon {
+    height: 25px;
+    border-color: #0078ff;
+    border-width: 1px;
+    padding: 0 5px;
+}
+
+.a-icon {
+    display: inline-block;
+}
+
+.fixed-width-button {
+    width: 150px;
+    text-align: center;
+    white-space: nowrap;
+    margin-bottom: 5px;
+}
+
+.userPage-button-fixed-width {
+    width: 135px;
+}
+
+.custom-modal-content {
+    background-color: #f4f4f4;
+    padding: 20px;
+    width: 60%;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 10%;
+    left: 20%;
+}
+
+.custom-form-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-group-right {
+    display: flex;
+    gap: 10px;
+}
+
+.toast-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: none;
+    z-index: 9999;
+}
+
+.custom-modal-footer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-body pre {
+    white-space: pre-wrap;
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.profile-image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-image {
+    max-width: 190px;
+    border-radius: 10px;
+}
+
+.user-info {
+    margin-left: 20px;
+    flex-grow: 1;
+}
+
+.quest-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 5px;
+}
+
+.quest-image {
+    max-width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.quest-name {
+    font-weight: bold;
+    color: #006400;
+}
+
+.btn-group-right .btn {
+    width: 150px;
+}
+
+.quest-description {
+    white-space: pre-wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 70px;
+}
+
+.btn-wide {
+    width: 500px;
+}
+
+.quest-title {
+    margin: auto;
+    padding-bottom: 50px;
+    color: #565756;
+}
+
+.btn-save-quest {
+    width: 200px;
+    margin-bottom: 50px;
+}
+
+.no-resize {
+    resize: none;
+}
+
+.padding-bottom-10 {
+    padding-bottom: 10px;
+}
+
+.user-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}

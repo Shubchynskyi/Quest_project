@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{quest-edit.title}">Quests List</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/appStyles.css}">
+</head>
+<body>
+<div th:replace="~{parts/header :: header}"></div>
+
+<div class="container">
+    <!-- Duplicate "To the list of quests" button at the top -->
+    <div class="d-flex justify-content-center mb-4">
+        <a th:href="${source != null ? source : '/profile'}">
+            <button type="button" class="btn btn-info btn-wide">
+                <span th:text="#{quest-edit.toQuests.button}">To the list of quests</span>
+            </button>
+        </a>
+    </div>
+
+    <h4 class="quest-title">
+        <span th:text="#{quest-edit.head.label}">Quest editing</span> <b th:text="${quest.name}"></b>
+    </h4>
+    <form class="row form-horizontal"
+          action="quest-edit"
+          th:object="${quest}"
+          method="post"
+          enctype="multipart/form-data">
+
+        <!-- Quest Name -->
+        <div class="mb-3">
+            <label for="questName" th:text="#{quest-edit.quest.name.label}">Quest Name:</label>
+            <input id="questName" th:field="*{name}" class="form-control">
+            <div class="text-danger" th:if="${fieldErrors != null and fieldErrors.containsKey('name')}"
+                 th:text="${fieldErrors['name']}"></div>
+        </div>
+
+        <!-- Quest Description -->
+        <div class="mb-3">
+            <label for="questDescription" th:text="#{quest-edit.quest.description.label}">Description:</label>
+            <textarea id="questDescription" th:field="*{description}" class="form-control" rows="5"></textarea>
+            <div class="text-danger" th:if="${fieldErrors != null and fieldErrors.containsKey('description')}"
+                 th:text="${fieldErrors['description']}"></div>
+        </div>
+
+        <div class="alert alert-danger" th:if="${questImageError}" th:text="${questImageError}"></div>
+
+        <!-- Quest Image -->
+        <div class="mb-3">
+            <label class="col-md-4 control-label" for="image-quest">
+                <img id="preview-quest"
+                     th:src="@{'images/' + ${quest.image}}" width="75%" th:alt="${quest.image}">
+            </label>
+            <input onchange="PreviewImage(this);"
+                   id="image-quest"
+                   data-preview-id="preview-quest"
+                   name="image"
+                   style="visibility:hidden;"
+                   class="input-file"
+                   type="file">
+        </div>
+
+        <input type="hidden" name="actionType" value="quest">
+        <input type="hidden" name="source" th:value="${source}">
+        <input type="hidden" th:field="*{id}">
+        <input type="hidden" name="authorId" th:value="${authorId}">
+
+        <!-- Save Button -->
+        <div class="mb-3">
+            <button type="submit" class="btn btn-success btn-save-quest">
+                <span th:text="#{quest-edit.save.button}">Save</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+<hr class="hr hr-blurry"/>
+
+<div class="container">
+    <div th:each="question : ${quest.questions}">
+        <form class="row form-horizontal"
+              action="quest-edit"
+              th:object="${question}"
+              method="post"
+              enctype="multipart/form-data">
+
+            <!-- Questions navigation -->
+            <a th:id="'label-' + ${question.id}"></a>
+
+            <!-- Question Text -->
+            <div class="mb-3">
+                <label for="questionText" th:text="#{quest-edit.question.label}">Question:</label>
+                <textarea id="questionText" class="w-100 no-resize"
+                          name="questionText"
+                          th:text="${question.text}"
+                          required="">
+                </textarea>
+            </div>
+
+            <!-- Answers Text -->
+            <div class="mb-3 padding-bottom-10">
+                <div th:each="answer : ${question.answers}">
+                    <label for="answerText" th:text="#{quest-edit.answer.label}">Answer:</label>
+                    <textarea id="answerText" class="w-100 no-resize"
+                              th:name="'answer' + ${answer.id}"
+                              th:text="${answer.text}"
+                              required="">
+                    </textarea>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div class="alert alert-danger"
+                 th:if="${questionImageErrors != null and questionImageErrors[question.id] != null}"
+                 th:text="${questionImageErrors[question.id]}">
+            </div>
+
+            <!-- Image -->
+            <div class="mb-3">
+                <label class="col-md-4 control-label" th:for="'image-' + ${question.id}">
+                    <img th:id="'preview-' + ${question.id}"
+                         th:src="@{'images/' + ${question.image}}" width="75%"
+                         th:alt="${question.image}">
+                </label>
+
+                <input onchange="PreviewImage(this);"
+                       th:id="'image-' + ${question.id}"
+                       th:data-preview-id="'preview-' + ${question.id}"
+                       name="image"
+                       style="visibility:hidden;"
+                       class="input-file"
+                       type="file">
+            </div>
+
+            <input type="hidden" name="actionType" value="question">
+            <input type="hidden" name="source" th:value="${source}">
+            <input type="hidden" name="authorId" th:value="${authorId}">
+            <input type="hidden" name="id" th:value="${question.id}">
+            <input type="hidden" name="questId" th:value="${quest.id}">
+
+            <!-- Save Button -->
+            <div class="mb-3">
+                <button type="submit" class="btn btn-success" style="width: 200px;">
+                    <span th:text="#{quest-edit.save.button}">Save</span>
+                </button>
+            </div>
+
+        </form>
+        <hr class="hr hr-blurry"/>
+    </div>
+    <!-- Save button -->
+    <div class="d-flex justify-content-center mb-4">
+        <a th:href="${source != null ? source : '/profile'}">
+            <button type="button" class="btn btn-info" style="width: 500px;">
+                <span th:text="#{quest-edit.toQuests.button}">To the list of quests</span>
+            </button>
+        </a>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function PreviewImage(inputElement) {
+        const previewImageId = inputElement.getAttribute('data-preview-id');
+        const oFReader = new FileReader();
+
+        oFReader.readAsDataURL(inputElement.files[0]);
+        oFReader.onload = function (oFREvent) {
+            document.getElementById(previewImageId).src = oFREvent.target.result;
+        };
+    }
+</script>
+
+<div th:replace="~{parts/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{users.title}">Users Page</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/appStyles.css}">
+</head>
+<body>
+
+<div th:replace="~{parts/header :: header}"></div>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-center" th:text="#{users.title}">Users</h1>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col" th:each="user : ${users}">
+            <div class="card h-100 shadow-sm" id="user-card" th:attr="id='user-card-' + ${user.id}">
+                <img th:src="@{/images/{image}(image=${user.image})}" th:alt="${user.login}"
+                     class="card-img-top img-fluid rounded-circle mx-auto mt-3 user-image">
+                <div class="card-body text-center">
+                    <h5 class="card-title" th:text="${user.login}" id="user-login"
+                        th:attr="id='user-login-' + ${user.id}">User Login</h5>
+                    <p class="card-text">ID: <span th:text="${user.id}" id="user-id"></span></p>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <a th:href="@{/user(id=${user.id}, source='/users')}" class="btn btn-primary fixed-width-button"
+                       id="edit-btn" th:attr="id='edit-btn-' + ${user.id}" th:text="#{users.edit.button}">Edit</a>
+                    <form th:action="@{/user(id=${user.id})}" method="post">
+                        <input type="hidden" name="delete" value="delete"/>
+                        <button type="submit" class="btn btn-danger fixed-width-button"
+                                id="delete-btn" th:attr="id='delete-btn-' + ${user.id}" th:text="#{users.delete.button}"
+                                th:attrappend="data-confirm-message=#{user.confirm.delete}">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButtons = document.querySelectorAll('button[data-confirm-message]');
+        deleteButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                const confirmMessage = button.getAttribute('data-confirm-message');
+                if (!confirm(confirmMessage)) {
+                    event.preventDefault();
+                }
+            });
+        });
+    });
+</script>
+
+<div th:replace="~{parts/footer :: footer}"></div>
+</body>
+</html>
