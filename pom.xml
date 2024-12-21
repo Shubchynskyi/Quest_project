@@ -256,7 +256,6 @@
                 </configuration>
             </plugin>
 
-
             <!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

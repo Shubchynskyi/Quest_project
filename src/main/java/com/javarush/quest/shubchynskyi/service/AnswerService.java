@@ -28,6 +28,7 @@ public class AnswerService {
         answerRepository.save(answer);
     }
 
+    @Transactional
     public void delete(Answer answer) {
         answerRepository.delete(answer);
     }

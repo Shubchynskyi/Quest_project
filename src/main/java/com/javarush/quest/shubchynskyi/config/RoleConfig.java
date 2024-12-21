@@ -9,14 +9,26 @@ import java.util.List;
 public class RoleConfig {
 
     public static final List<Role> ALLOWED_ROLES_FOR_QUEST_CREATE =
-            List.of(Role.USER, Role.MODERATOR, Role.ADMIN);
-
+            List.of(Role.USER,
+                    Role.MODERATOR,
+                    Role.ADMIN
+            );
     public static final List<Role> ALLOWED_ROLES_FOR_QUEST_DELETE =
-            List.of(Role.MODERATOR, Role.ADMIN);
+            List.of(Role.MODERATOR,
+                    Role.ADMIN
+            );
     public static final List<Role> ALLOWED_ROLES_FOR_QUEST_EDIT =
-            List.of(Role.MODERATOR, Role.ADMIN);
+            List.of(Role.MODERATOR,
+                    Role.ADMIN
+            );
     public static final List<Role> ALLOWED_ROLES_FOR_USER_EDIT =
-            List.of(Role.USER, Role.MODERATOR, Role.ADMIN);
+            List.of(Role.USER,
+                    Role.MODERATOR,
+                    Role.ADMIN
+            );
     public static final List<Role> ALLOWED_ROLES_FOR_USERS_LIST =
-            List.of(Role.MODERATOR, Role.ADMIN);
+            List.of(Role.MODERATOR,
+                    Role.ADMIN
+            );
+
 }

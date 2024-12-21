@@ -1,6 +1,5 @@
 package com.javarush.quest.shubchynskyi.service;
 
-import com.javarush.quest.shubchynskyi.constant.Key;
 import com.javarush.quest.shubchynskyi.entity.*;
 import com.javarush.quest.shubchynskyi.exception.AppException;
 import com.javarush.quest.shubchynskyi.quest_util.BlockTypeResolver;
@@ -17,6 +16,7 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
+import static com.javarush.quest.shubchynskyi.constant.Key.INCORRECT_TYPE;
 import static com.javarush.quest.shubchynskyi.localization.ExceptionErrorMessages.*;
 
 @Slf4j
@@ -153,7 +153,7 @@ public class QuestService {
                     logicBlock.blockNumber(), logicBlock.blockData(), logicBlock.blockType());
             case ANSWER -> buildNewAnswer(questionsMapWithRawId, answersMapWithNullNextQuestionId, answers,
                     logicBlock.blockNumber(), logicBlock.blockData());
-            default -> throw new AppException(Key.INCORRECT_TYPE);
+            default -> throw new AppException(INCORRECT_TYPE);
         }
     }
 
