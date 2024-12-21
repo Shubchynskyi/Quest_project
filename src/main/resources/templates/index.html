@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{header.title.index}">Main Page</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/appStyles.css}">
+</head>
+<body>
+<div th:replace="~{parts/header :: header}"></div>
+
+<div class="container">
+    <!-- Error Message -->
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
+    <div class="container">
+        <div th:utext="${@contentService.getText('index_page', 'description', #locale)}"></div>
+    </div>
+
+</div>
+<div th:replace="~{parts/footer :: footer}"></div>
+</body>
+</html>

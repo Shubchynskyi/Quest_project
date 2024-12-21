@@ -1,0 +1,30 @@
+services:
+  db:
+    container_name: ${DATABASE_CONTAINER_NAME}
+    image: postgres:16.2
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "2345:5432"
+    volumes:
+      - postgresql_quest_data:/var/lib/postgresql/data
+
+  app:
+    container_name: ${FINAL_APP_CONTAINER_NAME}
+    image: ${FINAL_IMAGE_NAME}
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      APP_DIRECTORIES_IMAGES: ${APP_DIRECTORIES_IMAGES}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  postgresql_quest_data:

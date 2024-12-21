@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{signup.title}">Signup Page</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/appStyles.css}">
+</head>
+<body>
+<div th:replace="~{parts/header :: header}"></div>
+
+<div class="container">
+    <form class="form-horizontal"
+          action="signup"
+          method="post"
+          enctype="multipart/form-data">
+        <fieldset>
+
+            <!-- Form Name -->
+            <legend th:text="#{signup.form.label}">Create an Account</legend>
+
+            <!-- Error Image Message -->
+            <div class="alert alert-danger" th:if="${imageError}" th:text="${imageError}"></div>
+
+            <!-- File Button -->
+            <div class="form-group">
+                <div class="form-group">
+                    <label class="col-md-4 control-label" for="image">
+                        <img id="previewId"
+                             th:src="${#strings.isEmpty(tempImageId) ? '/images/no-image.jpg' : '/images/temp/' + tempImageId}"
+                             width="150"
+                             alt="no-image">
+
+                        <span th:text="#{signup.click.label}">press to change</span>
+                    </label>
+                </div>
+                <div class="col-md-4">
+                    <input onchange="PreviewImage('image','previewId');" id="image" name="image"
+                           style="visibility:hidden;"
+                           class="input-file" type="file">
+                </div>
+            </div>
+
+            <script type="text/javascript">
+                function PreviewImage(inputFileId, imageId) {
+                    const oFReader = new FileReader();
+                    oFReader.readAsDataURL(document.getElementById(inputFileId).files[0]);
+                    oFReader.onload = function (oFREvent) {
+                        document.getElementById(imageId).src = oFREvent.target.result;
+                    };
+                }
+            </script>
+
+            <label>
+                <input th:type="hidden" th:name="tempImageId" th:value="${tempImageId}">
+            </label>
+
+            <!-- Error Login Message -->
+            <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+            <div class="alert alert-danger" th:if="${fieldErrors != null && fieldErrors.containsKey('login')}"
+                 th:text="${fieldErrors['login']}"></div>
+
+            <!-- Login input-->
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="login" th:text="#{signup.login.label}">Login</label>
+                <div class="col-md-4">
+                    <input id="login" name="login" type="text"
+                           th:placeholder="#{signup.login.placeholder}"
+                           th:value="${userDTOFromModel != null ? userDTOFromModel.login : ''}"
+                           class="form-control input-md" required="">
+                </div>
+            </div>
+
+            <!-- Error Password Message -->
+            <br th:if="${fieldErrors != null && fieldErrors.containsKey('password')}">
+            <div class="alert alert-danger" th:if="${fieldErrors != null && fieldErrors.containsKey('password')}"
+                 th:text="${fieldErrors['password']}">
+            </div>
+
+            <!-- Password input-->
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="password" th:text="#{signup.password.label}">Password</label>
+                <div class="col-md-4">
+                    <input id="password" name="password" type="password"
+                           th:placeholder="#{signup.password.placeholder}"
+                           th:value="${userDTOFromModel != null ? userDTOFromModel.password : ''}"
+                           class="form-control input-md" required="">
+                </div>
+            </div>
+
+            <!-- Role input-->
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="role" th:text="#{signup.role.label}">Role</label>
+                <div class="col-md-4">
+                    <select id="role" name="role" class="form-control">
+                        <option th:each="role : ${roles}"
+                                th:value="${role}"
+                                th:selected="${userDTOFromModel != null ? role == userDTOFromModel.role : role == 'GUEST'}"
+                                th:text="${role}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Button (Double) -->
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="updateOrCreate"></label>
+                <div class="col-md-8">
+                    <button id="updateOrCreate" name="create" class="btn btn-success"
+                            th:text="#{signup.sign-up.button}">Sign-up
+                    </button>
+                </div>
+            </div>
+
+        </fieldset>
+    </form>
+</div>
+
+<div th:replace="~{parts/footer :: footer}"></div>
+</body>
+</html>

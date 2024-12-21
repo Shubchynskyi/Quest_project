@@ -1,0 +1,22 @@
+Here you can enter the structure of your quest in the format:
+
+[Label]: Question, where [Label] is a unique number for the question
+[Label]< Answer, where [Label] is the number to go to when this answer is chosen
+[Label]+ Victory message, where [Label] is a unique number for the message
+[Label]- Defeat message, where [Label] is a unique number for the message
+
+Example:
+
+1: Do you know arithmetic?
+2< Yes, of course
+99< What is that?
+
+2: How much is two plus two?
+99< One
+99< Two
+99< Three
+100< Four
+
+99- You lost
+
+100+ You won

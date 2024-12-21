@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:text="#{profile.title}">My Profile</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/appStyles.css}">
+</head>
+<body>
+<!-- Header -->
+<div th:replace="~{parts/header :: header}"></div>
+
+<div class="container">
+
+    <!-- Error Message -->
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
+    <!-- User Profile Section -->
+    <div class="profile-section">
+        <div class="profile-image-container">
+            <img th:src="@{/images/{image}(image=${user.image})}" class="profile-image" alt="" th:alt="${user.image}">
+        </div>
+        <div class="user-info">
+            <h5 th:text="#{profile.login.label} + ' ' + ${user.login}"></h5>
+            <h5 th:text="#{profile.role.label} + ' ' + ${user.role}"></h5>
+            <form class="form-horizontal" th:action="@{/profile}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="id" th:value="${user.id}">
+                <button type="submit" name="user" class="btn btn-primary fixed-width-button">
+                    <span th:text="#{profile.edit.button}">Edit</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quests List -->
+    <div class="quest-list">
+        <p class="mb-4 fs-4 text-center" th:text="#{profile.quests.list.title}">My Quests</p>
+        <div class="row">
+            <div th:each="quest : ${quests}" class="col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-start">
+                        <img th:src="@{/images/{image}(image=${quest.image})}" class="quest-image" alt="Quest Image">
+                        <div class="button-container">
+                            <a th:href="@{/quest(id=${quest.id})}" class="btn btn-primary fixed-width-button mb-2">
+                                <span th:text="#{quests-list.button.play}">PLAY &raquo;</span>
+                            </a>
+                            <a th:href="@{/quest-edit(id=${quest.id}, source='/profile')}"
+                               class="btn btn-secondary fixed-width-button mb-2">
+                                <span th:text="#{quests-list.button.edit}">Edit</span>
+                            </a>
+                            <form th:action="@{/quest-delete}" method="post" style="display:inline;">
+                                <input type="hidden" name="id" th:value="${quest.id}">
+                                <input type="hidden" name="source" th:value="@{/profile}">
+                                <button type="submit" class="btn btn-danger fixed-width-button"
+                                        th:text="#{quests-list.button.delete}"
+                                        th:attr="data-confirm-message=#{quests-list.confirm.delete}">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title quest-name" th:text="${quest.name}"></h5>
+                        <p class="card-text quest-description" th:text="${quest.description}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButtons = document.querySelectorAll('button[data-confirm-message]');
+        deleteButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                const confirmMessage = button.getAttribute('data-confirm-message');
+                if (!confirm(confirmMessage)) {
+                    event.preventDefault();
+                }
+            });
+        });
+    });
+</script>
+
+<div th:replace="~{parts/footer :: footer}"></div>
+</body>
+</html>

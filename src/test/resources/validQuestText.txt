@@ -1,0 +1,8 @@
+1: Do you know arithmetic?\n2< Yes, of course\n99< What is that?
+2: How much is two plus two?
+99< One
+99< Two
+99< Three
+100< Four
+99- You lost
+100+ You won
